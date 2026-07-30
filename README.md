@@ -1,0 +1,9 @@
+# BIYA DEX · 公开文档
+
+| 资源 | 链接 |
+| --- | --- |
+| 入口页 | https://terryxu923.github.io/biya-dex-docs/ |
+| BD 域 PRD 合集（BD01–BD07） | https://terryxu923.github.io/biya-dex-docs/bd-prd-combo.html |
+| 永续合约交互原型 | https://terryxu923.github.io/biya-dex-docs/biya-perp-prototype.html |
+
+静态 HTML，由 GitHub Pages 托管。
