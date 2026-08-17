@@ -76,6 +76,110 @@
     flex: 1;
   }
 
+  .nav-menu-btn {
+    display: none;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    margin-left: -6px;
+    color: var(--text-primary);
+    border-radius: 6px;
+    flex-shrink: 0;
+  }
+
+  .nav-menu-btn:hover { color: var(--accent); }
+
+  .nav-menu-btn svg {
+    width: 22px;
+    height: 22px;
+  }
+
+  /* 移动端侧栏导航（默认隐藏，手机宽度打开） */
+  .nav-drawer {
+    display: none;
+    position: fixed;
+    inset: 0;
+    z-index: 260;
+  }
+
+  .nav-drawer.open { display: block; }
+
+  .nav-drawer-backdrop {
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.55);
+  }
+
+  .nav-drawer-panel {
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    width: min(78vw, 300px);
+    background: #0e0e0e;
+    border-right: 1px solid var(--border-light);
+    box-shadow: 12px 0 40px rgba(0, 0, 0, 0.45);
+    display: flex;
+    flex-direction: column;
+    padding: 14px 0 24px;
+    transform: translateX(-100%);
+    transition: transform 0.22s ease;
+  }
+
+  .nav-drawer.open .nav-drawer-panel {
+    transform: translateX(0);
+  }
+
+  .nav-drawer-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 4px 14px 16px;
+    border-bottom: 1px solid var(--border-light);
+  }
+
+  .nav-drawer-close {
+    width: 32px;
+    height: 32px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--text-secondary);
+    border-radius: 6px;
+  }
+
+  .nav-drawer-close:hover { color: var(--text-primary); }
+
+  .nav-drawer-links {
+    display: flex;
+    flex-direction: column;
+    padding: 12px 0;
+    overflow-y: auto;
+  }
+
+  .nav-drawer-links a {
+    display: flex;
+    align-items: center;
+    min-height: 48px;
+    padding: 0 20px;
+    font-size: 16px;
+    color: var(--text-secondary);
+    border-left: 3px solid transparent;
+  }
+
+  .nav-drawer-links a:hover {
+    color: var(--text-primary);
+    background: rgba(255, 255, 255, 0.03);
+  }
+
+  .nav-drawer-links a.active {
+    color: var(--text-primary);
+    background: linear-gradient(90deg, rgba(57, 200, 93, 0.14), transparent 70%);
+    border-left-color: var(--accent);
+  }
+
   .logo {
     display: flex;
     align-items: center;
@@ -941,7 +1045,7 @@
   .deposit-amount-input {
     width: 100%;
     height: 48px;
-    padding: 0 56px 0 14px;
+    padding: 0 88px 0 14px;
     background: #0A0A0A;
     border: 1px solid var(--border);
     border-radius: 6px;
@@ -960,6 +1064,39 @@
 
   .deposit-amount-wrap.error .deposit-amount-input {
     border-color: var(--fall);
+  }
+
+  .deposit-amount-clear {
+    position: absolute;
+    right: 48px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 22px;
+    height: 22px;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    color: var(--text-tertiary);
+    background: rgba(255, 255, 255, 0.08);
+    font-size: 14px;
+    line-height: 1;
+    padding: 0;
+  }
+
+  .deposit-amount-wrap.has-value .deposit-amount-clear {
+    display: inline-flex;
+  }
+
+  .deposit-amount-clear:hover {
+    color: var(--text-primary);
+    background: rgba(255, 255, 255, 0.14);
+  }
+
+  .deposit-amount-clear svg {
+    width: 12px;
+    height: 12px;
+    display: block;
   }
 
   .deposit-amount-max {
@@ -1654,6 +1791,34 @@
     font-family: var(--font-mono);
   }
 
+  .withdraw-amount-clear {
+    width: 22px;
+    height: 22px;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    border-radius: 50%;
+    color: var(--text-tertiary);
+    background: rgba(255, 255, 255, 0.08);
+    padding: 0;
+  }
+
+  .withdraw-amount-inner.has-value .withdraw-amount-clear {
+    display: inline-flex;
+  }
+
+  .withdraw-amount-clear:hover {
+    color: var(--text-primary);
+    background: rgba(255, 255, 255, 0.14);
+  }
+
+  .withdraw-amount-clear svg {
+    width: 12px;
+    height: 12px;
+    display: block;
+  }
+
   .withdraw-amount-inner .max-btn {
     color: var(--accent);
     font-size: 13px;
@@ -2169,6 +2334,12 @@
     gap: 10px;
   }
 
+  .wm-auth-group {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
   .wm-auth-row {
     display: flex;
     align-items: center;
@@ -2204,6 +2375,15 @@
     padding-right: 8px;
   }
 
+  .wm-auth-row[hidden] {
+    display: none !important;
+  }
+
+  .wm-auth-label {
+    flex: 1;
+    min-width: 0;
+  }
+
   .wm-auth-icon {
     width: 32px;
     height: 32px;
@@ -2218,6 +2398,27 @@
 
   .wm-auth-icon.google { background: #fff; }
   .wm-auth-icon.twitter { background: #000; border: 1px solid #333; }
+
+  .wm-recent-badge {
+    margin-left: auto;
+    flex-shrink: 0;
+    padding: 4px 10px;
+    border-radius: 999px;
+    background: #2a3140;
+    color: #c5cdd8;
+    font-size: 12px;
+    font-weight: 500;
+    line-height: 1.2;
+    letter-spacing: 0.01em;
+  }
+
+  .wm-recent-badge[hidden] {
+    display: none !important;
+  }
+
+  .wm-auth-row.email-row .wm-recent-badge {
+    margin-left: 0;
+  }
 
   .wm-email-input {
     flex: 1;
@@ -2238,7 +2439,7 @@
 
   .wm-inline-error {
     display: none;
-    margin: -4px 4px 0;
+    margin: 0 4px;
     color: var(--fall);
     font-size: 12px;
     line-height: 1.5;
@@ -2250,11 +2451,102 @@
     flex-shrink: 0;
     padding: 6px 10px;
     font-size: 13px;
-    color: var(--text-tertiary);
+    color: var(--accent);
     border-radius: 6px;
+    cursor: pointer;
   }
 
-  .wm-email-submit:hover { color: var(--accent); }
+  .wm-email-submit:hover:not(:disabled) { color: #6ea8ff; }
+
+  .wm-email-submit:disabled {
+    color: var(--text-tertiary);
+    opacity: 0.45;
+    cursor: not-allowed;
+    pointer-events: none;
+  }
+
+  .wm-otp-body {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    padding: 4px 0 8px;
+  }
+
+  .wm-otp-desc {
+    margin: 0 0 20px;
+    font-size: 13px;
+    line-height: 1.55;
+    color: var(--text-secondary);
+  }
+
+  .wm-otp-desc strong {
+    color: var(--text-primary);
+    font-weight: 600;
+    word-break: break-all;
+  }
+
+  .wm-otp-inputs {
+    display: flex;
+    gap: 8px;
+    justify-content: center;
+    margin-bottom: 12px;
+  }
+
+  .wm-otp-digit {
+    width: 40px;
+    height: 44px;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+    background: #1A1A1A;
+    color: var(--text-primary);
+    font-size: 18px;
+    font-weight: 600;
+    font-family: var(--font-mono, ui-monospace, monospace);
+    text-align: center;
+    outline: none;
+    caret-color: var(--accent);
+  }
+
+  .wm-otp-digit:focus {
+    border-color: #fff;
+    box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.35);
+  }
+
+  .wm-otp-inputs.is-error .wm-otp-digit {
+    border-color: rgba(255, 92, 92, 0.55);
+    background: rgba(120, 40, 40, 0.35);
+    color: #ffb4b4;
+  }
+
+  .wm-otp-status {
+    min-height: 20px;
+    margin: 0 0 14px;
+    font-size: 13px;
+    font-weight: 600;
+    line-height: 1.4;
+  }
+
+  .wm-otp-status.is-success { color: var(--accent); }
+  .wm-otp-status.is-error { color: #ff8a8a; }
+
+  .wm-otp-resend {
+    margin: 0 0 8px;
+    font-size: 13px;
+    color: var(--text-secondary);
+  }
+
+  .wm-otp-resend-btn {
+    color: var(--accent);
+    font-weight: 600;
+    padding: 0;
+    background: none;
+    border: none;
+    cursor: pointer;
+    font: inherit;
+  }
+
+  .wm-otp-resend-btn:hover { text-decoration: underline; }
 
   .wm-select-hero {
     display: flex;
@@ -2349,6 +2641,15 @@
   .wm-wallet-item:hover {
     border-color: var(--accent);
     background: #1A1A1A;
+  }
+
+  .wm-wallet-item .wm-auth-label {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .wm-wallet-item .wm-recent-badge {
+    margin-left: auto;
   }
 
   .wm-wallet-logo {
@@ -4298,6 +4599,9 @@
     display: flex;
     align-items: center;
     gap: 14px;
+    overflow: visible;
+    position: relative;
+    z-index: 2;
   }
   .spot-tf-tab {
     font-size: 13px;
@@ -4324,6 +4628,51 @@
     display: inline-flex;
     align-items: center;
     justify-content: center;
+    background: transparent;
+    cursor: default;
+    padding: 0;
+    font-family: var(--font-sans);
+  }
+  .perp-tf-info-wrap {
+    margin-left: auto;
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+  }
+  .perp-tf-info-wrap .spot-tf-info {
+    margin-left: 0;
+  }
+  .perp-tf-type-tip {
+    display: none;
+    position: absolute;
+    right: 0;
+    top: calc(100% + 8px);
+    width: 252px;
+    padding: 12px 14px;
+    background: #1a1a1a;
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 6px;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.45);
+    z-index: 60;
+    pointer-events: none;
+    text-align: left;
+  }
+  .perp-tf-info-wrap:hover .perp-tf-type-tip,
+  .perp-tf-info-wrap:focus-within .perp-tf-type-tip {
+    display: block;
+  }
+  .perp-tf-type-tip-title {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-primary);
+    font-family: var(--font-sans);
+    margin-bottom: 8px;
+  }
+  .perp-tf-type-tip-body {
+    font-size: 12px;
+    line-height: 1.45;
+    color: var(--text-secondary);
+    font-family: var(--font-sans);
   }
   .spot-tf-avail {
     display: flex;
@@ -4527,10 +4876,40 @@
     border-bottom: 1px dotted #6A6A6A;
     cursor: help;
   }
+  .spot-acct-row .l.tip:hover,
+  .spot-acct-row .l.tip:focus {
+    color: #FFFFFF;
+  }
   .spot-acct-row .v {
     font-family: var(--font-mono);
     color: #FFFFFF;
     font-variant-numeric: tabular-nums;
+  }
+
+  /* 账户概览字段说明：fixed 挂 body，避免 .spot-acct-box overflow 裁切 */
+  .acct-float-tip {
+    position: fixed;
+    z-index: 1200;
+    display: none;
+    max-width: min(300px, calc(100vw - 24px));
+    padding: 10px 12px;
+    border-radius: 6px;
+    background: #1e1e1e;
+    border: 1px solid rgba(255, 255, 255, 0.16);
+    box-shadow: 0 10px 32px rgba(0, 0, 0, 0.6);
+    color: #f0f0f0;
+    font-size: 12px;
+    line-height: 1.55;
+    font-family: var(--font-sans);
+    pointer-events: auto;
+    white-space: normal;
+    word-break: break-word;
+  }
+  .acct-float-tip.is-visible {
+    display: block;
+  }
+  .acct-float-tip[hidden] {
+    display: none !important;
   }
 
   /* ===== Bottom positions ===== */
@@ -4683,7 +5062,9 @@
     overflow: auto;
     max-height: 460px;
     padding: 0 4px 8px;
+    -webkit-overflow-scrolling: touch;
   }
+  /* 桌面非弹窗：展开行内菜单时允许溢出，避免裁切下拉 */
   .perp-positions-scroll:has(.perp-pos-action.is-open) {
     overflow: visible;
   }
@@ -4695,7 +5076,8 @@
   .perp-positions-table {
     width: 100%;
     min-width: 1280px;
-    border-collapse: collapse;
+    border-collapse: separate;
+    border-spacing: 0;
     font-size: 12px;
   }
   .perp-positions-table th {
@@ -4706,6 +5088,7 @@
     border-bottom: 1px solid var(--divider);
     white-space: nowrap;
     font-size: 11px;
+    background: var(--bg-primary);
   }
   .perp-positions-table td {
     padding: 10px 8px;
@@ -4714,11 +5097,32 @@
     color: var(--text-primary);
     vertical-align: middle;
     white-space: nowrap;
+    background: var(--bg-primary);
   }
+  /* 合约名称列：始终左侧冻结 */
+  .perp-positions-table th:first-child,
+  .perp-positions-table td:first-child,
+  .perp-positions-table th.perp-pos-col-sym,
+  .perp-positions-table td.perp-pos-col-sym {
+    position: sticky;
+    left: 0;
+    z-index: 3;
+    background: var(--bg-primary);
+    box-shadow: 4px 0 10px rgba(0, 0, 0, 0.35);
+    min-width: 112px;
+  }
+  .perp-positions-table thead th:first-child,
+  .perp-positions-table thead th.perp-pos-col-sym {
+    z-index: 5;
+    background: #121212;
+  }
+  /* 右侧 sticky 仅手机启用，桌面会盖住「操作」列控件 */
   .perp-positions-table tr.perp-pos-row-long td:first-child,
   .perp-positions-table tr.perp-pos-row-short td:first-child {
-    position: relative;
+    position: sticky;
+    left: 0;
     padding-left: 14px;
+    background: var(--bg-primary);
   }
   .perp-positions-table tr.perp-pos-row-long td:first-child::before,
   .perp-positions-table tr.perp-pos-row-short td:first-child::before {
@@ -4828,7 +5232,9 @@
     position: relative;
     display: inline-flex;
     align-items: flex-start;
+    flex-wrap: nowrap;
     gap: 6px;
+    min-width: 250px;
     z-index: 1;
   }
   .perp-pos-action.is-open { z-index: 20; }
@@ -4855,6 +5261,7 @@
     box-shadow: 0 0 0 1px var(--accent);
   }
   .perp-pos-action .perp-pos-btn { min-width: 48px; height: 28px; margin-top: 0; }
+  /* 桌面非弹窗：行内下拉（对齐 copy 原型） */
   .perp-pos-price-menu {
     display: none;
     position: absolute;
@@ -4909,6 +5316,170 @@
   .perp-pos-amt-panel.is-flip-right {
     left: auto;
     right: 0;
+  }
+
+  /* 手机弹窗模式：价格 / 数量 底部 sheet */
+  .pos-close-sheet {
+    display: none;
+    position: fixed;
+    inset: 0;
+    z-index: 320;
+    align-items: flex-end;
+    justify-content: center;
+  }
+  .pos-close-sheet.open { display: flex; }
+  .pos-close-sheet-backdrop {
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.65);
+    backdrop-filter: blur(3px);
+  }
+  .pos-close-sheet-dialog {
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    max-width: 440px;
+    max-height: min(88vh, 560px);
+    overflow: auto;
+    margin: 0 auto;
+    padding: 10px 16px calc(16px + env(safe-area-inset-bottom, 0px));
+    background: #121212;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 16px 16px 0 0;
+    box-shadow: 0 -12px 40px rgba(0, 0, 0, 0.55);
+    animation: biyaSheetUp 0.24s ease;
+  }
+  .pos-close-sheet-grab {
+    width: 36px;
+    height: 4px;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.18);
+    margin: 2px auto 12px;
+  }
+  .pos-close-sheet-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 14px;
+  }
+  .pos-close-sheet-head h3 {
+    margin: 0;
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--text-primary);
+  }
+  .pos-close-sheet-close {
+    width: 32px;
+    height: 32px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--text-secondary);
+    border-radius: 6px;
+  }
+  .pos-close-mode-toggle {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0;
+    margin-bottom: 14px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    overflow: hidden;
+  }
+  .pos-close-mode-toggle button {
+    height: 40px;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text-tertiary);
+    background: #1a1a1a;
+  }
+  .pos-close-mode-toggle button.active {
+    color: #000;
+    background: var(--accent);
+  }
+  .pos-close-field {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    margin-bottom: 12px;
+  }
+  .pos-close-field label {
+    font-size: 12px;
+    color: var(--text-tertiary);
+  }
+  .pos-close-field-row {
+    display: flex;
+    align-items: center;
+    height: 44px;
+    padding: 0 12px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    background: #0a0a0a;
+  }
+  .pos-close-field-row input {
+    flex: 1;
+    min-width: 0;
+    border: none;
+    outline: none;
+    background: transparent;
+    color: var(--text-primary);
+    font-family: var(--font-mono);
+    font-size: 16px;
+  }
+  .pos-close-field-row input:disabled,
+  .pos-close-field-row input[readonly] {
+    color: var(--text-secondary);
+    cursor: default;
+    opacity: 0.95;
+  }
+  .pos-close-field-row.is-readonly {
+    background: #141414;
+    border-color: rgba(255, 255, 255, 0.08);
+  }
+  .pos-close-field-row .unit {
+    color: var(--text-tertiary);
+    font-size: 13px;
+    margin-left: 8px;
+  }
+  .pos-close-hint {
+    margin: 0 0 14px;
+    font-size: 12px;
+    line-height: 1.45;
+    color: var(--text-tertiary);
+  }
+  .pos-close-sheet-est {
+    margin-bottom: 10px;
+    padding: 8px 10px;
+    border-radius: 6px;
+    background: #2a2a2a;
+    font-size: 13px;
+    color: rgba(255, 255, 255, 0.78);
+  }
+  .pos-close-sheet-est .pnl-up { color: #0ecb81; }
+  .pos-close-sheet-est .pnl-down { color: #f6465d; }
+  .pos-close-sheet-slider {
+    margin: 4px 0 14px;
+    padding: 12px 10px 10px;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 8px;
+    background: #0d0d0d;
+  }
+  .pos-close-sheet-confirm {
+    width: 100%;
+    min-height: 44px;
+    border-radius: 8px;
+    background: var(--accent);
+    color: #000;
+    font-size: 15px;
+    font-weight: 700;
+  }
+  .pos-close-sheet-confirm:hover { background: var(--accent-dark); }
+  .perp-pos-close-price.is-market-mode {
+    color: var(--accent);
+  }
+  .perp-pos-mode-tag {
+    display: none;
   }
   /* 截图：预估盈亏独立徽章，浮在数量输入上方，不进滑条框 */
   .perp-pos-est-pnl {
@@ -5095,8 +5666,34 @@
   .perp-orders-table {
     width: 100%;
     min-width: 1100px;
-    border-collapse: collapse;
+    border-collapse: separate;
+    border-spacing: 0;
     font-size: 12px;
+  }
+  /* 当前委托 / 历史委托 / 最近成交：首列合约冻结 */
+  .perp-orders-table th:first-child,
+  .perp-orders-table td:first-child {
+    position: sticky;
+    left: 0;
+    z-index: 2;
+    background: var(--bg-primary);
+    box-shadow: 4px 0 10px rgba(0, 0, 0, 0.32);
+  }
+  .perp-orders-table thead th:first-child {
+    z-index: 4;
+    background: #121212;
+  }
+  .perp-orders-table.perp-oorders-table th.perp-ord-th-actions,
+  .perp-orders-table.perp-oorders-table td:last-child {
+    position: sticky;
+    right: 0;
+    z-index: 2;
+    background: var(--bg-primary);
+    box-shadow: -4px 0 10px rgba(0, 0, 0, 0.28);
+  }
+  .perp-orders-table.perp-oorders-table thead th.perp-ord-th-actions {
+    z-index: 4;
+    background: #121212;
   }
   .perp-orders-table.perp-oorders-table {
     min-width: 1280px;
@@ -5128,10 +5725,20 @@
   }
   .perp-orders-table th:last-child,
   .perp-orders-table td:last-child { text-align: right; }
+  .perp-orders-table th,
+  .perp-orders-table td {
+    background: var(--bg-primary);
+  }
+  .perp-orders-table thead th {
+    background: #121212;
+  }
   .perp-orders-table tr.perp-ord-row-buy td:first-child,
   .perp-orders-table tr.perp-ord-row-sell td:first-child {
-    position: relative;
+    position: sticky;
+    left: 0;
+    z-index: 2;
     padding-left: 14px;
+    background: var(--bg-primary);
   }
   .perp-orders-table tr.perp-ord-row-buy td:first-child::before,
   .perp-orders-table tr.perp-ord-row-sell td:first-child::before {
@@ -5222,10 +5829,56 @@
   .perp-ohist-table { min-width: 1180px; }
   .perp-ohist-table th:last-child,
   .perp-ohist-table td:last-child { text-align: left; }
-  .perp-ord-status-filled { color: #0ecb81; font-weight: 500; }
-  .perp-ord-status-canceled { color: #f6465d; font-weight: 500; }
   .perp-ord-pnl-pos { color: #0ecb81; }
   .perp-ord-pnl-neg { color: #f6465d; }
+  .perp-ord-history-status {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    font-family: var(--font-sans);
+    font-weight: 500;
+  }
+  .perp-ord-history-status.is-filled { color: #0ecb81; }
+  .perp-ord-history-status.is-canceled { color: #f6465d; }
+  .perp-ord-cancel-reason {
+    position: relative;
+    display: inline-flex;
+    color: var(--text-secondary);
+  }
+  .perp-ord-cancel-info {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 16px;
+    height: 16px;
+    padding: 0;
+    border: 1px solid var(--text-tertiary);
+    border-radius: 50%;
+    background: transparent;
+    color: var(--text-secondary);
+    font: 600 10px/1 var(--font-sans);
+    cursor: help;
+  }
+  .perp-ord-cancel-tip {
+    display: none;
+    position: absolute;
+    left: 50%;
+    bottom: calc(100% + 7px);
+    transform: translateX(-50%);
+    z-index: 40;
+    min-width: max-content;
+    max-width: 220px;
+    padding: 7px 9px;
+    border: 1px solid rgba(255, 255, 255, 0.14);
+    border-radius: 4px;
+    background: #1c1c1c;
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.42);
+    color: var(--text-primary);
+    font: 12px/1.4 var(--font-sans);
+    white-space: normal;
+  }
+  .perp-ord-cancel-reason:hover .perp-ord-cancel-tip,
+  .perp-ord-cancel-reason:focus-within .perp-ord-cancel-tip { display: block; }
   .perp-ohist-footer {
     display: flex;
     justify-content: flex-end;
@@ -5351,10 +6004,648 @@
     .main { padding: 20px 16px 32px; }
     .page-header { flex-direction: column; }
     .header-actions { width: 100%; flex-wrap: wrap; }
-    .nav-links { display: none; }
     .metrics-bar { grid-template-columns: 1fr; }
     .metric-cell { border-right: none; border-bottom: 1px solid var(--border); }
     .metric-cell:last-child { border-bottom: none; }
+
+    /* —— 导航缩略：汉堡 + logo 图标 / 钱包 + 导出 —— */
+    .top-nav {
+      height: 48px;
+      padding: 0 10px 0 6px;
+      gap: 8px;
+    }
+    .page { padding-top: 48px; }
+    body.view-perp .page { padding-top: 52px; }
+    .nav-menu-btn { display: inline-flex; }
+    .nav-links { display: none !important; }
+    .top-nav .logo-text { display: none; }
+    .nav-drawer .logo-text { display: inline; }
+    .nav-left { gap: 4px; flex: 1; min-width: 0; }
+    .nav-right { gap: 6px; }
+    .btn-connect,
+    .btn-deposit-sm {
+      height: 30px;
+      padding: 0 10px;
+      font-size: 11px;
+    }
+    .wallet-chip {
+      height: 30px;
+      padding: 0 8px;
+      font-size: 11px;
+      max-width: 132px;
+    }
+    .wallet-chip #walletChipAddress {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      max-width: 88px;
+    }
+    .wallet-chip .chevron { display: none; }
+    .icon-btn {
+      width: 30px;
+      height: 30px;
+    }
+
+    /* —— 合约页：单列纵向布局 —— */
+    body.view-perp #view-perp.active {
+      display: flex;
+      flex-direction: column;
+      min-height: calc(100vh - 52px);
+      overflow-x: hidden;
+    }
+
+    #view-perp .spot-watchlist {
+      height: 40px;
+      padding: 0 10px;
+      gap: 10px;
+      overflow-x: auto;
+      overflow-y: hidden;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
+    }
+    #view-perp .spot-watchlist::-webkit-scrollbar { display: none; }
+    #view-perp .spot-watch-items {
+      flex: 1;
+      min-width: 0;
+      gap: 14px;
+      overflow-x: auto;
+      overflow-y: hidden;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
+    }
+    #view-perp .spot-watch-items::-webkit-scrollbar { display: none; }
+
+    #view-perp .spot-market-bar {
+      height: auto;
+      min-height: 56px;
+      padding: 8px 10px;
+      gap: 12px;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
+    }
+    #view-perp .spot-market-bar::-webkit-scrollbar { display: none; }
+    #view-perp .spot-pair-name { font-size: 16px; }
+    #view-perp .spot-stats { gap: 14px; }
+
+    #view-perp .spot-grid,
+    .spot-grid {
+      display: flex;
+      flex-direction: column;
+      min-height: 0;
+      height: auto;
+      gap: 1px;
+      background: var(--border-light);
+    }
+    #view-perp .spot-grid {
+      gap: 4px;
+      background: transparent;
+      min-height: 0 !important;
+    }
+
+    #view-perp .spot-chart-pane,
+    #view-perp .spot-mid-col,
+    #view-perp .spot-trade-form,
+    #view-perp .spot-bottom-pane,
+    #view-perp .spot-acct-box,
+    .spot-chart-pane,
+    .spot-mid-col,
+    .spot-trade-form,
+    .spot-bottom-pane,
+    .spot-acct-box {
+      grid-column: auto !important;
+      grid-row: auto !important;
+      width: 100%;
+      max-width: 100%;
+    }
+
+    /* 顺序：K线 → 订单簿 → 下单 → 持仓 → 账户（与 DOM 一致） */
+    #view-perp .spot-chart-pane {
+      order: 1;
+      height: 340px;
+      max-height: 340px;
+      min-height: 300px;
+    }
+    #view-perp .spot-mid-col {
+      order: 2;
+      height: 380px;
+      max-height: 380px;
+      min-height: 320px;
+    }
+    #view-perp .spot-trade-form {
+      order: 3;
+      height: auto;
+      max-height: none;
+      min-height: 0;
+      overflow: visible;
+    }
+    #view-perp .spot-bottom-pane {
+      order: 4;
+      height: auto;
+      max-height: none;
+      min-height: 280px;
+      overflow: hidden;
+    }
+    #view-perp .spot-acct-box {
+      order: 5;
+      height: auto;
+      max-height: none;
+      min-height: 0;
+      overflow: visible;
+      padding-bottom: calc(16px + env(safe-area-inset-bottom, 0px));
+    }
+
+    #view-perp .spot-toolbar {
+      padding: 6px 10px;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+    #view-perp .spot-bottom-head {
+      flex-wrap: nowrap;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+    #view-perp .spot-bottom-tabs {
+      flex-wrap: nowrap;
+      overflow-x: auto;
+    }
+
+    /* —— 持仓区：可纵向扩展 + 表横滑 + 左右固定列 —— */
+    #view-perp .spot-bottom-pane,
+    #view-spot .spot-bottom-pane {
+      overflow: visible;
+    }
+    #view-perp .spot-bottom-body,
+    #view-spot .spot-bottom-body {
+      overflow: visible;
+      flex: none;
+      min-height: 260px;
+    }
+    #view-perp .spot-bottom-head,
+    #view-spot .spot-bottom-head {
+      flex-wrap: wrap;
+      row-gap: 6px;
+      padding: 0 8px 0 0;
+    }
+    #view-perp .spot-bottom-tools,
+    #view-spot .spot-bottom-tools {
+      width: 100%;
+      justify-content: flex-start;
+      overflow-x: auto;
+      padding-bottom: 4px;
+      -webkit-overflow-scrolling: touch;
+    }
+    #view-perp .spot-bottom-tab,
+    #view-spot .spot-bottom-tab {
+      min-height: 44px;
+      padding: 10px 12px;
+      font-size: 13px;
+    }
+    .spot-bottom-empty,
+    .spot-empty-state {
+      min-height: 160px;
+      height: auto;
+      padding: 28px 16px;
+    }
+
+    .perp-positions-scroll,
+    .perp-orders-scroll {
+      overflow: auto;
+      max-height: min(52vh, 420px);
+      -webkit-overflow-scrolling: touch;
+      overscroll-behavior: contain;
+    }
+    .perp-positions-table,
+    .perp-orders-table,
+    .perp-ohist-table,
+    .perp-thist-table,
+    .perp-fhist-table {
+      border-collapse: separate;
+      border-spacing: 0;
+    }
+    .perp-positions-table { min-width: 960px; }
+    .perp-orders-table { min-width: 980px; }
+    .perp-ohist-table { min-width: 1000px; }
+
+    /* 持仓：左冻结合约；右冻结市价平仓（手机） */
+    .perp-positions-table th:first-child,
+    .perp-positions-table td:first-child {
+      position: sticky;
+      left: 0;
+      z-index: 3;
+      background: var(--bg-primary);
+      box-shadow: 4px 0 8px rgba(0, 0, 0, 0.28);
+      min-width: 108px;
+    }
+    .perp-positions-table th:last-child,
+    .perp-positions-table td:last-child {
+      position: sticky;
+      right: 0;
+      z-index: 3;
+      background: var(--bg-primary);
+      box-shadow: -4px 0 8px rgba(0, 0, 0, 0.28);
+      min-width: 88px;
+    }
+    .perp-positions-table thead th:first-child,
+    .perp-positions-table thead th:last-child {
+      z-index: 4;
+      background: #121212;
+    }
+    .perp-positions-table tr.perp-pos-row-long td:first-child,
+    .perp-positions-table tr.perp-pos-row-short td:first-child {
+      background: var(--bg-primary);
+    }
+
+    /* 委托表：合约列固定 */
+    .perp-orders-table th:first-child,
+    .perp-orders-table td:first-child {
+      position: sticky;
+      left: 0;
+      z-index: 2;
+      background: var(--bg-primary);
+      box-shadow: 4px 0 8px rgba(0, 0, 0, 0.22);
+    }
+    .perp-orders-table thead th:first-child {
+      z-index: 3;
+      background: #121212;
+    }
+    .perp-orders-table th.perp-ord-th-actions,
+    .perp-orders-table td:last-child {
+      position: sticky;
+      right: 0;
+      z-index: 2;
+      background: var(--bg-primary);
+      box-shadow: -4px 0 8px rgba(0, 0, 0, 0.22);
+    }
+
+    /* 手机：操作列走弹窗，禁用行内下拉；保持 scroll 以支持 sticky */
+    .perp-positions-scroll:has(.perp-pos-action.is-open) {
+      overflow: auto;
+    }
+    .perp-pos-price-menu,
+    .perp-pos-amt-panel {
+      display: none !important;
+    }
+    .perp-pos-btn {
+      min-height: 36px;
+      padding: 8px 12px;
+      font-size: 13px;
+    }
+    .perp-pos-action {
+      flex-wrap: wrap;
+      max-width: 100%;
+    }
+    .perp-pos-action input.perp-pos-close-price,
+    .perp-pos-action input.perp-pos-close-amt {
+      width: 96px;
+      height: 36px;
+      font-size: 16px; /* 避免 iOS 聚焦放大 */
+      cursor: pointer;
+    }
+
+    /* —— 下单表单触控优化 —— */
+    #view-perp .spot-tf-inner,
+    #view-spot .spot-tf-inner {
+      padding: 12px 12px 16px;
+      gap: 12px;
+    }
+    .spot-side-btn,
+    .spot-btn-trade,
+    .perp-connect-btn,
+    .perp-enable-btn,
+    .perp-dual-btns .spot-btn-trade {
+      min-height: 44px;
+      font-size: 15px;
+    }
+    .spot-tf-field {
+      height: 44px;
+    }
+    .spot-tf-field input,
+    .spot-tf-field input#perpInputPrice,
+    .spot-tf-field input#perpInputAmount,
+    #perpInputPrice,
+    #perpInputAmount,
+    #wmEmailInput {
+      font-size: 16px !important; /* 防止 iOS 自动缩放 */
+    }
+    .spot-avail-plus {
+      width: 28px;
+      height: 28px;
+      font-size: 16px;
+    }
+    .spot-tf-tab {
+      min-height: 36px;
+      padding: 8px 4px 10px;
+      font-size: 14px;
+    }
+    .perp-margin-btn,
+    .perp-lev-btn {
+      min-height: 40px;
+    }
+    .perp-tf-type-tip,
+    .perp-fees-tip {
+      width: min(280px, calc(100vw - 24px));
+      max-width: calc(100vw - 24px);
+      right: 0;
+      left: auto;
+      pointer-events: auto;
+    }
+    /* 触控设备：取消 hover 依赖，改用 is-open / focus-within */
+    .perp-tf-info-wrap:hover .perp-tf-type-tip {
+      display: none;
+    }
+    .perp-tf-info-wrap.is-open .perp-tf-type-tip,
+    .perp-tf-info-wrap:focus-within .perp-tf-type-tip {
+      display: block;
+    }
+    .perp-fees-tip-wrap:hover .perp-fees-tip {
+      display: none;
+    }
+    .perp-fees-tip-wrap.is-open .perp-fees-tip,
+    .perp-fees-tip-wrap:focus-within .perp-fees-tip {
+      display: block;
+    }
+    .spot-pct-bar,
+    #perpPctBar {
+      min-height: 28px;
+      touch-action: none;
+    }
+
+    /* —— 订单簿 / 图表工具条 —— */
+    #view-perp .spot-book-tabs,
+    #view-spot .spot-book-tabs {
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+    .spot-book-tab {
+      min-height: 40px;
+      padding: 10px 12px;
+    }
+    .spot-book-mode {
+      min-width: 36px;
+      min-height: 32px;
+    }
+    #view-perp .spot-toolbar,
+    #view-spot .spot-toolbar {
+      gap: 4px;
+      flex-wrap: nowrap;
+    }
+    .spot-interval {
+      min-height: 36px;
+      padding: 8px 10px;
+      flex-shrink: 0;
+    }
+    .spot-chart-modes {
+      flex-shrink: 0;
+    }
+
+    /* —— 行情栏 / 自选 —— */
+    .spot-watchlist,
+    #view-spot .spot-watchlist {
+      height: 40px;
+      padding: 0 10px;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
+    }
+    .spot-watchlist::-webkit-scrollbar { display: none; }
+    .spot-watch-item {
+      min-height: 32px;
+      padding: 4px 2px;
+    }
+    .spot-quote-toggle button {
+      min-width: 32px;
+      min-height: 28px;
+    }
+    .spot-market-bar,
+    #view-spot .spot-market-bar {
+      height: auto;
+      min-height: 52px;
+      padding: 8px 10px;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
+    }
+    .spot-market-bar::-webkit-scrollbar { display: none; }
+    .spot-pair-name {
+      min-height: 40px;
+      font-size: 16px;
+    }
+    .spot-fav-btn {
+      width: 36px;
+      height: 36px;
+    }
+
+    /* —— 账户概览 —— */
+    #view-perp .spot-acct-box,
+    #view-spot .spot-acct-box {
+      padding: 14px 12px calc(20px + env(safe-area-inset-bottom, 0px));
+    }
+    .spot-acct-dep,
+    .spot-acct-actions button {
+      min-height: 44px;
+      font-size: 14px;
+    }
+
+    /* —— 投资组合页 —— */
+    .main { padding: 16px 12px 28px; }
+    .page-title { font-size: 22px; }
+    .header-actions {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+    }
+    .header-actions .btn-swap {
+      grid-column: 1 / -1;
+    }
+    .header-actions > button {
+      min-height: 44px;
+      width: 100%;
+    }
+    .metrics-bar { border-radius: 8px; overflow: hidden; }
+    .metric-value { font-size: 18px; word-break: break-all; }
+    .mid-grid { gap: 12px; }
+    .bottom-panel { overflow-x: auto; }
+    .portfolio-tabs {
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      flex-wrap: nowrap;
+    }
+    .portfolio-tabs button,
+    .tab-btn {
+      min-height: 40px;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+    .spot-bal-table,
+    .funding-bal-table,
+    .funding-xfer-table {
+      display: block;
+      width: 100%;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+    .spot-bal-table table,
+    table.spot-bal-table,
+    table.funding-bal-table,
+    table.funding-xfer-table {
+      min-width: 520px;
+    }
+    .fee-table-wrap {
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      margin: 0 -4px;
+    }
+    .fee-table { min-width: 520px; }
+
+    /* —— 弹窗：底部呼出 + 表单触控 —— */
+    .wallet-modal,
+    .fee-modal,
+    .deposit-modal,
+    .withdraw-modal,
+    .modify-order-modal,
+    .pos-confirm-modal {
+      align-items: flex-end;
+      justify-content: center;
+      padding: 0;
+      z-index: 300;
+    }
+
+    .wallet-modal-dialog,
+    .fee-modal-dialog,
+    .deposit-modal-dialog,
+    .withdraw-modal-dialog,
+    .modify-order-dialog,
+    .pos-confirm-dialog {
+      width: 100%;
+      max-width: 100%;
+      border-radius: 16px 16px 0 0;
+      max-height: min(92vh, 900px);
+      overflow-x: hidden;
+      overflow-y: auto;
+      margin: 0;
+      padding: 16px 16px calc(16px + env(safe-area-inset-bottom, 0px));
+      animation: biyaSheetUp 0.28s ease;
+      box-shadow: 0 -8px 40px rgba(0, 0, 0, 0.55);
+    }
+
+    .pos-confirm-dialog.is-reverse { max-width: 100%; }
+
+    .wallet-modal-dialog {
+      border-left: none;
+      border-right: none;
+      border-bottom: none;
+      padding-top: 20px;
+    }
+
+    /* 底部 sheet 拖拽指示条 */
+    .wallet-modal-dialog::before,
+    .fee-modal-dialog::before,
+    .deposit-modal-dialog::before,
+    .withdraw-modal-dialog::before,
+    .modify-order-dialog::before,
+    .pos-confirm-dialog::before {
+      content: "";
+      display: block;
+      width: 36px;
+      height: 4px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.18);
+      margin: 0 auto 12px;
+    }
+
+    .deposit-primary-btn,
+    .withdraw-primary-btn,
+    #withdrawPrimaryBtn,
+    .modify-order-dialog button[type="button"],
+    .pos-confirm-dialog button {
+      min-height: 44px;
+    }
+    .deposit-modal input,
+    .withdraw-modal input,
+    .modify-order-dialog input,
+    .wm-email-input,
+    .wm-otp-digit {
+      font-size: 16px !important;
+    }
+    .wm-otp-inputs {
+      gap: 6px;
+      flex-wrap: nowrap;
+      justify-content: center;
+    }
+    .wm-otp-digit {
+      width: 44px;
+      height: 48px;
+      flex: 0 0 44px;
+    }
+    .wm-auth-row {
+      min-height: 52px;
+    }
+    .wm-email-submit {
+      min-height: 36px;
+      padding: 8px 12px;
+    }
+
+    /* 钱包菜单：全宽下拉，避免裁切 */
+    .wallet-menu { position: static; }
+    .wallet-popover {
+      position: fixed;
+      top: 52px;
+      right: 8px;
+      left: auto;
+      min-width: min(240px, calc(100vw - 16px));
+      max-width: calc(100vw - 16px);
+      z-index: 250;
+      border-radius: 8px;
+    }
+    .wallet-popover-row {
+      min-height: 48px;
+      padding: 14px 16px;
+      font-size: 14px;
+    }
+
+    /* 通用下拉 */
+    .dropdown-menu {
+      max-width: calc(100vw - 24px);
+      z-index: 80;
+    }
+
+    /* Toast / 演示面板：避让底部安全区与 sheet */
+    .toast-stack {
+      bottom: calc(16px + env(safe-area-inset-bottom, 0px));
+      width: min(420px, calc(100vw - 20px));
+      z-index: 420;
+    }
+    .bd01-demo {
+      right: 10px;
+      bottom: calc(10px + env(safe-area-inset-bottom, 0px));
+      transform: scale(0.92);
+      transform-origin: bottom right;
+      opacity: 0.92;
+      max-width: calc(100vw - 20px);
+    }
+    .bd01-demo-panel {
+      width: min(300px, calc(100vw - 24px));
+      max-height: 50vh;
+    }
+
+    /* 触控：减少 hover 误触态 */
+    .nav-drawer-links a {
+      min-height: 52px;
+      font-size: 17px;
+    }
+  }
+
+  @keyframes biyaSheetUp {
+    from { transform: translateY(100%); opacity: 0.6; }
+    to { transform: translateY(0); opacity: 1; }
+  }
+
+  /* 触控设备增强：指针粗精度 */
+  @media (max-width: 768px) and (hover: none) {
+    .spot-watch-item:hover .sym { color: inherit; }
+    .perp-pos-btn:hover { opacity: 1; }
+    button:active { opacity: 0.88; }
   }
 </style>
 </head>
@@ -5363,6 +6654,11 @@
   <!-- Top Navigation -->
   <header class="top-nav">
     <div class="nav-left">
+      <button type="button" class="nav-menu-btn" id="btnNavMenu" aria-label="打开菜单" aria-expanded="false" aria-controls="navDrawer">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
+          <path d="M4 7h16M4 12h16M4 17h16" stroke-linecap="round"/>
+        </svg>
+      </button>
       <a href="#portfolio" class="logo" aria-label="BIYA" id="logoHome">
         <svg class="logo-mark" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
           <path d="M12 3C12 3 7 8 7 13.5C7 16.5 9.2 19 12 19C14.8 19 17 16.5 17 13.5C17 8 12 3 12 3Z" fill="currentColor" opacity="0.9"/>
@@ -5415,6 +6711,37 @@
       </button>
     </div>
   </header>
+
+  <!-- 移动端侧栏导航 -->
+  <div class="nav-drawer" id="navDrawer" aria-hidden="true">
+    <div class="nav-drawer-backdrop" id="navDrawerBackdrop"></div>
+    <aside class="nav-drawer-panel" role="dialog" aria-modal="true" aria-label="主导航">
+      <div class="nav-drawer-head">
+        <a href="#portfolio" class="logo" id="drawerLogoHome" aria-label="BIYA">
+          <svg class="logo-mark" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M12 3C12 3 7 8 7 13.5C7 16.5 9.2 19 12 19C14.8 19 17 16.5 17 13.5C17 8 12 3 12 3Z" fill="currentColor" opacity="0.9"/>
+            <path d="M12 8C12 8 9.5 11 9.5 13.8C9.5 15.4 10.6 16.8 12 16.8C13.4 16.8 14.5 15.4 14.5 13.8C14.5 11 12 8 12 8Z" fill="#0D0D0D"/>
+            <path d="M12 19V21" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+            <path d="M9 21H15" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+          </svg>
+          <span class="logo-text">BIYA</span>
+        </a>
+        <button type="button" class="nav-drawer-close" id="btnNavDrawerClose" aria-label="关闭菜单">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+            <path d="M6 6l12 12M18 6L6 18" stroke-linecap="round"/>
+          </svg>
+        </button>
+      </div>
+      <nav class="nav-drawer-links" id="drawerNav">
+        <a href="#perp" data-view="perp">合约</a>
+        <a href="#spot" data-view="spot">现货</a>
+        <a href="#">金库</a>
+        <a href="#portfolio" data-view="portfolio" class="active">投资组合</a>
+        <a href="#">浏览器</a>
+        <a href="#">文档</a>
+      </nav>
+    </aside>
+  </div>
 
   <div id="view-portfolio" class="view-shell active">
   <main class="main">
@@ -5561,7 +6888,6 @@
             </div>
             <button type="button" class="perp-pos-display" id="btnPortfolioPosDisplay">显示 <span class="chev">▾</span></button>
           </div>
-          <label id="portfolioHideOtherWrap"><input type="checkbox" id="chkPortfolioHideOther"> 隐藏其他交易对</label>
           <button type="button" class="perp-pos-close-all hidden" id="btnPortfolioCloseAll">全部平仓</button>
         </div>
       </div>
@@ -5610,10 +6936,6 @@
             <div class="perp-orders-toolbar">
               <div class="perp-orders-subtabs" id="portfolioOrdersSubtabs">
                 <button type="button" class="perp-orders-subtab active" data-orders-filter="limit">限价/市价 (0)</button>
-                <button type="button" class="perp-orders-subtab" data-orders-filter="tpsl">止盈止损 (0)</button>
-                <button type="button" class="perp-orders-subtab" data-orders-filter="trigger">触发 (0)</button>
-                <button type="button" class="perp-orders-subtab" data-orders-filter="twap">TWAP (0)</button>
-                <button type="button" class="perp-orders-subtab" data-orders-filter="all">全部</button>
               </div>
               <span class="perp-orders-sync hidden" id="portfolioOrdersSyncHint">订单数据同步中</span>
             </div>
@@ -5635,7 +6957,7 @@
                     <th>止盈止损</th>
                     <th>只减仓</th>
                     <th>状态 | 委托编号</th>
-                    <th class="perp-ord-th-actions"><button type="button" class="perp-orders-cancel-all" id="btnPortfolioCancelAllOrdersHead" disabled aria-disabled="true" title="S1 仅支持单笔撤销">全部撤销</button></th>
+                    <th class="perp-ord-th-actions">操作</th>
                   </tr>
                 </thead>
                 <tbody id="portfolioOrdersBody"></tbody>
@@ -5654,10 +6976,6 @@
             <div class="perp-orders-toolbar">
               <div class="perp-orders-subtabs" id="portfolioOrderHistorySubtabs">
                 <button type="button" class="perp-orders-subtab active" data-ohist-filter="limit">限价/市价</button>
-                <button type="button" class="perp-orders-subtab" data-ohist-filter="tpsl">止盈止损</button>
-                <button type="button" class="perp-orders-subtab" data-ohist-filter="trigger">触发</button>
-                <button type="button" class="perp-orders-subtab" data-ohist-filter="twap">TWAP</button>
-                <button type="button" class="perp-orders-subtab" data-ohist-filter="all">全部</button>
               </div>
             </div>
             <div class="spot-empty-state perp-orders-empty hidden" id="portfolioOrderHistoryEmpty">
@@ -5718,7 +7036,6 @@
                     <th>吃单 | 挂单</th>
                     <th>手续费</th>
                     <th>已实现盈亏</th>
-                    <th>来源</th>
                   </tr>
                 </thead>
                 <tbody id="portfolioTradeHistoryBody"></tbody>
@@ -5883,7 +7200,7 @@
                   <circle cx="12" cy="12" r="9"></circle>
                   <path d="M12 7v5l3 2"></path>
                 </svg>
-                <span id="tvPlaceholderStatus">Waiting to start...</span>
+                <span id="tvPlaceholderStatus">图表加载中…</span>
               </div>
             </div>
           </div>
@@ -6064,14 +7381,14 @@
           <button type="button" id="btnSpotWithdraw" disabled>提现</button>
         </div>
         <div class="spot-acct-section-title">账户权益</div>
-        <div class="spot-acct-row"><span class="l tip">现货</span><span class="v" data-spot-acct="spotEq">--</span></div>
-        <div class="spot-acct-row"><span class="l tip">永续</span><span class="v" data-spot-acct="perpsEq">--</span></div>
+        <div class="spot-acct-row"><span class="l tip" tabindex="0" data-tip="全部现货资产的美元总价值">现货</span><span class="v" data-spot-acct="spotEq">--</span></div>
+        <div class="spot-acct-row"><span class="l tip" tabindex="0" data-tip="余额 + 未实现盈亏（若全部仓位平仓后的近似账户权益）">永续</span><span class="v" data-spot-acct="perpsEq">--</span></div>
         <div class="spot-acct-section-title">永续概览</div>
-        <div class="spot-acct-row"><span class="l tip">余额</span><span class="v" data-spot-acct="bal">--</span></div>
+        <div class="spot-acct-row"><span class="l tip" tabindex="0" data-tip="净划转合计 + 已实现盈亏合计 + 净资金费用合计">余额</span><span class="v" data-spot-acct="bal">--</span></div>
         <div class="spot-acct-row"><span class="l">未实现盈亏</span><span class="v" data-spot-acct="upnl">--</span></div>
         <div class="spot-acct-row"><span class="l">全仓保证金率</span><span class="v" data-spot-acct="cmr">--</span></div>
-        <div class="spot-acct-row"><span class="l tip">维持保证金</span><span class="v" data-spot-acct="mm">--</span></div>
-        <div class="spot-acct-row"><span class="l tip">全仓账户杠杆</span><span class="v" data-spot-acct="lev">--</span></div>
+        <div class="spot-acct-row"><span class="l tip" tabindex="0" data-tip="维持全仓持仓所需的最低组合价值">维持保证金</span><span class="v" data-spot-acct="mm">--</span></div>
+        <div class="spot-acct-row"><span class="l tip" tabindex="0" data-tip="全仓账户杠杆 = 全仓持仓总价值 / 全仓账户权益，用于计算全仓仓位的强平价格">全仓账户杠杆</span><span class="v" data-spot-acct="lev">--</span></div>
       </aside>
     </div>
   </div>
@@ -6174,7 +7491,7 @@
                   <circle cx="12" cy="12" r="9"></circle>
                   <path d="M12 7v5l3 2"></path>
                 </svg>
-                <span id="perpTvPlaceholderStatus">Waiting to start...</span>
+                <span id="perpTvPlaceholderStatus">图表加载中…</span>
               </div>
             </div>
           </div>
@@ -6252,7 +7569,13 @@
           <div class="spot-tf-tabs" id="perpTfTabs">
             <button type="button" class="spot-tf-tab active" data-perp-type="limit">限价</button>
             <button type="button" class="spot-tf-tab" data-perp-type="market">市价</button>
-            <button type="button" class="spot-tf-info" title="说明" id="perpTfInfo">i</button>
+            <span class="perp-tf-info-wrap" id="perpTfInfoWrap">
+              <button type="button" class="spot-tf-info" id="perpTfInfo" aria-describedby="perpTfTypeTip">i</button>
+              <div class="perp-tf-type-tip" id="perpTfTypeTip" role="tooltip">
+                <div class="perp-tf-type-tip-title" id="perpTfTypeTipTitle">限价</div>
+                <div class="perp-tf-type-tip-body" id="perpTfTypeTipBody">使用限价单以特定价格开仓或平仓。限价单提交后将加入订单簿。</div>
+              </div>
+            </span>
           </div>
           <div class="spot-tf-avail">
             <span>可用</span>
@@ -6315,8 +7638,8 @@
               <div class="spot-pct-thumb" id="perpPctThumb"></div>
             </div>
             <div class="perp-amt-preview">
-              <span>买入 <span class="v" id="perpBuyPreview">0.00</span> <span id="perpBuyPreviewUnit">USDC</span></span>
-              <span>卖出 <span class="v" id="perpSellPreview">0.00</span> <span id="perpSellPreviewUnit">USDC</span></span>
+              <span>买入 <span class="v" id="perpBuyPreview">0.0000</span> <span id="perpBuyPreviewUnit">BTC</span></span>
+              <span>卖出 <span class="v" id="perpSellPreview">0.0000</span> <span id="perpSellPreviewUnit">BTC</span></span>
             </div>
           </div>
           <div class="perp-check-row">
@@ -6360,7 +7683,7 @@
                 <span class="long">--</span>
                 <span class="sep">/</span>
                 <span class="short">--</span>
-                <span class="unit" id="perpMaxSizeUnit">USDC</span>
+                <span class="unit" id="perpMaxSizeUnit">BTC</span>
               </span>
             </div>
             <div class="spot-tf-meta-row">
@@ -6402,7 +7725,6 @@
               </div>
               <button type="button" class="perp-pos-display" id="btnPerpPosDisplay">显示 <span class="chev">▾</span></button>
             </div>
-            <label id="perpHideOtherWrap"><input type="checkbox" id="chkPerpHideOther"> 隐藏其他交易对</label>
             <label id="perpHideSmallWrap" class="hidden"><input type="checkbox" id="chkPerpHideSmall"> 隐藏小额余额</label>
             <button type="button" class="perp-pos-close-all hidden" id="btnPerpCloseAll">全部平仓</button>
           </div>
@@ -6443,10 +7765,6 @@
               <div class="perp-orders-toolbar">
                 <div class="perp-orders-subtabs" id="perpOrdersSubtabs">
                   <button type="button" class="perp-orders-subtab active" data-orders-filter="limit">限价/市价 (0)</button>
-                  <button type="button" class="perp-orders-subtab" data-orders-filter="tpsl">止盈止损 (0)</button>
-                  <button type="button" class="perp-orders-subtab" data-orders-filter="trigger">触发 (0)</button>
-                  <button type="button" class="perp-orders-subtab" data-orders-filter="twap">TWAP (0)</button>
-                  <button type="button" class="perp-orders-subtab" data-orders-filter="all">全部</button>
                 </div>
                 <span class="perp-orders-sync hidden" id="perpOrdersSyncHint">订单数据同步中</span>
               </div>
@@ -6468,7 +7786,7 @@
                       <th>止盈止损</th>
                       <th>只减仓</th>
                       <th>状态 | 委托编号</th>
-                      <th class="perp-ord-th-actions"><button type="button" class="perp-orders-cancel-all" id="btnPerpCancelAllOrdersHead" disabled aria-disabled="true" title="S1 仅支持单笔撤销">全部撤销</button></th>
+                      <th class="perp-ord-th-actions">操作</th>
                     </tr>
                   </thead>
                   <tbody id="perpOrdersBody"></tbody>
@@ -6479,10 +7797,6 @@
               <div class="perp-orders-toolbar">
                 <div class="perp-orders-subtabs" id="perpOrderHistorySubtabs">
                   <button type="button" class="perp-orders-subtab active" data-ohist-filter="limit">限价/市价</button>
-                  <button type="button" class="perp-orders-subtab" data-ohist-filter="tpsl">止盈止损</button>
-                  <button type="button" class="perp-orders-subtab" data-ohist-filter="trigger">触发</button>
-                  <button type="button" class="perp-orders-subtab" data-ohist-filter="twap">TWAP</button>
-                  <button type="button" class="perp-orders-subtab" data-ohist-filter="all">全部</button>
                 </div>
               </div>
               <div class="spot-empty-state perp-orders-empty hidden" id="perpOrderHistoryEmpty">
@@ -6535,7 +7849,6 @@
                       <th>吃单 | 挂单</th>
                       <th>手续费</th>
                       <th>已实现盈亏</th>
-                      <th>来源</th>
                     </tr>
                   </thead>
                   <tbody id="perpTradeHistoryBody"></tbody>
@@ -6584,16 +7897,16 @@
           <button type="button" id="btnPerpWithdraw" disabled>提现</button>
         </div>
         <div class="spot-acct-section-title">账户权益</div>
-        <div class="spot-acct-row"><span class="l tip">现货</span><span class="v" data-perp-acct="spotEq">--</span></div>
-        <div class="spot-acct-row"><span class="l tip">合约</span><span class="v" data-perp-acct="perpsEq">--</span></div>
+        <div class="spot-acct-row"><span class="l tip" tabindex="0" data-tip="全部现货资产的美元总价值">现货</span><span class="v" data-perp-acct="spotEq">--</span></div>
+        <div class="spot-acct-row"><span class="l tip" tabindex="0" data-tip="余额 + 未实现盈亏（若全部仓位平仓后的近似账户权益）">合约</span><span class="v" data-perp-acct="perpsEq">--</span></div>
         <div class="spot-acct-section-title">合约概览</div>
-        <div class="spot-acct-row"><span class="l tip">余额</span><span class="v" data-perp-acct="bal">--</span></div>
+        <div class="spot-acct-row"><span class="l tip" tabindex="0" data-tip="净划转合计 + 已实现盈亏合计 + 净资金费用合计">余额</span><span class="v" data-perp-acct="bal">--</span></div>
         <div class="spot-acct-row" style="display:none" aria-hidden="true"><span class="l tip">交易可用</span><span class="v" data-perp-acct="tradeAvail">--</span></div>
         <div class="spot-acct-row" style="display:none" aria-hidden="true"><span class="l tip">可提现</span><span class="v" data-perp-acct="withdrawable">--</span></div>
         <div class="spot-acct-row"><span class="l">未实现盈亏</span><span class="v" data-perp-acct="upnl">--</span></div>
         <div class="spot-acct-row"><span class="l">全仓保证金率</span><span class="v" data-perp-acct="cmr">--</span></div>
-        <div class="spot-acct-row"><span class="l tip">维持保证金</span><span class="v" data-perp-acct="mm">--</span></div>
-        <div class="spot-acct-row"><span class="l tip">全仓账户杠杆</span><span class="v" data-perp-acct="lev">--</span></div>
+        <div class="spot-acct-row"><span class="l tip" tabindex="0" data-tip="维持全仓持仓所需的最低组合价值">维持保证金</span><span class="v" data-perp-acct="mm">--</span></div>
+        <div class="spot-acct-row"><span class="l tip" tabindex="0" data-tip="全仓账户杠杆 = 全仓持仓总价值 / 全仓账户权益，用于计算全仓仓位的强平价格">全仓账户杠杆</span><span class="v" data-perp-acct="lev">--</span></div>
         <p class="funding-status-line spot-acct-funding-status" id="perpFundingStatus" hidden></p>
       </aside>
     </div>
@@ -6602,6 +7915,7 @@
 </div>
 
 <div class="toast-stack" id="toastStack" aria-live="polite" aria-relevant="additions"></div>
+<div class="acct-float-tip" id="acctFloatTip" role="tooltip" aria-hidden="true" hidden></div>
 
 <!-- Fee Schedule Modal -->
 <div class="fee-modal" id="feeScheduleModal" aria-hidden="true">
@@ -6709,6 +8023,61 @@
     <div class="modify-order-footer">
       <button type="button" class="modify-order-btn cancel" id="btnModifyOrderCancel">取消</button>
       <button type="button" class="modify-order-btn confirm" id="btnModifyOrderConfirm">确认</button>
+    </div>
+  </div>
+</div>
+
+<!-- 持仓平仓：价格类型 / 数量 弹窗 -->
+<div class="pos-close-sheet" id="posCloseSheet" aria-hidden="true">
+  <div class="pos-close-sheet-backdrop" id="posCloseSheetBackdrop"></div>
+  <div class="pos-close-sheet-dialog" role="dialog" aria-modal="true" aria-labelledby="posCloseSheetTitle">
+    <div class="pos-close-sheet-grab" aria-hidden="true"></div>
+    <div class="pos-close-sheet-head">
+      <h3 id="posCloseSheetTitle">平仓价格</h3>
+      <button type="button" class="pos-close-sheet-close" id="btnPosCloseSheetClose" aria-label="关闭">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18" stroke-linecap="round"/></svg>
+      </button>
+    </div>
+    <div id="posCloseSheetPriceView">
+      <div class="pos-close-mode-toggle" role="tablist" aria-label="价格类型">
+        <button type="button" class="active" data-sheet-price-mode="market" id="posCloseModeMarket">市价</button>
+        <button type="button" data-sheet-price-mode="limit" id="posCloseModeLimit">限价</button>
+      </div>
+      <div class="pos-close-field">
+        <label for="posCloseSheetPriceInput">价格</label>
+        <div class="pos-close-field-row">
+          <input type="text" id="posCloseSheetPriceInput" inputmode="decimal" autocomplete="off" aria-label="平仓价格">
+          <span class="unit">USDC</span>
+        </div>
+      </div>
+      <p class="pos-close-hint" id="posCloseSheetPriceHint">市价：仅读取最新价格，不可修改；确认后按市价平仓。</p>
+      <button type="button" class="pos-close-sheet-confirm" id="btnPosCloseSheetPriceOk">确认</button>
+    </div>
+    <div id="posCloseSheetAmtView" hidden>
+      <div class="pos-close-sheet-est" id="posCloseSheetEst">预估盈亏 <span id="posCloseSheetEstVal">--</span></div>
+      <div class="pos-close-field">
+        <label for="posCloseSheetAmtInput">数量</label>
+        <div class="pos-close-field-row">
+          <input type="text" id="posCloseSheetAmtInput" inputmode="decimal" autocomplete="off" aria-label="平仓数量">
+          <span class="unit" id="posCloseSheetAmtUnit">BTC</span>
+        </div>
+      </div>
+      <div class="pos-close-sheet-slider">
+        <div class="perp-pos-pct-bar" id="posCloseSheetPctBar">
+          <div class="perp-pos-pct-fill" id="posCloseSheetPctFill"></div>
+          <div class="spot-pct-dot" data-pct="0"></div>
+          <div class="spot-pct-dot" data-pct="25"></div>
+          <div class="spot-pct-dot" data-pct="50"></div>
+          <div class="spot-pct-dot" data-pct="75"></div>
+          <div class="spot-pct-dot" data-pct="100"></div>
+          <div class="perp-pos-pct-thumb" id="posCloseSheetPctThumb"></div>
+        </div>
+        <div class="perp-pos-amt-ends">
+          <div class="end"><span class="qty" id="posCloseSheetAmtCur">0</span><span class="lbl">当前</span></div>
+          <div class="end"><span class="qty" id="posCloseSheetAmtMax">0</span><span class="lbl">最大</span></div>
+        </div>
+      </div>
+      <button type="button" class="pos-close-sheet-confirm" id="btnPosCloseSheetAmtOk">确认</button>
     </div>
   </div>
 </div>
@@ -6865,6 +8234,9 @@
 
     <div class="deposit-amount-wrap" id="depositAmountWrap">
       <input type="text" class="deposit-amount-input" id="depositAmountInput" inputmode="decimal" placeholder="数量" autocomplete="off">
+      <button type="button" class="deposit-amount-clear" id="depositAmountClear" aria-label="清除数量" title="清除" hidden>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18" stroke-linecap="round"/></svg>
+      </button>
       <button type="button" class="deposit-amount-max" id="depositAmountMax">最大</button>
     </div>
     <p class="deposit-amount-error" id="depositAmountError"></p>
@@ -6947,6 +8319,9 @@
           <div class="withdraw-amount-field">
             <div class="withdraw-amount-inner" id="withdrawAmountWrap">
               <input type="text" id="withdrawAmountInput" inputmode="decimal" placeholder="提现金额" autocomplete="off">
+              <button type="button" class="withdraw-amount-clear" id="withdrawAmountClear" aria-label="清除金额" title="清除" hidden>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18" stroke-linecap="round"/></svg>
+              </button>
               <button type="button" class="max-btn" id="withdrawAmountMax">最大</button>
             </div>
           </div>
@@ -6979,33 +8354,79 @@
         </button>
       </div>
       <h2 class="wm-title" id="wmWelcomeTitle">欢迎来到 BIYA！</h2>
-      <div class="wm-auth-list">
-        <div class="wm-auth-row email-row">
-          <span class="wm-auth-icon" aria-hidden="true">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 7 9-7" stroke-linecap="round"/></svg>
-          </span>
-          <input type="email" class="wm-email-input" id="wmEmailInput" placeholder="your@email.com" aria-label="邮箱">
-          <button type="button" class="wm-email-submit" id="btnEmailSubmit">提交</button>
+      <div class="wm-auth-list" id="wmAuthList">
+        <!-- 最近使用的外部钱包快捷入口（有缓存且为钱包连接时显示，并置顶） -->
+        <button type="button" class="wm-auth-row" id="btnRecentWalletConnect" data-auth-slot="recent-wallet" hidden>
+          <span class="wm-wallet-logo" id="recentWalletLogo" aria-hidden="true">MM</span>
+          <span class="wm-auth-label" id="recentWalletName">MetaMask</span>
+          <span class="wm-recent-badge">最近</span>
+        </button>
+        <div class="wm-auth-group" data-auth-slot="email" id="wmAuthEmailGroup">
+          <div class="wm-auth-row email-row" id="wmAuthEmailRow">
+            <span class="wm-auth-icon" aria-hidden="true">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 7 9-7" stroke-linecap="round"/></svg>
+            </span>
+            <input type="email" class="wm-email-input" id="wmEmailInput" placeholder="your@email.com" aria-label="邮箱">
+            <button type="button" class="wm-email-submit" id="btnEmailSubmit" disabled aria-disabled="true">提交</button>
+          </div>
+          <p class="wm-inline-error" id="wmEmailError" role="alert">请输入有效邮箱地址</p>
         </div>
-        <p class="wm-inline-error" id="wmEmailError" role="alert">请输入有效邮箱地址</p>
-        <button type="button" class="wm-auth-row" id="btnGoogleConnect">
+        <button type="button" class="wm-auth-row" id="btnGoogleConnect" data-auth-slot="google">
           <span class="wm-auth-icon google" aria-hidden="true">
             <svg width="16" height="16" viewBox="0 0 24 24"><path fill="#EA4335" d="M12 10.2v3.6h5.1c-.2 1.2-.9 2.3-1.9 3l3.1 2.4c1.8-1.7 2.9-4.1 2.9-7 0-.7-.1-1.3-.2-1.9H12z"/><path fill="#34A853" d="M6.6 14.3l-.8.6-2.7 2.1C4.8 19.7 8.1 22 12 22c2.7 0 5-.9 6.7-2.4l-3.1-2.4c-.9.6-2 1-3.6 1-2.8 0-5.1-1.9-5.9-4.4z"/><path fill="#FBBC05" d="M3.1 7c-.5 1-.8 2.1-.8 3.3s.3 2.3.8 3.3c0 .1 3.5-2.7 3.5-2.7-.2-.6-.3-1.2-.3-1.9s.1-1.3.3-1.9L3.1 7z"/><path fill="#4285F4" d="M12 5.3c1.5 0 2.8.5 3.8 1.5l2.8-2.8C16.9 2.3 14.7 1.3 12 1.3 8.1 1.3 4.8 3.6 3.1 7l3.5 2.7C7 7.2 9.3 5.3 12 5.3z"/></svg>
           </span>
-          <span>Google</span>
+          <span class="wm-auth-label">Google</span>
+          <span class="wm-recent-badge" data-recent-for="google" hidden>最近</span>
         </button>
-        <button type="button" class="wm-auth-row" id="btnTwitterConnect">
+        <button type="button" class="wm-auth-row" id="btnTwitterConnect" data-auth-slot="twitter">
           <span class="wm-auth-icon twitter" aria-hidden="true">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="#fff"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.746l7.727-8.849L1.254 2.25H8.08l4.253 5.622L18.244 2.25zm-1.161 17.52h1.833L7.084 4.126H5.117L17.083 19.77z"/></svg>
           </span>
-          <span>Twitter</span>
+          <span class="wm-auth-label">Twitter</span>
+          <span class="wm-recent-badge" data-recent-for="twitter" hidden>最近</span>
         </button>
-        <button type="button" class="wm-auth-row" id="btnContinueWallet">
+        <button type="button" class="wm-auth-row" id="btnContinueWallet" data-auth-slot="wallet-entry">
           <span class="wm-auth-icon" aria-hidden="true">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="2" y="6" width="20" height="14" rx="2"/><path d="M2 10h20M16 14h2" stroke-linecap="round"/></svg>
           </span>
-          <span>使用钱包连接</span>
+          <span class="wm-auth-label">使用钱包连接</span>
         </button>
+      </div>
+      <div class="wm-footer">
+        <span>由</span>
+        <span class="privy-mark"><span class="privy-dot"></span>privy</span>
+        <span>提供保护</span>
+      </div>
+    </div>
+
+    <!-- Step 1b: Email confirmation code -->
+    <div class="wm-view" data-view="email-code">
+      <div class="wm-top-bar">
+        <button type="button" class="wm-icon-btn" id="btnEmailCodeBack" aria-label="返回">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 6l-6 6 6 6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+        <button type="button" class="wm-icon-btn wm-close" aria-label="关闭">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 6l12 12M18 6L6 18" stroke-linecap="round"/></svg>
+        </button>
+      </div>
+      <div class="wm-otp-body">
+        <div class="wm-select-hero" style="margin-bottom: 8px;">
+          <div class="wm-select-hero-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 7 9-7" stroke-linecap="round"/></svg>
+          </div>
+          <h2 class="wm-title sm" style="margin:0" id="wmEmailCodeTitle">输入验证码</h2>
+        </div>
+        <p class="wm-otp-desc" id="wmEmailCodeDesc">请查收发送至 <strong id="wmEmailCodeAddress">your@email.com</strong> 的 privy.io 邮件，并在下方输入验证码</p>
+        <div class="wm-otp-inputs" id="wmOtpInputs" role="group" aria-label="六位验证码">
+          <input class="wm-otp-digit" type="text" inputmode="numeric" autocomplete="one-time-code" maxlength="1" aria-label="第 1 位" data-otp-index="0">
+          <input class="wm-otp-digit" type="text" inputmode="numeric" autocomplete="one-time-code" maxlength="1" aria-label="第 2 位" data-otp-index="1">
+          <input class="wm-otp-digit" type="text" inputmode="numeric" autocomplete="one-time-code" maxlength="1" aria-label="第 3 位" data-otp-index="2">
+          <input class="wm-otp-digit" type="text" inputmode="numeric" autocomplete="one-time-code" maxlength="1" aria-label="第 4 位" data-otp-index="3">
+          <input class="wm-otp-digit" type="text" inputmode="numeric" autocomplete="one-time-code" maxlength="1" aria-label="第 5 位" data-otp-index="4">
+          <input class="wm-otp-digit" type="text" inputmode="numeric" autocomplete="one-time-code" maxlength="1" aria-label="第 6 位" data-otp-index="5">
+        </div>
+        <p class="wm-otp-status" id="wmOtpStatus" role="status" aria-live="polite"></p>
+        <p class="wm-otp-resend">没收到邮件？<button type="button" class="wm-otp-resend-btn" id="btnEmailCodeResend">重新发送</button></p>
       </div>
       <div class="wm-footer">
         <span>由</span>
@@ -7035,25 +8456,30 @@
         <input type="search" id="walletSearchInput" placeholder="搜索钱包" aria-label="搜索钱包">
       </div>
       <div class="wm-wallet-list" id="walletList">
-        <button type="button" class="wm-wallet-item" data-wallet="OKX Wallet" data-logo="okx">
+        <button type="button" class="wm-wallet-item" data-wallet="OKX Wallet" data-logo="okx" data-order="0">
           <span class="wm-wallet-logo okx"><span class="installed-dot"></span>OKX</span>
-          <span>OKX Wallet</span>
+          <span class="wm-auth-label">OKX Wallet</span>
+          <span class="wm-recent-badge" hidden>最近</span>
         </button>
-        <button type="button" class="wm-wallet-item" data-wallet="MetaMask" data-logo="metamask">
+        <button type="button" class="wm-wallet-item" data-wallet="MetaMask" data-logo="metamask" data-order="1">
           <span class="wm-wallet-logo metamask"><span class="installed-dot"></span>MM</span>
-          <span>MetaMask</span>
+          <span class="wm-auth-label">MetaMask</span>
+          <span class="wm-recent-badge" hidden>最近</span>
         </button>
-        <button type="button" class="wm-wallet-item" data-wallet="Coinbase Wallet" data-logo="coinbase">
+        <button type="button" class="wm-wallet-item" data-wallet="Coinbase Wallet" data-logo="coinbase" data-order="2">
           <span class="wm-wallet-logo coinbase"><span class="installed-dot"></span>CB</span>
-          <span>Coinbase Wallet</span>
+          <span class="wm-auth-label">Coinbase Wallet</span>
+          <span class="wm-recent-badge" hidden>最近</span>
         </button>
-        <button type="button" class="wm-wallet-item" data-wallet="Rainbow" data-logo="rainbow">
+        <button type="button" class="wm-wallet-item" data-wallet="Rainbow" data-logo="rainbow" data-order="3">
           <span class="wm-wallet-logo rainbow">RB</span>
-          <span>Rainbow</span>
+          <span class="wm-auth-label">Rainbow</span>
+          <span class="wm-recent-badge" hidden>最近</span>
         </button>
-        <button type="button" class="wm-wallet-item" data-wallet="Base" data-logo="base">
+        <button type="button" class="wm-wallet-item" data-wallet="Base" data-logo="base" data-order="4">
           <span class="wm-wallet-logo base"><span class="installed-dot"></span>Base</span>
-          <span>Base</span>
+          <span class="wm-auth-label">Base</span>
+          <span class="wm-recent-badge" hidden>最近</span>
         </button>
       </div>
       <div class="wm-search-empty" id="walletSearchEmpty">未找到匹配的钱包，请更换关键词</div>
@@ -7408,25 +8834,19 @@
   }
 
   function statusLabelTransfer(status, type) {
-    /* 列表暴露口径：信息不完整 / 状态待确认不单独露出 */
-    if (status === "status_unknown" || status === "incomplete") {
-      return type === "withdraw" ? "处理中" : "确认中";
+    /* 充值：确认中 / 充值成功 / 充值失败；提现：处理中 / 提现成功 / 提现失败 */
+    if (type === "deposit") {
+      if (status === "credited") return "充值成功";
+      if (status === "failed") return "充值失败";
+      return "确认中";
     }
-    var map = {
-      waiting_wallet: "等待钱包",
-      cancelled: "已取消",
-      submitted: "已提交",
-      confirming: "确认中",
-      credited: "已入账",
-      failed: "失败",
-      signed: "处理中",
-      locked: "处理中",
-      processing: "处理中",
-      releasing: "资金释放中",
-      completed: "成功",
-      failed_released: "失败"
-    };
-    return map[status] || status;
+    if (type === "withdraw") {
+      if (status === "completed") return "提现成功";
+      if (status === "failed" || status === "failed_released" || status === "cancelled") return "提现失败";
+      return "处理中";
+    }
+    if (status === "status_unknown" || status === "incomplete") return "确认中";
+    return status || "--";
   }
 
   function beginFundingQuery(options) {
@@ -7544,12 +8964,13 @@
         el.textContent = "--";
         return;
       }
-      if (typeof bd05Demo !== "undefined" && bd05Demo && bd05Demo.scene && bd05Demo.acct && Object.prototype.hasOwnProperty.call(bd05Demo.acct, key)) {
-        el.textContent = bd05Demo.acct[key];
+      if (key === "spotEq") {
+        /* 现货未上线：固定占位 */
+        el.textContent = "--";
         return;
       }
-      if (key === "spotEq") {
-        el.textContent = formatUsd(DEMO_SPOT_USDC, false);
+      if (typeof bd05Demo !== "undefined" && bd05Demo && bd05Demo.scene && bd05Demo.acct && Object.prototype.hasOwnProperty.call(bd05Demo.acct, key)) {
+        el.textContent = bd05Demo.acct[key];
         return;
       }
       if (key === "perpsEq") {
@@ -8263,10 +9684,16 @@
 
   var WALLET_KEY = "biya_identity_session_v2";
   var LEGACY_WALLET_KEY = "biya_wallet_connected";
+  /* 最近连接方式（断开会话后仍保留，用于欢迎页排序与「最近」标记） */
+  var RECENT_AUTH_KEY = "biya_last_auth_method_v1";
   var waitTimer = null;
   var successTimer = null;
   var accountQueryTimer = null;
   var selectedWallet = "OKX Wallet";
+  var pendingEmailAddress = "";
+  var DEMO_EMAIL_OTP = "111111";
+  var otpVerifyLock = false;
+  var otpSuccessTimer = null;
   var activeAttemptId = 0;
   var sessionSequence = 0;
   var modalReturnFocus = null;
@@ -8320,13 +9747,184 @@
     "Rainbow": "RAINBOW",
     "Base": "BASE_WALLET"
   };
+  var walletNameByProvider = {
+    OKX_WALLET: "OKX Wallet",
+    METAMASK: "MetaMask",
+    COINBASE_WALLET: "Coinbase Wallet",
+    RAINBOW: "Rainbow",
+    BASE_WALLET: "Base"
+  };
+  var walletLogoClassByName = {
+    "OKX Wallet": "okx",
+    "MetaMask": "metamask",
+    "Coinbase Wallet": "coinbase",
+    "Rainbow": "rainbow",
+    "Base": "base"
+  };
 
   var modal = document.getElementById("walletModal");
   var modalDialog = document.getElementById("walletModalDialog");
 
+  function normalizeAuthMethod(method) {
+    var m = String(method || "").toUpperCase();
+    if (m === "EMAIL") return "email";
+    if (m === "GOOGLE") return "google";
+    if (m === "TWITTER") return "twitter";
+    if (m === "EXTERNAL_WALLET" || m === "WALLET") return "wallet";
+    return "";
+  }
+
+  function loadRecentAuthMethod() {
+    try {
+      var raw = localStorage.getItem(RECENT_AUTH_KEY);
+      if (!raw) return null;
+      var data = JSON.parse(raw);
+      if (!data || typeof data !== "object") return null;
+      var kind = data.kind || normalizeAuthMethod(data.connectionMethod);
+      if (kind !== "email" && kind !== "google" && kind !== "twitter" && kind !== "wallet") return null;
+      if (kind === "wallet") {
+        var walletName = data.walletName || walletNameByProvider[data.walletProvider] || "";
+        if (!walletName || !walletLogoText[walletName]) return null;
+        return {
+          kind: "wallet",
+          walletName: walletName,
+          walletProvider: data.walletProvider || walletProviderCode[walletName] || "UNKNOWN"
+        };
+      }
+      return { kind: kind };
+    } catch (e) {
+      return null;
+    }
+  }
+
+  function persistRecentAuthMethod(details) {
+    details = details || {};
+    var kind = normalizeAuthMethod(details.connectionMethod || details.kind);
+    if (!kind) return;
+    var payload = { kind: kind, updatedAt: Date.now() };
+    if (kind === "wallet") {
+      var walletName = details.walletName || selectedWallet || walletNameByProvider[details.walletProvider] || "";
+      if (!walletName) return;
+      payload.walletName = walletName;
+      payload.walletProvider = details.walletProvider || walletProviderCode[walletName] || "UNKNOWN";
+    }
+    try {
+      localStorage.setItem(RECENT_AUTH_KEY, JSON.stringify(payload));
+    } catch (e) {}
+  }
+
+  function setRecentBadgeVisible(el, visible) {
+    if (!el) return;
+    if (visible) el.removeAttribute("hidden");
+    else el.setAttribute("hidden", "");
+  }
+
+  function applyWelcomeAuthOrder() {
+    var list = document.getElementById("wmAuthList");
+    if (!list) return;
+
+    var recentWalletBtn = document.getElementById("btnRecentWalletConnect");
+    var emailGroup = document.getElementById("wmAuthEmailGroup");
+    var googleBtn = document.getElementById("btnGoogleConnect");
+    var twitterBtn = document.getElementById("btnTwitterConnect");
+    var walletEntryBtn = document.getElementById("btnContinueWallet");
+    var googleRecentBadge = googleBtn && googleBtn.querySelector('[data-recent-for="google"]');
+    var twitterRecentBadge = twitterBtn && twitterBtn.querySelector('[data-recent-for="twitter"]');
+
+    setRecentBadgeVisible(googleRecentBadge, false);
+    setRecentBadgeVisible(twitterRecentBadge, false);
+    if (recentWalletBtn) {
+      recentWalletBtn.setAttribute("hidden", "");
+      recentWalletBtn.removeAttribute("data-wallet");
+    }
+
+    var recent = loadRecentAuthMethod();
+    /* 默认：邮箱 → 社交(Google/Twitter) → 使用钱包连接；邮箱永不展示「最近」 */
+    var order = [emailGroup, googleBtn, twitterBtn, walletEntryBtn];
+
+    if (recent && recent.kind === "wallet" && recentWalletBtn) {
+      var wName = recent.walletName;
+      var logoEl = document.getElementById("recentWalletLogo");
+      var nameEl = document.getElementById("recentWalletName");
+      if (logoEl) {
+        logoEl.className = "wm-wallet-logo " + (walletLogoClassByName[wName] || "");
+        logoEl.textContent = walletLogoText[wName] || wName.slice(0, 3);
+      }
+      if (nameEl) nameEl.textContent = wName;
+      recentWalletBtn.setAttribute("data-wallet", wName);
+      recentWalletBtn.removeAttribute("hidden");
+      order = [recentWalletBtn, emailGroup, googleBtn, twitterBtn, walletEntryBtn];
+    } else if (recent && recent.kind === "google") {
+      setRecentBadgeVisible(googleRecentBadge, true);
+      order = [googleBtn, emailGroup, twitterBtn, walletEntryBtn];
+    } else if (recent && recent.kind === "twitter") {
+      setRecentBadgeVisible(twitterRecentBadge, true);
+      order = [twitterBtn, emailGroup, googleBtn, walletEntryBtn];
+    }
+    /* email：保持默认排序，不打「最近」标记 */
+
+    order.forEach(function (node) {
+      if (node) list.appendChild(node);
+    });
+  }
+
+  function applyWalletListOrder() {
+    var list = document.getElementById("walletList");
+    if (!list) return;
+
+    var items = Array.prototype.slice.call(list.querySelectorAll(".wm-wallet-item"));
+    if (!items.length) return;
+
+    items.forEach(function (item) {
+      setRecentBadgeVisible(item.querySelector(".wm-recent-badge"), false);
+    });
+
+    items.sort(function (a, b) {
+      var ao = parseInt(a.getAttribute("data-order") || "0", 10);
+      var bo = parseInt(b.getAttribute("data-order") || "0", 10);
+      return ao - bo;
+    });
+
+    var recent = loadRecentAuthMethod();
+    var recentName = recent && recent.kind === "wallet" ? recent.walletName : "";
+    if (recentName) {
+      var recentItem = null;
+      var rest = [];
+      items.forEach(function (item) {
+        if (item.getAttribute("data-wallet") === recentName) recentItem = item;
+        else rest.push(item);
+      });
+      if (recentItem) {
+        setRecentBadgeVisible(recentItem.querySelector(".wm-recent-badge"), true);
+        items = [recentItem].concat(rest);
+      }
+    }
+
+    items.forEach(function (item) {
+      list.appendChild(item);
+    });
+
+    /* 进入列表时按当前搜索词重新过滤，避免排序后空态错乱 */
+    var search = document.getElementById("walletSearchInput");
+    if (search) {
+      var q = (search.value || "").trim().toLowerCase();
+      var visible = 0;
+      items.forEach(function (item) {
+        var name = (item.getAttribute("data-wallet") || "").toLowerCase();
+        var match = !q || name.indexOf(q) !== -1;
+        item.style.display = match ? "" : "none";
+        if (match) visible += 1;
+      });
+      var empty = document.getElementById("walletSearchEmpty");
+      if (empty) empty.classList.toggle("is-visible", visible === 0);
+    }
+  }
+
   function clearWalletTimers() {
     if (waitTimer) { clearTimeout(waitTimer); waitTimer = null; }
     if (successTimer) { clearTimeout(successTimer); successTimer = null; }
+    if (otpSuccessTimer) { clearTimeout(otpSuccessTimer); otpSuccessTimer = null; }
+    otpVerifyLock = false;
   }
 
   function shortenAddress(address) {
@@ -8534,8 +10132,17 @@
     if (modalDialog) {
       modalDialog.setAttribute("data-border", name === "welcome" ? "accent" : "muted");
     }
+    if (name === "welcome") applyWelcomeAuthOrder();
+    if (name === "select") applyWalletListOrder();
     var active = document.querySelector('.wm-view[data-view="' + name + '"]');
-    var focusTarget = active && active.querySelector("button:not(:disabled), input:not(:disabled)");
+    var focusTarget = null;
+    if (active) {
+      if (name === "email-code") {
+        focusTarget = active.querySelector(".wm-otp-digit");
+      } else {
+        focusTarget = active.querySelector("button:not(:disabled):not([hidden]), input:not(:disabled)");
+      }
+    }
     if (focusTarget) setTimeout(function () { focusTarget.focus(); }, 0);
   }
 
@@ -8546,7 +10153,8 @@
     activeAttemptId += 1;
     identityState.connectionAttemptId = "conn_demo_" + activeAttemptId;
     modalReturnFocus = document.activeElement;
-    showWalletView(options.switchWallet ? "select" : (options.view || "welcome"));
+    /* 切换钱包：进入连接欢迎页（邮箱/社交/钱包），而非直接进钱包列表 */
+    showWalletView(options.view || "welcome");
     modal.classList.add("open");
     modal.setAttribute("aria-hidden", "false");
     document.body.style.overflow = "hidden";
@@ -8600,6 +10208,13 @@
     }
     activeAttemptId += 1;
     setConnected(true, payload);
+    persistRecentAuthMethod({
+      connectionMethod: payload.connectionMethod,
+      walletProvider: payload.walletProvider,
+      walletName: payload.walletName || (
+        normalizeAuthMethod(payload.connectionMethod) === "wallet" ? selectedWallet : ""
+      )
+    });
     beginAccountQueryHandoff();
     showWalletView("success");
     showToast("钱包身份已连接");
@@ -8613,7 +10228,11 @@
   function goToWaiting(walletName, options) {
     options = options || {};
     selectedWallet = walletName || "OKX Wallet";
-    var logo = walletLogoText[selectedWallet] || selectedWallet.slice(0, 3);
+    var method = options.connectionMethod || "EXTERNAL_WALLET";
+    var isExternalWallet = normalizeAuthMethod(method) === "wallet";
+    var logo = isExternalWallet
+      ? (walletLogoText[selectedWallet] || selectedWallet.slice(0, 3))
+      : (selectedWallet.slice(0, 1) || "W");
     document.getElementById("waitingLogo").textContent = logo;
     document.getElementById("successLogo").textContent = logo;
     document.getElementById("waitingTitle").textContent = "等待 " + selectedWallet + " 连接";
@@ -8634,8 +10253,9 @@
         walletAddress: options.walletAddress || WALLET,
         walletNetworkId: String(options.walletNetworkId || "42161"),
         walletNetworkName: options.walletNetworkName || "Arbitrum One",
-        connectionMethod: options.connectionMethod || "EXTERNAL_WALLET",
-        walletProvider: options.walletProvider || walletProviderCode[selectedWallet] || "UNKNOWN",
+        connectionMethod: method,
+        walletProvider: options.walletProvider || (isExternalWallet ? (walletProviderCode[selectedWallet] || "UNKNOWN") : "PRIVY_EMBEDDED"),
+        walletName: isExternalWallet ? selectedWallet : "",
         signatureCapability: options.signatureCapability || "EIP712_SUPPORTED"
       }, attemptId);
     }, options.delay == null ? 1200 : options.delay);
@@ -8656,6 +10276,150 @@
       walletAddress: WALLET,
       walletProvider: "PRIVY_EMBEDDED",
       delay: 900
+    });
+  }
+
+  function getOtpDigits() {
+    return Array.prototype.slice.call(document.querySelectorAll("#wmOtpInputs .wm-otp-digit"));
+  }
+
+  function getOtpValue() {
+    return getOtpDigits().map(function (el) { return (el.value || "").replace(/\D/g, "").slice(0, 1); }).join("");
+  }
+
+  function clearOtpStatus() {
+    var status = document.getElementById("wmOtpStatus");
+    var wrap = document.getElementById("wmOtpInputs");
+    if (status) {
+      status.textContent = "";
+      status.classList.remove("is-success", "is-error");
+    }
+    if (wrap) wrap.classList.remove("is-error");
+  }
+
+  function resetEmailOtpInputs(focusFirst) {
+    otpVerifyLock = false;
+    if (otpSuccessTimer) {
+      clearTimeout(otpSuccessTimer);
+      otpSuccessTimer = null;
+    }
+    getOtpDigits().forEach(function (el) { el.value = ""; });
+    clearOtpStatus();
+    if (focusFirst) {
+      var first = getOtpDigits()[0];
+      if (first) setTimeout(function () { first.focus(); }, 0);
+    }
+  }
+
+  function openEmailCodeView(email) {
+    pendingEmailAddress = email;
+    var addr = document.getElementById("wmEmailCodeAddress");
+    if (addr) addr.textContent = email;
+    resetEmailOtpInputs(false);
+    showWalletView("email-code");
+  }
+
+  function setOtpError() {
+    var status = document.getElementById("wmOtpStatus");
+    var wrap = document.getElementById("wmOtpInputs");
+    if (wrap) wrap.classList.add("is-error");
+    if (status) {
+      status.textContent = "验证码错误";
+      status.classList.remove("is-success");
+      status.classList.add("is-error");
+    }
+    otpVerifyLock = false;
+  }
+
+  function verifyEmailOtp() {
+    if (otpVerifyLock) return;
+    var code = getOtpValue();
+    if (code.length !== 6) {
+      clearOtpStatus();
+      return;
+    }
+    otpVerifyLock = true;
+    if (code === DEMO_EMAIL_OTP) {
+      var status = document.getElementById("wmOtpStatus");
+      var wrap = document.getElementById("wmOtpInputs");
+      if (wrap) wrap.classList.remove("is-error");
+      if (status) {
+        status.textContent = "验证成功！";
+        status.classList.remove("is-error");
+        status.classList.add("is-success");
+      }
+      otpSuccessTimer = setTimeout(function () {
+        otpSuccessTimer = null;
+        var email = pendingEmailAddress || "邮箱";
+        var logo = (email.charAt(0) || "邮").toUpperCase();
+        goToWaiting(email, {
+          connectionMethod: "EMAIL",
+          walletAddress: WALLET,
+          walletProvider: "PRIVY_EMBEDDED",
+          delay: 900
+        });
+        document.getElementById("waitingLogo").textContent = logo;
+        document.getElementById("successLogo").textContent = logo;
+        otpVerifyLock = false;
+      }, 450);
+      return;
+    }
+    setOtpError();
+  }
+
+  function bindEmailOtpInputs() {
+    var digits = getOtpDigits();
+    digits.forEach(function (input, index) {
+      input.addEventListener("input", function () {
+        var raw = (input.value || "").replace(/\D/g, "");
+        if (raw.length > 1) raw = raw.slice(-1);
+        input.value = raw;
+        clearOtpStatus();
+        otpVerifyLock = false;
+        if (raw && index < digits.length - 1) digits[index + 1].focus();
+        if (getOtpValue().length === 6) verifyEmailOtp();
+      });
+      input.addEventListener("keydown", function (e) {
+        if (e.key === "Backspace") {
+          if (input.value) {
+            input.value = "";
+            clearOtpStatus();
+            otpVerifyLock = false;
+            e.preventDefault();
+            return;
+          }
+          if (index > 0) {
+            digits[index - 1].focus();
+            digits[index - 1].value = "";
+            clearOtpStatus();
+            otpVerifyLock = false;
+            e.preventDefault();
+          }
+          return;
+        }
+        if (e.key === "ArrowLeft" && index > 0) {
+          digits[index - 1].focus();
+          e.preventDefault();
+        } else if (e.key === "ArrowRight" && index < digits.length - 1) {
+          digits[index + 1].focus();
+          e.preventDefault();
+        }
+      });
+      input.addEventListener("paste", function (e) {
+        var text = (e.clipboardData || window.clipboardData).getData("text") || "";
+        var nums = text.replace(/\D/g, "").slice(0, 6);
+        if (!nums) return;
+        e.preventDefault();
+        clearOtpStatus();
+        otpVerifyLock = false;
+        digits.forEach(function (el, i) { el.value = nums.charAt(i) || ""; });
+        var focusIdx = Math.min(nums.length, digits.length) - 1;
+        if (focusIdx >= 0) digits[focusIdx].focus();
+        if (nums.length === 6) verifyEmailOtp();
+      });
+      input.addEventListener("focus", function () {
+        input.select();
+      });
     });
   }
 
@@ -8712,6 +10476,14 @@
     var saved = loadIdentitySession();
     setConnected(false);
     if (!saved || !saved.walletAddress) return;
+    /* 用历史会话补齐「最近连接方式」，供断开后欢迎页排序 */
+    if (saved.connectionMethod) {
+      persistRecentAuthMethod({
+        connectionMethod: saved.connectionMethod,
+        walletProvider: saved.walletProvider,
+        walletName: walletNameByProvider[saved.walletProvider] || ""
+      });
+    }
     identityState.status = "connecting";
     showToast("正在验证钱包会话…", "info");
     var restoreAttempt = ++activeAttemptId;
@@ -8731,36 +10503,72 @@
 
   document.getElementById("btnContinueWallet").addEventListener("click", goToSelectWallet);
 
+  document.getElementById("btnRecentWalletConnect").addEventListener("click", function () {
+    var walletName = this.getAttribute("data-wallet") || selectedWallet || "OKX Wallet";
+    goToWaiting(walletName, { connectionMethod: "EXTERNAL_WALLET" });
+  });
+
   document.getElementById("btnGoogleConnect").addEventListener("click", function () {
     connectViaSocial("google");
   });
   document.getElementById("btnTwitterConnect").addEventListener("click", function () {
     connectViaSocial("twitter");
   });
+  function isValidEmailAddress(value) {
+    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test((value || "").trim());
+  }
+
+  function syncEmailSubmitState() {
+    var input = document.getElementById("wmEmailInput");
+    var submitBtn = document.getElementById("btnEmailSubmit");
+    if (!input || !submitBtn) return;
+    var valid = isValidEmailAddress(input.value);
+    submitBtn.disabled = !valid;
+    submitBtn.setAttribute("aria-disabled", valid ? "false" : "true");
+  }
+
   document.getElementById("btnEmailSubmit").addEventListener("click", function () {
     var input = document.getElementById("wmEmailInput");
     var email = (input.value || "").trim();
-    var valid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+    var valid = isValidEmailAddress(email);
     input.closest(".wm-auth-row").classList.toggle("is-error", !valid);
     document.getElementById("wmEmailError").classList.toggle("is-visible", !valid);
     if (!valid) {
       input.setAttribute("aria-invalid", "true");
       input.focus();
+      syncEmailSubmitState();
       return;
     }
     input.removeAttribute("aria-invalid");
-    connectViaSocial("email");
+    openEmailCodeView(email);
   });
   document.getElementById("wmEmailInput").addEventListener("input", function () {
     this.closest(".wm-auth-row").classList.remove("is-error");
     this.removeAttribute("aria-invalid");
     document.getElementById("wmEmailError").classList.remove("is-visible");
+    syncEmailSubmitState();
   });
   document.getElementById("wmEmailInput").addEventListener("keydown", function (e) {
     if (e.key === "Enter") {
       e.preventDefault();
-      document.getElementById("btnEmailSubmit").click();
+      var submitBtn = document.getElementById("btnEmailSubmit");
+      if (submitBtn && !submitBtn.disabled) submitBtn.click();
     }
+  });
+  syncEmailSubmitState();
+
+  bindEmailOtpInputs();
+  document.getElementById("btnEmailCodeBack").addEventListener("click", function () {
+    if (otpSuccessTimer) {
+      clearTimeout(otpSuccessTimer);
+      otpSuccessTimer = null;
+    }
+    otpVerifyLock = false;
+    showWalletView("welcome");
+  });
+  document.getElementById("btnEmailCodeResend").addEventListener("click", function () {
+    resetEmailOtpInputs(true);
+    showToast("验证码已重新发送", "info");
   });
 
   document.getElementById("btnWalletBack").addEventListener("click", function () {
@@ -10287,6 +12095,7 @@
     var input = document.getElementById("depositAmountInput");
     wrap.classList.remove("error", "valid");
     err.textContent = "";
+    if (typeof syncDepositAmountClearBtn === "function") syncDepositAmountClearBtn();
     renderDepositProgressBanner();
 
     if (hint) {
@@ -10525,13 +12334,39 @@
     });
   });
 
+  function syncDepositAmountClearBtn() {
+    var input = document.getElementById("depositAmountInput");
+    var wrap = document.getElementById("depositAmountWrap");
+    var clearBtn = document.getElementById("depositAmountClear");
+    if (!input || !wrap || !clearBtn) return;
+    var has = !!(String(input.value || "").trim()) && !input.disabled;
+    wrap.classList.toggle("has-value", has);
+    if (has) clearBtn.removeAttribute("hidden");
+    else clearBtn.setAttribute("hidden", "");
+  }
+
   document.getElementById("depositAmountInput").addEventListener("input", function (e) {
     depositState.amount = e.target.value;
+    syncDepositAmountClearBtn();
     syncDepositUI();
   });
 
   document.getElementById("depositAmountInput").addEventListener("focus", function () {
     closeDepositSelects();
+  });
+
+  document.getElementById("depositAmountClear").addEventListener("click", function (e) {
+    e.stopPropagation();
+    if (depositDepositing) return;
+    var input = document.getElementById("depositAmountInput");
+    if (input && input.disabled) return;
+    depositState.amount = "";
+    if (input) {
+      input.value = "";
+      input.focus();
+    }
+    syncDepositAmountClearBtn();
+    syncDepositUI();
   });
 
   document.getElementById("depositAmountMax").addEventListener("click", function (e) {
@@ -10542,6 +12377,7 @@
     if (bal <= 0) return;
     depositState.amount = String(bal);
     document.getElementById("depositAmountInput").value = String(bal);
+    syncDepositAmountClearBtn();
     syncDepositUI();
   });
 
@@ -10665,6 +12501,7 @@
     wrap.classList.remove("error", "valid");
     err.style.display = "none";
     err.textContent = "";
+    if (typeof syncWithdrawAmountClearBtn === "function") syncWithdrawAmountClearBtn();
     renderWithdrawProgressBanner();
     if (hint) {
       hint.style.display = "none";
@@ -10916,13 +12753,39 @@
     });
   });
 
+  function syncWithdrawAmountClearBtn() {
+    var input = document.getElementById("withdrawAmountInput");
+    var wrap = document.getElementById("withdrawAmountWrap");
+    var clearBtn = document.getElementById("withdrawAmountClear");
+    if (!input || !wrap || !clearBtn) return;
+    var has = !!(String(input.value || "").trim()) && !input.disabled;
+    wrap.classList.toggle("has-value", has);
+    if (has) clearBtn.removeAttribute("hidden");
+    else clearBtn.setAttribute("hidden", "");
+  }
+
   document.getElementById("withdrawAmountInput").addEventListener("input", function (e) {
     withdrawState.amount = e.target.value;
+    syncWithdrawAmountClearBtn();
     syncWithdrawUI();
   });
 
   document.getElementById("withdrawAmountInput").addEventListener("focus", function () {
     closeWithdrawSelects();
+  });
+
+  document.getElementById("withdrawAmountClear").addEventListener("click", function (e) {
+    e.stopPropagation();
+    if (withdrawWithdrawing) return;
+    var input = document.getElementById("withdrawAmountInput");
+    if (input && input.disabled) return;
+    withdrawState.amount = "";
+    if (input) {
+      input.value = "";
+      input.focus();
+    }
+    syncWithdrawAmountClearBtn();
+    syncWithdrawUI();
   });
 
   document.getElementById("withdrawAmountMax").addEventListener("click", function (e) {
@@ -10934,6 +12797,7 @@
     var maxDebit = Math.max(0, +bal.toFixed(6));
     withdrawState.amount = String(maxDebit);
     document.getElementById("withdrawAmountInput").value = String(maxDebit);
+    syncWithdrawAmountClearBtn();
     syncWithdrawUI();
   });
 
@@ -11083,32 +12947,8 @@
     var p1 = partsAgo(40);
     var p2 = partsAgo(35);
     var p3 = partsAgo(30);
-    var p4 = partsAgo(25);
     var p5 = partsAgo(20);
     perpOpenOrders = [
-      {
-        id: "184open473demo",
-        symbol: "ETHUSDC",
-        base: "ETH",
-        side: "short",
-        kind: "limit",
-        price: 1828.39,
-        size: 0.035,
-        filled: 0,
-        avgFill: 0,
-        remaining: 0.035,
-        leverage: 10,
-        marginMode: "cross",
-        tif: "GTC",
-        reduceOnly: false,
-        tpsl: null,
-        status: "open",
-        cancelState: null,
-        marginLocked: 6.4,
-        createdDate: p4.date,
-        createdTime: p4.time,
-        createdAt: p4.date + " " + p4.time
-      },
       {
         id: "184demo0001",
         symbol: "BTCUSDC",
@@ -11198,7 +13038,7 @@
         createdAt: p5.date + " " + p5.time
       }
     ];
-    /* 用户端当前委托仅暴露：开放、部分成交、撤销确认中 */
+    /* 用户端当前委托仅暴露：开放中、部分成交。 */
     perpOpenOrders.forEach(function (o) { refreshPerpOrderStatusLabel(o); });
     recomputePerpLockedUsdc();
   }
@@ -11226,8 +13066,11 @@
         reduceOnly: !!opts.reduceOnly,
         status: opts.status,
         fee: opts.fee != null ? opts.fee : 0.02,
-        pnl: opts.pnl,
-        pnlPct: opts.pnlPct,
+        pnl: opts.reduceOnly ? opts.pnl : null,
+        pnlPct: opts.reduceOnly ? opts.pnlPct : null,
+        cancelOrigin: opts.cancelOrigin || null,
+        cancelReason: opts.cancelReason || null,
+        terminalAt: now - opts.mins * 60000,
         createdDate: p.date,
         createdTime: p.time,
         createdAt: p.date + " " + p.time,
@@ -11235,11 +13078,11 @@
       };
     }
     perpOrderHistory = [
-      row({ id: "184hist0001", mins: 120, side: "long", kind: "limit", price: 64000, size: 0.002, filled: 0.002, avgFill: 63990, status: "filled", pnl: 1.2, pnlPct: 2.1 }),
-      row({ id: "184hist0002", mins: 100, side: "short", kind: "limit", price: 65000, size: 0.001, filled: 0, avgFill: 0, status: "canceled", fee: 0, pnl: null, pnlPct: null }),
-      row({ id: "184hist0003", mins: 80, side: "long", kind: "limit", price: 64100, size: 0.0015, filled: 0, avgFill: 0, status: "stp_canceled", fee: 0, pnl: null, pnlPct: null }),
-      row({ id: "184hist0004", mins: 60, side: "short", kind: "limit", price: 64800, size: 0.002, filled: 0.0005, avgFill: 64750, status: "liq_canceled", fee: 0.01, pnl: -0.3, pnlPct: -1.2 }),
-      row({ id: "184hist0005", mins: 45, side: "long", kind: "market", price: 64200, size: 0.001, filled: 0.001, avgFill: 64210, status: "filled", tif: "IOC", fee: 0.03, pnl: 0.5, pnlPct: 0.8 })
+      row({ id: "184hist0001", mins: 120, side: "long", kind: "limit", price: 64000, size: 0.002, filled: 0.002, avgFill: 63990, status: "filled", fee: 0.02 }),
+      row({ id: "184hist0002", mins: 100, side: "short", kind: "limit", price: 65000, size: 0.001, filled: 0, avgFill: 0, status: "canceled", fee: 0, cancelOrigin: "manual" }),
+      row({ id: "184hist0003", mins: 80, side: "long", kind: "limit", price: 64100, size: 0.0015, filled: 0, avgFill: 0, status: "stp_canceled", fee: 0, cancelOrigin: "system", cancelReason: "self_trade_protection" }),
+      row({ id: "184hist0004", mins: 60, side: "short", kind: "limit", price: 64800, size: 0.002, filled: 0.0005, avgFill: 64750, status: "liq_canceled", fee: 0.01, reduceOnly: true, pnl: -0.3, pnlPct: -1.2, cancelOrigin: "system", cancelReason: "liquidation" }),
+      row({ id: "184hist0005", mins: 45, side: "long", kind: "market", price: null, size: 0.001, filled: 0.001, avgFill: 64210, status: "filled", tif: "IOC", fee: 0.03 })
     ];
   }
 
@@ -11394,6 +13237,16 @@
     var status = statusOverride || order.status || "canceled";
     var filled = Number(order.filled) || 0;
     var avgFill = Number(order.avgFill) || 0;
+    var orderFills = perpTradeHistory.filter(function (fill) { return fill.orderId === order.id; });
+    var fee = order.fee == null
+      ? orderFills.reduce(function (sum, fill) { return sum + (Number(fill.fee) || 0); }, 0)
+      : Number(order.fee) || 0;
+    var pnl = null;
+    if (order.reduceOnly && orderFills.length) {
+      pnl = orderFills.reduce(function (sum, fill) { return sum + (Number(fill.closedPnl) || 0); }, 0);
+    } else if (order.reduceOnly && order.pnl != null) {
+      pnl = Number(order.pnl);
+    }
     perpOrderHistory.unshift({
       id: order.id,
       symbol: order.symbol,
@@ -11409,9 +13262,12 @@
       tif: order.tif || "GTC",
       reduceOnly: !!order.reduceOnly,
       status: status,
-      fee: Number(order.fee) || 0,
-      pnl: order.pnl == null ? null : order.pnl,
-      pnlPct: order.pnlPct == null ? null : order.pnlPct,
+      fee: fee,
+      pnl: pnl,
+      pnlPct: order.reduceOnly && order.pnlPct != null ? order.pnlPct : null,
+      cancelOrigin: order.cancelOrigin || null,
+      cancelReason: order.cancelReason || null,
+      terminalAt: Date.now(),
       createdDate: order.createdDate,
       createdTime: order.createdTime,
       createdAt: order.createdAt,
@@ -11423,14 +13279,18 @@
   }
 
   function getVisiblePerpOrderHistory() {
-    var hide = isPerpHideOtherMarkets();
     var symbol = PERP_SYMBOL + "USDC";
     return perpOrderHistory.filter(function (o) {
-      if (hide && o.symbol !== symbol) return false;
+      if (o.symbol !== symbol) return false;
+      if (["filled", "canceled", "cancelled", "stp_canceled", "liq_canceled"].indexOf(o.status) < 0) return false;
       var kind = o.kind || "limit";
       if (perpOrderHistoryFilter === "all") return true;
       if (perpOrderHistoryFilter === "limit") return kind === "limit" || kind === "market";
       return kind === perpOrderHistoryFilter;
+    }).sort(function (a, b) {
+      var ta = Number(a.terminalAt) || Date.parse(a.createdAt || "") || 0;
+      var tb = Number(b.terminalAt) || Date.parse(b.createdAt || "") || 0;
+      return tb - ta || String(b.id || "").localeCompare(String(a.id || ""));
     });
   }
 
@@ -11448,6 +13308,36 @@
     var pct = o.pnlPct == null || !isFinite(o.pnlPct) ? "--" : (spotFmt(o.pnlPct, 2) + "%");
     return '<span class="' + cls + '">' + spotFmt(o.pnl, 2) + ' USDC</span>' +
       '<span class="' + cls + '">' + pct + "</span>";
+  }
+
+  function getPerpCancelReasonText(o) {
+    if (!o || o.cancelOrigin === "manual" || ["canceled", "cancelled", "stp_canceled", "liq_canceled"].indexOf(o.status) < 0) return "";
+    var isConfirmedSystemCancel = o.cancelOrigin === "system" || o.status === "stp_canceled" || o.status === "liq_canceled";
+    if (!isConfirmedSystemCancel) return "";
+    var reason = o.cancelReason || (o.status === "stp_canceled" ? "self_trade_protection" : (o.status === "liq_canceled" ? "liquidation" : "unknown"));
+    var labels = {
+      price_protection: "达到价格保护范围",
+      no_liquidity: "当前无可成交对手盘",
+      self_trade_protection: "自成交保护",
+      liquidation: "仓位清算取消开放单",
+      reduce_only_invalid: "只减仓条件已不成立"
+    };
+    return labels[reason] || "系统保护取消";
+  }
+
+  function renderPerpCancelReason(o) {
+    var reason = getPerpCancelReasonText(o);
+    if (!reason) return "";
+    return '<span class="perp-ord-cancel-reason"><button type="button" class="perp-ord-cancel-info" aria-label="取消说明：' + reason + '">i</button>' +
+      '<span class="perp-ord-cancel-tip" role="tooltip">' + reason + "</span></span>";
+  }
+
+  function renderPerpHistoryStatus(o) {
+    var isFilled = o && o.status === "filled";
+    var statusLabel = isFilled ? "完全成交" : "已取消";
+    var reasonIcon = isFilled ? "" : renderPerpCancelReason(o);
+    return '<span class="perp-ord-history-status ' + (isFilled ? "is-filled" : "is-canceled") + '">' +
+      statusLabel + reasonIcon + "</span>";
   }
 
   function renderPerpOrderHistory() {
@@ -11487,40 +13377,22 @@
           : "--";
         var filledStr = filled > 0
           ? formatPerpOrderSize(filled) + " " + base
-          : "--";
-        var status = o.status || "canceled";
-        var statusLabel = "已撤销";
-        var statusClass = "perp-ord-status-canceled";
-        if (status === "filled") {
-          statusLabel = "已成交";
-          statusClass = "perp-ord-status-filled";
-        } else if (status === "partial") {
-          statusLabel = "部分成交";
-          statusClass = "perp-ord-status-filled";
-        } else if (status === "stp_canceled") {
-          statusLabel = "自成交保护已取消";
-          statusClass = "perp-ord-status-canceled";
-        } else if (status === "liq_canceled") {
-          statusLabel = "已取消";
-          statusClass = "perp-ord-status-canceled";
-        } else if (status === "canceled" || status === "cancelled") {
-          statusLabel = "已撤销";
-          statusClass = "perp-ord-status-canceled";
-        }
+          : "0 " + base;
+        var priceStr = o.kind === "market" ? "市价" : (spotFmt(o.price, priceDec) + " USDC");
         tr.innerHTML =
           '<td><div class="perp-ord-sym"><span class="pair">' + o.symbol + '</span>' +
           '<span class="meta">' + modeLabel + ' <span class="' + levClass + '">' + o.leverage + "X</span></span></div></td>" +
           '<td><div class="perp-ord-stack"><span class="primary">' + dateStr + '</span><span class="muted">' + timeStr + "</span></div></td>" +
           '<td><span class="perp-ord-side ' + (isBuy ? "buy" : "sell") + '">' + sideLabel + "</span></td>" +
           '<td><div class="perp-ord-stack"><span class="' + (filled > 0 ? "primary" : "muted") + '">' + avgStr +
-          '</span><span class="primary">' + spotFmt(o.price, priceDec) + " USDC</span></div></td>" +
+          '</span><span class="primary">' + priceStr + "</span></div></td>" +
           '<td><div class="perp-ord-stack"><span class="' + (filled > 0 ? "primary" : "muted") + '">' + filledStr +
           '</span><span class="primary">' + formatPerpOrderSize(o.size) + " " + base + "</span></div></td>" +
           '<td><div class="perp-ord-stack">' + formatPerpHistoryPnl(o) + "</div></td>" +
           "<td>" + formatPerpHistoryFee(o.fee) + "</td>" +
           "<td>" + (o.tif || "GTC") + "</td>" +
           "<td>" + (o.reduceOnly ? "是" : "否") + "</td>" +
-          '<td><div class="perp-ord-stack"><span class="' + statusClass + '">' + statusLabel + "</span>" +
+          '<td><div class="perp-ord-stack">' + renderPerpHistoryStatus(o) +
           '<span class="perp-ord-id"><span class="perp-ord-id-text" data-copy="' + o.id + '">' + shortPerpOrderId(o.id) +
           '</span> <button type="button" class="perp-ord-copy" title="复制委托编号" data-copy="' + o.id + '" aria-label="复制">⧉</button></span></div></td>';
         tbody.appendChild(tr);
@@ -11582,7 +13454,6 @@
         var base = t.base || String(t.symbol || "").replace(/USDC$/, "") || PERP_SYMBOL;
         var priceDec = base === "BTC" ? (typeof perpTickDecimals === "number" ? perpTickDecimals : 1) : 2;
         var sideLabel = isBuy ? "买入" : "卖出";
-        var sourceLabel = t.source || "普通";
         var modeLabel = t.marginMode === "isolated" ? "逐仓" : "全仓";
         var lev = t.leverage != null ? t.leverage : 10;
         var levClass = isBuy ? "lev-buy" : "lev-sell";
@@ -11605,8 +13476,7 @@
           "<td>" + spotFmt(value, 2) + " USDC</td>" +
           "<td>" + liquidity + "</td>" +
           "<td>" + formatPerpTradeFee(t.fee) + "</td>" +
-          "<td>" + (isSpot ? '<span class="muted">--</span>' : formatPerpTradeClosedPnl(t.closedPnl)) + "</td>" +
-          "<td>" + sourceLabel + "</td>";
+          "<td>" + (isSpot ? '<span class="muted">--</span>' : formatPerpTradeClosedPnl(t.closedPnl)) + "</td>";
         tbody.appendChild(tr);
       });
     });
@@ -11635,9 +13505,8 @@
 
   function formatPerpFundingPositionSize(size, base) {
     if (!isFinite(size)) return '<span class="muted">--</span>';
-    var cls = size > 0 ? "pos" : (size < 0 ? "neg" : "flat");
-    var sign = size < 0 ? "-" : "";
-    return '<span class="perp-fhist-signed ' + cls + '">' + sign + formatPerpOrderSize(Math.abs(size)) + " " + base + "</span>";
+    /* 列表展示仓位数量用绝对值，不出现负数 */
+    return '<span class="perp-fhist-signed flat">' + formatPerpOrderSize(Math.abs(size)) + " " + base + "</span>";
   }
 
   function renderPerpFundingHistory() {
@@ -11722,6 +13591,10 @@
     if (navSpot) navSpot.classList.toggle("active", isSpot);
     if (navPerp) navPerp.classList.toggle("active", isPerp);
     if (navPortfolio) navPortfolio.classList.toggle("active", isPortfolio);
+    document.querySelectorAll("#drawerNav a[data-view]").forEach(function (a) {
+      a.classList.toggle("active", a.getAttribute("data-view") === name);
+    });
+    if (typeof closeNavDrawer === "function") closeNavDrawer();
     if (isSpot) document.title = "BIYA · 现货 · BTC/USDC";
     else if (isPerp) document.title = "BIYA · 合约 · BTC/USDC";
     else document.title = "BIYA · 投资组合";
@@ -11772,6 +13645,71 @@
     if (location.hash === "#perp") return "perp";
     return "portfolio";
   }
+
+  function openNavDrawer() {
+    var drawer = document.getElementById("navDrawer");
+    var btn = document.getElementById("btnNavMenu");
+    if (!drawer) return;
+    drawer.classList.add("open");
+    drawer.setAttribute("aria-hidden", "false");
+    if (btn) btn.setAttribute("aria-expanded", "true");
+    document.body.style.overflow = "hidden";
+  }
+
+  function closeNavDrawer() {
+    var drawer = document.getElementById("navDrawer");
+    var btn = document.getElementById("btnNavMenu");
+    if (!drawer) return;
+    drawer.classList.remove("open");
+    drawer.setAttribute("aria-hidden", "true");
+    if (btn) btn.setAttribute("aria-expanded", "false");
+    /* 有弹窗打开时不要恢复 body 滚动 */
+    var anyModalOpen = document.querySelector(
+      ".wallet-modal.open, .fee-modal.open, .deposit-modal.open, .withdraw-modal.open, .modify-order-modal.open, .pos-confirm-modal.open"
+    );
+    if (!anyModalOpen) document.body.style.overflow = "";
+  }
+
+  (function bindMobileNavDrawer() {
+    var btn = document.getElementById("btnNavMenu");
+    var backdrop = document.getElementById("navDrawerBackdrop");
+    var closeBtn = document.getElementById("btnNavDrawerClose");
+    var drawerNav = document.getElementById("drawerNav");
+    if (btn) {
+      btn.addEventListener("click", function (e) {
+        e.stopPropagation();
+        var drawer = document.getElementById("navDrawer");
+        if (drawer && drawer.classList.contains("open")) closeNavDrawer();
+        else openNavDrawer();
+      });
+    }
+    if (backdrop) backdrop.addEventListener("click", closeNavDrawer);
+    if (closeBtn) closeBtn.addEventListener("click", closeNavDrawer);
+    if (drawerNav) {
+      drawerNav.querySelectorAll("a[data-view]").forEach(function (a) {
+        a.addEventListener("click", function (e) {
+          e.preventDefault();
+          setView(a.getAttribute("data-view"));
+        });
+      });
+      drawerNav.querySelectorAll("a:not([data-view])").forEach(function (a) {
+        a.addEventListener("click", function (e) {
+          e.preventDefault();
+          closeNavDrawer();
+          showToast("演示原型暂未开放该入口", "info");
+        });
+      });
+    }
+    document.addEventListener("keydown", function (e) {
+      if (e.key === "Escape") {
+        var drawer = document.getElementById("navDrawer");
+        if (drawer && drawer.classList.contains("open")) closeNavDrawer();
+      }
+    });
+    window.addEventListener("resize", function () {
+      if (window.innerWidth > 768) closeNavDrawer();
+    });
+  })();
 
   if (navSpot) {
     navSpot.addEventListener("click", function (e) {
@@ -11832,7 +13770,7 @@
     if (status) {
       status.textContent = statusText || (isError
         ? "K 线加载失败，请检查网络后刷新"
-        : "Waiting to start...");
+        : "图表加载中…");
     }
   }
 
@@ -11847,7 +13785,7 @@
     } else if (tvProgressTimer) { clearTimeout(tvProgressTimer); tvProgressTimer = null; }
     ph.classList.remove("is-loading", "is-error");
     ph.classList.add("is-done");
-    if (status) status.textContent = "Waiting to start...";
+    if (status) status.textContent = "图表加载中…";
     var t = setTimeout(function () {
       ph.classList.remove("is-visible", "is-done");
       resetTvProgressBar(ph);
@@ -11873,7 +13811,7 @@
     var ph = document.getElementById(placeholderId);
     if (!host || !ph) return;
     host.innerHTML = "";
-    showTvPlaceholder({ placeholderId: placeholderId, statusId: statusId }, false, "Waiting to start...");
+    showTvPlaceholder({ placeholderId: placeholderId, statusId: statusId }, false, "图表加载中…");
 
     /* overrides / studies_overrides / disabled_features 必须是 JSON 字符串：
        embed iframe 会对它们再 JSON.parse；若直接传对象会变成
@@ -12488,7 +14426,7 @@
         return;
       }
       var map = {
-        spotEq: formatUsd(DEMO_SPOT_USDC, false),
+        spotEq: "--", /* 现货未上线 */
         perpsEq: formatUsd(DEMO_PERP_USDC, false),
         bal: formatUsd(DEMO_PERP_USDC, false),
         upnl: "$0.00",
@@ -12769,11 +14707,127 @@
     });
   }
 
-  document.querySelectorAll(".spot-acct-row .tip").forEach(function (el) {
-    el.addEventListener("click", function () {
-      showToast(el.textContent + "说明（演示）");
+  /* 账户概览字段说明：fixed 气泡挂 body，悬停即显 */
+  (function bindAcctFieldTips() {
+    var tipEl = document.getElementById("acctFloatTip");
+    if (!tipEl) {
+      tipEl = document.createElement("div");
+      tipEl.id = "acctFloatTip";
+      tipEl.className = "acct-float-tip";
+      tipEl.setAttribute("role", "tooltip");
+      tipEl.hidden = true;
+      document.body.appendChild(tipEl);
+    }
+    /* 若 HTML 里写了错误 class，纠正 */
+    tipEl.className = "acct-float-tip";
+    var hideTimer = null;
+    var activeEl = null;
+
+    function placeTip(anchor) {
+      if (!tipEl || !anchor) return;
+      tipEl.hidden = false;
+      tipEl.classList.add("is-visible");
+      /* 先离屏测量真实尺寸 */
+      tipEl.style.left = "-9999px";
+      tipEl.style.top = "0px";
+      var tw = Math.max(tipEl.offsetWidth || 0, 160);
+      var th = Math.max(tipEl.offsetHeight || 0, 36);
+      var r = anchor.getBoundingClientRect();
+      var pad = 10;
+      var left = r.left + r.width / 2 - tw / 2;
+      if (left + tw > window.innerWidth - pad) left = window.innerWidth - tw - pad;
+      if (left < pad) left = pad;
+      /* 优先显示在字段上方（账户区在右下角，下方空间常不足） */
+      var top = r.top - th - 10;
+      if (top < pad) top = r.bottom + 10;
+      if (top + th > window.innerHeight - pad) {
+        top = Math.max(pad, window.innerHeight - th - pad);
+      }
+      tipEl.style.left = Math.round(left) + "px";
+      tipEl.style.top = Math.round(top) + "px";
+    }
+
+    function showTip(el) {
+      if (!el) return;
+      var text = (el.getAttribute("data-tip") || el.getAttribute("title") || "").trim();
+      if (!text) return;
+      if (el.getAttribute("title")) {
+        if (!el.getAttribute("data-tip")) el.setAttribute("data-tip", el.getAttribute("title"));
+        el.removeAttribute("title");
+      }
+      if (hideTimer) {
+        clearTimeout(hideTimer);
+        hideTimer = null;
+      }
+      activeEl = el;
+      tipEl.textContent = text;
+      tipEl.setAttribute("aria-hidden", "false");
+      placeTip(el);
+      /* 下一帧再校正一次，确保换行后尺寸准确 */
+      requestAnimationFrame(function () {
+        if (activeEl === el) placeTip(el);
+      });
+    }
+
+    function hideTip() {
+      activeEl = null;
+      tipEl.classList.remove("is-visible");
+      tipEl.setAttribute("aria-hidden", "true");
+      tipEl.hidden = true;
+      tipEl.textContent = "";
+    }
+
+    function scheduleHide() {
+      if (hideTimer) clearTimeout(hideTimer);
+      hideTimer = setTimeout(function () {
+        hideTimer = null;
+        hideTip();
+      }, 100);
+    }
+
+    document.querySelectorAll(".spot-acct-row .l.tip[data-tip], .spot-acct-row .l.tip[title]").forEach(function (el) {
+      if (el.getAttribute("data-acct-tip-bound") === "1") return;
+      el.setAttribute("data-acct-tip-bound", "1");
+      if (el.getAttribute("title") && !el.getAttribute("data-tip")) {
+        el.setAttribute("data-tip", el.getAttribute("title"));
+        el.removeAttribute("title");
+      }
+      if (!el.hasAttribute("tabindex")) el.setAttribute("tabindex", "0");
+      el.addEventListener("mouseenter", function () { showTip(el); });
+      el.addEventListener("mouseleave", scheduleHide);
+      el.addEventListener("focus", function () { showTip(el); });
+      el.addEventListener("blur", scheduleHide);
+      el.addEventListener("click", function (e) {
+        e.preventDefault();
+        e.stopPropagation();
+        if (activeEl === el && tipEl.classList.contains("is-visible") && !tipEl.hidden) hideTip();
+        else showTip(el);
+      });
     });
-  });
+
+    tipEl.addEventListener("mouseenter", function () {
+      if (hideTimer) {
+        clearTimeout(hideTimer);
+        hideTimer = null;
+      }
+    });
+    tipEl.addEventListener("mouseleave", scheduleHide);
+
+    window.addEventListener("scroll", function () {
+      if (activeEl && tipEl.classList.contains("is-visible") && !tipEl.hidden) placeTip(activeEl);
+    }, true);
+    window.addEventListener("resize", function () {
+      if (activeEl && tipEl.classList.contains("is-visible") && !tipEl.hidden) placeTip(activeEl);
+    });
+    document.addEventListener("keydown", function (e) {
+      if (e.key === "Escape") hideTip();
+    });
+    document.addEventListener("click", function (e) {
+      if (!activeEl) return;
+      if (e.target && e.target.closest && e.target.closest(".spot-acct-row .l.tip")) return;
+      hideTip();
+    });
+  })();
 
   var chkHideSmall = document.getElementById("chkHideSmall");
   if (chkHideSmall) {
@@ -13220,14 +15274,8 @@
 
     var maxSz = typeof getPerpMaxSizeBtc === "function" ? getPerpMaxSizeBtc() : 0;
     var maxUnitEl = document.getElementById("perpMaxSizeUnit");
-    var maxTxt;
-    if (perpAmtUnit === "quote") {
-      maxTxt = spotFmt(Math.max(0, maxSz * px), 2);
-      if (maxUnitEl) maxUnitEl.textContent = "USDC";
-    } else {
-      maxTxt = typeof formatPerpAmtPreview === "function" ? formatPerpAmtPreview(maxSz) : "0.0000";
-      if (maxUnitEl) maxUnitEl.textContent = PERP_SYMBOL;
-    }
+    var maxTxt = typeof formatPerpAmtPreview === "function" ? formatPerpAmtPreview(maxSz) : "0.0000";
+    if (maxUnitEl) maxUnitEl.textContent = PERP_SYMBOL;
     setPerpDualText("perpMaxSize", maxTxt, maxTxt);
 
     var size = typeof getPerpEnteredSizeBtc === "function" ? getPerpEnteredSizeBtc() : 0;
@@ -13717,11 +15765,11 @@
     var priceInp = action.querySelector(".perp-pos-close-price");
     var mode = priceInp ? (priceInp.getAttribute("data-price-mode") || "limit") : "limit";
     if (mode === "market") {
-      return isFinite(perpMid) ? roundToPerpTick(perpMid) : (Number(pos.mark) || Number(pos.entry) || 0);
+      return roundToPerpTick(getPerpPosLiveMarketPx(pos));
     }
     var raw = parseFloat(String((priceInp && priceInp.value) || "").replace(/,/g, ""));
     if (isFinite(raw) && raw > 0) return roundToPerpTick(raw);
-    return isFinite(perpMid) ? roundToPerpTick(perpMid) : (Number(pos.mark) || Number(pos.entry) || 0);
+    return roundToPerpTick(getPerpPosLiveMarketPx(pos));
   }
 
   function syncPerpPosAmtPanel(action) {
@@ -13770,6 +15818,11 @@
     syncPerpPosCloseBtn(action);
   }
 
+  /** 手机宽度：价格/数量使用底部弹窗；桌面：行内下拉（copy 原型） */
+  function isPosCloseSheetMode() {
+    return !!(window.matchMedia && window.matchMedia("(max-width: 768px)").matches);
+  }
+
   function setPerpPosCloseAmtFromPct(action, pct) {
     var id = action.getAttribute("data-id");
     var pos = perpPositions.find(function (p) { return p.id === id; });
@@ -13794,7 +15847,235 @@
     return Math.max(0, Math.min(100, (x / usable) * 100));
   }
 
+  var posCloseSheetState = {
+    action: null,
+    view: "price", /* price | amount */
+    priceMode: "market",
+    posId: ""
+  };
+
+  function getPosCloseSheetEls() {
+    return {
+      sheet: document.getElementById("posCloseSheet"),
+      title: document.getElementById("posCloseSheetTitle"),
+      priceView: document.getElementById("posCloseSheetPriceView"),
+      amtView: document.getElementById("posCloseSheetAmtView"),
+      priceInput: document.getElementById("posCloseSheetPriceInput"),
+      amtInput: document.getElementById("posCloseSheetAmtInput"),
+      amtUnit: document.getElementById("posCloseSheetAmtUnit"),
+      hint: document.getElementById("posCloseSheetPriceHint"),
+      estVal: document.getElementById("posCloseSheetEstVal"),
+      amtCur: document.getElementById("posCloseSheetAmtCur"),
+      amtMax: document.getElementById("posCloseSheetAmtMax"),
+      fill: document.getElementById("posCloseSheetPctFill"),
+      thumb: document.getElementById("posCloseSheetPctThumb"),
+      bar: document.getElementById("posCloseSheetPctBar"),
+      modeMarket: document.getElementById("posCloseModeMarket"),
+      modeLimit: document.getElementById("posCloseModeLimit")
+    };
+  }
+
+  function getPerpPosLiveMarketPx(pos) {
+    var mark = pos ? Number(pos.mark) : NaN;
+    if (isFinite(mark) && mark > 0) return mark;
+    if (typeof perpMid !== "undefined" && isFinite(perpMid) && perpMid > 0) return perpMid;
+    var entry = pos ? Number(pos.entry) : NaN;
+    return isFinite(entry) ? entry : 0;
+  }
+
+  function closePosCloseSheet(options) {
+    options = options || {};
+    var els = getPosCloseSheetEls();
+    if (els.sheet) {
+      els.sheet.classList.remove("open");
+      els.sheet.setAttribute("aria-hidden", "true");
+    }
+    posCloseSheetState.action = null;
+    posCloseSheetState.posId = "";
+    var anyModalOpen = document.querySelector(
+      ".wallet-modal.open, .fee-modal.open, .deposit-modal.open, .withdraw-modal.open, .modify-order-modal.open, .pos-confirm-modal.open"
+    );
+    if (!anyModalOpen) document.body.style.overflow = "";
+    /* 桌面切行内菜单时不要顺带关掉刚打开的操作列 */
+    if (!options.keepActionPopovers) closeAllPerpPosActionPopovers();
+  }
+
+  function setPosCloseSheetPriceMode(mode) {
+    posCloseSheetState.priceMode = mode === "limit" ? "limit" : "market";
+    var els = getPosCloseSheetEls();
+    if (els.modeMarket) els.modeMarket.classList.toggle("active", posCloseSheetState.priceMode === "market");
+    if (els.modeLimit) els.modeLimit.classList.toggle("active", posCloseSheetState.priceMode === "limit");
+    var pos = perpPositions.find(function (p) { return p.id === posCloseSheetState.posId; });
+    var dec = getPerpPosPriceDec(pos);
+    var priceRow = els.priceInput && els.priceInput.closest(".pos-close-field-row");
+    var isMarket = posCloseSheetState.priceMode === "market";
+    if (els.hint) {
+      els.hint.textContent = isMarket
+        ? "市价：仅读取最新价格，不可修改；确认后按市价平仓。"
+        : "限价：请输入期望成交价格，确认后按限价挂单平仓。";
+    }
+    if (els.priceInput) {
+      if (isMarket) {
+        els.priceInput.value = spotFmt(roundToPerpTick(getPerpPosLiveMarketPx(pos)), dec);
+        els.priceInput.readOnly = true;
+        els.priceInput.setAttribute("aria-readonly", "true");
+      } else {
+        els.priceInput.readOnly = false;
+        els.priceInput.removeAttribute("aria-readonly");
+        var cur = parseFloat(String(els.priceInput.value || "").replace(/,/g, ""));
+        if (!isFinite(cur) || cur <= 0) {
+          els.priceInput.value = spotFmt(roundToPerpTick(getPerpPosLiveMarketPx(pos)), dec);
+        }
+      }
+    }
+    if (priceRow) priceRow.classList.toggle("is-readonly", isMarket);
+  }
+
+  function syncPosCloseSheetAmtUI() {
+    var els = getPosCloseSheetEls();
+    var pos = perpPositions.find(function (p) { return p.id === posCloseSheetState.posId; });
+    if (!pos || !els.amtInput) return;
+    var base = pos.base || PERP_SYMBOL;
+    var max = Math.abs(Number(pos.size) || 0);
+    var amt = parseFloat(String(els.amtInput.value || "").replace(/,/g, ""));
+    if (!isFinite(amt) || amt < 0) amt = 0;
+    var pct = max > 0 ? Math.max(0, Math.min(100, (amt / max) * 100)) : 0;
+    var inset = 4;
+    if (els.fill) {
+      els.fill.style.left = inset + "px";
+      els.fill.style.width = "calc((100% - " + (inset * 2) + "px) * " + (pct / 100) + ")";
+    }
+    if (els.thumb) {
+      els.thumb.style.left = "calc(" + inset + "px + (100% - " + (inset * 2) + "px) * " + (pct / 100) + ")";
+    }
+    if (els.amtCur) els.amtCur.textContent = (amt > 0 ? formatPerpPosSize(amt) : "0") + " " + base;
+    if (els.amtMax) els.amtMax.textContent = formatPerpPosSize(max) + " " + base;
+    if (els.amtUnit) els.amtUnit.textContent = base;
+    if (els.estVal) {
+      if (amt > 0) {
+        var action = posCloseSheetState.action;
+        var px = action ? getPerpPosClosePriceForEst(action, pos) : getPerpPosLiveMarketPx(pos);
+        var entry = Number(pos.entry) || 0;
+        var isLong = Number(pos.size) > 0;
+        var pnl = isLong ? (px - entry) * amt : (entry - px) * amt;
+        var cls = pnl > 0 ? "pnl-up" : (pnl < 0 ? "pnl-down" : "");
+        var sign = pnl > 0 ? "+" : (pnl < 0 ? "-" : "");
+        els.estVal.className = cls;
+        els.estVal.textContent = sign + spotFmt(Math.abs(pnl), 2) + " USDC";
+      } else {
+        els.estVal.className = "";
+        els.estVal.textContent = "--";
+      }
+    }
+  }
+
+  function openPosCloseSheet(action, view) {
+    if (!action) return;
+    closeAllPerpPosActionPopovers();
+    action.classList.add("is-open");
+    posCloseSheetState.action = action;
+    posCloseSheetState.posId = action.getAttribute("data-id") || "";
+    posCloseSheetState.view = view === "amount" ? "amount" : "price";
+    var els = getPosCloseSheetEls();
+    if (!els.sheet) return;
+    var pos = perpPositions.find(function (p) { return p.id === posCloseSheetState.posId; });
+    var priceInp = action.querySelector(".perp-pos-close-price");
+    var amtInp = action.querySelector(".perp-pos-close-amt");
+    var dec = getPerpPosPriceDec(pos);
+
+    if (els.priceView) els.priceView.hidden = posCloseSheetState.view !== "price";
+    if (els.amtView) els.amtView.hidden = posCloseSheetState.view !== "amount";
+    if (els.title) {
+      els.title.textContent = posCloseSheetState.view === "amount" ? "平仓数量" : "平仓价格";
+    }
+
+    if (posCloseSheetState.view === "price") {
+      var mode = priceInp ? (priceInp.getAttribute("data-price-mode") || "market") : "market";
+      if (mode !== "market" && mode !== "limit") mode = "market";
+      setPosCloseSheetPriceMode(mode);
+      if (els.priceInput) {
+        if (mode === "limit") {
+          var raw = priceInp ? String(priceInp.value || "").replace(/,/g, "") : "";
+          if (raw === "市价") raw = "";
+          var n = parseFloat(raw);
+          if (!isFinite(n) || n <= 0) n = getPerpPosLiveMarketPx(pos);
+          els.priceInput.value = spotFmt(roundToPerpTick(n), dec);
+          setTimeout(function () { els.priceInput.focus(); els.priceInput.select(); }, 50);
+        } else {
+          /* 市价只读最新价 */
+          els.priceInput.value = spotFmt(roundToPerpTick(getPerpPosLiveMarketPx(pos)), dec);
+        }
+      }
+    } else {
+      if (els.amtInput) {
+        els.amtInput.value = amtInp ? String(amtInp.value || "") : "";
+        setTimeout(function () { els.amtInput.focus(); }, 50);
+      }
+      syncPosCloseSheetAmtUI();
+    }
+
+    els.sheet.classList.add("open");
+    els.sheet.setAttribute("aria-hidden", "false");
+    document.body.style.overflow = "hidden";
+  }
+
+  function applyPosCloseSheetPrice() {
+    var action = posCloseSheetState.action;
+    var els = getPosCloseSheetEls();
+    if (!action || !els.priceInput) return;
+    var priceInp = action.querySelector(".perp-pos-close-price");
+    if (!priceInp) return;
+    var pos = perpPositions.find(function (p) { return p.id === posCloseSheetState.posId; });
+    var dec = getPerpPosPriceDec(pos);
+    var mode = posCloseSheetState.priceMode;
+    if (mode === "market") {
+      priceInp.setAttribute("data-price-mode", "market");
+      priceInp.value = "市价";
+      priceInp.classList.add("is-market-mode");
+    } else {
+      var n = parseFloat(String(els.priceInput.value || "").replace(/,/g, ""));
+      if (!isFinite(n) || n <= 0) {
+        showToast("请输入有效价格", "error");
+        return;
+      }
+      priceInp.setAttribute("data-price-mode", "limit");
+      priceInp.value = spotFmt(roundToPerpTick(n), dec);
+      priceInp.classList.remove("is-market-mode");
+    }
+    priceInp.classList.remove("is-focus");
+    syncPerpPosAmtPanel(action);
+    closePosCloseSheet();
+  }
+
+  function applyPosCloseSheetAmt() {
+    var action = posCloseSheetState.action;
+    var els = getPosCloseSheetEls();
+    if (!action || !els.amtInput) return;
+    var amtInp = action.querySelector(".perp-pos-close-amt");
+    if (!amtInp) return;
+    var pos = perpPositions.find(function (p) { return p.id === posCloseSheetState.posId; });
+    var max = pos ? Math.abs(Number(pos.size) || 0) : 0;
+    var n = parseFloat(String(els.amtInput.value || "").replace(/,/g, ""));
+    if (!isFinite(n) || n <= 0) {
+      showToast("请输入平仓数量", "error");
+      return;
+    }
+    if (n > max + 1e-12) {
+      showToast("平仓数量不能超过仓位", "error");
+      return;
+    }
+    amtInp.value = formatPerpPosSize(n);
+    syncPerpPosAmtPanel(action);
+    closePosCloseSheet();
+  }
+
   function openPerpPosPriceMenu(action) {
+    if (isPosCloseSheetMode()) {
+      openPosCloseSheet(action, "price");
+      return;
+    }
+    /* 桌面：行内下拉（与 copy 原型一致） */
+    closePosCloseSheet({ keepActionPopovers: true });
     closeAllPerpPosActionPopovers(action);
     action.classList.add("is-open");
     var priceInp = action.querySelector(".perp-pos-close-price");
@@ -13805,17 +16086,23 @@
     if (priceInp) priceInp.classList.add("is-focus");
     if (amtInp) amtInp.classList.remove("is-focus");
     if (panel) panel.classList.remove("open");
-    if (menu) menu.classList.add("open");
-    fitPerpPosPopoverInTab(action, menu, priceWrap);
-    // #region agent log
-    requestAnimationFrame(function () {
-      var fit = fitPerpPosPopoverInTab(action, menu, priceWrap);
-      fetch('http://127.0.0.1:7248/ingest/e727b332-e4e2-4f36-9fe1-26042926c919',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'576728'},body:JSON.stringify({sessionId:'576728',runId:'post-fix',hypothesisId:'A',location:'biya-perp-prototype.html:openPerpPosPriceMenu',message:'price menu after fit',data:{fit:fit,flipped:menu&&menu.classList.contains('is-flip-right'),viewportW:window.innerWidth},timestamp:Date.now()})}).catch(function(){});
-    });
-    // #endregion
+    if (menu) {
+      menu.classList.add("open");
+      var mode = priceInp ? (priceInp.getAttribute("data-price-mode") || "market") : "market";
+      menu.querySelectorAll("[data-price-opt]").forEach(function (b) {
+        var opt = b.getAttribute("data-price-opt");
+        b.classList.toggle("active", (mode === "market" && opt === "market") || (mode === "limit" && opt === "limit"));
+      });
+      fitPerpPosPopoverInTab(action, menu, priceWrap);
+    }
   }
 
   function openPerpPosAmtPanel(action) {
+    if (isPosCloseSheetMode()) {
+      openPosCloseSheet(action, "amount");
+      return;
+    }
+    closePosCloseSheet({ keepActionPopovers: true });
     closeAllPerpPosActionPopovers(action);
     action.classList.add("is-open");
     var priceInp = action.querySelector(".perp-pos-close-price");
@@ -13829,19 +16116,90 @@
     if (panel) panel.classList.add("open");
     syncPerpPosAmtPanel(action);
     fitPerpPosPopoverInTab(action, panel, amtWrap);
-    // #region agent log
-    requestAnimationFrame(function () {
-      var fit = fitPerpPosPopoverInTab(action, panel, amtWrap);
-      var est = action.querySelector(".perp-pos-est-pnl");
-      var inp = action.querySelector(".perp-pos-close-amt");
-      var estParent = est && est.parentElement ? est.parentElement.className : null;
-      var inPanel = !!(est && est.closest(".perp-pos-amt-panel"));
-      var er = est && est.classList.contains("is-visible") ? est.getBoundingClientRect() : null;
-      var ir = inp ? inp.getBoundingClientRect() : null;
-      fetch('http://127.0.0.1:7248/ingest/e727b332-e4e2-4f36-9fe1-26042926c919',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'576728'},body:JSON.stringify({sessionId:'576728',runId:'post-fix',hypothesisId:'F',location:'biya-perp-prototype.html:openPerpPosAmtPanel',message:'est pnl separate badge check',data:{fit:fit,flipped:panel&&panel.classList.contains('is-flip-right'),panelW:panel&&Math.round(panel.getBoundingClientRect().width),estParent:estParent,estInsidePanel:inPanel,estVisible:est&&est.classList.contains('is-visible'),estAboveInput:er&&ir?Math.round(ir.top-er.bottom):null,estL:er&&Math.round(er.left),inpL:ir&&Math.round(ir.left),viewportW:window.innerWidth},timestamp:Date.now()})}).catch(function(){});
-    });
-    // #endregion
   }
+
+  (function bindPosCloseSheet() {
+    var els = getPosCloseSheetEls();
+    var backdrop = document.getElementById("posCloseSheetBackdrop");
+    var closeBtn = document.getElementById("btnPosCloseSheetClose");
+    var priceOk = document.getElementById("btnPosCloseSheetPriceOk");
+    var amtOk = document.getElementById("btnPosCloseSheetAmtOk");
+    if (backdrop) backdrop.addEventListener("click", closePosCloseSheet);
+    if (closeBtn) closeBtn.addEventListener("click", closePosCloseSheet);
+    if (priceOk) priceOk.addEventListener("click", applyPosCloseSheetPrice);
+    if (amtOk) amtOk.addEventListener("click", applyPosCloseSheetAmt);
+    if (els.modeMarket) {
+      els.modeMarket.addEventListener("click", function () { setPosCloseSheetPriceMode("market"); });
+    }
+    if (els.modeLimit) {
+      els.modeLimit.addEventListener("click", function () {
+        setPosCloseSheetPriceMode("limit");
+        if (els.priceInput && !els.priceInput.readOnly) {
+          setTimeout(function () { els.priceInput.focus(); els.priceInput.select(); }, 0);
+        }
+      });
+    }
+    if (els.priceInput) {
+      els.priceInput.addEventListener("input", function () {
+        if (els.priceInput.readOnly || posCloseSheetState.priceMode === "market") return;
+        var next = sanitizePerpDecimalInput(String(els.priceInput.value || "").replace(/,/g, ""), Math.max(typeof perpTickDecimals === "number" ? perpTickDecimals : 1, 1));
+        if (next !== String(els.priceInput.value || "").replace(/,/g, "")) els.priceInput.value = next;
+      });
+      els.priceInput.addEventListener("keydown", function (e) {
+        if (els.priceInput.readOnly || posCloseSheetState.priceMode === "market") {
+          if (e.key !== "Enter" && e.key !== "Escape" && e.key !== "Tab") e.preventDefault();
+          return;
+        }
+        if (e.key === "Enter") {
+          e.preventDefault();
+          applyPosCloseSheetPrice();
+        }
+      });
+    }
+    if (els.amtInput) {
+      els.amtInput.addEventListener("input", function () {
+        var next = sanitizePerpDecimalInput(String(els.amtInput.value || "").replace(/,/g, ""), 8);
+        if (next !== String(els.amtInput.value || "").replace(/,/g, "")) els.amtInput.value = next;
+        syncPosCloseSheetAmtUI();
+      });
+      els.amtInput.addEventListener("keydown", function (e) {
+        if (e.key === "Enter") {
+          e.preventDefault();
+          applyPosCloseSheetAmt();
+        }
+      });
+    }
+    if (els.bar) {
+      var dragging = false;
+      function onMove(e) {
+        if (!dragging) return;
+        e.preventDefault();
+        var pct = pctFromPerpPosBarEvent(els.bar, e);
+        var pos = perpPositions.find(function (p) { return p.id === posCloseSheetState.posId; });
+        var max = pos ? Math.abs(Number(pos.size) || 0) : 0;
+        var amt = max * (pct / 100);
+        if (els.amtInput) els.amtInput.value = amt > 0 ? formatPerpPosSize(amt) : "";
+        syncPosCloseSheetAmtUI();
+      }
+      function onUp() {
+        dragging = false;
+        document.removeEventListener("pointermove", onMove);
+        document.removeEventListener("pointerup", onUp);
+      }
+      els.bar.addEventListener("pointerdown", function (e) {
+        e.preventDefault();
+        dragging = true;
+        onMove(e);
+        document.addEventListener("pointermove", onMove);
+        document.addEventListener("pointerup", onUp);
+      });
+    }
+    document.addEventListener("keydown", function (e) {
+      if (e.key !== "Escape") return;
+      var sheet = document.getElementById("posCloseSheet");
+      if (sheet && sheet.classList.contains("open")) closePosCloseSheet();
+    });
+  })();
 
   function bindPerpPosActionControls(action) {
     if (!action || action.getAttribute("data-bound") === "1") return;
@@ -13859,25 +16217,30 @@
         openPerpPosPriceMenu(action);
       });
       priceInp.addEventListener("input", function () {
+        if (isPosCloseSheetMode()) return;
         var raw = String(priceInp.value || "");
         if (raw === "市价") {
           priceInp.setAttribute("data-price-mode", "market");
+          priceInp.classList.add("is-market-mode");
           return;
         }
         priceInp.setAttribute("data-price-mode", "limit");
+        priceInp.classList.remove("is-market-mode");
         var next = sanitizePerpDecimalInput(raw.replace(/,/g, ""), Math.max(typeof perpTickDecimals === "number" ? perpTickDecimals : 1, 1));
         if (next !== raw.replace(/,/g, "")) priceInp.value = next;
         syncPerpPosAmtPanel(action);
       });
       priceInp.addEventListener("blur", function () {
+        if (isPosCloseSheetMode()) return;
         if ((priceInp.getAttribute("data-price-mode") || "limit") === "market") {
           priceInp.value = "市价";
+          priceInp.classList.add("is-market-mode");
           return;
         }
         var raw = parseFloat(String(priceInp.value || "").replace(/,/g, ""));
         if (!isFinite(raw) || raw <= 0) return;
         var pos = perpPositions.find(function (p) { return p.id === id; });
-        var dec = pos && pos.base === "ETH" ? 2 : (typeof perpTickDecimals === "number" ? perpTickDecimals : 1);
+        var dec = getPerpPosPriceDec(pos);
         priceInp.value = spotFmt(roundToPerpTick(raw), dec);
         syncPerpPosAmtPanel(action);
       });
@@ -13889,18 +16252,21 @@
         btn.addEventListener("click", function (e) {
           e.preventDefault();
           e.stopPropagation();
+          if (isPosCloseSheetMode()) return;
           var opt = btn.getAttribute("data-price-opt");
           var pos = perpPositions.find(function (p) { return p.id === id; });
-          var dec = pos && pos.base === "ETH" ? 2 : (typeof perpTickDecimals === "number" ? perpTickDecimals : 1);
+          var dec = getPerpPosPriceDec(pos);
           menu.querySelectorAll("[data-price-opt]").forEach(function (b) {
             b.classList.toggle("active", b === btn);
           });
           if (opt === "market") {
             priceInp.setAttribute("data-price-mode", "market");
             priceInp.value = "市价";
+            priceInp.classList.add("is-market-mode");
           } else {
             priceInp.setAttribute("data-price-mode", "limit");
-            priceInp.value = spotFmt(roundToPerpTick(perpMid), dec);
+            priceInp.value = spotFmt(roundToPerpTick(getPerpPosLiveMarketPx(pos)), dec);
+            priceInp.classList.remove("is-market-mode");
           }
           menu.classList.remove("open");
           priceInp.classList.remove("is-focus");
@@ -13917,6 +16283,7 @@
         openPerpPosAmtPanel(action);
       });
       amtInp.addEventListener("input", function () {
+        if (isPosCloseSheetMode()) return;
         var next = sanitizePerpDecimalInput(amtInp.value, 4);
         if (next !== amtInp.value) amtInp.value = next;
         syncPerpPosAmtPanel(action);
@@ -13936,6 +16303,7 @@
         document.removeEventListener("pointerup", onUp);
       }
       bar.addEventListener("pointerdown", function (e) {
+        if (isPosCloseSheetMode()) return;
         e.preventDefault();
         e.stopPropagation();
         dragging = true;
@@ -14015,7 +16383,6 @@
     var markTxt = isFinite(markPx) ? (spotFmt(markPx, markDec) + " USDC") : "--";
     var liqTxt = isFinite(liqPx) ? (spotFmt(liqPx, liqDec) + " USDC") : "--";
     var upnlTxt = isFinite(upnlNum) ? (pnlSign + spotFmt(upnlNum, 2) + " USDC") : "--";
-    var closeVal = isFinite(closePx) ? spotFmt(closePx, closeDec) : "";
     var riskBlocked = typeof isPerpRiskActionsBlocked === "function" && isPerpRiskActionsBlocked();
     var riskTitle = riskBlocked ? ' title="账户状态更新中"' : "";
     var isLiquidating = typeof bd05Demo !== "undefined" && bd05Demo && bd05Demo.scene === "liquidating";
@@ -14026,14 +16393,15 @@
         '<td><span class="muted">强平中</span></td>' +
         "<td></td>";
     } else {
+      /* 默认市价：展示「市价」文案；桌面行内下拉，手机点入底部弹窗 */
       opsHtml =
         '<td><button type="button" class="perp-pos-btn" data-act="reverse" data-id="' + p.id + '"' + (riskBlocked ? " disabled" : "") + riskTitle + ">反手</button></td>" +
         '<td><div class="perp-pos-action" data-id="' + p.id + '">' +
         '<div class="perp-pos-price-wrap">' +
-        '<input type="text" class="perp-pos-close-price" data-id="' + p.id + '" data-price-mode="limit" value="' + closeVal + '" aria-label="平仓价格" autocomplete="off"' + (riskBlocked ? " disabled" : "") + ">" +
+        '<input type="text" class="perp-pos-close-price is-market-mode" data-id="' + p.id + '" data-price-mode="market" value="市价" aria-label="平仓价格" autocomplete="off"' + (riskBlocked ? " disabled" : "") + ">" +
         '<div class="perp-pos-price-menu" role="listbox">' +
-        '<button type="button" data-price-opt="market">市价</button>' +
-        '<button type="button" data-price-opt="last">最新价</button>' +
+        '<button type="button" data-price-opt="market" class="active">市价</button>' +
+        '<button type="button" data-price-opt="limit">限价</button>' +
         "</div></div>" +
         '<div class="perp-pos-amt-wrap">' +
         '<div class="perp-pos-est-pnl">预估盈亏 <span class="perp-pos-est-pnl-val">--</span></div>' +
@@ -14058,7 +16426,7 @@
         '<td><button type="button" class="perp-pos-btn" data-act="flash" data-id="' + p.id + '"' + (riskBlocked ? " disabled" : "") + riskTitle + ">闪电平仓</button></td>";
     }
     tr.innerHTML =
-      '<td><div class="perp-pos-sym"><span class="pair">' + p.symbol + "</span>" +
+      '<td class="perp-pos-col-sym"><div class="perp-pos-sym"><span class="pair">' + p.symbol + "</span>" +
       '<span class="meta"><span class="' + sideClass + '">' + sideLabel + " " + p.leverage + "x</span>" +
       '<button type="button" class="edit-lev" data-id="' + p.id + '" title="调整杠杆" aria-label="调整杠杆"' + (isLiquidating ? " disabled" : "") + ">" +
       '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9M16.5 3.5a2.1 2.1 0 013 3L7 19l-4 1 1-4L16.5 3.5z" stroke-linecap="round" stroke-linejoin="round"/></svg>' +
@@ -14474,20 +16842,12 @@
   }
 
   function refreshPerpOrderStatusLabel(o) {
-    /* 当前委托用户可见：开放 / 部分成交 / 撤销确认中；其余内部态映射到这三类 */
-    if (o.cancelState === "confirming" || o.cancelState === "unknown") {
-      o.statusLabel = "撤销确认中";
-      return;
-    }
+    /* 当前委托状态列只暴露开放中、部分成交；撤销进度属于操作反馈。 */
     if (o.status === "partial" || ((Number(o.filled) || 0) > 1e-12 && openOrderRemaining(o) > 1e-12)) {
       o.statusLabel = "部分成交";
       return;
     }
-    if (o.status === "filled") o.statusLabel = "已成交";
-    else if (o.status === "stp_canceled") o.statusLabel = "自成交保护已取消";
-    else if (o.status === "liq_canceled") o.statusLabel = "已取消";
-    else if (o.status === "canceled" || o.status === "cancelled") o.statusLabel = "已撤销";
-    else o.statusLabel = "开放"; /* open / new / confirming 等 */
+    o.statusLabel = "开放中";
   }
 
   function matchesPerpOpenOrdersFilter(o, filter) {
@@ -14503,19 +16863,18 @@
 
   function isPerpOpenOrderListed(o) {
     if (!o) return false;
-    if (o.status === "filled" || o.status === "canceled" || o.status === "liq_canceled" || o.status === "stp_canceled") {
-      return false;
-    }
-    var rem = openOrderRemaining(o);
-    return rem > 1e-12 || o.cancelState === "confirming" || o.cancelState === "unknown" || o.status === "confirming";
+    return (o.status === "open" || o.status === "partial") && openOrderRemaining(o) > 1e-12;
   }
 
   function listPerpOpenOrdersBase() {
-    var hide = isPerpHideOtherMarkets();
     var symbol = PERP_SYMBOL + "USDC";
     return perpOpenOrders.filter(function (o) {
-      if (hide && o.symbol !== symbol) return false;
+      if (o.symbol !== symbol) return false;
       return isPerpOpenOrderListed(o);
+    }).sort(function (a, b) {
+      var ta = Date.parse(a.createdAt || "") || 0;
+      var tb = Date.parse(b.createdAt || "") || 0;
+      return tb - ta || String(b.id || "").localeCompare(String(a.id || ""));
     });
   }
 
@@ -14541,8 +16900,8 @@
   }
 
   function formatPerpOrderValueUsd(n) {
-    if (!isFinite(n) || n <= 0) return "$0.00";
-    return "$" + spotFmt(n, 2);
+    if (!isFinite(n) || n <= 0) return "0.00 USDC";
+    return spotFmt(n, 2) + " USDC";
   }
 
   var modifyOrderTargetId = null;
@@ -14781,16 +17140,12 @@
           : "--";
         var canCancel = canCancelPerpOpenOrder(o);
         var actionHtml;
-        var modifyBtn =
-          '<button type="button" class="perp-ord-modify" disabled aria-disabled="true" title="S1 不支持改单，请撤销后重新提交">修改</button>';
         if (canCancel) {
-          actionHtml =
-            modifyBtn +
-            '<button type="button" class="perp-ord-cancel" data-id="' + o.id + '">撤销</button>';
+          actionHtml = '<button type="button" class="perp-ord-cancel" data-id="' + o.id + '">撤销</button>';
         } else if (o.cancelState === "confirming" || o.cancelState === "unknown") {
-          actionHtml = '<span class="muted">' + o.statusLabel + "</span>";
+          actionHtml = '<span class="muted">撤销确认中</span>';
         } else {
-          actionHtml = modifyBtn;
+          actionHtml = '<span class="muted">--</span>';
         }
         tr.innerHTML =
           '<td><div class="perp-ord-sym"><span class="pair">' + o.symbol + '</span>' +
@@ -14865,6 +17220,7 @@
           if (!again) return;
           again.cancelState = null;
           again.status = "canceled";
+          again.cancelOrigin = "manual";
           pushPerpOrderToHistory(again, "canceled");
           perpOpenOrders = perpOpenOrders.filter(function (o) { return o.id !== orderId; });
           recomputePerpLockedUsdc();
@@ -14875,6 +17231,7 @@
       }
       cur.cancelState = null;
       cur.status = "canceled";
+      cur.cancelOrigin = "manual";
       pushPerpOrderToHistory(cur, "canceled");
       perpOpenOrders = perpOpenOrders.filter(function (o) { return o.id !== orderId; });
       recomputePerpLockedUsdc();
@@ -14907,6 +17264,7 @@
         cur.cancelState = null;
         cur.status = "canceled";
         cur.remaining = 0;
+        cur.cancelOrigin = "manual";
         pushPerpOrderToHistory(cur, "canceled");
         canceled += 1;
       });
@@ -15026,6 +17384,29 @@
       protect = roundToPerpTick(protect);
       var match = matchPerpAgainstBook(side, v.size, null, protect);
       if (match.filled <= 1e-12) {
+        var emptyNow = new Date();
+        var emptyParts = formatPerpOrderTimeParts(emptyNow);
+        pushPerpOrderToHistory({
+          id: orderId,
+          symbol: PERP_SYMBOL + "USDC",
+          base: PERP_SYMBOL,
+          side: side,
+          kind: "market",
+          price: null,
+          size: v.size,
+          filled: 0,
+          avgFill: 0,
+          leverage: 10,
+          marginMode: "cross",
+          tif: "IOC",
+          reduceOnly: v.reduceOnly,
+          status: "canceled",
+          cancelOrigin: "system",
+          cancelReason: "no_liquidity",
+          createdAt: formatPerpOrderTime(emptyNow),
+          createdDate: emptyParts.date,
+          createdTime: emptyParts.time
+        }, "canceled");
         showToast("当前无可成交对手盘", "error");
         setPerpSubmitBusy(side, false);
         if (perpReduceOnlyLocked) setPerpReduceOnlyLocked(false);
@@ -15041,13 +17422,15 @@
       } else if (canceled > 1e-12) {
         showToast("剩余未成交部分已取消", "info");
       }
+      var marketNow = new Date();
+      var marketParts = formatPerpOrderTimeParts(marketNow);
       pushPerpOrderToHistory({
         id: orderId,
         symbol: PERP_SYMBOL + "USDC",
         base: PERP_SYMBOL,
         side: side,
         kind: "market",
-        price: match.avgFill,
+        price: null,
         size: v.size,
         filled: match.filled,
         avgFill: match.avgFill,
@@ -15055,11 +17438,13 @@
         marginMode: "cross",
         tif: "IOC",
         reduceOnly: v.reduceOnly,
-        status: "filled",
-        createdAt: formatPerpOrderTime(new Date()),
-        createdDate: formatPerpOrderTimeParts(new Date()).date,
-        createdTime: formatPerpOrderTimeParts(new Date()).time
-      }, "filled");
+        status: canceled > 1e-12 ? "canceled" : "filled",
+        cancelOrigin: canceled > 1e-12 ? "system" : null,
+        cancelReason: canceled > 1e-12 ? (match.hitProtect ? "price_protection" : "unknown") : null,
+        createdAt: formatPerpOrderTime(marketNow),
+        createdDate: marketParts.date,
+        createdTime: marketParts.time
+      }, canceled > 1e-12 ? "canceled" : "filled");
       setPerpSubmitBusy(side, false);
       if (perpReduceOnlyLocked) setPerpReduceOnlyLocked(false);
       recomputePerpLockedUsdc();
@@ -15338,6 +17723,7 @@
       t.classList.toggle("active", t.getAttribute("data-perp-type") === "market");
     });
     if (typeof syncPerpMarketRefUI === "function") syncPerpMarketRefUI();
+    if (typeof syncPerpTfTypeTip === "function") syncPerpTfTypeTip();
     submitPerpMarketOrder(closeSide, {
       size: size,
       reduceOnly: true,
@@ -15385,6 +17771,7 @@
       t.classList.toggle("active", t.getAttribute("data-perp-type") === "market");
     });
     syncPerpMarketRefUI();
+    if (typeof syncPerpTfTypeTip === "function") syncPerpTfTypeTip();
     submitPerpMarketOrder(side, {
       size: size,
       reduceOnly: true,
@@ -15620,6 +18007,41 @@
     if (typeof renderPortfolioBottomPanel === "function") renderPortfolioBottomPanel();
   }
 
+  function syncPerpTfTypeTip() {
+    var titleEl = document.getElementById("perpTfTypeTipTitle");
+    var bodyEl = document.getElementById("perpTfTypeTipBody");
+    if (!titleEl || !bodyEl) return;
+    if (perpOrderType === "market") {
+      titleEl.textContent = "市价";
+      bodyEl.textContent = "以市场价格立即买入或卖出。最终成交数量与价格取决于市场流动性。";
+    } else {
+      titleEl.textContent = "限价";
+      bodyEl.textContent = "使用限价单以特定价格开仓或平仓。限价单提交后将加入订单簿。";
+    }
+  }
+  var perpTfInfoWrap = document.getElementById("perpTfInfoWrap");
+  if (perpTfInfoWrap) {
+    perpTfInfoWrap.addEventListener("mouseenter", syncPerpTfTypeTip);
+    perpTfInfoWrap.addEventListener("focusin", syncPerpTfTypeTip);
+    /* 手机端：点击切换说明气泡（无 hover） */
+    perpTfInfoWrap.addEventListener("click", function (e) {
+      e.stopPropagation();
+      syncPerpTfTypeTip();
+      var open = perpTfInfoWrap.classList.toggle("is-open");
+      var fees = document.getElementById("perpFeesTipWrap");
+      if (fees) fees.classList.remove("is-open");
+      if (open) {
+        var infoBtn = document.getElementById("perpTfInfo");
+        if (infoBtn) infoBtn.focus();
+      }
+    });
+  }
+  document.addEventListener("click", function () {
+    if (perpTfInfoWrap) perpTfInfoWrap.classList.remove("is-open");
+    var feesTip = document.getElementById("perpFeesTipWrap");
+    if (feesTip) feesTip.classList.remove("is-open");
+  });
+
   document.querySelectorAll("#perpTfTabs .spot-tf-tab").forEach(function (tab) {
     tab.addEventListener("click", function () {
       document.querySelectorAll("#perpTfTabs .spot-tf-tab").forEach(function (t) { t.classList.remove("active"); });
@@ -15631,9 +18053,11 @@
       setPerpOrderFeedback("");
       syncPerpMarketRefUI();
       syncPerpMidBboEnabled();
+      syncPerpTfTypeTip();
     });
   });
   syncPerpMarketRefUI();
+  syncPerpTfTypeTip();
 
   var btnPerpMarginMode = document.getElementById("btnPerpMarginMode");
   if (btnPerpMarginMode) {
@@ -15886,14 +18310,14 @@
     var sizeBtc = perpAmtUnit === "quote" ? (getPerpFormPrice() > 0 ? amt / getPerpFormPrice() : 0) : amt;
     if (sizeBtc > 0 && sizeBtc < PERP_MIN_AMT) {
       if (perpAmtUnit === "quote") {
-        setPerpAmountError("Minimum amount is " + spotFmt(PERP_MIN_AMT * getPerpFormPrice(), 2) + " USDC");
+        setPerpAmountError("最小数量对应约 " + spotFmt(PERP_MIN_AMT * getPerpFormPrice(), 2) + " USDC");
       } else {
-        setPerpAmountError("Minimum amount is 0.0001 " + PERP_SYMBOL);
+        setPerpAmountError("委托数量不得低于 0.0001 " + PERP_SYMBOL);
       }
       return false;
     }
     if (sizeBtc > PERP_MAX_AMT) {
-      setPerpAmountError("Maximum amount is 1,000 " + PERP_SYMBOL);
+      setPerpAmountError("最大数量为 1,000 " + PERP_SYMBOL);
       return false;
     }
     setPerpAmountError("");
@@ -15908,8 +18332,8 @@
     var unitTxt = perpAmtUnit === "quote" ? "USDC" : PERP_SYMBOL;
     if (label) label.textContent = unitTxt;
     if (baseOpt) baseOpt.textContent = PERP_SYMBOL;
-    if (buyUnit) buyUnit.textContent = unitTxt;
-    if (sellUnit) sellUnit.textContent = unitTxt;
+    if (buyUnit) buyUnit.textContent = PERP_SYMBOL;
+    if (sellUnit) sellUnit.textContent = PERP_SYMBOL;
     document.querySelectorAll("#perpAmtUnitDd .perp-amt-unit-menu button").forEach(function (b) {
       b.classList.toggle("active", b.getAttribute("data-amt-unit") === perpAmtUnit);
     });
@@ -15972,23 +18396,17 @@
     if (perpAmtMode === "pct" && perpAmtPct > 0) {
       if (inp) inp.value = Math.round(perpAmtPct) + "%";
       var sizeBtc = getPerpMaxSizeBtc() * (perpAmtPct / 100);
-      var price = getPerpFormPrice();
-      var txt = perpAmtUnit === "quote"
-        ? spotFmt(sizeBtc * price, 2)
-        : formatPerpAmtPreview(sizeBtc);
+      var txt = formatPerpAmtPreview(sizeBtc);
       if (buyEl) buyEl.textContent = txt;
       if (sellEl) sellEl.textContent = txt;
       setPerpAmountError("");
     } else {
-      if (buyEl) buyEl.textContent = perpAmtUnit === "quote" ? "0.00" : "0.0000";
-      if (sellEl) sellEl.textContent = perpAmtUnit === "quote" ? "0.00" : "0.0000";
+      if (buyEl) buyEl.textContent = "0.0000";
+      if (sellEl) sellEl.textContent = "0.0000";
       if (perpAmtMode === "amount") {
         var entered = getPerpEnteredSizeBtc();
         if (entered > 0) {
-          var px = getPerpFormPrice();
-          var show = perpAmtUnit === "quote"
-            ? spotFmt(entered * px, 2)
-            : formatPerpAmtPreview(entered);
+          var show = formatPerpAmtPreview(entered);
           if (buyEl) buyEl.textContent = show;
           if (sellEl) sellEl.textContent = show;
         }
@@ -16129,12 +18547,6 @@
     });
   });
 
-  var perpTfInfo = document.getElementById("perpTfInfo");
-  if (perpTfInfo) {
-    perpTfInfo.addEventListener("click", function () {
-      showToast("限价 / 市价 / 触发说明（演示）");
-    });
-  }
   var perpFeesLabel = document.getElementById("perpFeesLabel");
   var perpFeesTipWrap = document.getElementById("perpFeesTipWrap");
   var btnPerpFeesMore = document.getElementById("btnPerpFeesMore");
@@ -16163,7 +18575,16 @@
   if (perpFeesLabel) {
     perpFeesLabel.addEventListener("click", function (e) {
       e.stopPropagation();
-      if (perpFeesTipWrap) perpFeesTipWrap.classList.toggle("is-open");
+      if (perpFeesTipWrap) {
+        var curr = document.getElementById("perpFeesCurr");
+        var parts = curr ? String(curr.textContent || "").split("/") : [];
+        var takerEl = document.getElementById("perpFeeTipTaker");
+        var makerEl = document.getElementById("perpFeeTipMaker");
+        if (takerEl) takerEl.textContent = (parts[0] || "0.0427%").trim();
+        if (makerEl) makerEl.textContent = (parts[1] || "0.0142%").trim();
+        perpFeesTipWrap.classList.toggle("is-open");
+      }
+      if (perpTfInfoWrap) perpTfInfoWrap.classList.remove("is-open");
     });
   }
   var btnPerpAvailPlus = document.getElementById("btnPerpAvailPlus");
@@ -16484,11 +18905,16 @@
     if (typeof renderPortfolioBottomPanel === "function") renderPortfolioBottomPanel();
   }
 
-  document.addEventListener("click", function () {
+  document.addEventListener("click", function (e) {
     closeDepositSelects();
     closeWithdrawSelects();
     closeWalletMenu();
-    if (typeof closeAllPerpPosActionPopovers === "function") closeAllPerpPosActionPopovers();
+    /* 操作列内部点击不关闭行内下拉（价格菜单 / 数量面板） */
+    var inPosAction = !!(e && e.target && e.target.closest && e.target.closest(".perp-pos-action"));
+    var inPosSheet = !!(e && e.target && e.target.closest && e.target.closest("#posCloseSheet .pos-close-sheet-dialog"));
+    if (!inPosAction && !inPosSheet && typeof closeAllPerpPosActionPopovers === "function") {
+      closeAllPerpPosActionPopovers();
+    }
     var prec = document.getElementById("spotPrecision");
     if (prec) prec.classList.remove("open");
     var perpPrec = document.getElementById("perpPrecision");
