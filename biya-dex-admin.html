@@ -1,0 +1,3247 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>网络管理 — BIYA DEX Admin</title>
+  <style>
+    /* ========================================================
+     * Design Tokens — copied from ui-foundation.css v1.1
+     * ======================================================== */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg-page: #F5F7FA;
+      --bg-container: #FFFFFF;
+      --bg-subtle: #FAFBFC;
+      --bg-hover: #F2F4F7;
+      --bg-active: #EEF2FF;
+
+      --border-default: #E5E7EB;
+      --border-subtle: #EEF0F3;
+      --border-strong: #D0D5DD;
+      --border-focus: #60A5FA;
+      --border-danger: #FCA5A5;
+
+      --text-primary: #111827;
+      --text-secondary: #344054;
+      --text-muted: #667085;
+      --text-disabled: #98A2B3;
+      --text-placeholder: #9CA3AF;
+
+      --primary: #3B82F6;
+      --primary-hover: #2563EB;
+      --primary-active: #1D4ED8;
+      --primary-subtle: #DBEAFE;
+      --success: #16A34A;
+      --success-subtle: #DCFCE7;
+      --warning: #D97706;
+      --warning-subtle: #FEF3C7;
+      --danger: #DC2626;
+      --danger-subtle: #FEE2E2;
+      --info: #0284C7;
+      --info-subtle: #E0F2FE;
+      --link: #2563EB;
+      --link-hover: #1D4ED8;
+
+      --tag-draft-text: #475467; --tag-draft-bg: #F2F4F7; --tag-draft-border: #E4E7EC;
+      --tag-pending-text: #B54708; --tag-pending-bg: #FFFAEB; --tag-pending-border: #FEDF89;
+      --tag-processing-text: #1D4ED8; --tag-processing-bg: #DBEAFE; --tag-processing-border: #93C5FD;
+      --tag-success-text: #027A48; --tag-success-bg: #ECFDF3; --tag-success-border: #A6F4C5;
+      --tag-error-text: #B42318; --tag-error-bg: #FEF3F2; --tag-error-border: #FECDCA;
+
+      --font-size-page-title: 20px;
+      --font-size-section-title: 16px;
+      --font-size-body-lg: 14px;
+      --font-size-body: 13px;
+      --font-size-small: 12px;
+      --font-size-mini: 11px;
+      --font-weight-page-title: 600;
+      --font-weight-section-title: 600;
+      --font-weight-body-strong: 500;
+      --font-weight-body: 400;
+      --font-weight-tag: 500;
+      --line-height-tight: 1.25;
+      --line-height-normal: 1.5;
+      --line-height-table: 1.4;
+
+      --space-2: 2px; --space-4: 4px; --space-6: 6px; --space-8: 8px;
+      --space-10: 10px; --space-12: 12px; --space-16: 16px;
+      --space-20: 20px; --space-24: 24px; --space-32: 32px;
+
+      --radius-xs: 4px; --radius-sm: 6px; --radius-md: 8px;
+      --radius-lg: 10px; --radius-xl: 12px;
+
+      --shadow-xs: 0 1px 2px rgba(16,24,40,0.04);
+      --shadow-sm: 0 2px 8px rgba(16,24,40,0.06);
+      --shadow-md: 0 8px 24px rgba(16,24,40,0.08);
+
+      --layout-sidebar-width: 220px;
+      --layout-header-height: 56px;
+
+      --button-height-sm: 28px; --button-height-md: 32px; --button-height-lg: 36px;
+      --button-padding-x-sm: 10px; --button-padding-x-md: 12px; --button-padding-x-lg: 16px;
+      --button-font-size: 13px; --button-font-weight: 400;
+
+      --input-height-md: 32px; --input-padding-x: 12px; --input-font-size: 13px;
+      --field-label-gap: 6px;
+
+      --table-header-height: 40px;
+      --table-row-height-default: 40px;
+      --table-cell-padding-x: 12px;
+      --table-cell-padding-y: 8px;
+      --table-font-size: 13px;
+      --table-header-font-size: 13px;
+      --table-header-font-weight: 500;
+
+      --tag-height: 22px; --tag-padding-x: 8px;
+      --tag-font-size: 12px; --tag-radius: 6px;
+
+      --drawer-width-md: 640px;
+      --modal-width-sm: 420px;
+      --modal-width-md: 560px;
+
+      --padding-page-x: 24px;
+      --padding-page-y: 24px;
+      --padding-section: 16px;
+      --padding-modal: 20px;
+      --padding-drawer: 20px;
+
+      --page-title-gap: 16px;
+    }
+
+    /* ========================================================
+     * Base
+     * ======================================================== */
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC",
+        "Microsoft YaHei", sans-serif;
+      font-size: var(--font-size-body);
+      color: var(--text-primary);
+      background: var(--bg-page);
+      line-height: var(--line-height-normal);
+    }
+
+    /* ========================================================
+     * Layout Shell
+     * ======================================================== */
+    .app-shell {
+      display: flex;
+      min-height: 100vh;
+    }
+
+    /* --- Sidebar --- */
+    .sidebar {
+      width: var(--layout-sidebar-width);
+      min-height: 100vh;
+      background: #1C2333;
+      display: flex;
+      flex-direction: column;
+      flex-shrink: 0;
+      position: fixed;
+      top: 0; left: 0;
+      z-index: 20;
+    }
+
+    .sidebar-logo {
+      height: var(--layout-header-height);
+      display: flex;
+      align-items: center;
+      padding: 0 var(--space-16);
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+    }
+
+    .sidebar-logo-text {
+      font-size: 16px;
+      font-weight: 700;
+      color: #FFFFFF;
+      letter-spacing: 0.02em;
+    }
+
+    .sidebar-logo-badge {
+      margin-left: var(--space-6);
+      font-size: 10px;
+      background: var(--primary);
+      color: #fff;
+      border-radius: 4px;
+      padding: 1px 5px;
+      font-weight: 500;
+    }
+
+    .sidebar-nav { padding: var(--space-8) 0; flex: 1; overflow-y: auto; }
+
+    .nav-group-label {
+      padding: var(--space-8) var(--space-16) var(--space-4);
+      font-size: 10px;
+      font-weight: 600;
+      color: rgba(255,255,255,0.35);
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+
+    .nav-item {
+      display: flex;
+      align-items: center;
+      gap: var(--space-8);
+      padding: 0 var(--space-16);
+      height: 36px;
+      font-size: var(--font-size-body);
+      color: rgba(255,255,255,0.6);
+      cursor: pointer;
+      border-radius: 0;
+      transition: background 0.15s, color 0.15s;
+      user-select: none;
+      text-decoration: none;
+    }
+
+    .nav-item:hover { background: rgba(255,255,255,0.06); color: rgba(255,255,255,0.9); }
+
+    .nav-item.active {
+      background: rgba(59,130,246,0.2);
+      color: #93C5FD;
+    }
+
+    .nav-item-icon { width: 16px; height: 16px; opacity: 0.8; flex-shrink: 0; }
+
+    .nav-sub-item {
+      display: flex;
+      align-items: center;
+      gap: var(--space-8);
+      padding: 0 var(--space-16) 0 38px;
+      height: 34px;
+      font-size: var(--font-size-body);
+      color: rgba(255,255,255,0.5);
+      cursor: pointer;
+      transition: background 0.15s, color 0.15s;
+      user-select: none;
+    }
+
+    .nav-sub-item:hover { background: rgba(255,255,255,0.06); color: rgba(255,255,255,0.85); }
+
+    .nav-sub-item.active {
+      color: #93C5FD;
+      background: rgba(59,130,246,0.15);
+    }
+
+    /* --- Main Content Area --- */
+    .main-wrapper {
+      margin-left: var(--layout-sidebar-width);
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+      /* flex 子项默认 min-width:auto 会被宽表格撑开，导致滚动发生在页面而非 table-wrap，sticky 失效 */
+      min-width: 0;
+      width: calc(100% - var(--layout-sidebar-width));
+      max-width: calc(100vw - var(--layout-sidebar-width));
+      overflow-x: hidden;
+    }
+
+    /* --- Top Header --- */
+    .top-header {
+      height: var(--layout-header-height);
+      background: var(--bg-container);
+      border-bottom: 1px solid var(--border-default);
+      display: flex;
+      align-items: center;
+      padding: 0 var(--padding-page-x);
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      gap: var(--space-8);
+    }
+
+    .breadcrumb {
+      display: flex;
+      align-items: center;
+      gap: var(--space-6);
+      font-size: var(--font-size-body);
+      color: var(--text-muted);
+    }
+
+    .breadcrumb-sep { color: var(--border-strong); }
+    .breadcrumb-current { color: var(--text-primary); font-weight: var(--font-weight-body-strong); }
+
+    .header-spacer { flex: 1; }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: var(--space-12);
+    }
+
+    .header-avatar {
+      width: 30px; height: 30px;
+      border-radius: 50%;
+      background: var(--primary-subtle);
+      color: var(--primary);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 12px; font-weight: 600;
+      cursor: pointer;
+    }
+
+    /* --- Page Content --- */
+    .page-content {
+      padding: var(--padding-page-y) var(--padding-page-x);
+      flex: 1;
+      min-width: 0;
+      max-width: 100%;
+      overflow-x: hidden;
+    }
+    .page-view {
+      min-width: 0;
+      max-width: 100%;
+    }
+
+    /* ========================================================
+     * Page Header
+     * ======================================================== */
+    .page-header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: var(--space-12);
+      margin-bottom: var(--page-title-gap);
+    }
+
+    .page-title {
+      font-size: var(--font-size-page-title);
+      font-weight: var(--font-weight-page-title);
+      line-height: var(--line-height-tight);
+      color: var(--text-primary);
+    }
+
+    .page-desc {
+      margin-top: var(--space-4);
+      font-size: var(--font-size-body);
+      color: var(--text-muted);
+    }
+
+    .page-header-actions {
+      display: flex;
+      align-items: center;
+      gap: var(--space-8);
+      flex-shrink: 0;
+    }
+
+    /* ========================================================
+     * Buttons
+     * ======================================================== */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: var(--space-6);
+      border-radius: var(--radius-sm);
+      font-size: var(--button-font-size);
+      font-weight: var(--button-font-weight);
+      cursor: pointer;
+      border: 1px solid transparent;
+      transition: background 0.15s, border-color 0.15s, color 0.15s;
+      white-space: nowrap;
+      text-decoration: none;
+      outline: none;
+    }
+
+    .btn:focus-visible { outline: 2px solid var(--border-focus); outline-offset: 2px; }
+
+    .btn-sm {
+      height: var(--button-height-sm);
+      padding: 0 var(--button-padding-x-sm);
+    }
+
+    .btn-md {
+      height: var(--button-height-md);
+      padding: 0 var(--button-padding-x-md);
+    }
+
+    .btn-primary {
+      background: var(--primary);
+      color: #fff;
+      border-color: var(--primary);
+    }
+    .btn-primary:hover { background: var(--primary-hover); border-color: var(--primary-hover); }
+    .btn-primary:active { background: var(--primary-active); border-color: var(--primary-active); }
+
+    .btn-secondary {
+      background: var(--bg-container);
+      color: var(--text-secondary);
+      border-color: var(--border-default);
+    }
+    .btn-secondary:hover { background: var(--bg-hover); border-color: var(--border-strong); }
+
+    .btn-danger {
+      background: var(--danger);
+      color: #fff;
+      border-color: var(--danger);
+    }
+    .btn-danger:hover { background: #B91C1C; border-color: #B91C1C; }
+
+    .btn-ghost {
+      background: transparent;
+      color: var(--text-muted);
+      border-color: transparent;
+    }
+    .btn-ghost:hover { background: var(--bg-hover); color: var(--text-secondary); }
+
+    .btn-link {
+      background: transparent;
+      border-color: transparent;
+      color: var(--link);
+      padding: 0;
+      height: auto;
+      font-size: var(--font-size-body);
+    }
+    .btn-link:hover { color: var(--link-hover); text-decoration: underline; }
+
+    .btn-link-danger {
+      background: transparent;
+      border-color: transparent;
+      color: var(--danger);
+      padding: 0;
+      height: auto;
+      font-size: var(--font-size-body);
+    }
+    .btn-link-danger:hover { color: #B91C1C; text-decoration: underline; }
+
+    .btn-link-warning {
+      background: transparent;
+      border-color: transparent;
+      color: #D97706;
+      padding: 0;
+      height: auto;
+      font-size: var(--font-size-body);
+    }
+    .btn-link-warning:hover { color: #B45309; text-decoration: underline; }
+
+    .btn-link-success {
+      background: transparent;
+      border-color: transparent;
+      color: #059669;
+      padding: 0;
+      height: auto;
+      font-size: var(--font-size-body);
+    }
+    .btn-link-success:hover { color: #047857; text-decoration: underline; }
+
+    /* ========================================================
+     * Filter Card
+     * ======================================================== */
+    .filter-card {
+      background: var(--bg-container);
+      border: 1px solid var(--border-default);
+      border-radius: var(--radius-md);
+      padding: var(--padding-section);
+      margin-bottom: var(--space-16);
+    }
+
+    .filter-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr) auto;
+      gap: var(--space-12);
+      align-items: end;
+    }
+
+    .filter-actions {
+      display: flex;
+      gap: var(--space-8);
+      align-items: flex-end;
+      padding-bottom: 1px;
+    }
+
+    /* ========================================================
+     * Form Fields (inline)
+     * ======================================================== */
+    .field-label {
+      font-size: var(--font-size-small);
+      color: var(--text-secondary);
+      margin-bottom: var(--field-label-gap);
+      font-weight: var(--font-weight-body-strong);
+    }
+
+    .field-input,
+    .field-select,
+    .field-textarea {
+      display: block;
+      width: 100%;
+      height: var(--input-height-md);
+      padding: 0 var(--input-padding-x);
+      font-size: var(--input-font-size);
+      color: var(--text-primary);
+      background: var(--bg-container);
+      border: 1px solid var(--border-default);
+      border-radius: var(--radius-sm);
+      outline: none;
+      font-family: inherit;
+      transition: border-color 0.15s;
+      -webkit-appearance: none;
+    }
+
+    .field-input::placeholder,
+    .field-select::placeholder { color: var(--text-placeholder); }
+
+    .field-input:focus,
+    .field-select:focus { border-color: var(--border-focus); box-shadow: 0 0 0 3px rgba(96,165,250,0.15); }
+
+    .field-input.error,
+    .field-select.error { border-color: var(--border-danger); }
+
+    .field-input.error:focus,
+    .field-select.error:focus { box-shadow: 0 0 0 3px rgba(252,165,165,0.2); }
+
+    /* ---- 可搜索下拉 (searchable-select) ---- */
+    .ss-wrap { position: relative; display: block; }
+    .ss-input {
+      display: block; width: 100%; height: var(--input-height-md);
+      padding: 0 28px 0 var(--input-padding-x);
+      font-size: var(--input-font-size); color: var(--text-primary);
+      background: var(--bg-container); border: 1px solid var(--border-default);
+      border-radius: var(--radius-sm); outline: none; font-family: inherit;
+      transition: border-color 0.15s; box-sizing: border-box; cursor: pointer;
+    }
+    .ss-input:focus { border-color: var(--border-focus); box-shadow: 0 0 0 3px rgba(96,165,250,0.15); }
+    .ss-input.error { border-color: var(--border-danger); }
+    .ss-input:disabled { background: var(--bg-subtle); color: var(--text-secondary); border-color: var(--border-subtle); cursor: not-allowed; }
+    .ss-arrow {
+      position: absolute; right: 8px; top: 50%; transform: translateY(-50%);
+      pointer-events: none; color: var(--text-muted); font-size: 12px;
+    }
+    .ss-dropdown {
+      display: none; position: absolute; left: 0; right: 0; top: calc(100% + 2px);
+      background: var(--bg-container); border: 1px solid var(--border-default);
+      border-radius: var(--radius-sm); z-index: 2000; box-shadow: 0 4px 16px rgba(0,0,0,0.12);
+      max-height: 220px; overflow: hidden; flex-direction: column;
+    }
+    .ss-dropdown.open { display: flex; }
+    .ss-search {
+      padding: 6px 8px; border-bottom: 1px solid var(--border-subtle);
+      flex-shrink: 0;
+    }
+    .ss-search input {
+      width: 100%; padding: 4px 8px; font-size: 13px;
+      border: 1px solid var(--border-default); border-radius: var(--radius-sm);
+      outline: none; font-family: inherit; box-sizing: border-box;
+    }
+    .ss-search input:focus { border-color: var(--border-focus); }
+    .ss-list { overflow-y: auto; flex: 1; }
+    .ss-option {
+      padding: 7px 12px; font-size: var(--input-font-size); cursor: pointer;
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+      color: var(--text-primary);
+    }
+    .ss-option:hover, .ss-option.focused { background: var(--bg-hover, #f3f4f6); }
+    .ss-option.selected { background: var(--primary-subtle, #eff6ff); color: var(--primary); font-weight: 500; }
+    .ss-option.placeholder-opt { color: var(--text-placeholder); }
+    .ss-empty { padding: 10px 12px; color: var(--text-muted); font-size: 13px; text-align: center; }
+
+    /* ---- 不可编辑控件 ---- */
+    .field-input:disabled,
+    .field-select:disabled {
+      background: var(--bg-subtle);
+      color: var(--text-secondary);
+      border-color: var(--border-subtle);
+      cursor: not-allowed;
+      -webkit-text-fill-color: var(--text-secondary);
+      opacity: 1;
+    }
+    .checkbox-item input:disabled + span {
+      color: var(--text-disabled);
+      cursor: not-allowed;
+    }
+    .checkbox-item input:disabled { cursor: not-allowed; }
+    .section-locked-banner {
+      display: none;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 12px;
+      background: #FFFBEB;
+      border: 1px solid #FDE68A;
+      border-radius: var(--radius-sm);
+      font-size: var(--font-size-small);
+      color: #78350F;
+      margin-bottom: var(--space-12);
+    }
+    .section-locked-banner.show { display: flex; }
+
+    .field-textarea {
+      height: auto;
+      min-height: 72px;
+      padding: var(--space-8) var(--input-padding-x);
+      resize: vertical;
+      line-height: var(--line-height-normal);
+    }
+
+    .field-error-msg {
+      margin-top: var(--space-4);
+      font-size: var(--font-size-small);
+      color: var(--danger);
+    }
+
+    .field-hint {
+      margin-top: var(--space-4);
+      font-size: var(--font-size-small);
+      color: var(--text-muted);
+    }
+
+    /* Switch Toggle */
+    .switch-row {
+      display: flex;
+      align-items: center;
+      gap: var(--space-8);
+      min-height: var(--input-height-md);
+    }
+
+    .switch {
+      position: relative;
+      display: inline-flex;
+      width: 36px;
+      height: 20px;
+      cursor: pointer;
+    }
+
+    .switch input { opacity: 0; width: 0; height: 0; }
+
+    .switch-track {
+      position: absolute;
+      inset: 0;
+      background: var(--border-strong);
+      border-radius: 999px;
+      transition: background 0.2s;
+    }
+
+    .switch input:checked ~ .switch-track { background: var(--primary); }
+
+    .switch-thumb {
+      position: absolute;
+      top: 2px; left: 2px;
+      width: 16px; height: 16px;
+      background: #fff;
+      border-radius: 50%;
+      transition: transform 0.2s;
+      box-shadow: var(--shadow-xs);
+    }
+
+    .switch input:checked ~ .switch-thumb { transform: translateX(16px); }
+
+    .switch-label { font-size: var(--font-size-body); color: var(--text-secondary); }
+
+    /* Checkbox group */
+    .checkbox-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--space-8);
+      align-items: center;
+      min-height: var(--input-height-md);
+    }
+
+    .checkbox-item {
+      display: flex;
+      align-items: center;
+      gap: var(--space-4);
+      font-size: var(--font-size-body);
+      color: var(--text-secondary);
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .checkbox-item input[type="checkbox"] {
+      width: 14px; height: 14px;
+      accent-color: var(--primary);
+      cursor: pointer;
+    }
+
+    /* ========================================================
+     * List Page Main Card & Table
+     * ======================================================== */
+    .list-card {
+      border-radius: var(--radius-md);
+      border: 1px solid var(--border-default);
+      background: var(--bg-container);
+      box-shadow: var(--shadow-sm);
+      /* 不可用 overflow:hidden/clip，否则右侧 sticky 列失效 */
+      overflow: visible;
+      min-width: 0;
+      max-width: 100%;
+    }
+
+    .list-toolbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: var(--space-10) var(--space-16);
+      border-bottom: 1px solid var(--border-subtle);
+      border-radius: var(--radius-md) var(--radius-md) 0 0;
+    }
+
+    .list-toolbar-left {
+      font-size: var(--font-size-body);
+      color: var(--text-muted);
+    }
+
+    .list-toolbar-right {
+      display: flex;
+      align-items: center;
+      gap: var(--space-8);
+    }
+
+    /* 横向滚动容器：必须是唯一横向滚动层，sticky 才钉在表格可视区右侧 */
+    .table-wrap {
+      overflow-x: auto;
+      overflow-y: visible;
+      position: relative;
+      width: 100%;
+      max-width: 100%;
+      min-width: 0;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    .list-card table {
+      width: max-content;
+      min-width: 100%;
+      border-collapse: separate !important;
+      border-spacing: 0;
+      font-size: var(--table-font-size);
+    }
+
+    thead tr {
+      background: #F9FAFB;
+    }
+
+    thead th {
+      padding: 0 var(--table-cell-padding-x);
+      height: var(--table-header-height);
+      font-size: var(--table-header-font-size);
+      font-weight: var(--table-header-font-weight);
+      color: var(--text-secondary);
+      text-align: left;
+      white-space: nowrap;
+      border-bottom: 1px solid var(--border-default);
+      background: #F9FAFB;
+    }
+
+    tbody tr {
+      transition: background 0.12s;
+    }
+
+    tbody tr:hover { background: var(--bg-hover); }
+
+    tbody td {
+      padding: var(--table-cell-padding-y) var(--table-cell-padding-x);
+      height: var(--table-row-height-default);
+      vertical-align: middle;
+      color: var(--text-primary);
+      white-space: nowrap;
+      border-bottom: 1px solid var(--border-subtle);
+      background: var(--bg-container);
+    }
+    tbody tr:last-child td { border-bottom: none; }
+    tbody tr:hover td { background: var(--bg-hover); }
+
+    .td-muted { color: var(--text-muted); }
+    .td-mono { font-family: "SF Mono", "Cascadia Mono", monospace; font-size: 12px; }
+
+    .network-logo {
+      width: 28px; height: 28px;
+      border-radius: 50%;
+      object-fit: cover;
+      display: inline-block;
+      background: var(--bg-subtle);
+      border: 1px solid var(--border-subtle);
+    }
+
+    .network-logo-placeholder {
+      width: 28px; height: 28px;
+      border-radius: 50%;
+      background: var(--bg-subtle);
+      border: 1px solid var(--border-default);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 11px; color: var(--text-muted); font-weight: 600;
+      flex-shrink: 0;
+    }
+
+    .network-name-cell {
+      display: flex;
+      align-items: center;
+      gap: var(--space-8);
+    }
+
+    .network-name-text { font-weight: var(--font-weight-body-strong); }
+    .network-short-text { font-size: var(--font-size-small); color: var(--text-muted); }
+
+    .actions-cell {
+      display: flex;
+      align-items: center;
+      gap: var(--space-12);
+    }
+
+    /* ========================================================
+     * Tags / Badges
+     * ======================================================== */
+    .tag {
+      display: inline-flex;
+      align-items: center;
+      height: var(--tag-height);
+      padding: 0 var(--tag-padding-x);
+      font-size: var(--tag-font-size);
+      font-weight: var(--font-weight-tag);
+      border-radius: var(--tag-radius);
+      border: 1px solid transparent;
+      white-space: nowrap;
+    }
+
+    .tag-success { color: var(--tag-success-text); background: var(--tag-success-bg); border-color: var(--tag-success-border); }
+    .tag-draft   { color: var(--tag-draft-text);   background: var(--tag-draft-bg);   border-color: var(--tag-draft-border); }
+    .tag-pending { color: var(--tag-pending-text);  background: var(--tag-pending-bg);  border-color: var(--tag-pending-border); }
+    .tag-processing { color: var(--tag-processing-text); background: var(--tag-processing-bg); border-color: var(--tag-processing-border); }
+    .tag-error   { color: var(--tag-error-text);   background: var(--tag-error-bg);   border-color: var(--tag-error-border); }
+
+    /* ========================================================
+     * Pagination
+     * ======================================================== */
+    .pagination {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: var(--space-12) var(--space-16);
+      border-top: 1px solid var(--border-subtle);
+    }
+
+    .pagination-info { font-size: var(--font-size-small); color: var(--text-muted); }
+
+    .pagination-btns {
+      display: flex;
+      align-items: center;
+      gap: var(--space-4);
+    }
+
+    .page-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 28px; height: 28px;
+      border-radius: var(--radius-xs);
+      border: 1px solid var(--border-default);
+      font-size: var(--font-size-small);
+      color: var(--text-secondary);
+      cursor: pointer;
+      background: var(--bg-container);
+      transition: background 0.12s, border-color 0.12s;
+    }
+
+    .page-btn:hover { background: var(--bg-hover); border-color: var(--border-strong); }
+    .page-btn.active { background: var(--primary); border-color: var(--primary); color: #fff; }
+    .page-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+
+    /* ========================================================
+     * Modal Overlay
+     * ======================================================== */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(16, 24, 40, 0.45);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 100;
+      backdrop-filter: blur(2px);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.2s;
+    }
+
+    .modal-overlay.open { opacity: 1; pointer-events: auto; }
+
+    .modal {
+      background: var(--bg-container);
+      border-radius: var(--radius-xl);
+      box-shadow: var(--shadow-md);
+      width: var(--modal-width-sm);
+      max-width: calc(100vw - 32px);
+      display: flex;
+      flex-direction: column;
+      max-height: calc(100vh - 64px);
+      transform: scale(0.96) translateY(8px);
+      transition: transform 0.2s;
+    }
+
+    .modal-overlay.open .modal { transform: scale(1) translateY(0); }
+
+    .modal-md { width: var(--modal-width-md); }
+
+    .modal-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: var(--space-16) var(--padding-modal);
+      border-bottom: 1px solid var(--border-default);
+      flex-shrink: 0;
+    }
+
+    .modal-title {
+      font-size: var(--font-size-section-title);
+      font-weight: var(--font-weight-section-title);
+      color: var(--text-primary);
+    }
+
+    .modal-close {
+      width: 28px; height: 28px;
+      border-radius: var(--radius-xs);
+      border: none;
+      background: transparent;
+      cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      color: var(--text-muted);
+      font-size: 18px;
+      transition: background 0.12s, color 0.12s;
+    }
+
+    .modal-close:hover { background: var(--bg-hover); color: var(--text-primary); }
+
+    .modal-body {
+      padding: var(--padding-modal);
+      overflow-y: auto;
+      flex: 1;
+    }
+
+    .modal-footer {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: var(--space-8);
+      padding: var(--space-12) var(--padding-modal);
+      border-top: 1px solid var(--border-default);
+      flex-shrink: 0;
+    }
+
+    /* ========================================================
+     * Drawer (Side Panel)
+     * ======================================================== */
+    .drawer-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(16, 24, 40, 0.35);
+      z-index: 90;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.25s;
+    }
+
+    .drawer-overlay.open { opacity: 1; pointer-events: auto; }
+
+    .drawer {
+      position: fixed;
+      top: 0; right: 0;
+      height: 100vh;
+      width: var(--drawer-width-md);
+      max-width: 100vw;
+      background: var(--bg-container);
+      box-shadow: -4px 0 24px rgba(16,24,40,0.12);
+      display: flex;
+      flex-direction: column;
+      z-index: 91;
+      transform: translateX(100%);
+      transition: transform 0.25s ease;
+    }
+
+    .drawer-overlay.open .drawer { transform: translateX(0); }
+
+    .drawer-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 var(--padding-drawer);
+      height: 56px;
+      border-bottom: 1px solid var(--border-default);
+      flex-shrink: 0;
+    }
+
+    .drawer-title {
+      font-size: var(--font-size-section-title);
+      font-weight: var(--font-weight-section-title);
+      color: var(--text-primary);
+    }
+
+    .drawer-body {
+      flex: 1;
+      overflow-y: auto;
+      padding: var(--padding-drawer);
+    }
+
+    .drawer-footer {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: var(--space-8);
+      padding: var(--space-12) var(--padding-drawer);
+      border-top: 1px solid var(--border-default);
+      flex-shrink: 0;
+      background: var(--bg-container);
+    }
+
+    /* ========================================================
+     * Form Sections inside Drawer
+     * ======================================================== */
+    .form-section {
+      margin-bottom: var(--space-24);
+    }
+
+    .form-section:last-child { margin-bottom: 0; }
+
+    .form-section-title {
+      font-size: var(--font-size-body-lg);
+      font-weight: var(--font-weight-section-title);
+      color: var(--text-primary);
+      padding-bottom: var(--space-8);
+      border-bottom: 1px solid var(--border-subtle);
+      margin-bottom: var(--space-16);
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: var(--space-16) var(--space-20);
+    }
+
+    .form-grid-full { grid-column: 1 / -1; }
+
+    .form-field { display: flex; flex-direction: column; }
+
+    /* Required asterisk */
+    .req { color: var(--danger); margin-left: 2px; }
+
+    /* ========================================================
+     * TOTP Input
+     * ======================================================== */
+    .totp-desc {
+      font-size: var(--font-size-body);
+      color: var(--text-muted);
+      margin-bottom: var(--space-16);
+      line-height: var(--line-height-normal);
+    }
+
+    .totp-input-wrap { position: relative; }
+
+    .totp-icon {
+      position: absolute;
+      top: 50%; left: var(--input-padding-x);
+      transform: translateY(-50%);
+      color: var(--text-muted);
+      pointer-events: none;
+      font-size: 15px;
+    }
+
+    .totp-input {
+      padding-left: 36px !important;
+      letter-spacing: 0.2em;
+      font-size: 18px !important;
+      font-weight: 600;
+      text-align: center;
+      height: 44px !important;
+    }
+
+    .totp-hint {
+      margin-top: var(--space-8);
+      font-size: var(--font-size-small);
+      color: var(--text-muted);
+      text-align: center;
+    }
+
+    /* ========================================================
+     * Delete Confirm
+     * ======================================================== */
+    .delete-info-box {
+      background: var(--danger-subtle);
+      border: 1px solid var(--border-danger);
+      border-radius: var(--radius-md);
+      padding: var(--space-12) var(--space-16);
+      margin-bottom: var(--space-16);
+    }
+
+    .delete-info-label { font-size: var(--font-size-small); color: var(--text-muted); margin-bottom: var(--space-4); }
+    .delete-info-value { font-size: var(--font-size-body); font-weight: var(--font-weight-body-strong); color: var(--text-primary); }
+    .delete-warn { font-size: var(--font-size-body); color: var(--text-secondary); }
+
+    /* ========================================================
+     * Misc Utilities
+     * ======================================================== */
+    .space-y-12 > * + * { margin-top: var(--space-12); }
+    .space-y-16 > * + * { margin-top: var(--space-16); }
+    .flex { display: flex; }
+    .flex-col { flex-direction: column; }
+    .items-center { align-items: center; }
+    .gap-8 { gap: var(--space-8); }
+    .gap-12 { gap: var(--space-12); }
+    .mt-4 { margin-top: var(--space-4); }
+    .mt-8 { margin-top: var(--space-8); }
+    .mt-12 { margin-top: var(--space-12); }
+    .text-muted { color: var(--text-muted); }
+    .text-small { font-size: var(--font-size-small); }
+    .font-medium { font-weight: var(--font-weight-body-strong); }
+    .w-full { width: 100%; }
+    .condition-row { display: none; }
+    .condition-row.show { display: flex; flex-direction: column; }
+
+    /* Scrollbar */
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: var(--border-strong); border-radius: 999px; }
+
+    /* 右侧一体冻结：状态 + 操作合并为一列，整体 sticky */
+    .list-card table .th-sticky-ops,
+    .list-card table .td-sticky-ops {
+      position: sticky;
+      right: 0;
+      z-index: 5;
+      min-width: 168px;
+      background-clip: padding-box;
+      box-shadow: -8px 0 14px rgba(16, 24, 40, 0.1);
+      border-left: 1px solid var(--border-default);
+    }
+    .list-card table thead .th-sticky-ops {
+      z-index: 6;
+      background: #F9FAFB;
+    }
+    .list-card table tbody .td-sticky-ops {
+      background: #FFFFFF;
+    }
+    .list-card table tbody tr:hover .td-sticky-ops {
+      background: var(--bg-hover);
+    }
+    .sticky-ops-head {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      white-space: nowrap;
+    }
+    .sticky-ops-head span { min-width: 52px; }
+    .sticky-ops-cell {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      white-space: nowrap;
+    }
+    .sticky-ops-cell .ops-status { flex-shrink: 0; min-width: 64px; }
+    .actions-cell {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+
+    /* Token spec name/desc single-line clamp with native tooltip */
+    .ts-cell-clamp {
+      display: block;
+      max-width: 160px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      cursor: default;
+    }
+
+    /* Cell truncation */
+    .cell-clip {
+      display: block;
+      max-width: 100%;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    /* Logo input tabs */
+    .logo-tab-bar {
+      display: flex;
+      border: 1px solid var(--border-default);
+      border-radius: var(--radius-sm);
+      overflow: hidden;
+      margin-bottom: var(--space-8);
+      width: fit-content;
+    }
+    .logo-tab-btn {
+      padding: 0 14px;
+      height: 28px;
+      font-size: var(--font-size-small);
+      font-weight: 500;
+      border: none;
+      background: var(--bg-subtle);
+      color: var(--text-muted);
+      cursor: pointer;
+      transition: background 0.15s, color 0.15s;
+    }
+    .logo-tab-btn.active { background: var(--primary); color: #fff; }
+    .logo-upload-area { display: flex; align-items: center; gap: var(--space-8); }
+    .logo-upload-label {
+      display: inline-flex;
+      align-items: center;
+      gap: var(--space-6);
+      height: var(--input-height-md);
+      padding: 0 var(--button-padding-x-md);
+      border: 1px dashed var(--border-default);
+      border-radius: var(--radius-sm);
+      font-size: var(--font-size-body);
+      color: var(--text-muted);
+      cursor: pointer;
+      background: var(--bg-subtle);
+      flex: 1;
+      transition: border-color 0.15s, color 0.15s;
+    }
+    .logo-upload-label:hover { border-color: var(--primary); color: var(--primary); }
+    .logo-preview-img {
+      width: 36px; height: 36px;
+      border-radius: 50%;
+      border: 1px solid var(--border-default);
+      object-fit: cover;
+      display: none;
+      background: var(--bg-subtle);
+      flex-shrink: 0;
+    }
+    .logo-preview-img.visible { display: block; }
+
+    /* Address regex custom row */
+    .addr-regex-custom-row { display: none; margin-top: var(--space-8); }
+    .addr-regex-custom-row.show { display: block; }
+  
+    .req { color: var(--danger); }
+    .text-small { font-size: var(--font-size-small); }
+    .text-muted { color: var(--text-muted); }
+    .toast-stack {
+      position: fixed; right: 20px; bottom: 20px; z-index: 200;
+      display: flex; flex-direction: column; gap: 8px;
+    }
+    .toast {
+      min-width: 240px; max-width: 380px;
+      padding: 10px 14px; border-radius: var(--radius-md);
+      background: #1C2333; color: #fff; font-size: 13px;
+      box-shadow: var(--shadow-md);
+      opacity: 0; transform: translateY(8px);
+      transition: opacity .2s, transform .2s;
+    }
+    .toast.show { opacity: 1; transform: translateY(0); }
+    .toast.ok { border-left: 3px solid #22C55E; }
+    .toast.err { border-left: 3px solid #EF4444; }
+    .empty-row td { text-align: center; color: var(--text-muted); padding: 40px 12px !important; }
+    .switch-pair { display: flex; flex-direction: column; gap: 8px; }
+    .url-cell { max-width: 160px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .filter-grid-5 {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr) auto;
+      gap: var(--space-12);
+      align-items: end;
+    }
+    @media (max-width: 1200px) {
+      .filter-grid-5 { grid-template-columns: repeat(3, 1fr); }
+      .filter-actions { grid-column: 1 / -1; }
+    }
+    .drawer { width: min(720px, 100vw); }
+    .section-badge {
+      font-size: 10px; font-weight: 600; padding: 1px 6px; border-radius: 4px;
+      background: var(--primary-subtle); color: var(--primary);
+    }
+    .form-section-title { display: flex; align-items: center; gap: 8px; }
+
+  
+    .page-view { display: none; min-width: 0; max-width: 100%; }
+    .page-view.active { display: block; }
+    .mono-sm { font-family: "SF Mono", "Cascadia Mono", monospace; font-size: 12px; word-break: break-all; }
+    .addr-cell { max-width: 140px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+  </style>
+</head>
+
+<body>
+<div class="app-shell">
+  <aside class="sidebar">
+    <div class="sidebar-logo">
+      <span class="sidebar-logo-text">BIYA DEX</span>
+      <span class="sidebar-logo-badge">Admin</span>
+    </div>
+    <nav class="sidebar-nav">
+      <div class="nav-group-label">运营配置</div>
+      <div class="nav-item active" data-nav="network">
+        <svg class="nav-item-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="8" cy="8" r="6"/><path d="M2 8h12M8 2c1.5 1.8 2.2 3.8 2.2 6S9.5 12.2 8 14C6.5 12.2 5.8 10.2 5.8 8S6.5 3.8 8 2z"/></svg>
+        网络管理
+      </div>
+      <div class="nav-item" data-nav="asset">
+        <svg class="nav-item-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="3" width="12" height="10" rx="1.5"/><path d="M5 7h6M5 10h4"/></svg>
+        资产管理
+      </div>
+      <div class="nav-item" style="opacity:.45;cursor:default" title="后续模块">
+        <svg class="nav-item-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 4h10v2H3zM3 8h10v2H3zM3 12h6v2H3z"/></svg>
+        市场参数
+        <span style="margin-left:auto;font-size:10px;opacity:.7">S1.5</span>
+      </div>
+      <div class="nav-group-label">资金</div>
+      <div class="nav-item" data-nav="deposit">
+        <svg class="nav-item-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M8 3v8M5 8l3 3 3-3"/><path d="M3 13h10"/></svg>
+        充值记录
+      </div>
+      <div class="nav-item" data-nav="withdraw">
+        <svg class="nav-item-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M8 13V5M5 8l3-3 3 3"/><path d="M3 3h10"/></svg>
+        提现记录
+      </div>
+      <div class="nav-group-label">风控</div>
+      <div class="nav-item" style="opacity:.45;cursor:default" title="后续模块">
+        <svg class="nav-item-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M8 2l5 2v4c0 3-2.2 5.2-5 6-2.8-.8-5-3-5-6V4l5-2z"/></svg>
+        清算与偿付
+        <span style="margin-left:auto;font-size:10px;opacity:.7">S2</span>
+      </div>
+    </nav>
+  </aside>
+
+  <div class="main-wrapper">
+    <header class="top-header">
+      <div class="breadcrumb">
+        <span>运营配置</span>
+        <span class="breadcrumb-sep">/</span>
+        <span class="breadcrumb-current" id="bcCurrent">网络管理</span>
+      </div>
+      <div class="header-spacer"></div>
+      <div class="header-actions">
+        <span class="text-small text-muted">原型演示 · 本地数据</span>
+        <div class="header-avatar" title="运营管理员">运</div>
+      </div>
+    </header>
+
+    <main class="page-content">
+      <!-- ========== 网络管理 ========== -->
+      <div class="page-view active" id="pageNetwork">
+      <div class="page-header">
+        <div>
+          <h1 class="page-title">网络管理</h1>
+          <p class="page-desc">配置永续合约充值 / 提现可用网络。</p>
+        </div>
+        <div class="page-header-actions">
+          <button type="button" class="btn btn-md btn-primary" id="btnAddNetwork">+ 新增网络</button>
+        </div>
+      </div>
+<div class="filter-card" style="margin-top:16px">
+        <div class="filter-grid-5">
+          <div class="form-field">
+            <div class="field-label">网络名称</div>
+            <input class="field-input" type="text" id="fName" placeholder="模糊搜索，如 Arbitrum" />
+          </div>
+          <div class="form-field">
+            <div class="field-label">链 ID</div>
+            <input class="field-input" type="text" id="fChainId" placeholder="精确，如 42161" />
+          </div>
+          <div class="form-field">
+            <div class="field-label">网络状态</div>
+            <select class="field-select" id="fStatus">
+              <option value="">全部</option>
+              <option value="enabled">启用中</option>
+              <option value="maintenance">维护中</option>
+              <option value="disabled">已禁用</option>
+            </select>
+          </div>
+          <div class="form-field">
+            <div class="field-label">充值是否开放</div>
+            <select class="field-select" id="fDeposit">
+              <option value="">全部</option>
+              <option value="1">开放</option>
+              <option value="0">关闭</option>
+            </select>
+          </div>
+          <div class="form-field">
+            <div class="field-label">提现是否开放</div>
+            <select class="field-select" id="fWithdraw">
+              <option value="">全部</option>
+              <option value="1">开放</option>
+              <option value="0">关闭</option>
+            </select>
+          </div>
+          <div class="filter-actions">
+            <button type="button" class="btn btn-md btn-primary" id="btnSearch">查询</button>
+            <button type="button" class="btn btn-md btn-secondary" id="btnReset">重置</button>
+          </div>
+        </div>
+      </div>
+      <div class="list-card">
+        <div class="list-toolbar">
+          <div class="list-toolbar-left">共 <strong id="totalCount">0</strong> 条网络配置</div>
+          <div class="list-toolbar-right"><span class="text-small text-muted">金额单位：USDC · 时间单位：分钟</span></div>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>网络名称</th>
+                <th>链 ID</th>
+                <th>充值</th>
+                <th>提现</th>
+                <th>充值确认数</th>
+                <th>最低充值</th>
+                <th>最低提现</th>
+                <th>提现手续费</th>
+                <th>预计充值(分)</th>
+                <th>预计提现(分)</th>
+                <th>提现观察确认数</th>
+                <th>网络图标</th>
+                <th>RPC 配置引用</th>
+                <th>交易浏览器</th>
+                <th>地址浏览器</th>
+                <th>更新时间</th>
+                <th>更新人员</th>
+                <th class="th-sticky-ops"><div class="sticky-ops-head"><span>状态</span><span>操作</span></div></th>
+              </tr>
+            </thead>
+            <tbody id="tableBody"></tbody>
+          </table>
+        </div>
+        <div class="pagination">
+          <div class="pagination-info" id="pageInfo">—</div>
+          <div class="pagination-btns" id="pageBtns"></div>
+        </div>
+      </div>
+      </div><!-- /pageNetwork -->
+
+      <!-- ========== 资产管理 ========== -->
+      <div class="page-view" id="pageAsset">
+      <div class="page-header">
+        <div>
+          <h1 class="page-title">资产管理</h1>
+          <p class="page-desc">配置各充提网络上的抵押资产。</p>
+        </div>
+        <div class="page-header-actions">
+          <button type="button" class="btn btn-md btn-primary" id="btnAddAsset">+ 新增资产</button>
+        </div>
+      </div>
+<div class="filter-card" style="margin-top:16px">
+        <div class="filter-grid-5">
+          <div class="form-field">
+            <div class="field-label">所属网络</div>
+            <select class="field-select" id="afNetwork">
+              <option value="">全部</option>
+            </select>
+          </div>
+          <div class="form-field">
+            <div class="field-label">资产编码</div>
+            <input class="field-input" type="text" id="afCode" placeholder="如 USDC" />
+          </div>
+          <div class="form-field">
+            <div class="field-label">链上符号</div>
+            <input class="field-input" type="text" id="afSymbol" placeholder="如 USDC" />
+          </div>
+          <div class="form-field">
+            <div class="field-label">状态</div>
+            <select class="field-select" id="afStatus">
+              <option value="">全部</option>
+              <option value="enabled">启用中</option>
+              <option value="disabled">已禁用</option>
+            </select>
+          </div>
+          <div class="form-field">
+            <div class="field-label">充值是否开放</div>
+            <select class="field-select" id="afDeposit">
+              <option value="">全部</option>
+              <option value="1">开放</option>
+              <option value="0">关闭</option>
+            </select>
+          </div>
+          <div class="form-field">
+            <div class="field-label">提现是否开放</div>
+            <select class="field-select" id="afWithdraw">
+              <option value="">全部</option>
+              <option value="1">开放</option>
+              <option value="0">关闭</option>
+            </select>
+          </div>
+          <div class="form-field">
+            <div class="field-label">代币合约地址</div>
+            <input class="field-input td-mono" type="text" id="afContract" placeholder="模糊匹配 0x…" />
+          </div>
+          <div class="filter-actions">
+            <button type="button" class="btn btn-md btn-primary" id="btnAssetSearch">查询</button>
+            <button type="button" class="btn btn-md btn-secondary" id="btnAssetReset">重置</button>
+          </div>
+        </div>
+      </div>
+      <div class="list-card">
+        <div class="list-toolbar">
+          <div class="list-toolbar-left">共 <strong id="assetTotalCount">0</strong> 条资产配置</div>
+          <div class="list-toolbar-right"><span class="text-small text-muted">S1 抵押资产：USDC</span></div>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>资产编码</th>
+                <th>链上符号</th>
+                <th>所属网络</th>
+                <th>充值</th>
+                <th>提现</th>
+                <th>代币精度</th>
+                <th>代币合约地址</th>
+                <th>充值桥或网关合约</th>
+                <th>提现桥或出金合约</th>
+                <th>资产 Logo</th>
+                <th>备注</th>
+                <th>主键</th>
+                <th>创建时间</th>
+                <th>创建人员</th>
+                <th>更新时间</th>
+                <th>更新人员</th>
+                <th class="th-sticky-ops"><div class="sticky-ops-head"><span>状态</span><span>操作</span></div></th>
+              </tr>
+            </thead>
+            <tbody id="assetTableBody"></tbody>
+          </table>
+        </div>
+        <div class="pagination">
+          <div class="pagination-info" id="assetPageInfo">—</div>
+          <div class="pagination-btns" id="assetPageBtns"></div>
+        </div>
+      </div>
+      </div><!-- /pageAsset -->
+
+      <!-- ========== 充值记录 ========== -->
+      <div class="page-view" id="pageDeposit">
+        <div class="page-header">
+          <div>
+            <h1 class="page-title">充值记录</h1>
+            <p class="page-desc">查看用户链上充值请求与入账结果。</p>
+          </div>
+        </div>
+        <div class="filter-card">
+          <div class="filter-grid-5">
+            <div class="form-field">
+              <div class="field-label">网络名称</div>
+              <input class="field-input" type="text" id="dfNetwork" placeholder="如 Arbitrum" />
+            </div>
+            <div class="form-field">
+              <div class="field-label">充值资产</div>
+              <input class="field-input" type="text" id="dfAsset" placeholder="如 USDC" />
+            </div>
+            <div class="form-field">
+              <div class="field-label">充值状态</div>
+              <select class="field-select" id="dfStatus">
+                <option value="">全部</option>
+                <option value="confirming">确认中</option>
+                <option value="success">充值成功</option>
+                <option value="failed">充值失败</option>
+              </select>
+            </div>
+            <div class="form-field">
+              <div class="field-label">主账户</div>
+              <input class="field-input" type="text" id="dfAccount" placeholder="账户 ID / 地址片段" />
+            </div>
+            <div class="form-field">
+              <div class="field-label">交易哈希</div>
+              <input class="field-input td-mono" type="text" id="dfTx" placeholder="0x…" />
+            </div>
+            <div class="form-field">
+              <div class="field-label">异常类型</div>
+              <select class="field-select" id="dfException">
+                <option value="">全部</option>
+                <option value="none">无</option>
+                <option value="confirm_timeout">确认超时</option>
+                <option value="amount_mismatch">金额不匹配</option>
+                <option value="invalid_memo">无效备注</option>
+                <option value="chain_reorg">链重组</option>
+              </select>
+            </div>
+            <div class="filter-actions">
+              <button type="button" class="btn btn-md btn-primary" id="btnDepSearch">查询</button>
+              <button type="button" class="btn btn-md btn-secondary" id="btnDepReset">重置</button>
+            </div>
+          </div>
+        </div>
+        <div class="list-card">
+          <div class="list-toolbar">
+            <div class="list-toolbar-left">共 <strong id="depTotalCount">0</strong> 条充值记录</div>
+            <div class="list-toolbar-right"><span class="text-small text-muted">金额单位：USDC</span></div>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>网络名称</th>
+                  <th>充值资产</th>
+                  <th>充值金额</th>
+                  <th>确认入账金额</th>
+                  <th>当前确认数/所需确认数</th>
+                  <th>主账户</th>
+                  <th>钱包地址</th>
+                  <th>发送地址</th>
+                  <th>接收地址</th>
+                  <th>交易哈希</th>
+                  <th>提交时间</th>
+                  <th>入账时间</th>
+                  <th>失败原因</th>
+                  <th>异常类型</th>
+                  <th>备注</th>
+                  <th>创建时间</th>
+                  <th>更新时间</th>
+                  <th class="th-sticky-ops"><div class="sticky-ops-head"><span>状态</span><span>操作</span></div></th>
+                </tr>
+              </thead>
+              <tbody id="depTableBody"></tbody>
+            </table>
+          </div>
+          <div class="pagination">
+            <div class="pagination-info" id="depPageInfo">—</div>
+            <div class="pagination-btns" id="depPageBtns"></div>
+          </div>
+        </div>
+      </div><!-- /pageDeposit -->
+
+      <!-- ========== 提现记录 ========== -->
+      <div class="page-view" id="pageWithdraw">
+        <div class="page-header">
+          <div>
+            <h1 class="page-title">提现记录</h1>
+            <p class="page-desc">查看提现请求，对待审核记录进行通过或拒绝。</p>
+          </div>
+        </div>
+        <div class="filter-card">
+          <div class="filter-grid-5">
+            <div class="form-field">
+              <div class="field-label">网络名称</div>
+              <input class="field-input" type="text" id="wfNetwork" placeholder="如 Arbitrum" />
+            </div>
+            <div class="form-field">
+              <div class="field-label">提现资产</div>
+              <input class="field-input" type="text" id="wfAsset" placeholder="如 USDC" />
+            </div>
+            <div class="form-field">
+              <div class="field-label">状态</div>
+              <select class="field-select" id="wfStatus">
+                <option value="">全部</option>
+                <option value="pending_review">待审核</option>
+                <option value="processing">处理中</option>
+                <option value="success">提现成功</option>
+                <option value="failed">提现失败</option>
+                <option value="rejected">已拒绝</option>
+              </select>
+            </div>
+            <div class="form-field">
+              <div class="field-label">审核状态</div>
+              <select class="field-select" id="wfAudit">
+                <option value="">全部</option>
+                <option value="pending">待审核</option>
+                <option value="approved">已通过</option>
+                <option value="rejected">已拒绝</option>
+              </select>
+            </div>
+            <div class="form-field">
+              <div class="field-label">主账户</div>
+              <input class="field-input" type="text" id="wfAccount" placeholder="账户 ID / 地址片段" />
+            </div>
+            <div class="form-field">
+              <div class="field-label">目标地址</div>
+              <input class="field-input td-mono" type="text" id="wfTo" placeholder="0x…" />
+            </div>
+            <div class="form-field">
+              <div class="field-label">交易哈希</div>
+              <input class="field-input td-mono" type="text" id="wfTx" placeholder="0x…" />
+            </div>
+            <div class="filter-actions">
+              <button type="button" class="btn btn-md btn-primary" id="btnWdSearch">查询</button>
+              <button type="button" class="btn btn-md btn-secondary" id="btnWdReset">重置</button>
+            </div>
+          </div>
+        </div>
+        <div class="list-card">
+          <div class="list-toolbar">
+            <div class="list-toolbar-left">共 <strong id="wdTotalCount">0</strong> 条提现记录</div>
+            <div class="list-toolbar-right"><span class="text-small text-muted">金额单位：USDC</span></div>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>网络名称</th>
+                  <th>提现资产</th>
+                  <th>主账户</th>
+                  <th>目标地址</th>
+                  <th>总扣减金额</th>
+                  <th>实际到账金额</th>
+                  <th>提现手续费</th>
+                  <th>审核状态</th>
+                  <th>交易哈希</th>
+                  <th>失败原因</th>
+                  <th>审核人</th>
+                  <th>审核时间</th>
+                  <th>审核备注</th>
+                  <th>创建时间</th>
+                  <th>锁定时间</th>
+                  <th>完成时间</th>
+                  <th>备注</th>
+                  <th class="th-sticky-ops"><div class="sticky-ops-head"><span>状态</span><span>操作</span></div></th>
+                </tr>
+              </thead>
+              <tbody id="wdTableBody"></tbody>
+            </table>
+          </div>
+          <div class="pagination">
+            <div class="pagination-info" id="wdPageInfo">—</div>
+            <div class="pagination-btns" id="wdPageBtns"></div>
+          </div>
+        </div>
+      </div><!-- /pageWithdraw -->
+
+    </main>
+  </div>
+</div>
+
+<!-- Network Drawer -->
+<div class="drawer-overlay" id="formDrawer">
+  <div class="drawer" onclick="event.stopPropagation()">
+    <div class="drawer-header">
+      <span class="drawer-title" id="drawerTitle">新增网络</span>
+      <button type="button" class="modal-close" id="btnCloseDrawer">✕</button>
+    </div>
+    <div class="drawer-body">
+      <input type="hidden" id="editId" value="" />
+      <div class="form-section">
+        <h3 class="form-section-title">① 基础标识</h3>
+        <div class="form-grid">
+          <div class="form-field">
+            <div class="field-label">网络名称 <span class="req">*</span></div>
+            <input class="field-input" id="fldDisplayName" type="text" placeholder="如 Arbitrum One" maxlength="64" />
+                      </div>
+          <div class="form-field">
+            <div class="field-label">链 ID <span class="req">*</span></div>
+            <input class="field-input td-mono" id="fldChainId" type="text" placeholder="如 42161" inputmode="numeric" />
+          </div>
+          <div class="form-field form-grid-full">
+            <div class="field-label">网络图标</div>
+            <input class="field-input" id="fldIconUrl" type="text" placeholder="https://... 或留空" />
+          </div>
+        </div>
+      </div>
+      <div class="form-section">
+        <h3 class="form-section-title">② 开关与状态</h3>
+        <div class="form-grid">
+          <div class="form-field">
+            <div class="field-label">网络状态 <span class="req">*</span></div>
+            <select class="field-select" id="fldStatus">
+              <option value="enabled">启用中</option>
+              <option value="maintenance">维护中</option>
+              <option value="disabled">已禁用</option>
+            </select>
+          </div>
+          <div class="form-field">
+            <div class="field-label">充值 / 提现开关</div>
+            <div class="switch-pair">
+              <label class="switch-row">
+                <span class="switch"><input type="checkbox" id="fldDepositOpen" checked /><span class="switch-track"></span><span class="switch-thumb"></span></span>
+                <span class="switch-label">充值是否开放</span>
+              </label>
+              <label class="switch-row">
+                <span class="switch"><input type="checkbox" id="fldWithdrawOpen" checked /><span class="switch-track"></span><span class="switch-thumb"></span></span>
+                <span class="switch-label">提现是否开放</span>
+              </label>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="form-section">
+        <h3 class="form-section-title">③ 确认数与预计时效</h3>
+        <div class="form-grid">
+          <div class="form-field">
+            <div class="field-label">充值确认数 <span class="req">*</span></div>
+            <input class="field-input" id="fldDepositConf" type="number" min="1" max="256" />
+          </div>
+          <div class="form-field">
+            <div class="field-label">提现观察确认数</div>
+            <input class="field-input" id="fldWithdrawConf" type="number" min="0" max="256" />
+          </div>
+          <div class="form-field">
+            <div class="field-label">预计充值到账时间（分钟）</div>
+            <input class="field-input" id="fldEtaDeposit" type="number" min="0" />
+          </div>
+          <div class="form-field">
+            <div class="field-label">预计提现到账时间（分钟）</div>
+            <input class="field-input" id="fldEtaWithdraw" type="number" min="0" />
+          </div>
+        </div>
+      </div>
+      <div class="form-section">
+        <h3 class="form-section-title">④ 限额与手续费（USDC）</h3>
+        <div class="form-grid">
+          <div class="form-field">
+            <div class="field-label">最低充值金额 <span class="req">*</span></div>
+            <input class="field-input" id="fldMinDeposit" type="text" />
+          </div>
+          <div class="form-field">
+            <div class="field-label">最低提现金额 <span class="req">*</span></div>
+            <input class="field-input" id="fldMinWithdraw" type="text" />
+          </div>
+          <div class="form-field">
+            <div class="field-label">提现手续费 <span class="req">*</span></div>
+            <input class="field-input" id="fldWithdrawFee" type="text" />
+          </div>
+        </div>
+      </div>
+      <div class="form-section">
+        <h3 class="form-section-title">⑤ 浏览器与 RPC</h3>
+        <div class="form-grid">
+          <div class="form-field form-grid-full">
+            <div class="field-label">交易浏览器链接模板 <span class="req">*</span></div>
+            <input class="field-input td-mono" id="fldExplorerTx" type="text" placeholder="https://arbiscan.io/tx/{txHash}" />
+                      </div>
+          <div class="form-field form-grid-full">
+            <div class="field-label">地址浏览器链接模板</div>
+            <input class="field-input td-mono" id="fldExplorerAddr" type="text" placeholder="https://arbiscan.io/address/{address}" />
+          </div>
+          <div class="form-field form-grid-full">
+            <div class="field-label">RPC 配置引用 <span class="req">*</span></div>
+            <input class="field-input td-mono" id="fldRpcRef" type="text" placeholder="cfg://rpc/arbitrum-one-mainnet" />
+          </div>
+        </div>
+      </div>
+      <div class="form-section">
+        <h3 class="form-section-title">⑥ 备注</h3>
+        <div class="form-grid">
+          <div class="form-field form-grid-full">
+            <div class="field-label">备注</div>
+            <textarea class="field-textarea" id="fldRemark"></textarea>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="drawer-footer">
+      <button type="button" class="btn btn-md btn-secondary" id="btnCancelDrawer">取消</button>
+      <button type="button" class="btn btn-md btn-primary" id="btnSaveNetwork">保存</button>
+    </div>
+  </div>
+</div>
+
+<!-- Asset Drawer -->
+<div class="drawer-overlay" id="assetDrawer">
+  <div class="drawer" onclick="event.stopPropagation()">
+    <div class="drawer-header">
+      <span class="drawer-title" id="assetDrawerTitle">新增资产</span>
+      <button type="button" class="modal-close" id="btnCloseAssetDrawer">✕</button>
+    </div>
+    <div class="drawer-body">
+      <input type="hidden" id="assetEditId" value="" />
+      <div class="form-section">
+        <h3 class="form-section-title">① 归属与标识</h3>
+        <div class="form-grid">
+          <div class="form-field">
+            <div class="field-label">所属网络 <span class="req">*</span></div>
+            <select class="field-select" id="afldNetworkId"></select>
+          </div>
+          <div class="form-field">
+            <div class="field-label">链上符号 <span class="req">*</span></div>
+            <input class="field-input" id="afldSymbol" type="text" placeholder="如 USDC" maxlength="32" />
+          </div>
+          <div class="form-field">
+            <div class="field-label">资产编码</div>
+            <input class="field-input td-mono" id="afldCode" type="text" readonly disabled placeholder="保存时系统自动生成" />
+            <p class="field-hint">系统按「符号_链ID」自动生成，不可编辑</p>
+          </div>
+          <div class="form-field">
+            <div class="field-label">代币精度 <span class="req">*</span></div>
+            <input class="field-input" id="afldDecimals" type="number" min="0" max="36" placeholder="如 6" />
+          </div>
+          <div class="form-field form-grid-full">
+            <div class="field-label">资产 Logo</div>
+            <input class="field-input" id="afldLogo" type="text" placeholder="https://.../usdc.svg" />
+          </div>
+        </div>
+      </div>
+      <div class="form-section">
+        <h3 class="form-section-title">② 合约地址</h3>
+        <div class="form-grid">
+          <div class="form-field form-grid-full">
+            <div class="field-label">代币合约地址 <span class="req">*</span></div>
+            <input class="field-input td-mono" id="afldTokenContract" type="text" placeholder="0x…" />
+                      </div>
+          <div class="form-field form-grid-full">
+            <div class="field-label">充值桥或网关合约</div>
+            <input class="field-input td-mono" id="afldDepositBridge" type="text" placeholder="充值监听/存款合约地址，可选" />
+          </div>
+          <div class="form-field form-grid-full">
+            <div class="field-label">提现桥或出金合约</div>
+            <input class="field-input td-mono" id="afldWithdrawBridge" type="text" placeholder="提现执行合约地址，可选" />
+          </div>
+        </div>
+      </div>
+      <div class="form-section">
+        <h3 class="form-section-title">③ 开关与状态</h3>
+        <div class="form-grid">
+          <div class="form-field">
+            <div class="field-label">状态 <span class="req">*</span></div>
+            <select class="field-select" id="afldStatus">
+              <option value="enabled">启用中</option>
+              <option value="disabled">已禁用</option>
+            </select>
+          </div>
+          <div class="form-field">
+            <div class="field-label">充值 / 提现开关</div>
+            <div class="switch-pair">
+              <label class="switch-row">
+                <span class="switch"><input type="checkbox" id="afldDepositOpen" checked /><span class="switch-track"></span><span class="switch-thumb"></span></span>
+                <span class="switch-label">充值是否开放</span>
+              </label>
+              <label class="switch-row">
+                <span class="switch"><input type="checkbox" id="afldWithdrawOpen" checked /><span class="switch-track"></span><span class="switch-thumb"></span></span>
+                <span class="switch-label">提现是否开放</span>
+              </label>
+            </div>
+          </div>
+          <div class="form-field form-grid-full">
+            <div class="field-label">备注</div>
+            <textarea class="field-textarea" id="afldRemark" placeholder="备注"></textarea>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="drawer-footer">
+      <button type="button" class="btn btn-md btn-secondary" id="btnCancelAssetDrawer">取消</button>
+      <button type="button" class="btn btn-md btn-primary" id="btnSaveAsset">保存</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="confirmModal">
+  <div class="modal">
+    <div class="modal-header">
+      <span class="modal-title" id="confirmTitle">确认操作</span>
+      <button type="button" class="modal-close" id="btnCloseConfirm">✕</button>
+    </div>
+    <div class="modal-body">
+      <p id="confirmMsg" style="line-height:1.6;color:var(--text-secondary)"></p>
+    </div>
+    <div class="modal-footer">
+      <button type="button" class="btn btn-md btn-secondary" id="btnConfirmCancel">取消</button>
+      <button type="button" class="btn btn-md btn-danger" id="btnConfirmOk">确认</button>
+    </div>
+  </div>
+</div>
+
+
+<!-- 提现审核 -->
+<div class="modal-overlay" id="auditModal">
+  <div class="modal modal-md">
+    <div class="modal-header">
+      <span class="modal-title">提现审核</span>
+      <button type="button" class="modal-close" id="btnCloseAudit">✕</button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="auditId" value="" />
+      <div class="form-grid" style="margin-bottom:12px">
+        <div class="form-field">
+          <div class="field-label">主账户</div>
+          <div class="td-mono" id="auditAccount">—</div>
+        </div>
+        <div class="form-field">
+          <div class="field-label">网络 / 资产</div>
+          <div id="auditNetAsset">—</div>
+        </div>
+        <div class="form-field">
+          <div class="field-label">目标地址</div>
+          <div class="td-mono text-small" id="auditTo">—</div>
+        </div>
+        <div class="form-field">
+          <div class="field-label">总扣减 / 到账 / 手续费</div>
+          <div id="auditAmounts">—</div>
+        </div>
+      </div>
+      <div class="form-field" style="margin-bottom:12px">
+        <div class="field-label">审核结果 <span class="req">*</span></div>
+        <div class="checkbox-group" style="gap:16px">
+          <label class="checkbox-item"><input type="radio" name="auditResult" value="approve" checked /> 通过</label>
+          <label class="checkbox-item"><input type="radio" name="auditResult" value="reject" /> 拒绝</label>
+        </div>
+      </div>
+      <div class="form-field" id="auditRejectWrap" style="display:none">
+        <div class="field-label">拒绝原因 <span class="req">*</span></div>
+        <textarea class="field-textarea" id="auditRejectReason" placeholder="请输入拒绝原因，将展示给用户/客服"></textarea>
+      </div>
+      <div class="form-field" id="auditApproveWrap">
+        <div class="field-label">审核备注</div>
+        <textarea class="field-textarea" id="auditRemark" placeholder="选填"></textarea>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button type="button" class="btn btn-md btn-secondary" id="btnAuditCancel">取消</button>
+      <button type="button" class="btn btn-md btn-primary" id="btnAuditSubmit">提交审核</button>
+    </div>
+  </div>
+</div>
+
+<!-- 记录详情（只读） -->
+<div class="drawer-overlay" id="detailDrawer">
+  <div class="drawer" onclick="event.stopPropagation()">
+    <div class="drawer-header">
+      <span class="drawer-title" id="detailTitle">记录详情</span>
+      <button type="button" class="modal-close" id="btnCloseDetail">✕</button>
+    </div>
+    <div class="drawer-body" id="detailBody"></div>
+    <div class="drawer-footer">
+      <button type="button" class="btn btn-md btn-secondary" id="btnCloseDetail2">关闭</button>
+    </div>
+  </div>
+</div>
+
+
+<div class="toast-stack" id="toastStack"></div>
+
+<script>
+(function () {
+  var PAGE_SIZE = 10;
+  var state = {
+    page: "network",
+    net: { page: 1, filters: {}, editId: null },
+    asset: { page: 1, filters: {}, editId: null },
+    confirmCb: null
+  };
+
+  var networks = [
+    {
+      id: "n-arb", chainId: "42161", displayName: "Arbitrum One",
+      explorerTxTemplate: "https://arbiscan.io/tx/{txHash}",
+      explorerAddressTemplate: "https://arbiscan.io/address/{address}",
+      rpcRef: "cfg://rpc/arbitrum-one-mainnet",
+      depositOpen: true, withdrawOpen: true, status: "enabled",
+      etaDepositMin: 13, etaWithdrawMin: 30, depositConfirmations: 12, withdrawConfirmations: 1,
+      minDeposit: "1", minWithdraw: "1", withdrawFee: "1", iconUrl: "",
+      remark: "默认启用网络",
+      createdAt: "2025-06-26 14:22:49", createdBy: "system",
+      updatedAt: "2025-09-24 18:09:05", updatedBy: "Terry"
+    },
+    {
+      id: "n-eth", chainId: "1", displayName: "Ethereum",
+      explorerTxTemplate: "https://etherscan.io/tx/{txHash}",
+      explorerAddressTemplate: "https://etherscan.io/address/{address}",
+      rpcRef: "cfg://rpc/ethereum-mainnet",
+      depositOpen: false, withdrawOpen: false, status: "disabled",
+      etaDepositMin: 20, etaWithdrawMin: 45, depositConfirmations: 12, withdrawConfirmations: 3,
+      minDeposit: "10", minWithdraw: "10", withdrawFee: "5", iconUrl: "",
+      remark: "S1 不开放，预留配置",
+      createdAt: "2025-06-26 14:22:49", createdBy: "system",
+      updatedAt: "2025-09-24 18:10:00", updatedBy: "Terry"
+    },
+    {
+      id: "n-base", chainId: "8453", displayName: "Base",
+      explorerTxTemplate: "https://basescan.org/tx/{txHash}",
+      explorerAddressTemplate: "https://basescan.org/address/{address}",
+      rpcRef: "cfg://rpc/base-mainnet",
+      depositOpen: true, withdrawOpen: false, status: "maintenance",
+      etaDepositMin: 8, etaWithdrawMin: 20, depositConfirmations: 6, withdrawConfirmations: 1,
+      minDeposit: "1", minWithdraw: "1", withdrawFee: "1", iconUrl: "",
+      remark: "维护中：仅测试充值监听",
+      createdAt: "2025-07-09 15:39:56", createdBy: "Terry",
+      updatedAt: "2025-09-24 18:09:02", updatedBy: "emilyn"
+    }
+  ];
+
+  // Official-style demo USDC on Arbitrum (native USDC)
+  var assets = [
+    {
+      id: "a-usdc-arb",
+      networkId: "n-arb",
+      assetCode: "USDC_42161",
+      chainSymbol: "USDC",
+      decimals: 6,
+      tokenContract: "0xaf88d065e77c8cC2239327C5EDb3A432268e5831",
+      depositBridge: "0xDepositBridgeDemo000000000000000000001",
+      withdrawBridge: "0xWithdrawBridgeDemo00000000000000000001",
+      depositOpen: true,
+      withdrawOpen: true,
+      status: "enabled",
+      logoUrl: "",
+      remark: "默认抵押资产 USDC",
+      createdAt: "2025-06-26 14:22:49",
+      createdBy: "system",
+      updatedAt: "2025-09-24 18:09:05",
+      updatedBy: "Terry"
+    },
+    {
+      id: "a-usdc-eth",
+      networkId: "n-eth",
+      assetCode: "USDC_1",
+      chainSymbol: "USDC",
+      decimals: 6,
+      tokenContract: "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48",
+      depositBridge: "",
+      withdrawBridge: "",
+      depositOpen: false,
+      withdrawOpen: false,
+      status: "disabled",
+      logoUrl: "",
+      remark: "预留：以太坊 USDC，S1 不开放",
+      createdAt: "2025-06-26 14:22:49",
+      createdBy: "system",
+      updatedAt: "2025-09-24 18:10:00",
+      updatedBy: "Terry"
+    }
+  ];
+
+  function toast(msg, type) {
+    var stack = document.getElementById("toastStack");
+    var el = document.createElement("div");
+    el.className = "toast " + (type || "ok");
+    el.textContent = msg;
+    stack.appendChild(el);
+    requestAnimationFrame(function () { el.classList.add("show"); });
+    setTimeout(function () {
+      el.classList.remove("show");
+      setTimeout(function () { el.remove(); }, 200);
+    }, 2400);
+  }
+
+  function statusTag(s) {
+    if (s === "enabled") return '<span class="tag tag-success">启用中</span>';
+    if (s === "maintenance") return '<span class="tag tag-pending">维护中</span>';
+    return '<span class="tag tag-draft">已禁用</span>';
+  }
+  function boolTag(v) {
+    return v ? '<span class="tag tag-success">开放</span>' : '<span class="tag tag-error">关闭</span>';
+  }
+  function escapeHtml(s) {
+    return String(s == null ? "" : s)
+      .replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+  }
+  function escapeAttr(s) { return escapeHtml(s).replace(/'/g, "&#39;"); }
+  function nowStr() {
+    var d = new Date();
+    function p(n) { return n < 10 ? "0" + n : "" + n; }
+    return d.getFullYear() + "-" + p(d.getMonth() + 1) + "-" + p(d.getDate()) + " " +
+      p(d.getHours()) + ":" + p(d.getMinutes()) + ":" + p(d.getSeconds());
+  }
+  function isDecimal(s) { return /^(?:0|[1-9]\d*)(?:\.\d+)?$/.test(String(s).trim()); }
+  function isAddress(s) { return /^0x[a-fA-F0-9]{40}$/.test(String(s).trim()); }
+
+  function networkById(id) {
+    return networks.find(function (n) { return n.id === id; });
+  }
+  function networkLabel(id) {
+    var n = networkById(id);
+    return n ? n.displayName + " (" + n.chainId + ")" : id;
+  }
+
+  function iconHtml(label, url) {
+    if (url) return '<img class="network-logo" src="' + escapeAttr(url) + '" alt=""/>';
+    var ch = (label || "?").charAt(0).toUpperCase();
+    return '<div class="network-logo-placeholder">' + ch + "</div>";
+  }
+
+  /* ---------- nav ---------- */
+  function switchPage(page) {
+    state.page = page;
+    document.querySelectorAll(".nav-item[data-nav]").forEach(function (el) {
+      el.classList.toggle("active", el.getAttribute("data-nav") === page);
+    });
+    var map = {
+      network: "pageNetwork",
+      asset: "pageAsset",
+      deposit: "pageDeposit",
+      withdraw: "pageWithdraw"
+    };
+    Object.keys(map).forEach(function (k) {
+      var el = document.getElementById(map[k]);
+      if (el) el.classList.toggle("active", k === page);
+    });
+    var titles = { network: "网络管理", asset: "资产管理", deposit: "充值记录", withdraw: "提现记录" };
+    document.getElementById("bcCurrent").textContent = titles[page] || page;
+    if (page === "asset") {
+      fillAssetNetworkSelects();
+      renderAssetTable();
+    } else if (page === "deposit") {
+      renderDepTable();
+    } else if (page === "withdraw") {
+      renderWdTable();
+    } else {
+      renderNetTable();
+    }
+  }
+
+  /* ---------- networks ---------- */
+  function filteredNets() {
+    var f = state.net.filters;
+    return networks.filter(function (r) {
+      if (f.name && r.displayName.toLowerCase().indexOf(f.name.toLowerCase()) < 0) return false;
+      if (f.chainId && String(r.chainId) !== String(f.chainId)) return false;
+      if (f.status && r.status !== f.status) return false;
+      if (f.deposit !== "" && f.deposit != null && (r.depositOpen ? "1" : "0") !== f.deposit) return false;
+      if (f.withdraw !== "" && f.withdraw != null && (r.withdrawOpen ? "1" : "0") !== f.withdraw) return false;
+      return true;
+    });
+  }
+
+  function renderNetTable() {
+    var list = filteredNets();
+    var total = list.length;
+    var pages = Math.max(1, Math.ceil(total / PAGE_SIZE));
+    if (state.net.page > pages) state.net.page = pages;
+    var start = (state.net.page - 1) * PAGE_SIZE;
+    var pageRows = list.slice(start, start + PAGE_SIZE);
+    document.getElementById("totalCount").textContent = total;
+    document.getElementById("pageInfo").textContent =
+      total === 0 ? "暂无数据" : "第 " + state.net.page + " / " + pages + " 页 · 每页 " + PAGE_SIZE + " 条";
+    var body = document.getElementById("tableBody");
+    if (!pageRows.length) {
+      body.innerHTML = '<tr class="empty-row"><td colspan="18">无匹配网络</td></tr>';
+    } else {
+      body.innerHTML = pageRows.map(function (r) {
+        return (
+          '<tr data-id="' + escapeAttr(r.id) + '">' +
+          '<td><div class="network-name-text">' + escapeHtml(r.displayName) + "</div></td>" +
+          '<td class="td-mono">' + escapeHtml(r.chainId) + "</td>" +
+          "<td>" + boolTag(r.depositOpen) + "</td>" +
+          "<td>" + boolTag(r.withdrawOpen) + "</td>" +
+          "<td>" + escapeHtml(r.depositConfirmations) + "</td>" +
+          "<td>" + escapeHtml(r.minDeposit) + "</td>" +
+          "<td>" + escapeHtml(r.minWithdraw) + "</td>" +
+          "<td>" + escapeHtml(r.withdrawFee) + "</td>" +
+          '<td class="td-muted">' + escapeHtml(r.etaDepositMin == null ? "—" : r.etaDepositMin) + "</td>" +
+          '<td class="td-muted">' + escapeHtml(r.etaWithdrawMin == null ? "—" : r.etaWithdrawMin) + "</td>" +
+          '<td class="td-muted">' + escapeHtml(r.withdrawConfirmations == null ? "—" : r.withdrawConfirmations) + "</td>" +
+          "<td>" + iconHtml(r.displayName, r.iconUrl) + "</td>" +
+          '<td class="td-mono url-cell" title="' + escapeAttr(r.rpcRef) + '">' + escapeHtml(r.rpcRef) + "</td>" +
+          '<td class="td-mono url-cell" title="' + escapeAttr(r.explorerTxTemplate) + '">' + escapeHtml(r.explorerTxTemplate) + "</td>" +
+          '<td class="td-mono url-cell" title="' + escapeAttr(r.explorerAddressTemplate || "") + '">' + escapeHtml(r.explorerAddressTemplate || "—") + "</td>" +
+          '<td class="td-muted text-small">' + escapeHtml(r.updatedAt) + "</td>" +
+          '<td class="td-muted">' + escapeHtml(r.updatedBy) + "</td>" +
+          '<td class="td-sticky-ops"><div class="sticky-ops-cell">' +
+          '<span class="ops-status">' + statusTag(r.status) + "</span>" +
+          '<div class="actions-cell">' +
+          '<button type="button" class="btn-link" data-act="edit">修改</button>' +
+          (r.status === "enabled"
+            ? '<button type="button" class="btn-link-warning" data-act="disable">禁用</button>'
+            : '<button type="button" class="btn-link-success" data-act="enable">启用</button>') +
+          "</div></div></td></tr>"
+        );
+      }).join("");
+    }
+    renderPager("pageBtns", pages, state.net.page, function (p) { state.net.page = p; renderNetTable(); });
+  }
+
+  function renderPager(elId, pages, cur, onPage) {
+    var btns = document.getElementById(elId);
+    btns.innerHTML = "";
+    function add(label, page, disabled, active) {
+      var b = document.createElement("button");
+      b.type = "button";
+      b.className = "page-btn" + (active ? " active" : "");
+      b.textContent = label;
+      b.disabled = !!disabled;
+      b.addEventListener("click", function () { onPage(page); });
+      btns.appendChild(b);
+    }
+    add("‹", Math.max(1, cur - 1), cur <= 1, false);
+    for (var i = 1; i <= pages; i++) add(String(i), i, false, i === cur);
+    add("›", Math.min(pages, cur + 1), cur >= pages, false);
+  }
+
+  function openNetDrawer(row) {
+    state.net.editId = row ? row.id : null;
+    document.getElementById("drawerTitle").textContent = row ? "编辑网络" : "新增网络";
+    document.getElementById("editId").value = row ? row.id : "";
+    document.getElementById("fldDisplayName").value = row ? row.displayName : "";
+    document.getElementById("fldChainId").value = row ? row.chainId : "";
+    document.getElementById("fldIconUrl").value = row ? row.iconUrl || "" : "";
+    document.getElementById("fldStatus").value = row ? row.status : "enabled";
+    document.getElementById("fldDepositOpen").checked = row ? !!row.depositOpen : true;
+    document.getElementById("fldWithdrawOpen").checked = row ? !!row.withdrawOpen : true;
+    document.getElementById("fldDepositConf").value = row ? row.depositConfirmations : "";
+    document.getElementById("fldWithdrawConf").value = row && row.withdrawConfirmations != null ? row.withdrawConfirmations : "";
+    document.getElementById("fldEtaDeposit").value = row && row.etaDepositMin != null ? row.etaDepositMin : "";
+    document.getElementById("fldEtaWithdraw").value = row && row.etaWithdrawMin != null ? row.etaWithdrawMin : "";
+    document.getElementById("fldMinDeposit").value = row ? row.minDeposit : "1";
+    document.getElementById("fldMinWithdraw").value = row ? row.minWithdraw : "1";
+    document.getElementById("fldWithdrawFee").value = row ? row.withdrawFee : "1";
+    document.getElementById("fldExplorerTx").value = row ? row.explorerTxTemplate : "";
+    document.getElementById("fldExplorerAddr").value = row ? row.explorerAddressTemplate || "" : "";
+    document.getElementById("fldRpcRef").value = row ? row.rpcRef : "";
+    document.getElementById("fldRemark").value = row ? row.remark || "" : "";
+    document.getElementById("formDrawer").classList.add("open");
+  }
+  function closeNetDrawer() {
+    document.getElementById("formDrawer").classList.remove("open");
+    state.net.editId = null;
+  }
+
+  function saveNetwork() {
+    var displayName = document.getElementById("fldDisplayName").value.trim();
+    var chainId = document.getElementById("fldChainId").value.trim();
+    var depositConf = document.getElementById("fldDepositConf").value.trim();
+    var minDeposit = document.getElementById("fldMinDeposit").value.trim();
+    var minWithdraw = document.getElementById("fldMinWithdraw").value.trim();
+    var withdrawFee = document.getElementById("fldWithdrawFee").value.trim();
+    var explorerTx = document.getElementById("fldExplorerTx").value.trim();
+    var rpcRef = document.getElementById("fldRpcRef").value.trim();
+    if (!displayName) return toast("请填写网络名称", "err");
+    if (!chainId || !/^\d+$/.test(chainId)) return toast("链 ID 须为数字", "err");
+    if (!depositConf || Number(depositConf) < 1) return toast("请填写有效充值确认数", "err");
+    if (!isDecimal(minDeposit) || !isDecimal(minWithdraw) || !isDecimal(withdrawFee)) return toast("金额须为非负十进制数字", "err");
+    if (!explorerTx || explorerTx.indexOf("{txHash}") < 0) return toast("交易浏览器模板须包含 {txHash}", "err");
+    if (!rpcRef) return toast("请填写 RPC 配置引用", "err");
+    var addrTpl = document.getElementById("fldExplorerAddr").value.trim();
+    if (addrTpl && addrTpl.indexOf("{address}") < 0) return toast("地址浏览器模板须包含 {address}", "err");
+    if (networks.some(function (n) { return String(n.chainId) === chainId && n.id !== state.net.editId; })) {
+      return toast("链 ID 已存在", "err");
+    }
+    var payload = {
+      displayName: displayName, chainId: chainId,
+      iconUrl: document.getElementById("fldIconUrl").value.trim(),
+      status: document.getElementById("fldStatus").value,
+      depositOpen: document.getElementById("fldDepositOpen").checked,
+      withdrawOpen: document.getElementById("fldWithdrawOpen").checked,
+      depositConfirmations: Number(depositConf),
+      withdrawConfirmations: document.getElementById("fldWithdrawConf").value === "" ? null : Number(document.getElementById("fldWithdrawConf").value),
+      etaDepositMin: document.getElementById("fldEtaDeposit").value === "" ? null : Number(document.getElementById("fldEtaDeposit").value),
+      etaWithdrawMin: document.getElementById("fldEtaWithdraw").value === "" ? null : Number(document.getElementById("fldEtaWithdraw").value),
+      minDeposit: minDeposit, minWithdraw: minWithdraw, withdrawFee: withdrawFee,
+      explorerTxTemplate: explorerTx, explorerAddressTemplate: addrTpl, rpcRef: rpcRef,
+      remark: document.getElementById("fldRemark").value.trim(),
+      updatedAt: nowStr(), updatedBy: "运营管理员"
+    };
+    if (state.net.editId) {
+      var idx = networks.findIndex(function (n) { return n.id === state.net.editId; });
+      if (idx >= 0) networks[idx] = Object.assign({}, networks[idx], payload);
+      toast("网络已更新");
+    } else {
+      networks.unshift(Object.assign({ id: "n-" + Date.now(), createdAt: nowStr(), createdBy: "运营管理员" }, payload));
+      toast("网络已新增");
+    }
+    closeNetDrawer();
+    fillAssetNetworkSelects();
+    renderNetTable();
+  }
+
+  /* ---------- assets ---------- */
+  function fillAssetNetworkSelects() {
+    var opts = '<option value="">全部</option>';
+    var optsForm = '<option value="">请选择网络</option>';
+    networks.forEach(function (n) {
+      var lab = escapeHtml(n.displayName) + " (" + escapeHtml(n.chainId) + ")";
+      opts += '<option value="' + escapeAttr(n.id) + '">' + lab + "</option>";
+      optsForm += '<option value="' + escapeAttr(n.id) + '">' + lab +
+        (n.status !== "enabled" ? " · " + (n.status === "maintenance" ? "维护中" : "已禁用") : "") +
+        "</option>";
+    });
+    var af = document.getElementById("afNetwork");
+    var cur = af.value;
+    af.innerHTML = opts;
+    if (cur) af.value = cur;
+    document.getElementById("afldNetworkId").innerHTML = optsForm;
+  }
+
+  function filteredAssets() {
+    var f = state.asset.filters;
+    return assets.filter(function (r) {
+      if (f.networkId && r.networkId !== f.networkId) return false;
+      if (f.code && r.assetCode.toLowerCase().indexOf(f.code.toLowerCase()) < 0) return false;
+      if (f.symbol && r.chainSymbol.toLowerCase().indexOf(f.symbol.toLowerCase()) < 0) return false;
+      if (f.status && r.status !== f.status) return false;
+      if (f.deposit !== "" && f.deposit != null && (r.depositOpen ? "1" : "0") !== f.deposit) return false;
+      if (f.withdraw !== "" && f.withdraw != null && (r.withdrawOpen ? "1" : "0") !== f.withdraw) return false;
+      if (f.contract && r.tokenContract.toLowerCase().indexOf(f.contract.toLowerCase()) < 0) return false;
+      return true;
+    });
+  }
+
+  function renderAssetTable() {
+    var list = filteredAssets();
+    var total = list.length;
+    var pages = Math.max(1, Math.ceil(total / PAGE_SIZE));
+    if (state.asset.page > pages) state.asset.page = pages;
+    var start = (state.asset.page - 1) * PAGE_SIZE;
+    var pageRows = list.slice(start, start + PAGE_SIZE);
+    document.getElementById("assetTotalCount").textContent = total;
+    document.getElementById("assetPageInfo").textContent =
+      total === 0 ? "暂无数据" : "第 " + state.asset.page + " / " + pages + " 页 · 每页 " + PAGE_SIZE + " 条";
+    var body = document.getElementById("assetTableBody");
+    if (!pageRows.length) {
+      body.innerHTML = '<tr class="empty-row"><td colspan="17">无匹配资产，请调整筛选或新增资产</td></tr>';
+    } else {
+      body.innerHTML = pageRows.map(function (r) {
+        var net = networkById(r.networkId);
+        return (
+          '<tr data-id="' + escapeAttr(r.id) + '">' +
+          '<td><strong>' + escapeHtml(r.assetCode) + "</strong></td>" +
+          "<td>" + escapeHtml(r.chainSymbol) + "</td>" +
+          "<td>" + escapeHtml(net ? net.displayName : r.networkId) +
+          (net ? '<div class="network-short-text">chainId ' + escapeHtml(net.chainId) + "</div>" : "") +
+          "</td>" +
+          "<td>" + boolTag(r.depositOpen) + "</td>" +
+          "<td>" + boolTag(r.withdrawOpen) + "</td>" +
+          "<td>" + escapeHtml(r.decimals) + "</td>" +
+          '<td class="td-mono addr-cell" title="' + escapeAttr(r.tokenContract) + '">' + escapeHtml(r.tokenContract) + "</td>" +
+          '<td class="td-mono addr-cell" title="' + escapeAttr(r.depositBridge || "") + '">' + escapeHtml(r.depositBridge || "—") + "</td>" +
+          '<td class="td-mono addr-cell" title="' + escapeAttr(r.withdrawBridge || "") + '">' + escapeHtml(r.withdrawBridge || "—") + "</td>" +
+          "<td>" + iconHtml(r.chainSymbol || r.assetCode, r.logoUrl) + "</td>" +
+          '<td class="td-muted text-small">' + escapeHtml(r.remark || "—") + "</td>" +
+          '<td class="td-mono text-small">' + escapeHtml(r.id) + "</td>" +
+          '<td class="td-muted text-small">' + escapeHtml(r.createdAt) + "</td>" +
+          '<td class="td-muted">' + escapeHtml(r.createdBy) + "</td>" +
+          '<td class="td-muted text-small">' + escapeHtml(r.updatedAt) + "</td>" +
+          '<td class="td-muted">' + escapeHtml(r.updatedBy) + "</td>" +
+          '<td class="td-sticky-ops"><div class="sticky-ops-cell">' +
+          '<span class="ops-status">' + statusTag(r.status) + "</span>" +
+          '<div class="actions-cell">' +
+          '<button type="button" class="btn-link" data-aact="edit">修改</button>' +
+          (r.status === "enabled"
+            ? '<button type="button" class="btn-link-warning" data-aact="disable">禁用</button>'
+            : '<button type="button" class="btn-link-success" data-aact="enable">启用</button>') +
+          "</div></div></td></tr>"
+        );
+      }).join("");
+    }
+    renderPager("assetPageBtns", pages, state.asset.page, function (p) {
+      state.asset.page = p;
+      renderAssetTable();
+    });
+  }
+
+  /** 资产编码：符号_链ID，冲突时追加 -2、-3…；编辑时保持不变 */
+  function generateAssetCode(networkId, chainSymbol, excludeId) {
+    var net = networkById(networkId);
+    var sym = String(chainSymbol || "ASSET").trim().toUpperCase().replace(/[^A-Z0-9]+/g, "") || "ASSET";
+    var chainPart = net && net.chainId ? String(net.chainId) : "0";
+    var base = sym + "_" + chainPart;
+    var code = base;
+    var n = 2;
+    while (
+      assets.some(function (a) {
+        return a.assetCode === code && a.id !== excludeId;
+      })
+    ) {
+      code = base + "-" + n;
+      n += 1;
+    }
+    return code;
+  }
+
+  function previewAssetCode() {
+    var codeEl = document.getElementById("afldCode");
+    if (state.asset.editId) return;
+    var networkId = document.getElementById("afldNetworkId").value;
+    var symbol = document.getElementById("afldSymbol").value.trim();
+    if (!networkId || !symbol) {
+      codeEl.value = "";
+      codeEl.placeholder = "选择网络并填写链上符号后自动生成";
+      return;
+    }
+    codeEl.value = generateAssetCode(networkId, symbol, null);
+  }
+
+  function openAssetDrawer(row) {
+    state.asset.editId = row ? row.id : null;
+    document.getElementById("assetDrawerTitle").textContent = row ? "编辑资产" : "新增资产";
+    fillAssetNetworkSelects();
+    document.getElementById("assetEditId").value = row ? row.id : "";
+    document.getElementById("afldNetworkId").value = row ? row.networkId : (networks[0] ? networks[0].id : "");
+    document.getElementById("afldSymbol").value = row ? row.chainSymbol : "USDC";
+    document.getElementById("afldDecimals").value = row ? row.decimals : "6";
+    document.getElementById("afldLogo").value = row ? row.logoUrl || "" : "";
+    document.getElementById("afldTokenContract").value = row ? row.tokenContract : "";
+    document.getElementById("afldDepositBridge").value = row ? row.depositBridge || "" : "";
+    document.getElementById("afldWithdrawBridge").value = row ? row.withdrawBridge || "" : "";
+    document.getElementById("afldStatus").value = row ? row.status : "enabled";
+    document.getElementById("afldDepositOpen").checked = row ? !!row.depositOpen : true;
+    document.getElementById("afldWithdrawOpen").checked = row ? !!row.withdrawOpen : true;
+    document.getElementById("afldRemark").value = row ? row.remark || "" : "";
+    var codeEl = document.getElementById("afldCode");
+    if (row) {
+      codeEl.value = row.assetCode;
+      codeEl.placeholder = "";
+    } else {
+      codeEl.value = "";
+      previewAssetCode();
+    }
+    document.getElementById("assetDrawer").classList.add("open");
+  }
+  function closeAssetDrawer() {
+    document.getElementById("assetDrawer").classList.remove("open");
+    state.asset.editId = null;
+  }
+
+  function fillAssetNetworkSelects() {
+    var optsAll = '<option value="">全部</option>';
+    var optsForm = '<option value="">请选择网络</option>';
+    networks.forEach(function (n) {
+      var lab = n.displayName + " (" + n.chainId + ")";
+      optsAll += '<option value="' + escapeAttr(n.id) + '">' + escapeHtml(lab) + "</option>";
+      optsForm += '<option value="' + escapeAttr(n.id) + '">' + escapeHtml(lab) +
+        (n.status !== "enabled" ? " · " + (n.status === "maintenance" ? "维护中" : "已禁用") : "") +
+        "</option>";
+    });
+    var af = document.getElementById("afNetwork");
+    var keep = af.value;
+    af.innerHTML = optsAll;
+    if (keep) af.value = keep;
+    document.getElementById("afldNetworkId").innerHTML = optsForm;
+  }
+
+  function saveAsset() {
+    var networkId = document.getElementById("afldNetworkId").value;
+    var chainSymbol = document.getElementById("afldSymbol").value.trim();
+    var decimals = document.getElementById("afldDecimals").value.trim();
+    var tokenContract = document.getElementById("afldTokenContract").value.trim();
+    if (!networkId) return toast("请选择所属网络", "err");
+    if (!chainSymbol) return toast("请填写链上符号", "err");
+    if (decimals === "" || Number(decimals) < 0 || Number(decimals) > 36) return toast("代币精度须为 0–36", "err");
+    if (!isAddress(tokenContract)) return toast("代币合约地址格式无效（0x + 40 位十六进制）", "err");
+    var depB = document.getElementById("afldDepositBridge").value.trim();
+    var wdB = document.getElementById("afldWithdrawBridge").value.trim();
+    if (depB && !isAddress(depB)) return toast("充值桥或网关合约地址格式无效", "err");
+    if (wdB && !isAddress(wdB)) return toast("提现桥或出金合约地址格式无效", "err");
+
+    var assetCode;
+    if (state.asset.editId) {
+      var existing = assets.find(function (a) { return a.id === state.asset.editId; });
+      assetCode = existing ? existing.assetCode : generateAssetCode(networkId, chainSymbol, state.asset.editId);
+    } else {
+      assetCode = generateAssetCode(networkId, chainSymbol, null);
+    }
+
+    var dupC = assets.some(function (a) {
+      return a.networkId === networkId &&
+        a.tokenContract.toLowerCase() === tokenContract.toLowerCase() &&
+        a.id !== state.asset.editId;
+    });
+    if (dupC) return toast("该网络下代币合约已存在", "err");
+
+    var payload = {
+      networkId: networkId,
+      assetCode: assetCode,
+      chainSymbol: chainSymbol,
+      decimals: Number(decimals),
+      tokenContract: tokenContract,
+      depositBridge: depB,
+      withdrawBridge: wdB,
+      depositOpen: document.getElementById("afldDepositOpen").checked,
+      withdrawOpen: document.getElementById("afldWithdrawOpen").checked,
+      status: document.getElementById("afldStatus").value,
+      logoUrl: document.getElementById("afldLogo").value.trim(),
+      remark: document.getElementById("afldRemark").value.trim(),
+      updatedAt: nowStr(),
+      updatedBy: "运营管理员"
+    };
+
+    if (state.asset.editId) {
+      var idx = assets.findIndex(function (a) { return a.id === state.asset.editId; });
+      if (idx >= 0) assets[idx] = Object.assign({}, assets[idx], payload);
+      toast("资产已更新");
+    } else {
+      assets.unshift(Object.assign({
+        id: "a-" + Date.now(),
+        createdAt: nowStr(),
+        createdBy: "运营管理员"
+      }, payload));
+      toast("资产已新增，编码：" + assetCode);
+    }
+    closeAssetDrawer();
+    renderAssetTable();
+  }
+
+  function openConfirm(title, msg, cb) {
+    document.getElementById("confirmTitle").textContent = title;
+    document.getElementById("confirmMsg").textContent = msg;
+    state.confirmCb = cb;
+    document.getElementById("confirmModal").classList.add("open");
+  }
+  function closeConfirm() {
+    document.getElementById("confirmModal").classList.remove("open");
+    state.confirmCb = null;
+  }
+
+  /* events */
+  document.querySelectorAll(".nav-item[data-nav]").forEach(function (el) {
+    el.addEventListener("click", function () {
+      switchPage(el.getAttribute("data-nav"));
+    });
+  });
+
+  document.getElementById("btnSearch").addEventListener("click", function () {
+    state.net.filters = {
+      name: document.getElementById("fName").value.trim(),
+      chainId: document.getElementById("fChainId").value.trim(),
+      status: document.getElementById("fStatus").value,
+      deposit: document.getElementById("fDeposit").value,
+      withdraw: document.getElementById("fWithdraw").value
+    };
+    state.net.page = 1;
+    renderNetTable();
+  });
+  document.getElementById("btnReset").addEventListener("click", function () {
+    document.getElementById("fName").value = "";
+    document.getElementById("fChainId").value = "";
+    document.getElementById("fStatus").value = "";
+    document.getElementById("fDeposit").value = "";
+    document.getElementById("fWithdraw").value = "";
+    state.net.filters = {};
+    state.net.page = 1;
+    renderNetTable();
+  });
+  document.getElementById("btnAddNetwork").addEventListener("click", function () { openNetDrawer(null); });
+  document.getElementById("btnCloseDrawer").addEventListener("click", closeNetDrawer);
+  document.getElementById("btnCancelDrawer").addEventListener("click", closeNetDrawer);
+  document.getElementById("btnSaveNetwork").addEventListener("click", saveNetwork);
+  document.getElementById("formDrawer").addEventListener("click", function (e) {
+    if (e.target === this) closeNetDrawer();
+  });
+
+  document.getElementById("btnAssetSearch").addEventListener("click", function () {
+    state.asset.filters = {
+      networkId: document.getElementById("afNetwork").value,
+      code: document.getElementById("afCode").value.trim(),
+      symbol: document.getElementById("afSymbol").value.trim(),
+      status: document.getElementById("afStatus").value,
+      deposit: document.getElementById("afDeposit").value,
+      withdraw: document.getElementById("afWithdraw").value,
+      contract: document.getElementById("afContract").value.trim()
+    };
+    state.asset.page = 1;
+    renderAssetTable();
+  });
+  document.getElementById("btnAssetReset").addEventListener("click", function () {
+    document.getElementById("afNetwork").value = "";
+    document.getElementById("afCode").value = "";
+    document.getElementById("afSymbol").value = "";
+    document.getElementById("afStatus").value = "";
+    document.getElementById("afDeposit").value = "";
+    document.getElementById("afWithdraw").value = "";
+    document.getElementById("afContract").value = "";
+    state.asset.filters = {};
+    state.asset.page = 1;
+    renderAssetTable();
+  });
+  document.getElementById("btnAddAsset").addEventListener("click", function () { openAssetDrawer(null); });
+  document.getElementById("btnCloseAssetDrawer").addEventListener("click", closeAssetDrawer);
+  document.getElementById("btnCancelAssetDrawer").addEventListener("click", closeAssetDrawer);
+  document.getElementById("btnSaveAsset").addEventListener("click", saveAsset);
+  document.getElementById("assetDrawer").addEventListener("click", function (e) {
+    if (e.target === this) closeAssetDrawer();
+  });
+  document.getElementById("afldNetworkId").addEventListener("change", previewAssetCode);
+  document.getElementById("afldSymbol").addEventListener("input", previewAssetCode);
+
+  document.getElementById("btnCloseConfirm").addEventListener("click", closeConfirm);
+  document.getElementById("btnConfirmCancel").addEventListener("click", closeConfirm);
+  document.getElementById("btnConfirmOk").addEventListener("click", function () {
+    if (typeof state.confirmCb === "function") state.confirmCb();
+    closeConfirm();
+  });
+  document.getElementById("confirmModal").addEventListener("click", function (e) {
+    if (e.target === this) closeConfirm();
+  });
+
+  document.getElementById("tableBody").addEventListener("click", function (e) {
+    var btn = e.target.closest("[data-act]");
+    if (!btn) return;
+    var tr = btn.closest("tr");
+    var id = tr && tr.getAttribute("data-id");
+    var row = networks.find(function (n) { return n.id === id; });
+    if (!row) return;
+    var act = btn.getAttribute("data-act");
+    if (act === "edit") openNetDrawer(row);
+    if (act === "disable") {
+      openConfirm("禁用网络", "确认禁用网络「" + row.displayName + "」？", function () {
+        row.status = "disabled";
+        row.updatedAt = nowStr();
+        row.updatedBy = "运营管理员";
+        toast("已禁用 " + row.displayName);
+        renderNetTable();
+      });
+    }
+    if (act === "enable") {
+      row.status = "enabled";
+      row.updatedAt = nowStr();
+      row.updatedBy = "运营管理员";
+      toast("已启用 " + row.displayName);
+      renderNetTable();
+    }
+  });
+
+  document.getElementById("assetTableBody").addEventListener("click", function (e) {
+    var btn = e.target.closest("[data-aact]");
+    if (!btn) return;
+    var tr = btn.closest("tr");
+    var id = tr && tr.getAttribute("data-id");
+    var row = assets.find(function (a) { return a.id === id; });
+    if (!row) return;
+    var act = btn.getAttribute("data-aact");
+    if (act === "edit") openAssetDrawer(row);
+    if (act === "disable") {
+      openConfirm("禁用资产", "确认禁用资产「" + row.assetCode + "」？", function () {
+        row.status = "disabled";
+        row.updatedAt = nowStr();
+        row.updatedBy = "运营管理员";
+        toast("已禁用资产 " + row.assetCode);
+        renderAssetTable();
+      });
+    }
+    if (act === "enable") {
+      row.status = "enabled";
+      row.updatedAt = nowStr();
+      row.updatedBy = "运营管理员";
+      toast("已启用资产 " + row.assetCode);
+      renderAssetTable();
+    }
+  });
+
+  ["fName", "fChainId"].forEach(function (id) {
+    document.getElementById(id).addEventListener("keydown", function (e) {
+      if (e.key === "Enter") document.getElementById("btnSearch").click();
+    });
+  });
+  ["afCode", "afSymbol", "afContract"].forEach(function (id) {
+    document.getElementById(id).addEventListener("keydown", function (e) {
+      if (e.key === "Enter") document.getElementById("btnAssetSearch").click();
+    });
+  });
+
+
+  /* ========== 充值 / 提现记录 ========== */
+  state.dep = { page: 1, filters: {} };
+  state.wd = { page: 1, filters: {} };
+
+  function shortAddr(a) {
+    if (!a || a.length < 12) return a || "—";
+    return a.slice(0, 6) + "…" + a.slice(-4);
+  }
+  function shortHash(h) {
+    if (!h) return "—";
+    if (h.length < 16) return h;
+    return h.slice(0, 10) + "…" + h.slice(-6);
+  }
+
+  var deposits = [
+    {
+      id: "dep_ok_1", networkName: "Arbitrum One", asset: "USDC",
+      walletAddress: "0xEd36a1b2c3d4e5f678901234567890abcdefF167",
+      amount: "500", creditedAmount: "500",
+      txHash: "0xaaa111bbb222ccc333ddd444eee555fff666777888999000aaabbbcccdddeee",
+      fromAddress: "0xEd36a1b2c3d4e5f678901234567890abcdefF167",
+      toAddress: "0xBridgeDepositRecv0000000000000000000ABC",
+      accountId: "acc_10086", accountLabel: "0xEd36…F167",
+      submittedAt: "2025-09-20 10:12:03",
+      confirmCurrent: 12, confirmRequired: 12,
+      creditedAt: "2025-09-20 10:18:41",
+      failReason: "", exceptionType: "none",
+      createdAt: "2025-09-20 10:12:03", updatedAt: "2025-09-20 10:18:41",
+      remark: "", status: "success"
+    },
+    {
+      id: "dep_conf_1", networkName: "Arbitrum One", asset: "USDC",
+      walletAddress: "0xBb11c2d3e4f5a6b7c8d9e0f1a2b3c4d5e6f7a8b9",
+      amount: "120.5", creditedAmount: "",
+      txHash: "0xbbb222ccc333ddd444eee555fff666777888999000aaabbbcccdddeee111222",
+      fromAddress: "0xBb11c2d3e4f5a6b7c8d9e0f1a2b3c4d5e6f7a8b9",
+      toAddress: "0xBridgeDepositRecv0000000000000000000ABC",
+      accountId: "acc_10087", accountLabel: "0xBb11…a8b9",
+      submittedAt: "2025-09-24 14:02:11",
+      confirmCurrent: 5, confirmRequired: 12,
+      creditedAt: "",
+      failReason: "", exceptionType: "none",
+      createdAt: "2025-09-24 14:02:11", updatedAt: "2025-09-24 14:08:00",
+      remark: "链上确认中", status: "confirming"
+    },
+    {
+      id: "dep_conf_2", networkName: "Arbitrum One", asset: "USDC",
+      walletAddress: "0xCc22d3e4f5a6b7c8d9e0f1a2b3c4d5e6f7a8b9c0",
+      amount: "10", creditedAmount: "",
+      txHash: "0xccc333ddd444eee555fff666777888999000aaabbbcccdddeee111222333444",
+      fromAddress: "0xCc22d3e4f5a6b7c8d9e0f1a2b3c4d5e6f7a8b9c0",
+      toAddress: "0xBridgeDepositRecv0000000000000000000ABC",
+      accountId: "acc_10088", accountLabel: "0xCc22…b9c0",
+      submittedAt: "2025-09-24 15:30:00",
+      confirmCurrent: 11, confirmRequired: 12,
+      creditedAt: "",
+      failReason: "", exceptionType: "none",
+      createdAt: "2025-09-24 15:30:00", updatedAt: "2025-09-24 15:41:20",
+      remark: "", status: "confirming"
+    },
+    {
+      id: "dep_fail_1", networkName: "Arbitrum One", asset: "USDC",
+      walletAddress: "0xDd33e4f5a6b7c8d9e0f1a2b3c4d5e6f7a8b9c0d1",
+      amount: "80", creditedAmount: "",
+      txHash: "0xddd444eee555fff666777888999000aaabbbcccdddeee111222333444555666",
+      fromAddress: "0xDd33e4f5a6b7c8d9e0f1a2b3c4d5e6f7a8b9c0d1",
+      toAddress: "0xBridgeDepositRecv0000000000000000000ABC",
+      accountId: "acc_10089", accountLabel: "0xDd33…c0d1",
+      submittedAt: "2025-09-18 09:01:22",
+      confirmCurrent: 2, confirmRequired: 12,
+      creditedAt: "",
+      failReason: "确认超时，未达到所需确认数",
+      exceptionType: "confirm_timeout",
+      createdAt: "2025-09-18 09:01:22", updatedAt: "2025-09-18 12:01:22",
+      remark: "超时关闭", status: "failed"
+    },
+    {
+      id: "dep_fail_2", networkName: "Arbitrum One", asset: "USDC",
+      walletAddress: "0xEe44f5a6b7c8d9e0f1a2b3c4d5e6f7a8b9c0d1e2",
+      amount: "200", creditedAmount: "",
+      txHash: "0xeee555fff666777888999000aaabbbcccdddeee111222333444555666777888",
+      fromAddress: "0xEe44f5a6b7c8d9e0f1a2b3c4d5e6f7a8b9c0d1e2",
+      toAddress: "0xBridgeDepositRecv0000000000000000000ABC",
+      accountId: "acc_10090", accountLabel: "0xEe44…d1e2",
+      submittedAt: "2025-09-19 16:20:00",
+      confirmCurrent: 12, confirmRequired: 12,
+      creditedAt: "",
+      failReason: "链上金额与请求金额不一致",
+      exceptionType: "amount_mismatch",
+      createdAt: "2025-09-19 16:20:00", updatedAt: "2025-09-19 16:35:10",
+      remark: "", status: "failed"
+    },
+    {
+      id: "dep_ok_2", networkName: "Base", asset: "USDC",
+      walletAddress: "0xFf55a6b7c8d9e0f1a2b3c4d5e6f7a8b9c0d1e2f3",
+      amount: "25.25", creditedAmount: "25.25",
+      txHash: "0xfff666777888999000aaabbbcccdddeee111222333444555666777888999000",
+      fromAddress: "0xFf55a6b7c8d9e0f1a2b3c4d5e6f7a8b9c0d1e2f3",
+      toAddress: "0xBaseDepositRecv000000000000000000000DEF",
+      accountId: "acc_10091", accountLabel: "0xFf55…e2f3",
+      submittedAt: "2025-09-10 11:00:00",
+      confirmCurrent: 6, confirmRequired: 6,
+      creditedAt: "2025-09-10 11:06:12",
+      failReason: "", exceptionType: "none",
+      createdAt: "2025-09-10 11:00:00", updatedAt: "2025-09-10 11:06:12",
+      remark: "历史成功样例（网络已维护）", status: "success"
+    }
+  ];
+
+  var withdraws = [
+    {
+      id: "wd_review_1", networkName: "Arbitrum One", asset: "USDC",
+      accountId: "acc_10086", accountLabel: "0xEd36…F167",
+      toAddress: "0xEd36a1b2c3d4e5f678901234567890abcdefF167",
+      totalDebit: "101", receiveAmount: "100", fee: "1",
+      auditStatus: "pending", status: "pending_review",
+      createdAt: "2025-09-24 16:00:00",
+      txHash: "", failReason: "",
+      auditor: "", auditedAt: "", auditRemark: "",
+      lockedAt: "2025-09-24 16:00:01", completedAt: "",
+      remark: "大额提现待审"
+    },
+    {
+      id: "wd_review_2", networkName: "Arbitrum One", asset: "USDC",
+      accountId: "acc_10087", accountLabel: "0xBb11…a8b9",
+      toAddress: "0xBb11c2d3e4f5a6b7c8d9e0f1a2b3c4d5e6f7a8b9",
+      totalDebit: "51", receiveAmount: "50", fee: "1",
+      auditStatus: "pending", status: "pending_review",
+      createdAt: "2025-09-24 16:30:00",
+      txHash: "", failReason: "",
+      auditor: "", auditedAt: "", auditRemark: "",
+      lockedAt: "2025-09-24 16:30:01", completedAt: "",
+      remark: ""
+    },
+    {
+      id: "wd_proc_1", networkName: "Arbitrum One", asset: "USDC",
+      accountId: "acc_10088", accountLabel: "0xCc22…b9c0",
+      toAddress: "0xCc22d3e4f5a6b7c8d9e0f1a2b3c4d5e6f7a8b9c0",
+      totalDebit: "21", receiveAmount: "20", fee: "1",
+      auditStatus: "approved", status: "processing",
+      createdAt: "2025-09-23 10:00:00",
+      txHash: "0xwdproc111222333444555666777888999000aaabbbcccdddeeefff000111222",
+      failReason: "",
+      auditor: "Miller", auditedAt: "2025-09-23 10:05:00", auditRemark: "审核通过",
+      lockedAt: "2025-09-23 10:00:01", completedAt: "",
+      remark: "出金广播中"
+    },
+    {
+      id: "wd_ok_1", networkName: "Arbitrum One", asset: "USDC",
+      accountId: "acc_10086", accountLabel: "0xEd36…F167",
+      toAddress: "0xEd36a1b2c3d4e5f678901234567890abcdefF167",
+      totalDebit: "11", receiveAmount: "10", fee: "1",
+      auditStatus: "approved", status: "success",
+      createdAt: "2025-09-15 09:10:00",
+      txHash: "0xwdsuccessaaaabbbbccccddddeeeeffff000011112222333344445555666677",
+      failReason: "",
+      auditor: "Terry", auditedAt: "2025-09-15 09:12:00", auditRemark: "OK",
+      lockedAt: "2025-09-15 09:10:01", completedAt: "2025-09-15 09:25:33",
+      remark: ""
+    },
+    {
+      id: "wd_fail_1", networkName: "Arbitrum One", asset: "USDC",
+      accountId: "acc_10089", accountLabel: "0xDd33…c0d1",
+      toAddress: "0xDd33e4f5a6b7c8d9e0f1a2b3c4d5e6f7a8b9c0d1",
+      totalDebit: "31", receiveAmount: "30", fee: "1",
+      auditStatus: "approved", status: "failed",
+      createdAt: "2025-09-12 13:00:00",
+      txHash: "0xwdfail9999888877776666555544443333222211110000ffffeeeeddddcccc",
+      failReason: "链上交易失败，资金已释放回账户",
+      auditor: "emilyn", auditedAt: "2025-09-12 13:05:00", auditRemark: "通过",
+      lockedAt: "2025-09-12 13:00:01", completedAt: "2025-09-12 13:40:00",
+      remark: "失败释放"
+    },
+    {
+      id: "wd_rej_1", networkName: "Arbitrum One", asset: "USDC",
+      accountId: "acc_10090", accountLabel: "0xEe44…d1e2",
+      toAddress: "0xSuspicious000000000000000000000000000001",
+      totalDebit: "1001", receiveAmount: "1000", fee: "1",
+      auditStatus: "rejected", status: "rejected",
+      createdAt: "2025-09-11 08:00:00",
+      txHash: "",
+      failReason: "目标地址命中风险名单",
+      auditor: "Miller", auditedAt: "2025-09-11 08:20:00",
+      auditRemark: "目标地址命中风险名单",
+      lockedAt: "2025-09-11 08:00:01", completedAt: "2025-09-11 08:20:00",
+      remark: ""
+    }
+  ];
+
+  function depStatusTag(s) {
+    if (s === "success") return '<span class="tag tag-success">充值成功</span>';
+    if (s === "confirming") return '<span class="tag tag-processing">确认中</span>';
+    if (s === "failed") return '<span class="tag tag-error">充值失败</span>';
+    return '<span class="tag tag-draft">' + escapeHtml(s) + "</span>";
+  }
+  function wdStatusTag(s) {
+    var map = {
+      pending_review: ["tag-pending", "待审核"],
+      processing: ["tag-processing", "处理中"],
+      success: ["tag-success", "提现成功"],
+      failed: ["tag-error", "提现失败"],
+      rejected: ["tag-error", "已拒绝"]
+    };
+    var m = map[s] || ["tag-draft", s];
+    return '<span class="tag ' + m[0] + '">' + m[1] + "</span>";
+  }
+  function auditTag(s) {
+    if (s === "pending") return '<span class="tag tag-pending">待审核</span>';
+    if (s === "approved") return '<span class="tag tag-success">已通过</span>';
+    if (s === "rejected") return '<span class="tag tag-error">已拒绝</span>';
+    return "—";
+  }
+  function exceptionLabel(t) {
+    var map = {
+      none: "无",
+      confirm_timeout: "确认超时",
+      amount_mismatch: "金额不匹配",
+      invalid_memo: "无效备注",
+      chain_reorg: "链重组"
+    };
+    return map[t] || t || "—";
+  }
+
+  function filteredDeps() {
+    var f = state.dep.filters;
+    return deposits.filter(function (r) {
+      if (f.network && r.networkName.toLowerCase().indexOf(f.network.toLowerCase()) < 0) return false;
+      if (f.asset && r.asset.toLowerCase().indexOf(f.asset.toLowerCase()) < 0) return false;
+      if (f.status && r.status !== f.status) return false;
+      if (f.account) {
+        var q = f.account.toLowerCase();
+        if ((r.accountId + r.accountLabel + r.walletAddress).toLowerCase().indexOf(q) < 0) return false;
+      }
+      if (f.tx && (r.txHash || "").toLowerCase().indexOf(f.tx.toLowerCase()) < 0) return false;
+      if (f.exception && r.exceptionType !== f.exception) return false;
+      return true;
+    });
+  }
+
+  function filteredWds() {
+    var f = state.wd.filters;
+    return withdraws.filter(function (r) {
+      if (f.network && r.networkName.toLowerCase().indexOf(f.network.toLowerCase()) < 0) return false;
+      if (f.asset && r.asset.toLowerCase().indexOf(f.asset.toLowerCase()) < 0) return false;
+      if (f.status && r.status !== f.status) return false;
+      if (f.audit && r.auditStatus !== f.audit) return false;
+      if (f.account) {
+        var q = f.account.toLowerCase();
+        if ((r.accountId + r.accountLabel).toLowerCase().indexOf(q) < 0) return false;
+      }
+      if (f.to && (r.toAddress || "").toLowerCase().indexOf(f.to.toLowerCase()) < 0) return false;
+      if (f.tx && (r.txHash || "").toLowerCase().indexOf(f.tx.toLowerCase()) < 0) return false;
+      return true;
+    });
+  }
+
+  function renderDepTable() {
+    var list = filteredDeps();
+    var total = list.length;
+    var pages = Math.max(1, Math.ceil(total / PAGE_SIZE));
+    if (state.dep.page > pages) state.dep.page = pages;
+    var start = (state.dep.page - 1) * PAGE_SIZE;
+    var rows = list.slice(start, start + PAGE_SIZE);
+    document.getElementById("depTotalCount").textContent = total;
+    document.getElementById("depPageInfo").textContent =
+      total === 0 ? "暂无数据" : "第 " + state.dep.page + " / " + pages + " 页 · 每页 " + PAGE_SIZE + " 条";
+    var body = document.getElementById("depTableBody");
+    if (!rows.length) {
+      body.innerHTML = '<tr class="empty-row"><td colspan="18">无匹配充值记录</td></tr>';
+    } else {
+      body.innerHTML = rows.map(function (r) {
+        var amtLabel = r.status === "success" ? r.creditedAmount : r.amount;
+        var conf = r.confirmCurrent + " / " + r.confirmRequired;
+        return (
+          '<tr data-id="' + escapeAttr(r.id) + '">' +
+          "<td>" + escapeHtml(r.networkName) + "</td>" +
+          "<td>" + escapeHtml(r.asset) + "</td>" +
+          "<td><strong>" + escapeHtml(amtLabel) + "</strong></td>" +
+          "<td>" + escapeHtml(r.creditedAmount || "—") + "</td>" +
+          "<td>" + escapeHtml(conf) + "</td>" +
+          "<td>" + escapeHtml(r.accountLabel) + '<div class="network-short-text">' + escapeHtml(r.accountId) + "</div></td>" +
+          '<td class="td-mono addr-cell" title="' + escapeAttr(r.walletAddress) + '">' + escapeHtml(shortAddr(r.walletAddress)) + "</td>" +
+          '<td class="td-mono addr-cell" title="' + escapeAttr(r.fromAddress) + '">' + escapeHtml(shortAddr(r.fromAddress)) + "</td>" +
+          '<td class="td-mono addr-cell" title="' + escapeAttr(r.toAddress) + '">' + escapeHtml(shortAddr(r.toAddress)) + "</td>" +
+          '<td class="td-mono addr-cell" title="' + escapeAttr(r.txHash) + '">' + escapeHtml(shortHash(r.txHash)) + "</td>" +
+          '<td class="td-muted text-small">' + escapeHtml(r.submittedAt) + "</td>" +
+          '<td class="td-muted text-small">' + escapeHtml(r.creditedAt || "—") + "</td>" +
+          '<td class="td-muted text-small">' + escapeHtml(r.failReason || "—") + "</td>" +
+          "<td>" + escapeHtml(exceptionLabel(r.exceptionType)) + "</td>" +
+          '<td class="td-muted text-small">' + escapeHtml(r.remark || "—") + "</td>" +
+          '<td class="td-muted text-small">' + escapeHtml(r.createdAt) + "</td>" +
+          '<td class="td-muted text-small">' + escapeHtml(r.updatedAt) + "</td>" +
+          '<td class="td-sticky-ops"><div class="sticky-ops-cell">' +
+          '<span class="ops-status">' + depStatusTag(r.status) + "</span>" +
+          '<div class="actions-cell">' +
+          '<button type="button" class="btn-link" data-dact="detail">详情</button>' +
+          "</div></div></td></tr>"
+        );
+      }).join("");
+    }
+    renderPager("depPageBtns", pages, state.dep.page, function (p) {
+      state.dep.page = p;
+      renderDepTable();
+    });
+  }
+
+  function renderWdTable() {
+    var list = filteredWds();
+    var total = list.length;
+    var pages = Math.max(1, Math.ceil(total / PAGE_SIZE));
+    if (state.wd.page > pages) state.wd.page = pages;
+    var start = (state.wd.page - 1) * PAGE_SIZE;
+    var rows = list.slice(start, start + PAGE_SIZE);
+    document.getElementById("wdTotalCount").textContent = total;
+    document.getElementById("wdPageInfo").textContent =
+      total === 0 ? "暂无数据" : "第 " + state.wd.page + " / " + pages + " 页 · 每页 " + PAGE_SIZE + " 条";
+    var body = document.getElementById("wdTableBody");
+    if (!rows.length) {
+      body.innerHTML = '<tr class="empty-row"><td colspan="18">无匹配提现记录</td></tr>';
+    } else {
+      body.innerHTML = rows.map(function (r) {
+        var ops =
+          '<button type="button" class="btn-link" data-wact="detail">详情</button>' +
+          (r.status === "pending_review"
+            ? '<button type="button" class="btn-link" data-wact="audit">审核</button>'
+            : "");
+        return (
+          '<tr data-id="' + escapeAttr(r.id) + '">' +
+          "<td>" + escapeHtml(r.networkName) + "</td>" +
+          "<td>" + escapeHtml(r.asset) + "</td>" +
+          "<td>" + escapeHtml(r.accountLabel) + '<div class="network-short-text">' + escapeHtml(r.accountId) + "</div></td>" +
+          '<td class="td-mono addr-cell" title="' + escapeAttr(r.toAddress) + '">' + escapeHtml(shortAddr(r.toAddress)) + "</td>" +
+          "<td><strong>" + escapeHtml(r.totalDebit) + "</strong></td>" +
+          "<td>" + escapeHtml(r.receiveAmount) + "</td>" +
+          "<td>" + escapeHtml(r.fee) + "</td>" +
+          "<td>" + auditTag(r.auditStatus) + "</td>" +
+          '<td class="td-mono addr-cell" title="' + escapeAttr(r.txHash || "") + '">' + escapeHtml(shortHash(r.txHash)) + "</td>" +
+          '<td class="td-muted text-small">' + escapeHtml(r.failReason || "—") + "</td>" +
+          '<td class="td-muted">' + escapeHtml(r.auditor || "—") + "</td>" +
+          '<td class="td-muted text-small">' + escapeHtml(r.auditedAt || "—") + "</td>" +
+          '<td class="td-muted text-small">' + escapeHtml(r.auditRemark || "—") + "</td>" +
+          '<td class="td-muted text-small">' + escapeHtml(r.createdAt) + "</td>" +
+          '<td class="td-muted text-small">' + escapeHtml(r.lockedAt || "—") + "</td>" +
+          '<td class="td-muted text-small">' + escapeHtml(r.completedAt || "—") + "</td>" +
+          '<td class="td-muted text-small">' + escapeHtml(r.remark || "—") + "</td>" +
+          '<td class="td-sticky-ops"><div class="sticky-ops-cell">' +
+          '<span class="ops-status">' + wdStatusTag(r.status) + "</span>" +
+          '<div class="actions-cell">' + ops + "</div></div></td></tr>"
+        );
+      }).join("");
+    }
+    renderPager("wdPageBtns", pages, state.wd.page, function (p) {
+      state.wd.page = p;
+      renderWdTable();
+    });
+  }
+
+  function showDetail(title, pairs) {
+    document.getElementById("detailTitle").textContent = title;
+    document.getElementById("detailBody").innerHTML = pairs.map(function (p) {
+      return (
+        '<div class="form-field" style="margin-bottom:12px">' +
+        '<div class="field-label">' + escapeHtml(p[0]) + "</div>" +
+        '<div class="' + (p[2] ? "td-mono text-small" : "") + '" style="word-break:break-all">' +
+        escapeHtml(p[1] == null || p[1] === "" ? "—" : p[1]) +
+        "</div></div>"
+      );
+    }).join("");
+    document.getElementById("detailDrawer").classList.add("open");
+  }
+  function closeDetail() {
+    document.getElementById("detailDrawer").classList.remove("open");
+  }
+
+  function openAudit(row) {
+    document.getElementById("auditId").value = row.id;
+    document.getElementById("auditAccount").textContent = row.accountLabel + " / " + row.accountId;
+    document.getElementById("auditNetAsset").textContent = row.networkName + " · " + row.asset;
+    document.getElementById("auditTo").textContent = row.toAddress;
+    document.getElementById("auditAmounts").textContent =
+      row.totalDebit + " / " + row.receiveAmount + " / " + row.fee + " USDC";
+    document.querySelector('input[name="auditResult"][value="approve"]').checked = true;
+    document.getElementById("auditRejectReason").value = "";
+    document.getElementById("auditRemark").value = "";
+    document.getElementById("auditRejectWrap").style.display = "none";
+    document.getElementById("auditApproveWrap").style.display = "block";
+    document.getElementById("auditModal").classList.add("open");
+  }
+  function closeAudit() {
+    document.getElementById("auditModal").classList.remove("open");
+  }
+  function syncAuditUi() {
+    var rej = document.querySelector('input[name="auditResult"]:checked').value === "reject";
+    document.getElementById("auditRejectWrap").style.display = rej ? "block" : "none";
+    document.getElementById("auditApproveWrap").style.display = rej ? "none" : "block";
+  }
+  function submitAudit() {
+    var id = document.getElementById("auditId").value;
+    var row = withdraws.find(function (w) { return w.id === id; });
+    if (!row) return;
+    var result = document.querySelector('input[name="auditResult"]:checked').value;
+    var now = nowStr();
+    if (result === "reject") {
+      var reason = document.getElementById("auditRejectReason").value.trim();
+      if (!reason) return toast("拒绝时必须填写拒绝原因", "err");
+      row.auditStatus = "rejected";
+      row.status = "rejected";
+      row.failReason = reason;
+      row.auditRemark = reason;
+      row.auditor = "运营管理员";
+      row.auditedAt = now;
+      row.completedAt = now;
+      toast("已拒绝提现");
+    } else {
+      row.auditStatus = "approved";
+      row.status = "processing";
+      row.auditRemark = document.getElementById("auditRemark").value.trim() || "审核通过";
+      row.auditor = "运营管理员";
+      row.auditedAt = now;
+      row.failReason = "";
+      row.txHash = row.txHash || ("0xwd" + Date.now().toString(16) + "aaaabbbbccccddddeeeeffff0000111122223333");
+      toast("审核通过，进入处理中");
+    }
+    closeAudit();
+    renderWdTable();
+  }
+
+  document.getElementById("btnDepSearch").addEventListener("click", function () {
+    state.dep.filters = {
+      network: document.getElementById("dfNetwork").value.trim(),
+      asset: document.getElementById("dfAsset").value.trim(),
+      status: document.getElementById("dfStatus").value,
+      account: document.getElementById("dfAccount").value.trim(),
+      tx: document.getElementById("dfTx").value.trim(),
+      exception: document.getElementById("dfException").value
+    };
+    state.dep.page = 1;
+    renderDepTable();
+  });
+  document.getElementById("btnDepReset").addEventListener("click", function () {
+    ["dfNetwork", "dfAsset", "dfStatus", "dfAccount", "dfTx", "dfException"].forEach(function (id) {
+      document.getElementById(id).value = "";
+    });
+    state.dep.filters = {};
+    state.dep.page = 1;
+    renderDepTable();
+  });
+  document.getElementById("btnWdSearch").addEventListener("click", function () {
+    state.wd.filters = {
+      network: document.getElementById("wfNetwork").value.trim(),
+      asset: document.getElementById("wfAsset").value.trim(),
+      status: document.getElementById("wfStatus").value,
+      audit: document.getElementById("wfAudit").value,
+      account: document.getElementById("wfAccount").value.trim(),
+      to: document.getElementById("wfTo").value.trim(),
+      tx: document.getElementById("wfTx").value.trim()
+    };
+    state.wd.page = 1;
+    renderWdTable();
+  });
+  document.getElementById("btnWdReset").addEventListener("click", function () {
+    ["wfNetwork", "wfAsset", "wfStatus", "wfAudit", "wfAccount", "wfTo", "wfTx"].forEach(function (id) {
+      document.getElementById(id).value = "";
+    });
+    state.wd.filters = {};
+    state.wd.page = 1;
+    renderWdTable();
+  });
+
+  document.getElementById("depTableBody").addEventListener("click", function (e) {
+    var btn = e.target.closest("[data-dact]");
+    if (!btn) return;
+    var id = btn.closest("tr").getAttribute("data-id");
+    var row = deposits.find(function (d) { return d.id === id; });
+    if (!row) return;
+    if (btn.getAttribute("data-dact") === "detail") {
+      showDetail("充值详情", [
+        ["网络名称", row.networkName],
+        ["充值资产", row.asset],
+        ["充值状态", row.status === "success" ? "充值成功" : row.status === "confirming" ? "确认中" : "充值失败"],
+        ["充值金额", row.amount],
+        ["确认入账金额", row.creditedAmount || "—"],
+        ["确认进度", row.confirmCurrent + " / " + row.confirmRequired],
+        ["主账户", row.accountId + " / " + row.accountLabel],
+        ["钱包地址", row.walletAddress, true],
+        ["发送地址", row.fromAddress, true],
+        ["接收地址", row.toAddress, true],
+        ["交易哈希", row.txHash, true],
+        ["提交时间", row.submittedAt],
+        ["入账时间", row.creditedAt || "—"],
+        ["失败原因", row.failReason || "—"],
+        ["异常类型", exceptionLabel(row.exceptionType)],
+        ["备注", row.remark || "—"],
+        ["创建时间", row.createdAt],
+        ["更新时间", row.updatedAt]
+      ]);
+    }
+  });
+
+  document.getElementById("wdTableBody").addEventListener("click", function (e) {
+    var btn = e.target.closest("[data-wact]");
+    if (!btn) return;
+    var id = btn.closest("tr").getAttribute("data-id");
+    var row = withdraws.find(function (w) { return w.id === id; });
+    if (!row) return;
+    var act = btn.getAttribute("data-wact");
+    if (act === "detail") {
+      showDetail("提现详情", [
+        ["网络名称", row.networkName],
+        ["提现资产", row.asset],
+        ["状态", ({ pending_review: "待审核", processing: "处理中", success: "提现成功", failed: "提现失败", rejected: "已拒绝" })[row.status] || row.status],
+        ["审核状态", ({ pending: "待审核", approved: "已通过", rejected: "已拒绝" })[row.auditStatus] || row.auditStatus],
+        ["主账户", row.accountId + " / " + row.accountLabel],
+        ["目标地址", row.toAddress, true],
+        ["总扣减金额", row.totalDebit],
+        ["实际到账金额", row.receiveAmount],
+        ["提现手续费", row.fee],
+        ["交易哈希", row.txHash || "—", true],
+        ["失败原因", row.failReason || "—"],
+        ["审核人", row.auditor || "—"],
+        ["审核时间", row.auditedAt || "—"],
+        ["审核备注", row.auditRemark || "—"],
+        ["创建时间", row.createdAt],
+        ["锁定时间", row.lockedAt || "—"],
+        ["完成时间", row.completedAt || "—"],
+        ["备注", row.remark || "—"]
+      ]);
+    }
+    if (act === "audit") openAudit(row);
+  });
+
+  document.getElementById("btnCloseDetail").addEventListener("click", closeDetail);
+  document.getElementById("btnCloseDetail2").addEventListener("click", closeDetail);
+  document.getElementById("detailDrawer").addEventListener("click", function (e) {
+    if (e.target === this) closeDetail();
+  });
+  document.getElementById("btnCloseAudit").addEventListener("click", closeAudit);
+  document.getElementById("btnAuditCancel").addEventListener("click", closeAudit);
+  document.getElementById("btnAuditSubmit").addEventListener("click", submitAudit);
+  document.getElementById("auditModal").addEventListener("click", function (e) {
+    if (e.target === this) closeAudit();
+  });
+  document.querySelectorAll('input[name="auditResult"]').forEach(function (el) {
+    el.addEventListener("change", syncAuditUi);
+  });
+
+
+  state.net.filters = {};
+  state.asset.filters = {};
+  fillAssetNetworkSelects();
+  renderNetTable();
+})();
+
+</script>
+</body>
+</html>
