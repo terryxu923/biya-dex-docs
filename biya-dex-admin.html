@@ -1245,6 +1245,59 @@
     .mono-sm { font-family: "SF Mono", "Cascadia Mono", monospace; font-size: 12px; word-break: break-all; }
     .addr-cell { max-width: 140px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 
+    /* 详情页：字段名与值颜色区分 */
+    .detail-list { display: flex; flex-direction: column; gap: 0; }
+    .detail-row {
+      display: grid;
+      grid-template-columns: 132px 1fr;
+      gap: 12px 16px;
+      padding: 12px 0;
+      border-bottom: 1px solid var(--border-subtle);
+      align-items: start;
+    }
+    .detail-row:last-child { border-bottom: none; }
+    .detail-name {
+      font-size: var(--font-size-small);
+      font-weight: 500;
+      color: var(--text-muted);
+      line-height: 1.5;
+      padding-top: 1px;
+    }
+    .detail-value {
+      font-size: var(--font-size-body);
+      font-weight: 500;
+      color: var(--text-primary);
+      line-height: 1.5;
+      word-break: break-all;
+    }
+    .detail-value.is-mono {
+      font-family: "SF Mono", "Cascadia Mono", monospace;
+      font-size: 12px;
+      font-weight: 400;
+      color: #1F2937;
+    }
+    .detail-value.is-empty {
+      color: var(--text-disabled);
+      font-weight: 400;
+    }
+
+    .row-level-low { background: #FEF3F2 !important; }
+    .row-level-low td { background: #FEF3F2 !important; }
+    .row-level-low:hover td { background: #FEE4E2 !important; }
+    .row-level-high { background: #FFFAEB !important; }
+    .row-level-high td { background: #FFFAEB !important; }
+    .row-level-high:hover td { background: #FEF0C7 !important; }
+    .row-level-low .td-sticky-ops,
+    .row-level-high .td-sticky-ops { /* keep sticky bg with row */ }
+    .amt-down { color: #B42318; font-weight: 600; }
+    .amt-up { color: #B54708; font-weight: 600; }
+    .amt-ok { color: #027A48; font-weight: 600; }
+    .field-readonly {
+      background: var(--bg-subtle) !important;
+      color: var(--text-secondary) !important;
+      cursor: not-allowed;
+    }
+
   </style>
 </head>
 
@@ -1278,6 +1331,10 @@
       <div class="nav-item" data-nav="withdraw">
         <svg class="nav-item-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M8 13V5M5 8l3-3 3 3"/><path d="M3 3h10"/></svg>
         提现记录
+      </div>
+      <div class="nav-item" data-nav="treasury">
+        <svg class="nav-item-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 6h12v7H2z"/><path d="M4 6V5a4 4 0 018 0v1"/><path d="M8 9v2"/></svg>
+        金库监控
       </div>
       <div class="nav-group-label">风控</div>
       <div class="nav-item" style="opacity:.45;cursor:default" title="后续模块">
@@ -1376,7 +1433,6 @@
                 <th>预计提现(分)</th>
                 <th>提现观察确认数</th>
                 <th>网络图标</th>
-                <th>RPC 配置引用</th>
                 <th>交易浏览器</th>
                 <th>地址浏览器</th>
                 <th>更新时间</th>
@@ -1679,6 +1735,77 @@
         </div>
       </div><!-- /pageWithdraw -->
 
+      <!-- ========== 金库监控 ========== -->
+      <div class="page-view" id="pageTreasury">
+        <div class="page-header">
+          <div>
+            <h1 class="page-title">金库监控</h1>
+            <p class="page-desc">按网络监控出金金库余额、在途与可用水位。金库地址只读，水位区间可配置。</p>
+          </div>
+          <div class="page-header-actions">
+            <button type="button" class="btn btn-md btn-secondary" id="btnTreasuryRefresh">刷新余额</button>
+          </div>
+        </div>
+        <div class="filter-card">
+          <div class="filter-grid-5">
+            <div class="form-field">
+              <div class="field-label">网络名称</div>
+              <input class="field-input" type="text" id="tfNetwork" placeholder="如 Arbitrum" />
+            </div>
+            <div class="form-field">
+              <div class="field-label">链 ID</div>
+              <input class="field-input" type="text" id="tfChainId" placeholder="如 42161" />
+            </div>
+            <div class="form-field">
+              <div class="field-label">资产</div>
+              <input class="field-input" type="text" id="tfAsset" placeholder="如 USDC" />
+            </div>
+            <div class="form-field">
+              <div class="field-label">水位状态</div>
+              <select class="field-select" id="tfLevel">
+                <option value="">全部</option>
+                <option value="healthy">健康</option>
+                <option value="low">低于低水位</option>
+                <option value="high">高于高水位</option>
+              </select>
+            </div>
+            <div class="filter-actions">
+              <button type="button" class="btn btn-md btn-primary" id="btnTfSearch">查询</button>
+              <button type="button" class="btn btn-md btn-secondary" id="btnTfReset">重置</button>
+            </div>
+          </div>
+        </div>
+        <div class="list-card">
+          <div class="list-toolbar">
+            <div class="list-toolbar-left">共 <strong id="tfTotalCount">0</strong> 条金库</div>
+            <div class="list-toolbar-right"><span class="text-small text-muted">金额单位：USDC · 角色：出金热钱包</span></div>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>网络名称</th>
+                  <th>链 ID</th>
+                  <th>金库地址</th>
+                  <th>资产</th>
+                  <th>余额</th>
+                  <th>在途</th>
+                  <th>可用</th>
+                  <th>水位</th>
+                  <th>同步时间</th>
+                  <th class="th-sticky-ops"><div class="sticky-ops-head"><span>状态</span><span>操作</span></div></th>
+                </tr>
+              </thead>
+              <tbody id="tfTableBody"></tbody>
+            </table>
+          </div>
+          <div class="pagination">
+            <div class="pagination-info" id="tfPageInfo">—</div>
+            <div class="pagination-btns" id="tfPageBtns"></div>
+          </div>
+        </div>
+      </div><!-- /pageTreasury -->
+
     </main>
   </div>
 </div>
@@ -1739,20 +1866,22 @@
         <h3 class="form-section-title">③ 确认数与预计时效</h3>
         <div class="form-grid">
           <div class="form-field">
-            <div class="field-label">充值确认数 <span class="req">*</span></div>
-            <input class="field-input" id="fldDepositConf" type="number" min="1" max="256" />
+            <div class="field-label">充值确认数</div>
+            <input class="field-input field-readonly" id="fldDepositConf" type="text" readonly disabled />
+            <p class="field-hint">系统写入，不可编辑</p>
           </div>
           <div class="form-field">
             <div class="field-label">提现观察确认数</div>
-            <input class="field-input" id="fldWithdrawConf" type="number" min="0" max="256" />
+            <input class="field-input field-readonly" id="fldWithdrawConf" type="text" readonly disabled />
+            <p class="field-hint">系统写入，不可编辑</p>
           </div>
           <div class="form-field">
-            <div class="field-label">预计充值到账时间（分钟）</div>
-            <input class="field-input" id="fldEtaDeposit" type="number" min="0" />
+            <div class="field-label">预计充值到账时间（分钟） <span class="req">*</span></div>
+            <input class="field-input" id="fldEtaDeposit" type="number" min="0" step="1" placeholder="如 13" />
           </div>
           <div class="form-field">
-            <div class="field-label">预计提现到账时间（分钟）</div>
-            <input class="field-input" id="fldEtaWithdraw" type="number" min="0" />
+            <div class="field-label">预计提现到账时间（分钟） <span class="req">*</span></div>
+            <input class="field-input" id="fldEtaWithdraw" type="number" min="0" step="1" placeholder="如 30" />
           </div>
         </div>
       </div>
@@ -1774,19 +1903,15 @@
         </div>
       </div>
       <div class="form-section">
-        <h3 class="form-section-title">⑤ 浏览器与 RPC</h3>
+        <h3 class="form-section-title">⑤ 浏览器链接</h3>
         <div class="form-grid">
           <div class="form-field form-grid-full">
             <div class="field-label">交易浏览器链接模板 <span class="req">*</span></div>
             <input class="field-input td-mono" id="fldExplorerTx" type="text" placeholder="https://arbiscan.io/tx/{txHash}" />
-                      </div>
+          </div>
           <div class="form-field form-grid-full">
             <div class="field-label">地址浏览器链接模板</div>
             <input class="field-input td-mono" id="fldExplorerAddr" type="text" placeholder="https://arbiscan.io/address/{address}" />
-          </div>
-          <div class="form-field form-grid-full">
-            <div class="field-label">RPC 配置引用 <span class="req">*</span></div>
-            <input class="field-input td-mono" id="fldRpcRef" type="text" placeholder="cfg://rpc/arbitrum-one-mainnet" />
           </div>
         </div>
       </div>
@@ -1848,14 +1973,16 @@
           <div class="form-field form-grid-full">
             <div class="field-label">代币合约地址 <span class="req">*</span></div>
             <input class="field-input td-mono" id="afldTokenContract" type="text" placeholder="0x…" />
-                      </div>
+          </div>
           <div class="form-field form-grid-full">
             <div class="field-label">充值桥或网关合约</div>
-            <input class="field-input td-mono" id="afldDepositBridge" type="text" placeholder="充值监听/存款合约地址，可选" />
+            <input class="field-input field-readonly td-mono" id="afldDepositBridge" type="text" readonly disabled placeholder="—" />
+            <p class="field-hint">由部署配置注入，运营不可编辑</p>
           </div>
           <div class="form-field form-grid-full">
             <div class="field-label">提现桥或出金合约</div>
-            <input class="field-input td-mono" id="afldWithdrawBridge" type="text" placeholder="提现执行合约地址，可选" />
+            <input class="field-input field-readonly td-mono" id="afldWithdrawBridge" type="text" readonly disabled placeholder="—" />
+            <p class="field-hint">由部署配置注入，运营不可编辑</p>
           </div>
         </div>
       </div>
@@ -1973,6 +2100,104 @@
     <div class="drawer-body" id="detailBody"></div>
     <div class="drawer-footer">
       <button type="button" class="btn btn-md btn-secondary" id="btnCloseDetail2">关闭</button>
+    </div>
+  </div>
+</div>
+
+
+
+<!-- 金库水位配置（地址只读） -->
+<div class="drawer-overlay" id="treasuryDrawer">
+  <div class="drawer" onclick="event.stopPropagation()">
+    <div class="drawer-header">
+      <span class="drawer-title">配置水位</span>
+      <button type="button" class="modal-close" id="btnCloseTreasuryDrawer">✕</button>
+    </div>
+    <div class="drawer-body">
+      <input type="hidden" id="tfEditId" value="" />
+      <div class="form-section">
+        <h3 class="form-section-title">① 金库信息</h3>
+        <div class="form-grid">
+          <div class="form-field">
+            <div class="field-label">所属网络</div>
+            <input class="field-input field-readonly" id="tfFldNetwork" type="text" readonly disabled />
+          </div>
+          <div class="form-field">
+            <div class="field-label">链 ID</div>
+            <input class="field-input field-readonly td-mono" id="tfFldChainId" type="text" readonly disabled />
+          </div>
+          <div class="form-field">
+            <div class="field-label">资产</div>
+            <input class="field-input field-readonly" id="tfFldAsset" type="text" readonly disabled />
+          </div>
+          <div class="form-field">
+            <div class="field-label">金库角色</div>
+            <input class="field-input field-readonly" id="tfFldRole" type="text" readonly disabled />
+          </div>
+          <div class="form-field form-grid-full">
+            <div class="field-label">金库地址</div>
+            <input class="field-input field-readonly td-mono" id="tfFldAddress" type="text" readonly disabled />
+            <p class="field-hint">仅读取，不支持编辑。地址由部署/环境配置注入。</p>
+          </div>
+        </div>
+      </div>
+      <div class="form-section">
+        <h3 class="form-section-title">② 水位配置</h3>
+        <div class="form-grid">
+          <div class="form-field">
+            <div class="field-label">低水位 L（USDC） <span class="req">*</span></div>
+            <input class="field-input" id="tfFldLow" type="text" placeholder="如 50000" />
+          </div>
+          <div class="form-field">
+            <div class="field-label">高水位 H（USDC） <span class="req">*</span></div>
+            <input class="field-input" id="tfFldHigh" type="text" placeholder="如 500000" />
+          </div>
+          <div class="form-field">
+            <div class="field-label">安全缓冲（USDC）</div>
+            <input class="field-input" id="tfFldBuffer" type="text" placeholder="可选，默认 0" />
+          </div>
+          <div class="form-field">
+            <div class="field-label">低水位自动暂停提现</div>
+            <label class="switch-row">
+              <span class="switch">
+                <input type="checkbox" id="tfFldAutoPause" />
+                <span class="switch-track"></span>
+                <span class="switch-thumb"></span>
+              </span>
+              <span class="switch-label" id="tfAutoPauseLabel">关闭</span>
+            </label>
+          </div>
+          <div class="form-field form-grid-full">
+            <div class="field-label">备注</div>
+            <textarea class="field-textarea" id="tfFldRemark" placeholder="备注"></textarea>
+          </div>
+        </div>
+      </div>
+      <div class="form-section">
+        <h3 class="form-section-title">③ 当前快照（只读）</h3>
+        <div class="form-grid">
+          <div class="form-field">
+            <div class="field-label">余额</div>
+            <input class="field-input field-readonly" id="tfFldBalance" type="text" readonly disabled />
+          </div>
+          <div class="form-field">
+            <div class="field-label">在途</div>
+            <input class="field-input field-readonly" id="tfFldTransit" type="text" readonly disabled />
+          </div>
+          <div class="form-field">
+            <div class="field-label">可用</div>
+            <input class="field-input field-readonly" id="tfFldAvailable" type="text" readonly disabled />
+          </div>
+          <div class="form-field">
+            <div class="field-label">同步时间</div>
+            <input class="field-input field-readonly" id="tfFldSynced" type="text" readonly disabled />
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="drawer-footer">
+      <button type="button" class="btn btn-md btn-secondary" id="btnCancelTreasuryDrawer">取消</button>
+      <button type="button" class="btn btn-md btn-primary" id="btnSaveTreasury">保存水位</button>
     </div>
   </div>
 </div>
@@ -2130,13 +2355,20 @@
       network: "pageNetwork",
       asset: "pageAsset",
       deposit: "pageDeposit",
-      withdraw: "pageWithdraw"
+      withdraw: "pageWithdraw",
+      treasury: "pageTreasury"
     };
     Object.keys(map).forEach(function (k) {
       var el = document.getElementById(map[k]);
       if (el) el.classList.toggle("active", k === page);
     });
-    var titles = { network: "网络管理", asset: "资产管理", deposit: "充值记录", withdraw: "提现记录" };
+    var titles = {
+      network: "网络管理",
+      asset: "资产管理",
+      deposit: "充值记录",
+      withdraw: "提现记录",
+      treasury: "金库监控"
+    };
     document.getElementById("bcCurrent").textContent = titles[page] || page;
     if (page === "asset") {
       fillAssetNetworkSelects();
@@ -2145,6 +2377,8 @@
       renderDepTable();
     } else if (page === "withdraw") {
       renderWdTable();
+    } else if (page === "treasury") {
+      renderTreasuryTable();
     } else {
       renderNetTable();
     }
@@ -2175,7 +2409,7 @@
       total === 0 ? "暂无数据" : "第 " + state.net.page + " / " + pages + " 页 · 每页 " + PAGE_SIZE + " 条";
     var body = document.getElementById("tableBody");
     if (!pageRows.length) {
-      body.innerHTML = '<tr class="empty-row"><td colspan="18">无匹配网络</td></tr>';
+      body.innerHTML = '<tr class="empty-row"><td colspan="17">无匹配网络</td></tr>';
     } else {
       body.innerHTML = pageRows.map(function (r) {
         return (
@@ -2192,7 +2426,6 @@
           '<td class="td-muted">' + escapeHtml(r.etaWithdrawMin == null ? "—" : r.etaWithdrawMin) + "</td>" +
           '<td class="td-muted">' + escapeHtml(r.withdrawConfirmations == null ? "—" : r.withdrawConfirmations) + "</td>" +
           "<td>" + iconHtml(r.displayName, r.iconUrl) + "</td>" +
-          '<td class="td-mono url-cell" title="' + escapeAttr(r.rpcRef) + '">' + escapeHtml(r.rpcRef) + "</td>" +
           '<td class="td-mono url-cell" title="' + escapeAttr(r.explorerTxTemplate) + '">' + escapeHtml(r.explorerTxTemplate) + "</td>" +
           '<td class="td-mono url-cell" title="' + escapeAttr(r.explorerAddressTemplate || "") + '">' + escapeHtml(r.explorerAddressTemplate || "—") + "</td>" +
           '<td class="td-muted text-small">' + escapeHtml(r.updatedAt) + "</td>" +
@@ -2238,16 +2471,19 @@
     document.getElementById("fldStatus").value = row ? row.status : "enabled";
     document.getElementById("fldDepositOpen").checked = row ? !!row.depositOpen : true;
     document.getElementById("fldWithdrawOpen").checked = row ? !!row.withdrawOpen : true;
-    document.getElementById("fldDepositConf").value = row ? row.depositConfirmations : "";
-    document.getElementById("fldWithdrawConf").value = row && row.withdrawConfirmations != null ? row.withdrawConfirmations : "";
-    document.getElementById("fldEtaDeposit").value = row && row.etaDepositMin != null ? row.etaDepositMin : "";
-    document.getElementById("fldEtaWithdraw").value = row && row.etaWithdrawMin != null ? row.etaWithdrawMin : "";
+    /* 确认数：只读系统值；ETA：运营可配置 */
+    document.getElementById("fldDepositConf").value = row ? row.depositConfirmations : "12";
+    document.getElementById("fldWithdrawConf").value =
+      row && row.withdrawConfirmations != null ? row.withdrawConfirmations : "1";
+    document.getElementById("fldEtaDeposit").value =
+      row && row.etaDepositMin != null ? row.etaDepositMin : "13";
+    document.getElementById("fldEtaWithdraw").value =
+      row && row.etaWithdrawMin != null ? row.etaWithdrawMin : "30";
     document.getElementById("fldMinDeposit").value = row ? row.minDeposit : "1";
     document.getElementById("fldMinWithdraw").value = row ? row.minWithdraw : "1";
     document.getElementById("fldWithdrawFee").value = row ? row.withdrawFee : "1";
     document.getElementById("fldExplorerTx").value = row ? row.explorerTxTemplate : "";
     document.getElementById("fldExplorerAddr").value = row ? row.explorerAddressTemplate || "" : "";
-    document.getElementById("fldRpcRef").value = row ? row.rpcRef : "";
     document.getElementById("fldRemark").value = row ? row.remark || "" : "";
     document.getElementById("formDrawer").classList.add("open");
   }
@@ -2259,35 +2495,41 @@
   function saveNetwork() {
     var displayName = document.getElementById("fldDisplayName").value.trim();
     var chainId = document.getElementById("fldChainId").value.trim();
-    var depositConf = document.getElementById("fldDepositConf").value.trim();
     var minDeposit = document.getElementById("fldMinDeposit").value.trim();
     var minWithdraw = document.getElementById("fldMinWithdraw").value.trim();
     var withdrawFee = document.getElementById("fldWithdrawFee").value.trim();
     var explorerTx = document.getElementById("fldExplorerTx").value.trim();
-    var rpcRef = document.getElementById("fldRpcRef").value.trim();
+    var etaDeposit = document.getElementById("fldEtaDeposit").value.trim();
+    var etaWithdraw = document.getElementById("fldEtaWithdraw").value.trim();
     if (!displayName) return toast("请填写网络名称", "err");
     if (!chainId || !/^\d+$/.test(chainId)) return toast("链 ID 须为数字", "err");
-    if (!depositConf || Number(depositConf) < 1) return toast("请填写有效充值确认数", "err");
     if (!isDecimal(minDeposit) || !isDecimal(minWithdraw) || !isDecimal(withdrawFee)) return toast("金额须为非负十进制数字", "err");
+    if (etaDeposit === "" || !/^\d+$/.test(etaDeposit)) return toast("请填写预计充值到账时间（非负整数分钟）", "err");
+    if (etaWithdraw === "" || !/^\d+$/.test(etaWithdraw)) return toast("请填写预计提现到账时间（非负整数分钟）", "err");
     if (!explorerTx || explorerTx.indexOf("{txHash}") < 0) return toast("交易浏览器模板须包含 {txHash}", "err");
-    if (!rpcRef) return toast("请填写 RPC 配置引用", "err");
     var addrTpl = document.getElementById("fldExplorerAddr").value.trim();
     if (addrTpl && addrTpl.indexOf("{address}") < 0) return toast("地址浏览器模板须包含 {address}", "err");
     if (networks.some(function (n) { return String(n.chainId) === chainId && n.id !== state.net.editId; })) {
       return toast("链 ID 已存在", "err");
     }
+    /* 确认数：只读系统值；ETA：运营可配置 */
+    var existing = state.net.editId
+      ? networks.find(function (n) { return n.id === state.net.editId; })
+      : null;
+    var depositConfirmations = existing ? existing.depositConfirmations : 12;
+    var withdrawConfirmations = existing ? existing.withdrawConfirmations : 1;
     var payload = {
       displayName: displayName, chainId: chainId,
       iconUrl: document.getElementById("fldIconUrl").value.trim(),
       status: document.getElementById("fldStatus").value,
       depositOpen: document.getElementById("fldDepositOpen").checked,
       withdrawOpen: document.getElementById("fldWithdrawOpen").checked,
-      depositConfirmations: Number(depositConf),
-      withdrawConfirmations: document.getElementById("fldWithdrawConf").value === "" ? null : Number(document.getElementById("fldWithdrawConf").value),
-      etaDepositMin: document.getElementById("fldEtaDeposit").value === "" ? null : Number(document.getElementById("fldEtaDeposit").value),
-      etaWithdrawMin: document.getElementById("fldEtaWithdraw").value === "" ? null : Number(document.getElementById("fldEtaWithdraw").value),
+      depositConfirmations: depositConfirmations,
+      withdrawConfirmations: withdrawConfirmations,
+      etaDepositMin: Number(etaDeposit),
+      etaWithdrawMin: Number(etaWithdraw),
       minDeposit: minDeposit, minWithdraw: minWithdraw, withdrawFee: withdrawFee,
-      explorerTxTemplate: explorerTx, explorerAddressTemplate: addrTpl, rpcRef: rpcRef,
+      explorerTxTemplate: explorerTx, explorerAddressTemplate: addrTpl,
       remark: document.getElementById("fldRemark").value.trim(),
       updatedAt: nowStr(), updatedBy: "运营管理员"
     };
@@ -2431,8 +2673,9 @@
     document.getElementById("afldDecimals").value = row ? row.decimals : "6";
     document.getElementById("afldLogo").value = row ? row.logoUrl || "" : "";
     document.getElementById("afldTokenContract").value = row ? row.tokenContract : "";
-    document.getElementById("afldDepositBridge").value = row ? row.depositBridge || "" : "";
-    document.getElementById("afldWithdrawBridge").value = row ? row.withdrawBridge || "" : "";
+    /* 桥/出金合约只读：编辑展示已有值；新增展示空占位（由部署配置注入，不可填） */
+    document.getElementById("afldDepositBridge").value = row ? row.depositBridge || "—" : "—";
+    document.getElementById("afldWithdrawBridge").value = row ? row.withdrawBridge || "—" : "—";
     document.getElementById("afldStatus").value = row ? row.status : "enabled";
     document.getElementById("afldDepositOpen").checked = row ? !!row.depositOpen : true;
     document.getElementById("afldWithdrawOpen").checked = row ? !!row.withdrawOpen : true;
@@ -2478,18 +2721,19 @@
     if (!chainSymbol) return toast("请填写链上符号", "err");
     if (decimals === "" || Number(decimals) < 0 || Number(decimals) > 36) return toast("代币精度须为 0–36", "err");
     if (!isAddress(tokenContract)) return toast("代币合约地址格式无效（0x + 40 位十六进制）", "err");
-    var depB = document.getElementById("afldDepositBridge").value.trim();
-    var wdB = document.getElementById("afldWithdrawBridge").value.trim();
-    if (depB && !isAddress(depB)) return toast("充值桥或网关合约地址格式无效", "err");
-    if (wdB && !isAddress(wdB)) return toast("提现桥或出金合约地址格式无效", "err");
 
     var assetCode;
+    var existingAsset = state.asset.editId
+      ? assets.find(function (a) { return a.id === state.asset.editId; })
+      : null;
     if (state.asset.editId) {
-      var existing = assets.find(function (a) { return a.id === state.asset.editId; });
-      assetCode = existing ? existing.assetCode : generateAssetCode(networkId, chainSymbol, state.asset.editId);
+      assetCode = existingAsset ? existingAsset.assetCode : generateAssetCode(networkId, chainSymbol, state.asset.editId);
     } else {
       assetCode = generateAssetCode(networkId, chainSymbol, null);
     }
+    /* 桥合约只读：编辑保留原值；新增为空（部署注入） */
+    var depB = existingAsset ? (existingAsset.depositBridge || "") : "";
+    var wdB = existingAsset ? (existingAsset.withdrawBridge || "") : "";
 
     var dupC = assets.some(function (a) {
       return a.networkId === networkId &&
@@ -3048,15 +3292,23 @@
 
   function showDetail(title, pairs) {
     document.getElementById("detailTitle").textContent = title;
-    document.getElementById("detailBody").innerHTML = pairs.map(function (p) {
-      return (
-        '<div class="form-field" style="margin-bottom:12px">' +
-        '<div class="field-label">' + escapeHtml(p[0]) + "</div>" +
-        '<div class="' + (p[2] ? "td-mono text-small" : "") + '" style="word-break:break-all">' +
-        escapeHtml(p[1] == null || p[1] === "" ? "—" : p[1]) +
-        "</div></div>"
-      );
-    }).join("");
+    document.getElementById("detailBody").innerHTML =
+      '<div class="detail-list">' +
+      pairs.map(function (p) {
+        var raw = p[1];
+        var empty = raw == null || raw === "";
+        var val = empty ? "—" : String(raw);
+        var valCls = "detail-value";
+        if (empty) valCls += " is-empty";
+        else if (p[2]) valCls += " is-mono";
+        return (
+          '<div class="detail-row">' +
+          '<div class="detail-name">' + escapeHtml(p[0]) + "</div>" +
+          '<div class="' + valCls + '">' + escapeHtml(val) + "</div>" +
+          "</div>"
+        );
+      }).join("") +
+      "</div>";
     document.getElementById("detailDrawer").classList.add("open");
   }
   function closeDetail() {
@@ -3233,6 +3485,280 @@
   });
   document.querySelectorAll('input[name="auditResult"]').forEach(function (el) {
     el.addEventListener("change", syncAuditUi);
+  });
+
+
+
+  /* ========== 金库监控 ========== */
+  state.tf = { page: 1, filters: {}, editId: null };
+
+  var treasuries = [
+    {
+      id: "tf-arb",
+      networkName: "Arbitrum One",
+      chainId: "42161",
+      address: "0x9A7f3c2e1b0d4a5f678901234567890abcdefF3e2",
+      asset: "USDC",
+      role: "出金热钱包",
+      roleCode: "withdraw_hot",
+      balance: 280000,
+      transit: 25000,
+      low: 50000,
+      high: 500000,
+      buffer: 0,
+      autoPauseWithdraw: true,
+      syncedAt: "2025-09-24 18:00:00",
+      remark: "S1 主出金池",
+      updatedAt: "2025-09-24 18:00:00",
+      updatedBy: "system"
+    },
+    {
+      id: "tf-base",
+      networkName: "Base",
+      chainId: "8453",
+      address: "0x4D2e9a1b2c3d4e5f678901234567890abcdef43Cd",
+      asset: "USDC",
+      role: "出金热钱包",
+      roleCode: "withdraw_hot",
+      balance: 120000,
+      transit: 8000,
+      low: 50000,
+      high: 500000,
+      buffer: 0,
+      autoPauseWithdraw: false,
+      syncedAt: "2025-09-24 18:00:00",
+      remark: "",
+      updatedAt: "2025-09-24 18:00:00",
+      updatedBy: "system"
+    },
+    {
+      id: "tf-bnb",
+      networkName: "BNB Chain",
+      chainId: "56",
+      address: "0x6F1c2d3e4f5a6b7c8d9e0f1a2b3c4d5e6f7a8c9Bf",
+      asset: "USDC",
+      role: "出金热钱包",
+      roleCode: "withdraw_hot",
+      balance: 38000,
+      transit: 12000,
+      low: 50000,
+      high: 500000,
+      buffer: 0,
+      autoPauseWithdraw: true,
+      syncedAt: "2025-09-24 17:55:00",
+      remark: "可用低于低水位",
+      updatedAt: "2025-09-24 17:55:00",
+      updatedBy: "system"
+    },
+    {
+      id: "tf-eth",
+      networkName: "Ethereum",
+      chainId: "1",
+      address: "0x2B8e3c4d5e6f7a8b9c0d1e2f3a4b5c6d7e8f90Ee9",
+      asset: "USDC",
+      role: "出金热钱包",
+      roleCode: "withdraw_hot",
+      balance: 640000,
+      transit: 5000,
+      low: 50000,
+      high: 500000,
+      buffer: 0,
+      autoPauseWithdraw: false,
+      syncedAt: "2025-09-24 18:01:00",
+      remark: "可用高于高水位",
+      updatedAt: "2025-09-24 18:01:00",
+      updatedBy: "system"
+    }
+  ];
+
+  function fmtUsd(n) {
+    var x = Number(n) || 0;
+    return "$" + x.toLocaleString("en-US", { maximumFractionDigits: 0 });
+  }
+  function treasuryAvailable(r) {
+    return Math.max(0, (Number(r.balance) || 0) - (Number(r.transit) || 0) - (Number(r.buffer) || 0));
+  }
+  function treasuryLevel(r) {
+    var a = treasuryAvailable(r);
+    var L = Number(r.low) || 0;
+    var H = Number(r.high) || 0;
+    if (a < L) return "low";
+    if (a > H) return "high";
+    return "healthy";
+  }
+  function levelTag(lv) {
+    if (lv === "healthy") return '<span class="tag tag-success">健康</span>';
+    if (lv === "low") return '<span class="tag tag-error">低于低水位</span>';
+    if (lv === "high") return '<span class="tag tag-pending">高于高水位</span>';
+    return '<span class="tag tag-draft">—</span>';
+  }
+  function availableHtml(r) {
+    var a = treasuryAvailable(r);
+    var lv = treasuryLevel(r);
+    if (lv === "low") return '<span class="amt-down">↓ ' + fmtUsd(a) + "</span>";
+    if (lv === "high") return '<span class="amt-up">↑ ' + fmtUsd(a) + "</span>";
+    return '<span class="amt-ok">' + fmtUsd(a) + "</span>";
+  }
+  function rowLevelClass(lv) {
+    if (lv === "low") return "row-level-low";
+    if (lv === "high") return "row-level-high";
+    return "";
+  }
+
+  function filteredTreasury() {
+    var f = state.tf.filters;
+    return treasuries.filter(function (r) {
+      if (f.network && r.networkName.toLowerCase().indexOf(f.network.toLowerCase()) < 0) return false;
+      if (f.chainId && String(r.chainId) !== String(f.chainId)) return false;
+      if (f.asset && r.asset.toLowerCase().indexOf(f.asset.toLowerCase()) < 0) return false;
+      if (f.level && treasuryLevel(r) !== f.level) return false;
+      return true;
+    });
+  }
+
+  function renderTreasuryTable() {
+    var list = filteredTreasury();
+    var total = list.length;
+    var pages = Math.max(1, Math.ceil(total / PAGE_SIZE));
+    if (state.tf.page > pages) state.tf.page = pages;
+    var start = (state.tf.page - 1) * PAGE_SIZE;
+    var rows = list.slice(start, start + PAGE_SIZE);
+    document.getElementById("tfTotalCount").textContent = total;
+    document.getElementById("tfPageInfo").textContent =
+      total === 0 ? "暂无数据" : "第 " + state.tf.page + " / " + pages + " 页 · 每页 " + PAGE_SIZE + " 条";
+    var body = document.getElementById("tfTableBody");
+    if (!rows.length) {
+      body.innerHTML = '<tr class="empty-row"><td colspan="10">无匹配金库</td></tr>';
+    } else {
+      body.innerHTML = rows.map(function (r) {
+        var lv = treasuryLevel(r);
+        var ops =
+          '<button type="button" class="btn-link" data-tact="config">配置水位</button>' +
+          (lv === "low"
+            ? '<button type="button" class="btn-link-warning" data-tact="pause">暂停提现</button>'
+            : "");
+        return (
+          '<tr data-id="' + escapeAttr(r.id) + '" class="' + rowLevelClass(lv) + '">' +
+          "<td>" + escapeHtml(r.networkName) + "</td>" +
+          '<td class="td-mono">' + escapeHtml(r.chainId) + "</td>" +
+          '<td class="td-mono addr-cell" title="' + escapeAttr(r.address) + '">' + escapeHtml(shortAddr(r.address)) + "</td>" +
+          "<td>" + escapeHtml(r.asset) + "</td>" +
+          "<td>" + escapeHtml(fmtUsd(r.balance)) + "</td>" +
+          "<td>" + escapeHtml(fmtUsd(r.transit)) + "</td>" +
+          "<td>" + availableHtml(r) + "</td>" +
+          "<td>" + escapeHtml(fmtUsd(r.low) + " ~ " + fmtUsd(r.high)) + "</td>" +
+          '<td class="td-muted text-small">' + escapeHtml(r.syncedAt) + "</td>" +
+          '<td class="td-sticky-ops"><div class="sticky-ops-cell">' +
+          '<span class="ops-status">' + levelTag(lv) + "</span>" +
+          '<div class="actions-cell">' + ops + "</div></div></td></tr>"
+        );
+      }).join("");
+    }
+    renderPager("tfPageBtns", pages, state.tf.page, function (p) {
+      state.tf.page = p;
+      renderTreasuryTable();
+    });
+  }
+
+  function openTreasuryDrawer(row) {
+    state.tf.editId = row.id;
+    document.getElementById("tfEditId").value = row.id;
+    document.getElementById("tfFldNetwork").value = row.networkName;
+    document.getElementById("tfFldChainId").value = row.chainId;
+    document.getElementById("tfFldAsset").value = row.asset;
+    document.getElementById("tfFldRole").value = row.role;
+    document.getElementById("tfFldAddress").value = row.address;
+    document.getElementById("tfFldLow").value = String(row.low);
+    document.getElementById("tfFldHigh").value = String(row.high);
+    document.getElementById("tfFldBuffer").value = row.buffer ? String(row.buffer) : "0";
+    document.getElementById("tfFldAutoPause").checked = !!row.autoPauseWithdraw;
+    document.getElementById("tfAutoPauseLabel").textContent = row.autoPauseWithdraw ? "开启" : "关闭";
+    document.getElementById("tfFldRemark").value = row.remark || "";
+    document.getElementById("tfFldBalance").value = fmtUsd(row.balance);
+    document.getElementById("tfFldTransit").value = fmtUsd(row.transit);
+    document.getElementById("tfFldAvailable").value = fmtUsd(treasuryAvailable(row));
+    document.getElementById("tfFldSynced").value = row.syncedAt;
+    document.getElementById("treasuryDrawer").classList.add("open");
+  }
+  function closeTreasuryDrawer() {
+    document.getElementById("treasuryDrawer").classList.remove("open");
+    state.tf.editId = null;
+  }
+  function saveTreasury() {
+    var id = document.getElementById("tfEditId").value;
+    var row = treasuries.find(function (x) { return x.id === id; });
+    if (!row) return;
+    var low = document.getElementById("tfFldLow").value.trim();
+    var high = document.getElementById("tfFldHigh").value.trim();
+    var buffer = document.getElementById("tfFldBuffer").value.trim() || "0";
+    if (!isDecimal(low) || !isDecimal(high) || !isDecimal(buffer)) return toast("水位/缓冲须为非负数字", "err");
+    if (Number(high) <= Number(low)) return toast("高水位必须大于低水位", "err");
+    row.low = Number(low);
+    row.high = Number(high);
+    row.buffer = Number(buffer);
+    row.autoPauseWithdraw = document.getElementById("tfFldAutoPause").checked;
+    row.remark = document.getElementById("tfFldRemark").value.trim();
+    row.updatedAt = nowStr();
+    row.updatedBy = "运营管理员";
+    toast("水位配置已保存");
+    closeTreasuryDrawer();
+    renderTreasuryTable();
+  }
+  function refreshTreasuryBalances() {
+    // 模拟链上刷新：轻微抖动余额
+    treasuries.forEach(function (r) {
+      var delta = Math.floor(Math.random() * 2000) - 1000;
+      r.balance = Math.max(0, r.balance + delta);
+      r.syncedAt = nowStr();
+      r.updatedAt = nowStr();
+      r.updatedBy = "system";
+    });
+    toast("余额已刷新（模拟）");
+    renderTreasuryTable();
+  }
+
+  document.getElementById("btnTfSearch").addEventListener("click", function () {
+    state.tf.filters = {
+      network: document.getElementById("tfNetwork").value.trim(),
+      chainId: document.getElementById("tfChainId").value.trim(),
+      asset: document.getElementById("tfAsset").value.trim(),
+      level: document.getElementById("tfLevel").value
+    };
+    state.tf.page = 1;
+    renderTreasuryTable();
+  });
+  document.getElementById("btnTfReset").addEventListener("click", function () {
+    document.getElementById("tfNetwork").value = "";
+    document.getElementById("tfChainId").value = "";
+    document.getElementById("tfAsset").value = "";
+    document.getElementById("tfLevel").value = "";
+    state.tf.filters = {};
+    state.tf.page = 1;
+    renderTreasuryTable();
+  });
+  document.getElementById("btnTreasuryRefresh").addEventListener("click", refreshTreasuryBalances);
+  document.getElementById("btnCloseTreasuryDrawer").addEventListener("click", closeTreasuryDrawer);
+  document.getElementById("btnCancelTreasuryDrawer").addEventListener("click", closeTreasuryDrawer);
+  document.getElementById("btnSaveTreasury").addEventListener("click", saveTreasury);
+  document.getElementById("treasuryDrawer").addEventListener("click", function (e) {
+    if (e.target === this) closeTreasuryDrawer();
+  });
+  document.getElementById("tfFldAutoPause").addEventListener("change", function () {
+    document.getElementById("tfAutoPauseLabel").textContent = this.checked ? "开启" : "关闭";
+  });
+  document.getElementById("tfTableBody").addEventListener("click", function (e) {
+    var btn = e.target.closest("[data-tact]");
+    if (!btn) return;
+    var id = btn.closest("tr").getAttribute("data-id");
+    var row = treasuries.find(function (x) { return x.id === id; });
+    if (!row) return;
+    var act = btn.getAttribute("data-tact");
+    if (act === "config") openTreasuryDrawer(row);
+    if (act === "pause") {
+      openConfirm("暂停提现", "确认暂停网络「" + row.networkName + "」的提现开放？（演示：仅提示，不改网络表）", function () {
+        toast("已记录暂停提现意图：" + row.networkName);
+      });
+    }
   });
 
 
