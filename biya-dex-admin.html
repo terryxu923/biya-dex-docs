@@ -1365,7 +1365,7 @@
       <div class="page-header">
         <div>
           <h1 class="page-title">网络管理</h1>
-          <p class="page-desc">配置永续合约充值 / 提现可用网络。</p>
+          <p class="page-desc">配置永续合约充值 / 提现可用网络。新增、编辑保存、启用 / 禁用均需通过 TOTP 安全验证（原型码 111111）。</p>
         </div>
         <div class="page-header-actions">
           <button type="button" class="btn btn-md btn-primary" id="btnAddNetwork">+ 新增网络</button>
@@ -1455,7 +1455,7 @@
       <div class="page-header">
         <div>
           <h1 class="page-title">资产管理</h1>
-          <p class="page-desc">配置各充提网络上的抵押资产。</p>
+          <p class="page-desc">配置各充提网络上的抵押资产。新增、编辑保存、启用 / 禁用均需通过 TOTP 安全验证（原型码 111111）。</p>
         </div>
         <div class="page-header-actions">
           <button type="button" class="btn btn-md btn-primary" id="btnAddAsset">+ 新增资产</button>
@@ -1645,7 +1645,7 @@
         <div class="page-header">
           <div>
             <h1 class="page-title">提现记录</h1>
-            <p class="page-desc">查看提现请求，对待审核记录进行通过或拒绝。</p>
+            <p class="page-desc">查看提现请求，对待审核记录进行通过或拒绝。提交审核结论需 TOTP 验证（原型码 111111）。</p>
           </div>
         </div>
         <div class="filter-card">
@@ -1740,7 +1740,7 @@
         <div class="page-header">
           <div>
             <h1 class="page-title">金库监控</h1>
-            <p class="page-desc">按网络监控出金金库余额、在途与可用水位。金库地址只读，水位区间可配置。</p>
+            <p class="page-desc">按网络监控出金金库余额、在途与可用水位。金库地址只读；保存水位配置需 TOTP 验证（原型码 111111）。</p>
           </div>
           <div class="page-header-actions">
             <button type="button" class="btn btn-md btn-secondary" id="btnTreasuryRefresh">刷新余额</button>
@@ -1924,6 +1924,21 @@
           </div>
         </div>
       </div>
+      <div class="form-section" id="fldTotp-section">
+        <h3 class="form-section-title">⑦ 安全验证（TOTP）</h3>
+        <p class="totp-desc">请输入 Google Authenticator 验证码以确认提交</p>
+        <div class="form-grid">
+          <div class="form-field form-grid-full">
+            <div class="field-label">Google 验证码 <span class="req">*</span></div>
+            <div class="totp-input-wrap">
+              <span class="totp-icon">🔑</span>
+              <input class="field-input totp-input" id="fldTotp" type="text" maxlength="6" placeholder="000000" autocomplete="one-time-code" inputmode="numeric" />
+            </div>
+            <span class="field-error-msg" id="fldTotpError" style="display:none;">验证码错误，请重新获取后输入。</span>
+            <p class="totp-hint">原型环境验证码：<strong>111111</strong></p>
+          </div>
+        </div>
+      </div>
     </div>
     <div class="drawer-footer">
       <button type="button" class="btn btn-md btn-secondary" id="btnCancelDrawer">取消</button>
@@ -2015,10 +2030,52 @@
           </div>
         </div>
       </div>
+      <div class="form-section" id="afldTotp-section">
+        <h3 class="form-section-title">④ 安全验证（TOTP）</h3>
+        <p class="totp-desc">请输入 Google Authenticator 验证码以确认提交</p>
+        <div class="form-grid">
+          <div class="form-field form-grid-full">
+            <div class="field-label">Google 验证码 <span class="req">*</span></div>
+            <div class="totp-input-wrap">
+              <span class="totp-icon">🔑</span>
+              <input class="field-input totp-input" id="afldTotp" type="text" maxlength="6" placeholder="000000" autocomplete="one-time-code" inputmode="numeric" />
+            </div>
+            <span class="field-error-msg" id="afldTotpError" style="display:none;">验证码错误，请重新获取后输入。</span>
+            <p class="totp-hint">原型环境验证码：<strong>111111</strong></p>
+          </div>
+        </div>
+      </div>
     </div>
     <div class="drawer-footer">
       <button type="button" class="btn btn-md btn-secondary" id="btnCancelAssetDrawer">取消</button>
       <button type="button" class="btn btn-md btn-primary" id="btnSaveAsset">保存</button>
+    </div>
+  </div>
+</div>
+
+
+<!-- TOTP 安全验证（列表操作：启用/禁用等） -->
+<div class="modal-overlay" id="totpModal">
+  <div class="modal">
+    <div class="modal-header">
+      <span class="modal-title" id="totpModalTitle">安全验证</span>
+      <button type="button" class="modal-close" id="btnCloseTotp">✕</button>
+    </div>
+    <div class="modal-body">
+      <p class="totp-desc" id="totpModalDesc">请输入 Google Authenticator 验证码</p>
+      <div class="form-field">
+        <div class="field-label">Google 验证码 <span class="req">*</span></div>
+        <div class="totp-input-wrap">
+          <span class="totp-icon">🔑</span>
+          <input class="field-input totp-input" id="totpModalInput" type="text" maxlength="6" placeholder="000000" autocomplete="one-time-code" inputmode="numeric" />
+        </div>
+        <span class="field-error-msg" id="totpModalError" style="display:none;">验证码错误，请重新获取后输入。</span>
+        <p class="totp-hint">原型环境验证码：<strong>111111</strong></p>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button type="button" class="btn btn-md btn-secondary" id="btnTotpCancel">取消</button>
+      <button type="button" class="btn btn-md btn-primary" id="btnTotpConfirm">确认验证</button>
     </div>
   </div>
 </div>
@@ -2081,6 +2138,16 @@
       <div class="form-field" id="auditApproveWrap">
         <div class="field-label">审核备注</div>
         <textarea class="field-textarea" id="auditRemark" placeholder="选填"></textarea>
+      </div>
+      <div class="form-field" style="margin-top:16px">
+        <div class="field-label">Google 验证码 <span class="req">*</span></div>
+        <p class="totp-desc" style="margin-bottom:8px">提交审核结论前须通过 TOTP 验证</p>
+        <div class="totp-input-wrap">
+          <span class="totp-icon">🔑</span>
+          <input class="field-input totp-input" id="auditTotp" type="text" maxlength="6" placeholder="000000" autocomplete="one-time-code" inputmode="numeric" />
+        </div>
+        <span class="field-error-msg" id="auditTotpError" style="display:none;">验证码错误，请重新获取后输入。</span>
+        <p class="totp-hint">原型环境验证码：<strong>111111</strong></p>
       </div>
     </div>
     <div class="modal-footer">
@@ -2194,6 +2261,21 @@
           </div>
         </div>
       </div>
+      <div class="form-section" id="tfFldTotp-section">
+        <h3 class="form-section-title">④ 安全验证（TOTP）</h3>
+        <p class="totp-desc">请输入 Google Authenticator 验证码以确认提交</p>
+        <div class="form-grid">
+          <div class="form-field form-grid-full">
+            <div class="field-label">Google 验证码 <span class="req">*</span></div>
+            <div class="totp-input-wrap">
+              <span class="totp-icon">🔑</span>
+              <input class="field-input totp-input" id="tfFldTotp" type="text" maxlength="6" placeholder="000000" autocomplete="one-time-code" inputmode="numeric" />
+            </div>
+            <span class="field-error-msg" id="tfFldTotpError" style="display:none;">验证码错误，请重新获取后输入。</span>
+            <p class="totp-hint">原型环境验证码：<strong>111111</strong></p>
+          </div>
+        </div>
+      </div>
     </div>
     <div class="drawer-footer">
       <button type="button" class="btn btn-md btn-secondary" id="btnCancelTreasuryDrawer">取消</button>
@@ -2208,6 +2290,79 @@
 <script>
 (function () {
   var PAGE_SIZE = 10;
+  /** 原型 TOTP 固定码（对齐 Web3 钱包 Admin） */
+  var DEMO_TOTP = "111111";
+  var totpPendingCb = null;
+
+  function clearTotpField(inputId, errorId) {
+    var inp = document.getElementById(inputId);
+    var err = document.getElementById(errorId);
+    if (inp) {
+      inp.value = "";
+      inp.classList.remove("error");
+    }
+    if (err) err.style.display = "none";
+  }
+
+  function bindTotpInput(inputId, errorId) {
+    var inp = document.getElementById(inputId);
+    if (!inp || inp._totpBound) return;
+    inp._totpBound = true;
+    inp.addEventListener("input", function () {
+      this.value = this.value.replace(/\D/g, "").slice(0, 6);
+      var err = document.getElementById(errorId);
+      if (err) err.style.display = "none";
+      this.classList.remove("error");
+    });
+  }
+
+  /** @returns {boolean} */
+  function requireTotp(inputId, errorId) {
+    var inp = document.getElementById(inputId);
+    var err = document.getElementById(errorId);
+    if (!inp) return false;
+    var code = (inp.value || "").trim();
+    if (code.length !== 6) {
+      if (err) {
+        err.textContent = "请输入完整的 6 位验证码。";
+        err.style.display = "block";
+      }
+      inp.classList.add("error");
+      return false;
+    }
+    if (code !== DEMO_TOTP) {
+      if (err) {
+        err.textContent = "验证码错误，请检查 Google Authenticator 后重试。（原型提示：正确验证码为 111111）";
+        err.style.display = "block";
+      }
+      inp.classList.add("error");
+      return false;
+    }
+    return true;
+  }
+
+  function openTotpModal(title, desc, onSuccess) {
+    totpPendingCb = onSuccess || null;
+    document.getElementById("totpModalTitle").textContent = title || "安全验证";
+    document.getElementById("totpModalDesc").textContent = desc || "请输入 Google Authenticator 验证码";
+    clearTotpField("totpModalInput", "totpModalError");
+    document.getElementById("totpModal").classList.add("open");
+    setTimeout(function () {
+      var el = document.getElementById("totpModalInput");
+      if (el) el.focus();
+    }, 180);
+  }
+  function closeTotpModal() {
+    document.getElementById("totpModal").classList.remove("open");
+    totpPendingCb = null;
+  }
+  function confirmTotpModal() {
+    if (!requireTotp("totpModalInput", "totpModalError")) return;
+    var cb = totpPendingCb;
+    closeTotpModal();
+    if (typeof cb === "function") cb();
+  }
+
   var state = {
     page: "network",
     net: { page: 1, filters: {}, editId: null },
@@ -2485,6 +2640,7 @@
     document.getElementById("fldExplorerTx").value = row ? row.explorerTxTemplate : "";
     document.getElementById("fldExplorerAddr").value = row ? row.explorerAddressTemplate || "" : "";
     document.getElementById("fldRemark").value = row ? row.remark || "" : "";
+    clearTotpField("fldTotp", "fldTotpError");
     document.getElementById("formDrawer").classList.add("open");
   }
   function closeNetDrawer() {
@@ -2512,6 +2668,7 @@
     if (networks.some(function (n) { return String(n.chainId) === chainId && n.id !== state.net.editId; })) {
       return toast("链 ID 已存在", "err");
     }
+    if (!requireTotp("fldTotp", "fldTotpError")) return;
     /* 确认数：只读系统值；ETA：运营可配置 */
     var existing = state.net.editId
       ? networks.find(function (n) { return n.id === state.net.editId; })
@@ -2688,6 +2845,7 @@
       codeEl.value = "";
       previewAssetCode();
     }
+    clearTotpField("afldTotp", "afldTotpError");
     document.getElementById("assetDrawer").classList.add("open");
   }
   function closeAssetDrawer() {
@@ -2741,6 +2899,7 @@
         a.id !== state.asset.editId;
     });
     if (dupC) return toast("该网络下代币合约已存在", "err");
+    if (!requireTotp("afldTotp", "afldTotpError")) return;
 
     var payload = {
       networkId: networkId,
@@ -2877,20 +3036,32 @@
     var act = btn.getAttribute("data-act");
     if (act === "edit") openNetDrawer(row);
     if (act === "disable") {
-      openConfirm("禁用网络", "确认禁用网络「" + row.displayName + "」？", function () {
-        row.status = "disabled";
-        row.updatedAt = nowStr();
-        row.updatedBy = "运营管理员";
-        toast("已禁用 " + row.displayName);
-        renderNetTable();
-      });
+      openTotpModal(
+        "安全验证 — 禁用网络",
+        "禁用「" + row.displayName + "」后客户端将不可选用该网络。请输入验证码。",
+        function () {
+          row.status = "disabled";
+          row.updatedAt = nowStr();
+          row.updatedBy = "运营管理员";
+          toast("已禁用 " + row.displayName);
+          renderNetTable();
+          fillAssetNetworkSelects();
+        }
+      );
     }
     if (act === "enable") {
-      row.status = "enabled";
-      row.updatedAt = nowStr();
-      row.updatedBy = "运营管理员";
-      toast("已启用 " + row.displayName);
-      renderNetTable();
+      openTotpModal(
+        "安全验证 — 启用网络",
+        "启用「" + row.displayName + "」后可对客户端开放（仍受充提开关约束）。请输入验证码。",
+        function () {
+          row.status = "enabled";
+          row.updatedAt = nowStr();
+          row.updatedBy = "运营管理员";
+          toast("已启用 " + row.displayName);
+          renderNetTable();
+          fillAssetNetworkSelects();
+        }
+      );
     }
   });
 
@@ -2904,20 +3075,30 @@
     var act = btn.getAttribute("data-aact");
     if (act === "edit") openAssetDrawer(row);
     if (act === "disable") {
-      openConfirm("禁用资产", "确认禁用资产「" + row.assetCode + "」？", function () {
-        row.status = "disabled";
-        row.updatedAt = nowStr();
-        row.updatedBy = "运营管理员";
-        toast("已禁用资产 " + row.assetCode);
-        renderAssetTable();
-      });
+      openTotpModal(
+        "安全验证 — 禁用资产",
+        "禁用「" + row.assetCode + "」后该网络资产不可充提。请输入验证码。",
+        function () {
+          row.status = "disabled";
+          row.updatedAt = nowStr();
+          row.updatedBy = "运营管理员";
+          toast("已禁用资产 " + row.assetCode);
+          renderAssetTable();
+        }
+      );
     }
     if (act === "enable") {
-      row.status = "enabled";
-      row.updatedAt = nowStr();
-      row.updatedBy = "运营管理员";
-      toast("已启用资产 " + row.assetCode);
-      renderAssetTable();
+      openTotpModal(
+        "安全验证 — 启用资产",
+        "启用「" + row.assetCode + "」后可对客户端开放（仍受开关约束）。请输入验证码。",
+        function () {
+          row.status = "enabled";
+          row.updatedAt = nowStr();
+          row.updatedBy = "运营管理员";
+          toast("已启用资产 " + row.assetCode);
+          renderAssetTable();
+        }
+      );
     }
   });
 
@@ -3327,6 +3508,7 @@
     document.getElementById("auditRemark").value = "";
     document.getElementById("auditRejectWrap").style.display = "none";
     document.getElementById("auditApproveWrap").style.display = "block";
+    clearTotpField("auditTotp", "auditTotpError");
     document.getElementById("auditModal").classList.add("open");
   }
   function closeAudit() {
@@ -3342,6 +3524,11 @@
     var row = withdraws.find(function (w) { return w.id === id; });
     if (!row) return;
     var result = document.querySelector('input[name="auditResult"]:checked').value;
+    if (result === "reject") {
+      var reasonPre = document.getElementById("auditRejectReason").value.trim();
+      if (!reasonPre) return toast("拒绝时必须填写拒绝原因", "err");
+    }
+    if (!requireTotp("auditTotp", "auditTotpError")) return;
     var now = nowStr();
     if (result === "reject") {
       var reason = document.getElementById("auditRejectReason").value.trim();
@@ -3678,6 +3865,7 @@
     document.getElementById("tfFldTransit").value = fmtUsd(row.transit);
     document.getElementById("tfFldAvailable").value = fmtUsd(treasuryAvailable(row));
     document.getElementById("tfFldSynced").value = row.syncedAt;
+    clearTotpField("tfFldTotp", "tfFldTotpError");
     document.getElementById("treasuryDrawer").classList.add("open");
   }
   function closeTreasuryDrawer() {
@@ -3693,6 +3881,7 @@
     var buffer = document.getElementById("tfFldBuffer").value.trim() || "0";
     if (!isDecimal(low) || !isDecimal(high) || !isDecimal(buffer)) return toast("水位/缓冲须为非负数字", "err");
     if (Number(high) <= Number(low)) return toast("高水位必须大于低水位", "err");
+    if (!requireTotp("tfFldTotp", "tfFldTotpError")) return;
     row.low = Number(low);
     row.high = Number(high);
     row.buffer = Number(buffer);
@@ -3755,12 +3944,32 @@
     var act = btn.getAttribute("data-tact");
     if (act === "config") openTreasuryDrawer(row);
     if (act === "pause") {
-      openConfirm("暂停提现", "确认暂停网络「" + row.networkName + "」的提现开放？（演示：仅提示，不改网络表）", function () {
-        toast("已记录暂停提现意图：" + row.networkName);
-      });
+      openTotpModal(
+        "安全验证 — 暂停提现",
+        "确认暂停网络「" + row.networkName + "」提现？（演示：仅记录意图）。请输入验证码。",
+        function () {
+          toast("已记录暂停提现意图：" + row.networkName);
+        }
+      );
     }
   });
 
+
+
+  bindTotpInput("fldTotp", "fldTotpError");
+  bindTotpInput("afldTotp", "afldTotpError");
+  bindTotpInput("tfFldTotp", "tfFldTotpError");
+  bindTotpInput("auditTotp", "auditTotpError");
+  bindTotpInput("totpModalInput", "totpModalError");
+  document.getElementById("btnCloseTotp").addEventListener("click", closeTotpModal);
+  document.getElementById("btnTotpCancel").addEventListener("click", closeTotpModal);
+  document.getElementById("btnTotpConfirm").addEventListener("click", confirmTotpModal);
+  document.getElementById("totpModal").addEventListener("click", function (e) {
+    if (e.target === this) closeTotpModal();
+  });
+  document.getElementById("totpModalInput").addEventListener("keydown", function (e) {
+    if (e.key === "Enter") confirmTotpModal();
+  });
 
   state.net.filters = {};
   state.asset.filters = {};
