@@ -2519,6 +2519,24 @@
     color: #ffb4b4;
   }
 
+  .wm-otp-inputs.is-locked .wm-otp-digit {
+    opacity: 0.55;
+    pointer-events: none;
+    cursor: not-allowed;
+  }
+
+  .wm-otp-inputs.is-shake {
+    animation: wm-otp-shake 400ms ease;
+  }
+
+  @keyframes wm-otp-shake {
+    0%, 100% { transform: translateX(0); }
+    20% { transform: translateX(-6px); }
+    40% { transform: translateX(6px); }
+    60% { transform: translateX(-4px); }
+    80% { transform: translateX(4px); }
+  }
+
   .wm-otp-status {
     min-height: 20px;
     margin: 0 0 14px;
@@ -2546,7 +2564,13 @@
     font: inherit;
   }
 
-  .wm-otp-resend-btn:hover { text-decoration: underline; }
+  .wm-otp-resend-btn:hover:not(:disabled) { text-decoration: underline; }
+
+  .wm-otp-resend-btn:disabled {
+    color: var(--text-tertiary);
+    cursor: not-allowed;
+    text-decoration: none;
+  }
 
   .wm-select-hero {
     display: flex;
@@ -2795,6 +2819,228 @@
     color: var(--text-primary);
     background: #1A1A1A;
     font-size: 13px;
+  }
+
+  /* WalletConnect 二维码连接 */
+  .wm-wc-body {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    padding: 8px 4px 20px;
+  }
+  .wm-wc-title {
+    margin: 0 0 6px;
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--text-primary);
+  }
+  .wm-wc-sub {
+    margin: 0 0 16px;
+    font-size: 13px;
+    color: var(--text-secondary);
+    line-height: 1.45;
+  }
+  .wm-wc-qr-wrap {
+    position: relative;
+    width: 240px;
+    height: 240px;
+    margin: 0 auto 14px;
+    border-radius: 18px;
+    background: #fff;
+    padding: 14px;
+    box-sizing: border-box;
+    cursor: pointer;
+    user-select: none;
+  }
+  .wm-wc-qr-wrap:hover { box-shadow: 0 0 0 2px rgba(57, 200, 93, 0.35); }
+  .wm-wc-qr-tip {
+    margin: -6px 0 12px;
+    font-size: 11px;
+    color: var(--text-tertiary);
+  }
+  .wm-wc-qr-wrap.is-expired .wm-wc-qr {
+    filter: blur(2px) grayscale(0.4);
+    opacity: 0.45;
+  }
+  .wm-wc-qr {
+    width: 100%;
+    height: 100%;
+    display: grid;
+    grid-template-columns: repeat(11, 1fr);
+    grid-template-rows: repeat(11, 1fr);
+    gap: 2px;
+  }
+  .wm-wc-qr span {
+    background: #111;
+    border-radius: 1px;
+  }
+  .wm-wc-qr span.off { background: transparent; }
+  .wm-wc-qr-expired {
+    display: none;
+    position: absolute;
+    inset: 0;
+    border-radius: 16px;
+    background: rgba(18, 18, 18, 0.55);
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    gap: 10px;
+    color: #fff;
+    font-size: 13px;
+    font-weight: 600;
+  }
+  .wm-wc-qr-wrap.is-expired .wm-wc-qr-expired { display: flex; }
+  .wm-wc-refresh {
+    height: 34px;
+    padding: 0 14px;
+    border-radius: 8px;
+    border: 1px solid rgba(255,255,255,0.35);
+    background: rgba(0,0,0,0.55);
+    color: #fff;
+    font-size: 12px;
+    font-weight: 600;
+  }
+  .wm-wc-refresh:hover { background: rgba(0,0,0,0.75); }
+  .wm-wc-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    width: 100%;
+    max-width: 280px;
+  }
+  .wm-wc-actions button {
+    height: 40px;
+    border-radius: 10px;
+    border: 1px solid var(--border);
+    background: #1A1A1A;
+    color: var(--text-primary);
+    font-size: 13px;
+  }
+  .wm-wc-actions .primary {
+    border-color: var(--accent);
+    background: var(--accent);
+    color: #000;
+    font-weight: 700;
+  }
+  .wm-wc-link-row {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    margin-top: 12px;
+  }
+  .wm-wc-link-btn {
+    height: 32px;
+    padding: 0 12px;
+    border-radius: 999px;
+    border: 1px solid var(--border);
+    background: transparent;
+    color: var(--text-secondary);
+    font-size: 12px;
+  }
+  .wm-wc-link-btn:hover { color: var(--text-primary); border-color: var(--text-tertiary); }
+  .wm-wc-brands {
+    display: flex;
+    gap: 8px;
+    justify-content: center;
+    margin: 10px 0 4px;
+  }
+  .wm-wc-brands span {
+    width: 28px;
+    height: 28px;
+    border-radius: 8px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 9px;
+    font-weight: 700;
+    color: #fff;
+  }
+  .wm-wc-brands .metamask { background: #E2761B; }
+  .wm-wc-brands .rainbow { background: linear-gradient(135deg, #FF6B6B, #4ECDC4); }
+  .wm-wc-brands .coinbase { background: #0052FF; }
+  .wm-wc-brands .okx { background: #111; border: 1px solid #333; }
+  .wm-wc-hint {
+    margin-top: 14px;
+    font-size: 12px;
+    color: var(--text-tertiary);
+  }
+  .wm-wc-hint button {
+    border: none;
+    background: none;
+    color: var(--accent);
+    font-size: 12px;
+    padding: 0;
+    text-decoration: underline;
+  }
+  .wm-wc-signing-card {
+    width: 100%;
+    max-width: 300px;
+    margin-top: 8px;
+    padding: 14px;
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    background: #161616;
+    text-align: left;
+    cursor: pointer;
+    user-select: none;
+  }
+  .wm-wc-signing-card:hover { border-color: var(--accent); }
+  .wm-wc-signing-card .wm-wc-open-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .wm-wc-signing-card .wm-wc-open-logo {
+    width: 36px;
+    height: 36px;
+    border-radius: 10px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    font-weight: 700;
+    color: #fff;
+    background: #E2761B;
+    flex-shrink: 0;
+  }
+  .wm-wc-signing-card .wm-wc-open-text {
+    flex: 1;
+    min-width: 0;
+    font-size: 13px;
+    color: var(--text-primary);
+    font-weight: 600;
+  }
+  .wm-wc-signing-card .wm-wc-open-btn {
+    height: 30px;
+    padding: 0 12px;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+    background: #222;
+    color: var(--text-primary);
+    font-size: 12px;
+  }
+  .wm-wc-signing-hint {
+    margin-top: 10px;
+    font-size: 11px;
+    color: var(--text-tertiary);
+    text-align: center;
+    line-height: 1.4;
+  }
+  .wm-wc-success-check {
+    width: 72px;
+    height: 72px;
+    margin: 12px auto 18px;
+    border-radius: 50%;
+    background: #16A34A;
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 36px;
+    font-weight: 700;
+    line-height: 1;
   }
 
   .wm-status-actions .primary {
@@ -8456,27 +8702,27 @@
         <input type="search" id="walletSearchInput" placeholder="搜索钱包" aria-label="搜索钱包">
       </div>
       <div class="wm-wallet-list" id="walletList">
-        <button type="button" class="wm-wallet-item" data-wallet="OKX Wallet" data-logo="okx" data-order="0">
+        <button type="button" class="wm-wallet-item" data-wallet="OKX Wallet" data-logo="okx" data-order="0" data-installed="1">
           <span class="wm-wallet-logo okx"><span class="installed-dot"></span>OKX</span>
           <span class="wm-auth-label">OKX Wallet</span>
           <span class="wm-recent-badge" hidden>最近</span>
         </button>
-        <button type="button" class="wm-wallet-item" data-wallet="MetaMask" data-logo="metamask" data-order="1">
+        <button type="button" class="wm-wallet-item" data-wallet="MetaMask" data-logo="metamask" data-order="1" data-installed="1">
           <span class="wm-wallet-logo metamask"><span class="installed-dot"></span>MM</span>
           <span class="wm-auth-label">MetaMask</span>
           <span class="wm-recent-badge" hidden>最近</span>
         </button>
-        <button type="button" class="wm-wallet-item" data-wallet="Coinbase Wallet" data-logo="coinbase" data-order="2">
+        <button type="button" class="wm-wallet-item" data-wallet="Coinbase Wallet" data-logo="coinbase" data-order="2" data-installed="1">
           <span class="wm-wallet-logo coinbase"><span class="installed-dot"></span>CB</span>
           <span class="wm-auth-label">Coinbase Wallet</span>
           <span class="wm-recent-badge" hidden>最近</span>
         </button>
-        <button type="button" class="wm-wallet-item" data-wallet="Rainbow" data-logo="rainbow" data-order="3">
+        <button type="button" class="wm-wallet-item" data-wallet="Rainbow" data-logo="rainbow" data-order="3" data-installed="0">
           <span class="wm-wallet-logo rainbow">RB</span>
           <span class="wm-auth-label">Rainbow</span>
           <span class="wm-recent-badge" hidden>最近</span>
         </button>
-        <button type="button" class="wm-wallet-item" data-wallet="Base" data-logo="base" data-order="4">
+        <button type="button" class="wm-wallet-item" data-wallet="Base" data-logo="base" data-order="4" data-installed="1">
           <span class="wm-wallet-logo base"><span class="installed-dot"></span>Base</span>
           <span class="wm-auth-label">Base</span>
           <span class="wm-recent-badge" hidden>最近</span>
@@ -8565,6 +8811,125 @@
       </div>
     </div>
 
+    <!-- WalletConnect：未安装钱包 → 二维码扫码 -->
+    <div class="wm-view" data-view="wc-qr">
+      <div class="wm-top-bar">
+        <button type="button" class="wm-icon-btn" id="btnWcQrBack" aria-label="返回">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 6l-6 6 6 6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+        <button type="button" class="wm-icon-btn wm-close" aria-label="关闭">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 6l12 12M18 6L6 18" stroke-linecap="round"/></svg>
+        </button>
+      </div>
+      <div class="wm-wc-body">
+        <h2 class="wm-wc-title" id="wcQrTitle">使用手机扫描二维码</h2>
+        <p class="wm-wc-sub">打开手机上的钱包应用，扫描二维码以连接 <strong id="wcQrWalletName">Rainbow</strong></p>
+        <div class="wm-wc-qr-wrap" id="wcQrWrap" title="单击：确认已扫码并连接；双击：取消连接（二维码失效）">
+          <div class="wm-wc-qr" id="wcQrCanvas" aria-hidden="true"></div>
+          <div class="wm-wc-qr-expired" id="wcQrExpired">
+            <span>二维码已失效</span>
+            <button type="button" class="wm-wc-refresh" id="btnWcRefreshQr">刷新二维码</button>
+          </div>
+        </div>
+        <p class="wm-wc-qr-tip">单击二维码 = 确认连接 · 双击二维码 = 取消连接</p>
+        <div class="wm-wc-brands" aria-hidden="true">
+          <span class="metamask">MM</span>
+          <span class="rainbow">RB</span>
+          <span class="coinbase">CB</span>
+          <span class="okx">OKX</span>
+        </div>
+        <div class="wm-wc-link-row">
+          <button type="button" class="wm-wc-link-btn" id="btnWcCopyLink">复制链接</button>
+        </div>
+        <p class="wm-wc-hint">还没有钱包？<button type="button" id="btnWcGetWallet">开始使用</button></p>
+      </div>
+      <div class="wm-footer">
+        <span>由</span>
+        <span class="privy-mark"><span class="privy-dot"></span>WalletConnect</span>
+        <span>提供连接</span>
+      </div>
+    </div>
+
+    <!-- WalletConnect：签名验证中 -->
+    <div class="wm-view" data-view="wc-signing">
+      <div class="wm-top-bar">
+        <button type="button" class="wm-icon-btn" id="btnWcSigningBack" aria-label="返回">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 6l-6 6 6 6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+        <button type="button" class="wm-icon-btn wm-close" aria-label="关闭">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 6l12 12M18 6L6 18" stroke-linecap="round"/></svg>
+        </button>
+      </div>
+      <div class="wm-status-body" id="wcSigningPanel" title="单击：验证成功；双击：验证失败（拒绝签名）">
+        <div class="wm-ring-wrap">
+          <div class="wm-ring spin"></div>
+          <div class="wm-ring-logo" id="wcSigningLogo">RB</div>
+        </div>
+        <h2 class="wm-title sm" id="wcSigningTitle">正在准备你的钱包…</h2>
+        <p class="wm-subtitle" id="wcSigningSub">请在 <strong id="wcSigningWalletName">Rainbow</strong> 中继续…</p>
+        <div class="wm-wc-signing-card" id="wcSigningCard">
+          <div class="wm-wc-open-row">
+            <span class="wm-wc-open-logo" id="wcSigningCardLogo">RB</span>
+            <span class="wm-wc-open-text">已打开 <span id="wcSigningCardName">Rainbow</span>…</span>
+            <button type="button" class="wm-wc-open-btn" id="btnWcOpenWallet">打开</button>
+          </div>
+        </div>
+        <p class="wm-wc-signing-hint">单击本页 = 验证成功 · 双击本页 = 拒绝签名<br>约 3 秒内也可自动完成验证（演示）</p>
+      </div>
+      <div class="wm-footer">
+        <span>由</span>
+        <span class="privy-mark"><span class="privy-dot"></span>WalletConnect</span>
+        <span>提供连接</span>
+      </div>
+    </div>
+
+    <!-- WalletConnect：签名验证成功 -->
+    <div class="wm-view" data-view="wc-sign-success">
+      <div class="wm-top-bar">
+        <span class="wm-top-spacer"></span>
+        <button type="button" class="wm-icon-btn wm-close" aria-label="关闭">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 6l12 12M18 6L6 18" stroke-linecap="round"/></svg>
+        </button>
+      </div>
+      <div class="wm-status-body">
+        <div class="wm-wc-success-check" aria-hidden="true">✓</div>
+        <h2 class="wm-title sm" id="wcSignSuccessTitle">签名验证成功</h2>
+        <p class="wm-subtitle">你已成功签署连接请求。正在返回 BIYA DEX…</p>
+      </div>
+      <div class="wm-footer">
+        <span>由</span>
+        <span class="privy-mark"><span class="privy-dot"></span>WalletConnect</span>
+        <span>提供连接</span>
+      </div>
+    </div>
+
+    <!-- WalletConnect：用户拒绝签名 -->
+    <div class="wm-view" data-view="wc-sign-failure">
+      <div class="wm-top-bar">
+        <span class="wm-top-spacer"></span>
+        <button type="button" class="wm-icon-btn wm-close" aria-label="关闭">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 6l12 12M18 6L6 18" stroke-linecap="round"/></svg>
+        </button>
+      </div>
+      <div class="wm-status-body">
+        <div class="wm-ring-wrap">
+          <div class="wm-ring error"></div>
+          <div class="wm-ring-logo error" aria-hidden="true">!</div>
+        </div>
+        <h2 class="wm-title sm">你已拒绝签名请求</h2>
+        <p class="wm-subtitle">可点击重试，再次发起签名验证；验证成功后将完成钱包连接。</p>
+        <div class="wm-status-actions">
+          <button type="button" id="btnWcFailBack">返回二维码</button>
+          <button type="button" class="primary" id="btnWcFailRetry">重试</button>
+        </div>
+      </div>
+      <div class="wm-footer">
+        <span>由</span>
+        <span class="privy-mark"><span class="privy-dot"></span>WalletConnect</span>
+        <span>提供连接</span>
+      </div>
+    </div>
+
   </div>
 </div>
 
@@ -8586,6 +8951,14 @@
       <button type="button" data-connect-scene="switch">切换钱包</button>
       <button type="button" data-connect-scene="disconnect">主动断开</button>
       <button type="button" data-connect-scene="session-expired">会话失效</button>
+    </div>
+    <div class="bd01-demo-title" style="margin-top:10px">钱包连接 · WalletConnect</div>
+    <div class="bd01-demo-grid">
+      <button type="button" data-connect-scene="wc-qr">未安装·二维码（单击确认/双击失效）</button>
+      <button type="button" data-connect-scene="wc-signing">签名验证中（单击成功/双击拒绝）</button>
+      <button type="button" data-connect-scene="wc-success">全流程·验证成功</button>
+      <button type="button" data-connect-scene="wc-reject">拒绝签名·可重试</button>
+      <button type="button" data-connect-scene="wc-qr-expired">二维码失效</button>
     </div>
     <div class="bd01-demo-title" style="margin-top:10px">账户与交易状态</div>
     <div class="bd01-demo-grid">
@@ -9688,12 +10061,27 @@
   var RECENT_AUTH_KEY = "biya_last_auth_method_v1";
   var waitTimer = null;
   var successTimer = null;
+  var wcQrExpireTimer = null;
+  var wcScanTimer = null;
+  var wcSignTimer = null;
+  var wcConnectMode = "installed"; /* installed | walletconnect */
   var accountQueryTimer = null;
   var selectedWallet = "OKX Wallet";
   var pendingEmailAddress = "";
   var DEMO_EMAIL_OTP = "111111";
+  var OTP_MAX_ERRORS = 5;
+  var OTP_LOCK_MS = 30 * 60 * 1000; /* 30 分钟 */
+  var OTP_RESEND_SECONDS = 59;
+  var OTP_ERROR_CLEAR_MS = 1500;
+  var OTP_SHAKE_MS = 400;
+  var OTP_LOCK_MAP_KEY = "biya_perp_otp_lock_map"; /* email -> lockUntil ms */
+  var OTP_ERR_MAP_KEY = "biya_perp_otp_err_map"; /* email -> error count */
   var otpVerifyLock = false;
   var otpSuccessTimer = null;
+  var otpErrorClearTimer = null;
+  var otpResendTimer = null;
+  var otpResendRemain = 0;
+  var otpLockTimer = null;
   var activeAttemptId = 0;
   var sessionSequence = 0;
   var modalReturnFocus = null;
@@ -9924,7 +10312,258 @@
     if (waitTimer) { clearTimeout(waitTimer); waitTimer = null; }
     if (successTimer) { clearTimeout(successTimer); successTimer = null; }
     if (otpSuccessTimer) { clearTimeout(otpSuccessTimer); otpSuccessTimer = null; }
+    if (otpErrorClearTimer) { clearTimeout(otpErrorClearTimer); otpErrorClearTimer = null; }
+    if (otpResendTimer) { clearInterval(otpResendTimer); otpResendTimer = null; }
+    otpResendRemain = 0;
+    if (otpLockTimer) { clearInterval(otpLockTimer); otpLockTimer = null; }
+    if (wcQrExpireTimer) { clearTimeout(wcQrExpireTimer); wcQrExpireTimer = null; }
+    if (wcScanTimer) { clearTimeout(wcScanTimer); wcScanTimer = null; }
+    if (wcSignTimer) { clearTimeout(wcSignTimer); wcSignTimer = null; }
     otpVerifyLock = false;
+  }
+
+  function isWalletInstalled(item) {
+    if (!item) return false;
+    var flag = item.getAttribute("data-installed");
+    if (flag === "1") return true;
+    if (flag === "0") return false;
+    return !!(item.querySelector && item.querySelector(".installed-dot"));
+  }
+
+  function renderWcQrPattern(seed) {
+    var canvas = document.getElementById("wcQrCanvas");
+    if (!canvas) return;
+    var n = 11;
+    var html = "";
+    var s = Number(seed) || Date.now();
+    function rnd() {
+      s = (s * 1664525 + 1013904223) >>> 0;
+      return s / 4294967296;
+    }
+    for (var i = 0; i < n * n; i++) {
+      var row = Math.floor(i / n);
+      var col = i % n;
+      var corner = (row < 3 && col < 3) || (row < 3 && col > n - 4) || (row > n - 4 && col < 3);
+      var on = corner || rnd() > 0.55;
+      html += '<span class="' + (on ? "" : "off") + '"></span>';
+    }
+    canvas.innerHTML = html;
+  }
+
+  function setWcQrExpired(expired) {
+    var wrap = document.getElementById("wcQrWrap");
+    if (!wrap) return;
+    wrap.classList.toggle("is-expired", !!expired);
+  }
+
+  function refreshWcQr() {
+    setWcQrExpired(false);
+    renderWcQrPattern(Date.now());
+    if (wcQrExpireTimer) clearTimeout(wcQrExpireTimer);
+    wcQrExpireTimer = setTimeout(function () {
+      wcQrExpireTimer = null;
+      setWcQrExpired(true);
+    }, 28000);
+  }
+
+  var wcSignOutcomeLock = null; /* manual click outcome overrides auto timer */
+
+  function openWcQrView(walletName, options) {
+    options = options || {};
+    wcConnectMode = "walletconnect";
+    wcSignOutcomeLock = null;
+    selectedWallet = walletName || "Rainbow";
+    var logo = walletLogoText[selectedWallet] || selectedWallet.slice(0, 3);
+    var nameEl = document.getElementById("wcQrWalletName");
+    if (nameEl) nameEl.textContent = selectedWallet;
+    var signingLogo = document.getElementById("wcSigningLogo");
+    if (signingLogo) signingLogo.textContent = logo;
+    var cardLogo = document.getElementById("wcSigningCardLogo");
+    if (cardLogo) cardLogo.textContent = logo;
+    ["wcSigningWalletName", "wcSigningCardName"].forEach(function (id) {
+      var el = document.getElementById(id);
+      if (el) el.textContent = selectedWallet;
+    });
+    clearWalletTimers();
+    var attemptId = ++activeAttemptId;
+    identityState.status = "connecting";
+    identityState.connectionAttemptId = "conn_wc_" + attemptId;
+    refreshWcQr();
+    showWalletView("wc-qr");
+    if (options.autoExpire) {
+      setWcQrExpired(true);
+      if (wcQrExpireTimer) { clearTimeout(wcQrExpireTimer); wcQrExpireTimer = null; }
+    }
+    if (options.autoScan) {
+      wcScanTimer = setTimeout(function () {
+        wcScanTimer = null;
+        if (attemptId !== activeAttemptId) return;
+        startWcSigning({
+          attemptId: attemptId,
+          outcome: options.outcome || "success",
+          signDelay: options.signDelay
+        });
+      }, options.scanDelay == null ? 500 : options.scanDelay);
+    }
+  }
+
+  function completeWcSignSuccess(attemptId, options) {
+    options = options || {};
+    showWalletView("wc-sign-success");
+    if (successTimer) clearTimeout(successTimer);
+    successTimer = setTimeout(function () {
+      successTimer = null;
+      if (attemptId !== activeAttemptId) return;
+      finishIdentityConnection({
+        walletAddress: options.walletAddress || WALLET,
+        walletNetworkId: String(options.walletNetworkId || "42161"),
+        walletNetworkName: options.walletNetworkName || "Arbitrum One",
+        connectionMethod: "EXTERNAL_WALLET",
+        walletProvider: walletProviderCode[selectedWallet] || "UNKNOWN",
+        walletName: selectedWallet,
+        signatureCapability: "EIP712_SUPPORTED",
+        connectChannel: "walletconnect"
+      }, attemptId);
+    }, options.successDelay == null ? 1000 : options.successDelay);
+  }
+
+  function startWcSigning(options) {
+    options = options || {};
+    var attemptId = options.attemptId || activeAttemptId;
+    if (attemptId !== activeAttemptId) return;
+    wcSignOutcomeLock = null;
+    setWcQrExpired(false);
+    if (wcQrExpireTimer) { clearTimeout(wcQrExpireTimer); wcQrExpireTimer = null; }
+    if (wcScanTimer) { clearTimeout(wcScanTimer); wcScanTimer = null; }
+    var logo = walletLogoText[selectedWallet] || selectedWallet.slice(0, 3);
+    var signingLogo = document.getElementById("wcSigningLogo");
+    if (signingLogo) signingLogo.textContent = logo;
+    var cardLogo = document.getElementById("wcSigningCardLogo");
+    if (cardLogo) cardLogo.textContent = logo;
+    ["wcSigningWalletName", "wcSigningCardName"].forEach(function (id) {
+      var el = document.getElementById(id);
+      if (el) el.textContent = selectedWallet;
+    });
+    document.getElementById("wcSigningTitle").textContent = "正在准备你的钱包…";
+    showWalletView("wc-signing");
+    if (wcSignTimer) clearTimeout(wcSignTimer);
+    /* 默认 3 秒自动验证；单击/双击可提前决定成功或失败 */
+    wcSignTimer = setTimeout(function () {
+      wcSignTimer = null;
+      if (attemptId !== activeAttemptId) return;
+      if (wcSignOutcomeLock === "reject") {
+        identityState.status = "failed";
+        showWalletView("wc-sign-failure");
+        return;
+      }
+      if (options.outcome === "reject" || options.outcome === "rejected") {
+        if (wcSignOutcomeLock === "success") {
+          completeWcSignSuccess(attemptId, options);
+          return;
+        }
+        identityState.status = "failed";
+        showWalletView("wc-sign-failure");
+        return;
+      }
+      if (wcSignOutcomeLock === "reject") {
+        identityState.status = "failed";
+        showWalletView("wc-sign-failure");
+        return;
+      }
+      completeWcSignSuccess(attemptId, options);
+    }, options.signDelay == null ? 3000 : options.signDelay);
+  }
+
+  function resolveWcSigningByClick(kind) {
+    /* kind: success | reject */
+    var active = document.querySelector('.wm-view.active[data-view="wc-signing"]');
+    if (!active) return;
+    wcSignOutcomeLock = kind;
+    if (wcSignTimer) {
+      clearTimeout(wcSignTimer);
+      wcSignTimer = null;
+    }
+    var attemptId = activeAttemptId;
+    if (kind === "reject") {
+      identityState.status = "failed";
+      showWalletView("wc-sign-failure");
+      return;
+    }
+    completeWcSignSuccess(attemptId, {});
+  }
+
+  function retryWcSigning() {
+    clearWalletTimers();
+    wcSignOutcomeLock = null;
+    var attemptId = ++activeAttemptId;
+    identityState.status = "connecting";
+    identityState.connectionAttemptId = "conn_wc_retry_" + attemptId;
+    startWcSigning({ attemptId: attemptId, outcome: "success", signDelay: 3000 });
+  }
+
+  function bindWcQrClickHandlers() {
+    var wrap = document.getElementById("wcQrWrap");
+    if (!wrap || wrap.getAttribute("data-wc-bound") === "1") return;
+    wrap.setAttribute("data-wc-bound", "1");
+    var clickTimer = null;
+    wrap.addEventListener("click", function (e) {
+      if (e.target && (e.target.id === "btnWcRefreshQr" || e.target.closest("#btnWcRefreshQr"))) return;
+      if (wrap.classList.contains("is-expired")) {
+        showToast("二维码已失效，请先刷新", "error");
+        return;
+      }
+      if (clickTimer) return;
+      clickTimer = setTimeout(function () {
+        clickTimer = null;
+        /* 单击二维码 = 确认连接 → 签名验证中 */
+        startWcSigning({ outcome: "success" });
+      }, 280);
+    });
+    wrap.addEventListener("dblclick", function (e) {
+      e.preventDefault();
+      if (clickTimer) {
+        clearTimeout(clickTimer);
+        clickTimer = null;
+      }
+      if (e.target && (e.target.id === "btnWcRefreshQr" || e.target.closest("#btnWcRefreshQr"))) return;
+      /* 双击二维码 = 取消连接 → 二维码失效 */
+      setWcQrExpired(true);
+      if (wcQrExpireTimer) { clearTimeout(wcQrExpireTimer); wcQrExpireTimer = null; }
+      showToast("已取消连接，二维码已失效", "info");
+    });
+  }
+
+  function bindWcSigningClickHandlers() {
+    var panel = document.getElementById("wcSigningPanel");
+    if (!panel || panel.getAttribute("data-wc-bound") === "1") return;
+    panel.setAttribute("data-wc-bound", "1");
+    var clickTimer = null;
+    function onSingle() {
+      resolveWcSigningByClick("success");
+    }
+    function onDouble() {
+      resolveWcSigningByClick("reject");
+    }
+    panel.addEventListener("click", function (e) {
+      if (e.target && e.target.id === "btnWcOpenWallet") {
+        e.stopPropagation();
+        showToast("请在手机钱包中打开并确认连接请求", "info");
+        return;
+      }
+      if (clickTimer) return;
+      clickTimer = setTimeout(function () {
+        clickTimer = null;
+        onSingle();
+      }, 280);
+    });
+    panel.addEventListener("dblclick", function (e) {
+      e.preventDefault();
+      if (clickTimer) {
+        clearTimeout(clickTimer);
+        clickTimer = null;
+      }
+      onDouble();
+    });
   }
 
   function shortenAddress(address) {
@@ -10287,6 +10926,139 @@
     return getOtpDigits().map(function (el) { return (el.value || "").replace(/\D/g, "").slice(0, 1); }).join("");
   }
 
+  function normalizeOtpEmail(email) {
+    return String(email || pendingEmailAddress || "").trim().toLowerCase();
+  }
+
+  function readOtpJsonMap(key) {
+    try {
+      var raw = localStorage.getItem(key);
+      if (!raw) return {};
+      var obj = JSON.parse(raw);
+      return obj && typeof obj === "object" ? obj : {};
+    } catch (e) {
+      return {};
+    }
+  }
+
+  function writeOtpJsonMap(key, map) {
+    try {
+      localStorage.setItem(key, JSON.stringify(map || {}));
+    } catch (e) {}
+  }
+
+  function getOtpErrorCount(email) {
+    var id = normalizeOtpEmail(email);
+    if (!id) return 0;
+    var map = readOtpJsonMap(OTP_ERR_MAP_KEY);
+    var n = parseInt(map[id] || "0", 10);
+    return isNaN(n) ? 0 : Math.max(0, n);
+  }
+
+  function setOtpErrorCount(n, email) {
+    var id = normalizeOtpEmail(email);
+    if (!id) return;
+    var map = readOtpJsonMap(OTP_ERR_MAP_KEY);
+    var val = Math.max(0, n);
+    if (val <= 0) delete map[id];
+    else map[id] = val;
+    writeOtpJsonMap(OTP_ERR_MAP_KEY, map);
+  }
+
+  function clearOtpErrorCount(email) {
+    setOtpErrorCount(0, email);
+  }
+
+  function getOtpLockUntil(email) {
+    var id = normalizeOtpEmail(email);
+    if (!id) return 0;
+    var map = readOtpJsonMap(OTP_LOCK_MAP_KEY);
+    var n = parseInt(map[id] || "0", 10);
+    return isNaN(n) ? 0 : n;
+  }
+
+  function setOtpLockUntil(ts, email) {
+    var id = normalizeOtpEmail(email);
+    if (!id) return;
+    var map = readOtpJsonMap(OTP_LOCK_MAP_KEY);
+    if (!ts) delete map[id];
+    else map[id] = ts;
+    writeOtpJsonMap(OTP_LOCK_MAP_KEY, map);
+  }
+
+  function clearOtpLock(email) {
+    setOtpLockUntil(0, email);
+  }
+
+  function isOtpLocked(email) {
+    var until = getOtpLockUntil(email);
+    if (!until) return false;
+    if (Date.now() >= until) {
+      clearOtpLock(email);
+      clearOtpErrorCount(email);
+      return false;
+    }
+    return true;
+  }
+
+  function getOtpLockRemainMs(email) {
+    var until = getOtpLockUntil(email);
+    if (!until) return 0;
+    return Math.max(0, until - Date.now());
+  }
+
+  function formatOtpLockCountdown(ms) {
+    var totalSec = Math.max(0, Math.ceil(ms / 1000));
+    var mm = Math.floor(totalSec / 60);
+    var ss = totalSec % 60;
+    var mmText = mm < 10 ? "0" + mm : String(mm);
+    var ssText = ss < 10 ? "0" + ss : String(ss);
+    return mmText + "分" + ssText + "秒";
+  }
+
+  function getOtpLockCountdownText(email) {
+    return formatOtpLockCountdown(getOtpLockRemainMs(email));
+  }
+
+  function stopOtpLockCountdown() {
+    if (otpLockTimer) {
+      clearInterval(otpLockTimer);
+      otpLockTimer = null;
+    }
+  }
+
+  function startOtpLockCountdown(email) {
+    stopOtpLockCountdown();
+    var lockedEmail = normalizeOtpEmail(email);
+    if (!isOtpLocked(lockedEmail)) return;
+    applyOtpLockUi(lockedEmail);
+    otpLockTimer = setInterval(function () {
+      /* 仅当当前页仍是该邮箱时更新 UI / 解锁 */
+      if (normalizeOtpEmail(pendingEmailAddress) !== lockedEmail) return;
+      if (!isOtpLocked(lockedEmail)) {
+        stopOtpLockCountdown();
+        clearOtpErrorCount(lockedEmail);
+        setOtpInputsDisabled(false);
+        clearOtpStatus();
+        updateOtpResendButton();
+        startOtpResendCountdown(OTP_RESEND_SECONDS);
+        var first = getOtpDigits()[0];
+        if (first) first.focus();
+        showToast("该邮箱验证锁定已解除，请重新输入验证码", "info");
+        return;
+      }
+      applyOtpLockUi(lockedEmail);
+    }, 1000);
+  }
+
+  function setOtpInputsDisabled(disabled) {
+    getOtpDigits().forEach(function (el) {
+      el.disabled = !!disabled;
+    });
+    var wrap = document.getElementById("wmOtpInputs");
+    if (wrap) wrap.classList.toggle("is-locked", !!disabled);
+  }
+
   function clearOtpStatus() {
     var status = document.getElementById("wmOtpStatus");
     var wrap = document.getElementById("wmOtpInputs");
@@ -10294,7 +11066,7 @@
       status.textContent = "";
       status.classList.remove("is-success", "is-error");
     }
-    if (wrap) wrap.classList.remove("is-error");
+    if (wrap) wrap.classList.remove("is-error", "is-shake");
   }
 
   function resetEmailOtpInputs(focusFirst) {
@@ -10303,11 +11075,75 @@
       clearTimeout(otpSuccessTimer);
       otpSuccessTimer = null;
     }
+    if (otpErrorClearTimer) {
+      clearTimeout(otpErrorClearTimer);
+      otpErrorClearTimer = null;
+    }
     getOtpDigits().forEach(function (el) { el.value = ""; });
     clearOtpStatus();
-    if (focusFirst) {
+    if (focusFirst && !isOtpLocked(pendingEmailAddress)) {
       var first = getOtpDigits()[0];
       if (first) setTimeout(function () { first.focus(); }, 0);
+    }
+  }
+
+  function updateOtpResendButton() {
+    var btn = document.getElementById("btnEmailCodeResend");
+    if (!btn) return;
+    if (isOtpLocked(pendingEmailAddress)) {
+      btn.disabled = true;
+      btn.textContent = "已锁定（" + getOtpLockCountdownText(pendingEmailAddress) + "）";
+      return;
+    }
+    if (otpResendRemain > 0) {
+      btn.disabled = true;
+      btn.textContent = "重新发送（" + otpResendRemain + "s）";
+      return;
+    }
+    btn.disabled = false;
+    btn.textContent = "重新发送";
+  }
+
+  function stopOtpResendCountdown() {
+    if (otpResendTimer) {
+      clearInterval(otpResendTimer);
+      otpResendTimer = null;
+    }
+    otpResendRemain = 0;
+    updateOtpResendButton();
+  }
+
+  function startOtpResendCountdown(seconds) {
+    stopOtpResendCountdown();
+    otpResendRemain = seconds == null ? OTP_RESEND_SECONDS : seconds;
+    updateOtpResendButton();
+    otpResendTimer = setInterval(function () {
+      otpResendRemain -= 1;
+      if (otpResendRemain <= 0) {
+        stopOtpResendCountdown();
+        return;
+      }
+      updateOtpResendButton();
+    }, 1000);
+  }
+
+  function applyOtpLockUi(email) {
+    var mail = normalizeOtpEmail(email || pendingEmailAddress);
+    var locked = isOtpLocked(mail);
+    setOtpInputsDisabled(locked);
+    updateOtpResendButton();
+    if (locked) {
+      var status = document.getElementById("wmOtpStatus");
+      if (status) {
+        status.textContent = "该邮箱验证已锁定，请 " + getOtpLockCountdownText(mail) + " 后再试";
+        status.classList.remove("is-success");
+        status.classList.add("is-error");
+      }
+      var resendBtn = document.getElementById("btnEmailCodeResend");
+      if (resendBtn) {
+        resendBtn.disabled = true;
+        resendBtn.textContent = "已锁定（" + getOtpLockCountdownText(mail) + "）";
+      }
     }
   }
 
@@ -10317,22 +11153,113 @@
     if (addr) addr.textContent = email;
     resetEmailOtpInputs(false);
     showWalletView("email-code");
+    if (isOtpLocked(email)) {
+      applyOtpLockUi(email);
+      startOtpLockCountdown(email);
+    } else {
+      stopOtpLockCountdown();
+      setOtpInputsDisabled(false);
+      clearOtpStatus();
+      startOtpResendCountdown(OTP_RESEND_SECONDS);
+      var first = getOtpDigits()[0];
+      if (first) setTimeout(function () { first.focus(); }, 0);
+    }
   }
 
-  function setOtpError() {
+  function handleOtpVerifySuccess() {
+    clearOtpErrorCount(pendingEmailAddress);
+    clearOtpLock(pendingEmailAddress);
+    stopOtpLockCountdown();
+    setOtpInputsDisabled(false);
     var status = document.getElementById("wmOtpStatus");
     var wrap = document.getElementById("wmOtpInputs");
-    if (wrap) wrap.classList.add("is-error");
+    if (wrap) wrap.classList.remove("is-error", "is-shake", "is-locked");
     if (status) {
-      status.textContent = "验证码错误";
+      status.textContent = "验证成功！";
+      status.classList.remove("is-error");
+      status.classList.add("is-success");
+    }
+    stopOtpResendCountdown();
+    otpSuccessTimer = setTimeout(function () {
+      otpSuccessTimer = null;
+      var email = pendingEmailAddress || "邮箱";
+      var logo = (email.charAt(0) || "邮").toUpperCase();
+      goToWaiting(email, {
+        connectionMethod: "EMAIL",
+        walletAddress: WALLET,
+        walletProvider: "PRIVY_EMBEDDED",
+        delay: 900
+      });
+      document.getElementById("waitingLogo").textContent = logo;
+      document.getElementById("successLogo").textContent = logo;
+      otpVerifyLock = false;
+    }, 450);
+  }
+
+  function handleOtpVerifyError() {
+    var status = document.getElementById("wmOtpStatus");
+    var wrap = document.getElementById("wmOtpInputs");
+    var mail = normalizeOtpEmail(pendingEmailAddress);
+    var count = getOtpErrorCount(mail) + 1;
+    setOtpErrorCount(count, mail);
+
+    var remain = Math.max(0, OTP_MAX_ERRORS - count);
+    if (status) {
+      if (count >= OTP_MAX_ERRORS) {
+        status.textContent = "该邮箱验证已锁定，请稍后重试";
+      } else {
+        status.textContent = "验证码错误，还剩下" + remain + "次机会";
+      }
       status.classList.remove("is-success");
       status.classList.add("is-error");
+    }
+    if (wrap) {
+      wrap.classList.add("is-error");
+      wrap.classList.remove("is-shake");
+      void wrap.offsetWidth;
+      wrap.classList.add("is-shake");
+      setTimeout(function () {
+        wrap.classList.remove("is-shake");
+      }, OTP_SHAKE_MS);
+    }
+
+    if (otpErrorClearTimer) clearTimeout(otpErrorClearTimer);
+    otpErrorClearTimer = setTimeout(function () {
+      otpErrorClearTimer = null;
+      getOtpDigits().forEach(function (el) { el.value = ""; });
+      if (wrap) wrap.classList.add("is-error");
+      otpVerifyLock = false;
+      if (!isOtpLocked(mail)) {
+        var first = getOtpDigits()[0];
+        if (first) first.focus();
+      }
+    }, OTP_ERROR_CLEAR_MS);
+
+    if (count >= OTP_MAX_ERRORS) {
+      setOtpLockUntil(Date.now() + OTP_LOCK_MS, mail);
+      setOtpInputsDisabled(true);
+      startOtpLockCountdown(mail);
+      var lockText = getOtpLockCountdownText(mail);
+      showToast("该邮箱验证已锁定：验证码错误次数过多，请 " + lockText + " 后再试", "error");
+      if (status) {
+        status.textContent = "该邮箱验证已锁定，请 " + lockText + " 后再试";
+        status.classList.add("is-error");
+      }
+      updateOtpResendButton();
+      otpVerifyLock = false;
+      return;
     }
     otpVerifyLock = false;
   }
 
   function verifyEmailOtp() {
     if (otpVerifyLock) return;
+    if (isOtpLocked(pendingEmailAddress)) {
+      applyOtpLockUi(pendingEmailAddress);
+      startOtpLockCountdown(pendingEmailAddress);
+      showToast("该邮箱验证已锁定：验证码错误次数过多，请 " + getOtpLockCountdownText(pendingEmailAddress) + " 后再试", "error");
+      return;
+    }
     var code = getOtpValue();
     if (code.length !== 6) {
       clearOtpStatus();
@@ -10340,37 +11267,21 @@
     }
     otpVerifyLock = true;
     if (code === DEMO_EMAIL_OTP) {
-      var status = document.getElementById("wmOtpStatus");
-      var wrap = document.getElementById("wmOtpInputs");
-      if (wrap) wrap.classList.remove("is-error");
-      if (status) {
-        status.textContent = "验证成功！";
-        status.classList.remove("is-error");
-        status.classList.add("is-success");
-      }
-      otpSuccessTimer = setTimeout(function () {
-        otpSuccessTimer = null;
-        var email = pendingEmailAddress || "邮箱";
-        var logo = (email.charAt(0) || "邮").toUpperCase();
-        goToWaiting(email, {
-          connectionMethod: "EMAIL",
-          walletAddress: WALLET,
-          walletProvider: "PRIVY_EMBEDDED",
-          delay: 900
-        });
-        document.getElementById("waitingLogo").textContent = logo;
-        document.getElementById("successLogo").textContent = logo;
-        otpVerifyLock = false;
-      }, 450);
+      handleOtpVerifySuccess();
       return;
     }
-    setOtpError();
+    handleOtpVerifyError();
   }
 
   function bindEmailOtpInputs() {
     var digits = getOtpDigits();
     digits.forEach(function (input, index) {
       input.addEventListener("input", function () {
+        if (isOtpLocked(pendingEmailAddress)) {
+          input.value = "";
+          applyOtpLockUi(pendingEmailAddress);
+          return;
+        }
         var raw = (input.value || "").replace(/\D/g, "");
         if (raw.length > 1) raw = raw.slice(-1);
         input.value = raw;
@@ -10380,6 +11291,11 @@
         if (getOtpValue().length === 6) verifyEmailOtp();
       });
       input.addEventListener("keydown", function (e) {
+        if (isOtpLocked(pendingEmailAddress)) {
+          e.preventDefault();
+          applyOtpLockUi(pendingEmailAddress);
+          return;
+        }
         if (e.key === "Backspace") {
           if (input.value) {
             input.value = "";
@@ -10406,10 +11322,25 @@
         }
       });
       input.addEventListener("paste", function (e) {
-        var text = (e.clipboardData || window.clipboardData).getData("text") || "";
-        var nums = text.replace(/\D/g, "").slice(0, 6);
-        if (!nums) return;
         e.preventDefault();
+        if (isOtpLocked(pendingEmailAddress)) {
+          applyOtpLockUi(pendingEmailAddress);
+          startOtpLockCountdown(pendingEmailAddress);
+          showToast("该邮箱验证已锁定：验证码错误次数过多，请 " + getOtpLockCountdownText(pendingEmailAddress) + " 后再试", "error");
+          return;
+        }
+        var text = "";
+        try {
+          text = (e.clipboardData || window.clipboardData).getData("text") || "";
+        } catch (err) {
+          showToast("粘贴失败", "error");
+          return;
+        }
+        var nums = String(text).replace(/\D/g, "").slice(0, 6);
+        if (!nums) {
+          showToast("粘贴失败", "error");
+          return;
+        }
         clearOtpStatus();
         otpVerifyLock = false;
         digits.forEach(function (el, i) { el.value = nums.charAt(i) || ""; });
@@ -10418,6 +11349,11 @@
         if (nums.length === 6) verifyEmailOtp();
       });
       input.addEventListener("focus", function () {
+        if (isOtpLocked(pendingEmailAddress)) {
+          input.blur();
+          applyOtpLockUi(pendingEmailAddress);
+          return;
+        }
         input.select();
       });
     });
@@ -10563,12 +11499,25 @@
       clearTimeout(otpSuccessTimer);
       otpSuccessTimer = null;
     }
+    if (otpErrorClearTimer) {
+      clearTimeout(otpErrorClearTimer);
+      otpErrorClearTimer = null;
+    }
+    stopOtpResendCountdown();
     otpVerifyLock = false;
     showWalletView("welcome");
   });
   document.getElementById("btnEmailCodeResend").addEventListener("click", function () {
+    if (isOtpLocked(pendingEmailAddress)) {
+      applyOtpLockUi(pendingEmailAddress);
+      startOtpLockCountdown(pendingEmailAddress);
+      showToast("该邮箱验证已锁定：验证码错误次数过多，请 " + getOtpLockCountdownText(pendingEmailAddress) + " 后再试", "error");
+      return;
+    }
+    if (otpResendRemain > 0) return;
     resetEmailOtpInputs(true);
-    showToast("验证码已重新发送", "info");
+    showToast("验证码已重新发送");
+    startOtpResendCountdown(OTP_RESEND_SECONDS);
   });
 
   document.getElementById("btnWalletBack").addEventListener("click", function () {
@@ -10595,7 +11544,13 @@
 
   document.querySelectorAll(".wm-wallet-item").forEach(function (item) {
     item.addEventListener("click", function () {
-      goToWaiting(item.getAttribute("data-wallet"));
+      var walletName = item.getAttribute("data-wallet") || "Wallet";
+      if (isWalletInstalled(item)) {
+        wcConnectMode = "installed";
+        goToWaiting(walletName);
+      } else {
+        openWcQrView(walletName);
+      }
     });
   });
 
@@ -10613,8 +11568,76 @@
 
   document.getElementById("btnFailureBack").addEventListener("click", goToSelectWallet);
   document.getElementById("btnFailureRetry").addEventListener("click", function () {
+    if (wcConnectMode === "walletconnect") {
+      retryWcSigning();
+      return;
+    }
     goToWaiting(selectedWallet);
   });
+
+  var btnWcQrBack = document.getElementById("btnWcQrBack");
+  if (btnWcQrBack) {
+    btnWcQrBack.addEventListener("click", function () {
+      clearWalletTimers();
+      goToSelectWallet();
+    });
+  }
+  var btnWcSigningBack = document.getElementById("btnWcSigningBack");
+  if (btnWcSigningBack) {
+    btnWcSigningBack.addEventListener("click", function () {
+      clearWalletTimers();
+      openWcQrView(selectedWallet);
+    });
+  }
+  var btnWcRefreshQr = document.getElementById("btnWcRefreshQr");
+  if (btnWcRefreshQr) {
+    btnWcRefreshQr.addEventListener("click", function () {
+      refreshWcQr();
+      showToast("二维码已刷新", "info");
+    });
+  }
+  var btnWcCopyLink = document.getElementById("btnWcCopyLink");
+  if (btnWcCopyLink) {
+    btnWcCopyLink.addEventListener("click", function () {
+      var link = "https://walletconnect.demo/biya/" + encodeURIComponent(selectedWallet || "wallet") + "?t=" + Date.now();
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(link).then(function () {
+          showToast("连接链接已复制");
+        }).catch(function () {
+          showToast("连接链接：" + link, "info");
+        });
+      } else {
+        showToast("连接链接：" + link, "info");
+      }
+    });
+  }
+  var btnWcGetWallet = document.getElementById("btnWcGetWallet");
+  if (btnWcGetWallet) {
+    btnWcGetWallet.addEventListener("click", function () {
+      showToast("请前往对应钱包官网下载安装后重试，或使用已安装钱包连接", "info");
+    });
+  }
+  bindWcQrClickHandlers();
+  bindWcSigningClickHandlers();
+  var btnWcFailBack = document.getElementById("btnWcFailBack");
+  if (btnWcFailBack) {
+    btnWcFailBack.addEventListener("click", function () {
+      openWcQrView(selectedWallet || "Rainbow");
+    });
+  }
+  var btnWcFailRetry = document.getElementById("btnWcFailRetry");
+  if (btnWcFailRetry) {
+    btnWcFailRetry.addEventListener("click", function () {
+      retryWcSigning();
+    });
+  }
+  var btnWcOpenWallet = document.getElementById("btnWcOpenWallet");
+  if (btnWcOpenWallet) {
+    btnWcOpenWallet.addEventListener("click", function (e) {
+      e.stopPropagation();
+      showToast("请在手机钱包中打开并确认连接请求", "info");
+    });
+  }
 
   document.getElementById("walletChip").addEventListener("click", toggleWalletMenu);
 
@@ -10682,6 +11705,34 @@
       }
       disconnectWallet("expired");
       return;
+    }
+    if (sceneId === "wc-qr" || sceneId === "wc-signing" || sceneId === "wc-success" || sceneId === "wc-reject" || sceneId === "wc-qr-expired") {
+      if (document.body.classList.contains("is-connected")) disconnectWallet();
+      openWalletModal({ view: "select" });
+      if (sceneId === "wc-qr") {
+        openWcQrView("Rainbow");
+        return;
+      }
+      if (sceneId === "wc-qr-expired") {
+        openWcQrView("Rainbow", { autoExpire: true });
+        return;
+      }
+      if (sceneId === "wc-signing") {
+        openWcQrView("Rainbow");
+        startWcSigning({ outcome: "success", signDelay: 3000 });
+        return;
+      }
+      if (sceneId === "wc-success") {
+        /* 自动演示：进入二维码后模拟单击扫码 → 签名 → 成功 */
+        openWcQrView("Rainbow", { autoScan: true, scanDelay: 400, outcome: "success", signDelay: 3000 });
+        return;
+      }
+      if (sceneId === "wc-reject") {
+        /* 自动演示：签名中默认拒绝；可点重试再成功 */
+        openWcQrView("Rainbow");
+        startWcSigning({ outcome: "reject", signDelay: 1000 });
+        return;
+      }
     }
     if (sceneId === "search-empty") {
       if (document.body.classList.contains("is-connected")) disconnectWallet();
