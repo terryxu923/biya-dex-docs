@@ -11,9 +11,9 @@
     .card { border: 1px solid #e8e8e8; border-radius: 10px; padding: 16px 18px; margin: 14px 0; }
     .card h2 { font-size: 1.05rem; margin: 0 0 6px; }
     .card p { margin: 0 0 10px; color: #444; font-size: 0.95rem; }
-    a.btn { display: inline-block; padding: 8px 14px; border-radius: 8px; background: #0969da; color: #fff; text-decoration: none; font-size: 0.92rem; }
+    a.btn { display: inline-block; padding: 8px 14px; border-radius: 8px; background: #0969da; color: #fff; text-decoration: none; font-size: 0.92rem; margin-right: 8px; }
     a.btn:hover { background: #0550ae; }
-    code { font-size: 0.85rem; background: #f6f8fa; padding: 2px 6px; border-radius: 4px; }
+    a.btn.secondary { background: #fff; color: #0969da; border: 1px solid #0969da; }
   </style>
 </head>
 <body>
@@ -29,17 +29,21 @@
     <p>BD01–BD07 精简优化版：删除范围边界/用例图/域级 NFR 等章节，并优化流程图参与者命名。</p>
     <a class="btn" href="./bd-prd-combo-lite.html">打开精简优化版</a>
   </div>
-
   <div class="card">
     <h2>永续合约交互原型</h2>
     <p>BIYA Perp 产品交互原型，用于页面结构与流程校准。</p>
     <a class="btn" href="./biya-perp-prototype.html">打开交互原型</a>
   </div>
-
   <div class="card">
     <h2>管理后台原型</h2>
-    <p>BIYA DEX Admin 运营后台原型（网络管理、充提配置等）。</p>
+    <p>BIYA DEX Admin 运营后台原型（网络、资产、充值、提现；金库/紧急/黑名单暂不做）。</p>
     <a class="btn" href="./biya-dex-admin.html">打开管理后台原型</a>
+  </div>
+  <div class="card">
+    <h2>管理后台 PRD（V1.0）</h2>
+    <p>BIYA DEX Admin 产品需求文档：本期范围、TOTP、提现无人工审核字段等。</p>
+    <a class="btn" href="./biya-dex-admin-prd.html">打开 PRD</a>
+    <a class="btn secondary" href="./biya-dex-admin-prd.md">Markdown 源文件</a>
   </div>
 </body>
 </html>

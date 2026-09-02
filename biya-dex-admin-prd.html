@@ -1,0 +1,2897 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>BIYA DEX Admin · 产品需求文档 V1.0</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/github-markdown-css@5.6.1/github-markdown-light.min.css" />
+  <style>
+    * { box-sizing: border-box; }
+    html, body { margin: 0; height: 100%; background: #f6f8fa; }
+    body { display: flex; flex-direction: column; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
+    .topbar {
+      flex: 0 0 auto; background: #fff; border-bottom: 1px solid #d8dee4;
+      padding: 10px 16px 10px 296px; font-size: 14px; z-index: 20;
+    }
+    .topbar a { margin-right: 16px; color: #0969da; text-decoration: none; }
+    .topbar a:hover { text-decoration: underline; }
+    .layout { flex: 1 1 auto; display: flex; min-height: 0; }
+    .sidebar {
+      flex: 0 0 280px; width: 280px; background: #fafafa; border-right: 1px solid #e8e8e8;
+      overflow-y: auto; position: sticky; top: 0; align-self: flex-start; max-height: 100vh;
+    }
+    .sidebar-header {
+      position: sticky; top: 0; z-index: 2; padding: 18px 16px 10px;
+      font-size: 15px; font-weight: 600; color: #111; background: #fafafa; border-bottom: 1px solid #eee;
+    }
+    .sidebar-toc { list-style: none; margin: 0; padding: 8px 0 24px; }
+    .sidebar-toc li { margin: 0; }
+    .sidebar-toc a {
+      display: block; padding: 6px 16px; font-size: 13px; color: #333;
+      line-height: 1.45; text-decoration: none; border-left: 3px solid transparent;
+    }
+    .sidebar-toc .l3 a { padding-left: 28px; font-size: 12px; color: #555; font-weight: 400; }
+    .sidebar-toc .l2 a { font-weight: 600; }
+    .sidebar-toc a:hover { background: #f0f0f0; }
+    .sidebar-toc a.active { border-left-color: #0969da; color: #0969da; background: #eef5ff; }
+    .content { flex: 1 1 auto; overflow-y: auto; padding: 28px 36px 80px; }
+    .markdown-body {
+      box-sizing: border-box; min-width: 200px; max-width: 920px;
+      margin: 0 auto; padding: 32px; background: #fff; border: 1px solid #e8e8e8; border-radius: 10px;
+    }
+    .markdown-body table { display: block; overflow-x: auto; }
+    .mermaid {
+      background: #fafafa; border: 1px solid #eee; border-radius: 8px;
+      padding: 16px; margin: 16px 0; overflow-x: auto;
+    }
+    @media (max-width: 900px) {
+      .sidebar { display: none; }
+      .topbar { padding-left: 16px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="topbar">
+    <a href="./">入口</a>
+    <a href="./biya-dex-admin.html">管理后台原型</a>
+    <a href="./biya-dex-admin-prd.md">PRD 源 Markdown</a>
+  </div>
+  <div class="layout">
+    <aside class="sidebar">
+      <div class="sidebar-header">目录</div>
+      <ul class="sidebar-toc">
+<li class="l2"><a href="#文档说明">文档说明</a></li>
+<li class="l2"><a href="#目录">目录</a></li>
+<li class="l2"><a href="#1-本版交付摘要">1. 本版交付摘要</a></li>
+<li class="l3"><a href="#11-产品目标">1.1 产品目标</a></li>
+<li class="l3"><a href="#12-核心数据模型">1.2 核心数据模型</a></li>
+<li class="l3"><a href="#13-本版交付能力">1.3 本版交付能力</a></li>
+<li class="l3"><a href="#14-角色与权限">1.4 角色与权限</a></li>
+<li class="l3"><a href="#15-业务边界">1.5 业务边界</a></li>
+<li class="l2"><a href="#2-后台框架与通用规则">2. 后台框架与通用规则</a></li>
+<li class="l3"><a href="#21-模块说明">2.1 模块说明</a></li>
+<li class="l3"><a href="#22-页面框架">2.2 页面框架</a></li>
+<li class="l3"><a href="#23-通用交互规则">2.3 通用交互规则</a></li>
+<li class="l3"><a href="#24-详情展示规则">2.4 详情展示规则</a></li>
+<li class="l3"><a href="#25-全局页面状态">2.5 全局页面状态</a></li>
+<li class="l3"><a href="#26-totp-安全验证">2.6 TOTP 安全验证</a></li>
+<li class="l2"><a href="#3-网络管理">3. 网络管理</a></li>
+<li class="l3"><a href="#31-用户目标">3.1 用户目标</a></li>
+<li class="l3"><a href="#32-模块说明">3.2 模块说明</a></li>
+<li class="l3"><a href="#33-流程步骤">3.3 流程步骤</a></li>
+<li class="l3"><a href="#34-列表与筛选">3.4 列表与筛选</a></li>
+<li class="l3"><a href="#35-新增与编辑">3.5 新增与编辑</a></li>
+<li class="l3"><a href="#36-状态">3.6 状态</a></li>
+<li class="l3"><a href="#37-交互规则">3.7 交互规则</a></li>
+<li class="l3"><a href="#38-数据管理">3.8 数据管理</a></li>
+<li class="l3"><a href="#39-验收标准">3.9 验收标准</a></li>
+<li class="l2"><a href="#4-资产管理">4. 资产管理</a></li>
+<li class="l3"><a href="#41-用户目标">4.1 用户目标</a></li>
+<li class="l3"><a href="#42-模块说明">4.2 模块说明</a></li>
+<li class="l3"><a href="#43-流程步骤">4.3 流程步骤</a></li>
+<li class="l3"><a href="#44-列表与筛选">4.4 列表与筛选</a></li>
+<li class="l3"><a href="#45-新增与编辑">4.5 新增与编辑</a></li>
+<li class="l3"><a href="#46-状态与交互">4.6 状态与交互</a></li>
+<li class="l3"><a href="#47-数据管理">4.7 数据管理</a></li>
+<li class="l3"><a href="#48-验收标准">4.8 验收标准</a></li>
+<li class="l2"><a href="#5-充值记录">5. 充值记录</a></li>
+<li class="l3"><a href="#51-用户目标">5.1 用户目标</a></li>
+<li class="l3"><a href="#52-模块说明">5.2 模块说明</a></li>
+<li class="l3"><a href="#53-列表与筛选">5.3 列表与筛选</a></li>
+<li class="l3"><a href="#54-状态">5.4 状态</a></li>
+<li class="l3"><a href="#55-详情">5.5 详情</a></li>
+<li class="l3"><a href="#56-操作">5.6 操作</a></li>
+<li class="l3"><a href="#57-业务规则">5.7 业务规则</a></li>
+<li class="l3"><a href="#58-验收标准">5.8 验收标准</a></li>
+<li class="l2"><a href="#6-提现记录">6. 提现记录</a></li>
+<li class="l3"><a href="#61-用户目标">6.1 用户目标</a></li>
+<li class="l3"><a href="#62-模块说明">6.2 模块说明</a></li>
+<li class="l3"><a href="#63-列表与筛选">6.3 列表与筛选</a></li>
+<li class="l3"><a href="#64-状态">6.4 状态</a></li>
+<li class="l3"><a href="#65-审核策略本期">6.5 审核策略（本期）</a></li>
+<li class="l3"><a href="#66-详情与操作">6.6 详情与操作</a></li>
+<li class="l3"><a href="#67-业务规则">6.7 业务规则</a></li>
+<li class="l3"><a href="#68-验收标准">6.8 验收标准</a></li>
+<li class="l2"><a href="#7-金库监控暂不做">7. 金库监控（暂不做）</a></li>
+<li class="l3"><a href="#71-用户目标">7.1 用户目标</a></li>
+<li class="l3"><a href="#72-模块说明">7.2 模块说明</a></li>
+<li class="l3"><a href="#73-指标口径">7.3 指标口径</a></li>
+<li class="l3"><a href="#74-列表与筛选">7.4 列表与筛选</a></li>
+<li class="l3"><a href="#75-配置水位编辑">7.5 配置水位（编辑）</a></li>
+<li class="l3"><a href="#76-操作与流程">7.6 操作与流程</a></li>
+<li class="l3"><a href="#77-状态">7.7 状态</a></li>
+<li class="l3"><a href="#78-业务规则">7.8 业务规则</a></li>
+<li class="l3"><a href="#79-验收标准">7.9 验收标准</a></li>
+<li class="l2"><a href="#7a-紧急控制暂不做">7A. 紧急控制（暂不做）</a></li>
+<li class="l2"><a href="#7b-黑名单暂不做">7B. 黑名单（暂不做）</a></li>
+<li class="l2"><a href="#8-横切规则">8. 横切规则</a></li>
+<li class="l3"><a href="#81-实体关系">8.1 实体关系</a></li>
+<li class="l3"><a href="#82-状态联动">8.2 状态联动</a></li>
+<li class="l3"><a href="#83-前台生效">8.3 前台生效</a></li>
+<li class="l3"><a href="#84-审计">8.4 审计</a></li>
+<li class="l3"><a href="#85-金额与精度">8.5 金额与精度</a></li>
+<li class="l3"><a href="#86-配置快照">8.6 配置快照</a></li>
+<li class="l3"><a href="#87-安全与数据保护">8.7 安全与数据保护</a></li>
+<li class="l3"><a href="#88-一致性与可恢复性">8.8 一致性与可恢复性</a></li>
+<li class="l3"><a href="#89-性能与可用性">8.9 性能与可用性</a></li>
+<li class="l2"><a href="#9-异常与提示">9. 异常与提示</a></li>
+<li class="l3"><a href="#91-通用">9.1 通用</a></li>
+<li class="l3"><a href="#92-表单">9.2 表单</a></li>
+<li class="l3"><a href="#93-业务">9.3 业务</a></li>
+<li class="l2"><a href="#10-上线验收">10. 上线验收</a></li>
+<li class="l3"><a href="#101-端到端验收场景">10.1 端到端验收场景</a></li>
+<li class="l3"><a href="#102-上线门槛">10.2 上线门槛</a></li>
+</ul>
+    </aside>
+    <main class="content">
+      <article class="markdown-body">
+<h1 id="biya-dex-admin-产品需求文档">BIYA DEX Admin 产品需求文档</h1>
+<h2 id="文档说明">文档说明</h2>
+<table>
+<thead>
+<tr>
+<th>项目</th>
+<th>内容</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>文档版本</td>
+<td><strong>V1.0</strong>（含 TOTP；2026-09-02 收敛本期范围：四模块交付，金库/紧急/黑名单与人工审核暂不做）</td>
+</tr>
+<tr>
+<td>更新日期</td>
+<td>2026-09-02</td>
+</tr>
+<tr>
+<td>产品经理</td>
+<td>Terry</td>
+</tr>
+<tr>
+<td>产品名称</td>
+<td>BIYA DEX 管理后台</td>
+</tr>
+<tr>
+<td>产品阶段</td>
+<td>S1</td>
+</tr>
+<tr>
+<td>文档定位</td>
+<td>定义永续合约运营配置与资金运营相关后台能力、列表查询、维护规则及对交易端生效口径</td>
+</tr>
+<tr>
+<td>核心能力</td>
+<td><strong>本期交付</strong>：网络管理 → 资产管理 → 充值记录 → 提现记录；高风险写操作须 TOTP。<strong>暂不做</strong>：金库监控、紧急控制、黑名单。<strong>提现审核</strong>：本期不支持人工审核；<strong>不展示审核状态/审核人/审核时间/审核备注字段</strong>。</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2 id="目录">目录</h2>
+<ul>
+<li><a href="#1-本版交付摘要">1. 本版交付摘要</a></li>
+<li><a href="#2-后台框架与通用规则">2. 后台框架与通用规则</a></li>
+<li><a href="#26-totp-安全验证">2.6 TOTP 安全验证</a></li>
+<li><a href="#3-网络管理">3. 网络管理</a></li>
+<li><a href="#4-资产管理">4. 资产管理</a></li>
+<li><a href="#5-充值记录">5. 充值记录</a></li>
+<li><a href="#6-提现记录">6. 提现记录</a></li>
+<li><a href="#7-金库监控暂不做">7. 金库监控（暂不做）</a></li>
+<li><a href="#7a-紧急控制暂不做">7A. 紧急控制（暂不做）</a></li>
+<li><a href="#7b-黑名单暂不做">7B. 黑名单（暂不做）</a></li>
+<li><a href="#8-横切规则">8. 横切规则</a></li>
+<li><a href="#9-异常与提示">9. 异常与提示</a></li>
+<li><a href="#10-上线验收">10. 上线验收</a></li>
+</ul>
+<hr>
+<h2 id="1-本版交付摘要">1. 本版交付摘要</h2>
+<h3 id="11-产品目标">1.1 产品目标</h3>
+<p>BIYA DEX Admin 面向具备运营/风控权限的内部人员，用于维护交易端充提依赖的网络与资产配置，并查询充提流水。本期不做金库监控、紧急控制与黑名单；提现不做人工审核。</p>
+<table>
+<thead>
+<tr>
+<th>目标</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>配置统一</td>
+<td>网络与资产分层配置，控制客户端可选充提网络与资产</td>
+</tr>
+<tr>
+<td>资金可运营</td>
+<td>充值/提现记录可查；提现无人工审核、不展示审核类字段</td>
+</tr>
+<tr>
+<td>操作可控</td>
+<td>列表筛选、新增编辑、状态启停、详情查看、确认反馈</td>
+</tr>
+<tr>
+<td>关键可追踪</td>
+<td>写操作保留创建/更新人员与时间</td>
+</tr>
+<tr>
+<td>暂不做</td>
+<td>金库监控、紧急控制、黑名单（导航可保留入口，标注「暂不做」）</td>
+</tr>
+</tbody>
+</table>
+<h3 id="12-核心数据模型">1.2 核心数据模型</h3>
+<table>
+<thead>
+<tr>
+<th>层级</th>
+<th>实体</th>
+<th>标识</th>
+<th>核心作用</th>
+<th>关系</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>第一层</td>
+<td>网络</td>
+<td>主键 / 链 ID</td>
+<td>定义链、客户端网络名称、充提开关、限额与浏览器模板</td>
+<td>一个网络可挂多条资产</td>
+</tr>
+<tr>
+<td>第二层</td>
+<td>网络资产</td>
+<td>主键 / 资产编码</td>
+<td>定义某网络上的 USDC 等抵押资产与合约</td>
+<td>必须归属一个网络</td>
+</tr>
+<tr>
+<td>第三层</td>
+<td>充值记录</td>
+<td>充值单号</td>
+<td>链上充值进度与入账结果</td>
+<td>关联网络、资产、主账户</td>
+</tr>
+<tr>
+<td>第三层</td>
+<td>提现记录</td>
+<td>提现单号</td>
+<td>提现锁定、出金与终态（本期无人工审、不展示审核字段）</td>
+<td>关联网络、资产、主账户</td>
+</tr>
+<tr>
+<td>第三层</td>
+<td>金库监控记录</td>
+<td>主键</td>
+<td>出金热钱包按网络×资产的余额与水位（<strong>暂不做</strong>）</td>
+<td>关联网络与资产；地址只读</td>
+</tr>
+</tbody>
+</table>
+<p><strong>生效原则：</strong></p>
+<ul>
+<li>交易端网络下拉：网络状态为启用中，且对应充值/提现开关打开。</li>
+<li>交易端资产可选：资产状态启用，且该资产充/提开关打开，并绑定有效网络。</li>
+<li>客户端以网络名称和资产符号作为主要展示信息；链 ID、代币合约和节点连接地址仅用于系统识别与校验。</li>
+</ul>
+<h3 id="13-本版交付能力">1.3 本版交付能力</h3>
+<table>
+<thead>
+<tr>
+<th>优先级</th>
+<th>能力</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>P0</strong></td>
+<td>网络：查询、新增、编辑、启用/禁用（<strong>保存与启停须 TOTP</strong>）</td>
+</tr>
+<tr>
+<td><strong>P0</strong></td>
+<td>资产：查询、新增、编辑、启用/禁用；资产编码系统生成（<strong>保存与启停须 TOTP</strong>）</td>
+</tr>
+<tr>
+<td><strong>P0</strong></td>
+<td>充值记录：多条件查询、状态列表、详情（<strong>只读，无需 TOTP</strong>）</td>
+</tr>
+<tr>
+<td><strong>P0</strong></td>
+<td>提现记录：多条件查询、详情；<strong>本期不提供人工审核入口；不展示审核状态/审核人/审核时间/审核备注</strong></td>
+</tr>
+<tr>
+<td><strong>P0</strong></td>
+<td>TOTP 安全验证：绑定管理员、网络/资产写操作门禁、错误重试与审计</td>
+</tr>
+<tr>
+<td><strong>暂不做</strong></td>
+<td>金库监控、紧急控制、黑名单</td>
+</tr>
+<tr>
+<td><strong>暂不做</strong></td>
+<td>提现人工审核（通过/拒绝）及审核弹窗内 TOTP</td>
+</tr>
+<tr>
+<td><strong>P1</strong></td>
+<td>列表导出、消息告警（不含暂不做模块内能力）</td>
+</tr>
+</tbody>
+</table>
+<h3 id="14-角色与权限">1.4 角色与权限</h3>
+<table>
+<thead>
+<tr>
+<th>角色</th>
+<th>能力</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>查看员</td>
+<td>本期四模块列表与详情；不展示写操作</td>
+</tr>
+<tr>
+<td>运营配置员</td>
+<td>网络、资产配置；不可改资金事实数据</td>
+</tr>
+<tr>
+<td>资金运营员</td>
+<td>查看充值/提现记录与详情（本期无人工审核操作）</td>
+</tr>
+<tr>
+<td>超级管理员</td>
+<td>拥有上述权限，用于应急处理；所有写操作均记录审计</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p>说明：原「资金审核员」人工审核职责本期不适用；角色命名可保留，但不开放审核写权限。金库配置权限随「金库监控」一并暂不做。</p>
+</blockquote>
+<h3 id="15-业务边界">1.5 业务边界</h3>
+<table>
+<thead>
+<tr>
+<th>类别</th>
+<th>本期范围</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>管理对象</td>
+<td><strong>网络管理、资产管理、充值记录、提现记录</strong></td>
+</tr>
+<tr>
+<td>资产范围</td>
+<td>S1 仅支持 USDC，数据结构保留多资产能力</td>
+</tr>
+<tr>
+<td><strong>暂不做</strong></td>
+<td><strong>金库监控、紧急控制、黑名单</strong>；提现人工审核（通过/拒绝）</td>
+</tr>
+<tr>
+<td>提现审核</td>
+<td>本期不支持人工审核；用户提现锁定成功后业务状态直接进入「处理中」；<strong>不展示审核状态、审核人、审核时间、审核备注</strong>；不展示审核按钮/审核弹窗</td>
+</tr>
+<tr>
+<td>不在本期</td>
+<td>市场参数管理、清算与偿付管理、人工充值补账、人工修改链上交易结果、金库地址或私钥管理</td>
+</tr>
+<tr>
+<td>数据原则</td>
+<td>后台只配置运营参数；链上余额、确认数、交易结果等事实不允许人工改写</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2 id="2-后台框架与通用规则">2. 后台框架与通用规则</h2>
+<h3 id="21-模块说明">2.1 模块说明</h3>
+<table>
+<thead>
+<tr>
+<th>项</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>用户</strong></td>
+<td>已登录且具备模块权限的管理员</td>
+</tr>
+<tr>
+<td><strong>前置</strong></td>
+<td>身份有效；后台服务可用</td>
+</tr>
+<tr>
+<td><strong>管理模块</strong></td>
+<td><strong>本期</strong>：网络管理、资产管理、充值记录、提现记录。<br><strong>暂不做</strong>：金库监控、紧急控制、黑名单</td>
+</tr>
+<tr>
+<td><strong>权限原则</strong></td>
+<td>查看与写入分别校验</td>
+</tr>
+</tbody>
+</table>
+<h3 id="22-页面框架">2.2 页面框架</h3>
+<table>
+<thead>
+<tr>
+<th>区域</th>
+<th>内容</th>
+<th>交互规则</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>顶部栏</td>
+<td>面包屑、管理员标识</td>
+<td>身份失效回登录</td>
+</tr>
+<tr>
+<td>侧边导航</td>
+<td>运营配置 / 资金 / 风控分组</td>
+<td>切换模块加载对应列表，筛选不跨模块继承</td>
+</tr>
+<tr>
+<td>标题区</td>
+<td>标题、说明、主操作</td>
+<td>主操作按写权限显示</td>
+</tr>
+<tr>
+<td>筛选区</td>
+<td>关键词与模块条件</td>
+<td>查询回第一页；重置恢复默认</td>
+</tr>
+<tr>
+<td>列表区</td>
+<td>表格、条数、分页</td>
+<td>状态与操作列一体冻结在右侧</td>
+</tr>
+<tr>
+<td>表单层</td>
+<td>右侧抽屉新增/编辑</td>
+<td>未保存关闭可确认</td>
+</tr>
+<tr>
+<td>弹窗层</td>
+<td>确认、<strong>TOTP 安全验证（P0 必启）</strong></td>
+<td>同时仅一个主弹层；TOTP 可嵌于抽屉末节或独立弹窗；本期无提现审核弹窗</td>
+</tr>
+</tbody>
+</table>
+<h3 id="23-通用交互规则">2.3 通用交互规则</h3>
+<table>
+<thead>
+<tr>
+<th>场景</th>
+<th>触发</th>
+<th>系统行为</th>
+<th>结果</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>进入模块</td>
+<td>点击导航</td>
+<td>加载第一页</td>
+<td>列表或空态</td>
+</tr>
+<tr>
+<td>查询</td>
+<td>条件组合</td>
+<td>过滤并回第一页</td>
+<td>更新条数与列表</td>
+</tr>
+<tr>
+<td>重置</td>
+<td>点击重置</td>
+<td>清空条件</td>
+<td>重新加载</td>
+</tr>
+<tr>
+<td>新增</td>
+<td>主按钮</td>
+<td>打开空白表单</td>
+<td>可填写保存</td>
+</tr>
+<tr>
+<td>编辑/配置</td>
+<td>行内操作</td>
+<td>回填最新数据</td>
+<td>按字段可编辑性展示</td>
+</tr>
+<tr>
+<td>启用/禁用</td>
+<td>行内操作</td>
+<td><strong>打开 TOTP 验证</strong> → 通过后更新状态</td>
+<td>刷新列表；TOTP 失败不改状态</td>
+</tr>
+<tr>
+<td>详情</td>
+<td>行内详情</td>
+<td>打开只读详情</td>
+<td>字段名与值颜色区分；<strong>无需 TOTP</strong></td>
+</tr>
+<tr>
+<td>提交中</td>
+<td>保存处理中</td>
+<td>锁定按钮</td>
+<td>不重复提交；TOTP 未通过不得进入提交</td>
+</tr>
+</tbody>
+</table>
+<p><strong>列表通用规则</strong></p>
+<table>
+<thead>
+<tr>
+<th>项</th>
+<th>规则</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>分页</td>
+<td>默认每页 10 条；翻页保留筛选条件</td>
+</tr>
+<tr>
+<td>时间</td>
+<td><code>YYYY-MM-DD HH:mm:ss</code></td>
+</tr>
+<tr>
+<td>地址/哈希</td>
+<td>等宽缩略，悬停可看全文</td>
+</tr>
+<tr>
+<td>金额</td>
+<td>十进制字符串语义；展示可读格式</td>
+</tr>
+<tr>
+<td>状态</td>
+<td>标签文案明确，不只靠颜色</td>
+</tr>
+<tr>
+<td>右侧冻结</td>
+<td><strong>状态 + 操作合并为一列</strong>，横向滚动时整体钉在右侧</td>
+</tr>
+<tr>
+<td>列顺序</td>
+<td>高频运营字段靠左，低频字段靠右</td>
+</tr>
+</tbody>
+</table>
+<h3 id="24-详情展示规则">2.4 详情展示规则</h3>
+<table>
+<thead>
+<tr>
+<th>项</th>
+<th>规则</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>字段名称</td>
+<td>次要色（灰）</td>
+</tr>
+<tr>
+<td>字段值</td>
+<td>主文本色（深）</td>
+</tr>
+<tr>
+<td>空值</td>
+<td>展示 <code>—</code>，使用更弱颜色</td>
+</tr>
+<tr>
+<td>地址/哈希</td>
+<td>等宽样式</td>
+</tr>
+</tbody>
+</table>
+<h3 id="25-全局页面状态">2.5 全局页面状态</h3>
+<table>
+<thead>
+<tr>
+<th>状态</th>
+<th>触发</th>
+<th>展示</th>
+<th>可操作</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>加载中</td>
+<td>进入或刷新</td>
+<td>占位</td>
+<td>不操作未加载行</td>
+</tr>
+<tr>
+<td>正常</td>
+<td>成功</td>
+<td>筛选+列表</td>
+<td>按权限操作</td>
+</tr>
+<tr>
+<td>空数据</td>
+<td>无记录</td>
+<td>空态</td>
+<td>可新增（有权限）</td>
+</tr>
+<tr>
+<td>筛选无结果</td>
+<td>有数据无匹配</td>
+<td>无匹配提示</td>
+<td>可重置</td>
+</tr>
+<tr>
+<td>加载失败</td>
+<td>请求失败</td>
+<td>错误+重试</td>
+<td>重试</td>
+</tr>
+<tr>
+<td>提交中/成功/失败</td>
+<td>写操作</td>
+<td>锁定按钮或展示页面轻提示</td>
+<td>失败可改后重试</td>
+</tr>
+</tbody>
+</table>
+<h3 id="26-totp-安全验证">2.6 TOTP 安全验证</h3>
+<h4 id="261-目标与原则">2.6.1 目标与原则</h4>
+<table>
+<thead>
+<tr>
+<th>项</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>目标</td>
+<td>对会改变线上充提路由的后台写操作（网络/资产配置与启停），增加与登录态独立的第二因子（TOTP）。金库与提现人工审核相关 TOTP 随对应能力暂不做</td>
+</tr>
+<tr>
+<td>绑定</td>
+<td>管理员账号须完成 Google Authenticator（或兼容应用）绑定后方可执行受控写操作；未绑定则写入口引导去绑定</td>
+</tr>
+<tr>
+<td>校验时机</td>
+<td><strong>业务字段校验通过之后、持久化写库之前</strong>；TOTP 失败不得产生部分写入</td>
+</tr>
+<tr>
+<td>原型约定</td>
+<td>联调/原型环境可使用固定演示码 <code>111111</code>；生产环境必须校验真实动态 6 位码，演示码关闭</td>
+</tr>
+<tr>
+<td>不对客</td>
+<td>TOTP 仅后台；交易端用户无此流程</td>
+</tr>
+<tr>
+<td>与登录关系</td>
+<td>TOTP 不替代登录与 RBAC；须同时满足：登录有效 ∧ 模块写权限 ∧ TOTP 通过</td>
+</tr>
+</tbody>
+</table>
+<h4 id="262-需要-totp-的操作清单p0">2.6.2 需要 TOTP 的操作清单（P0）</h4>
+<table>
+<thead>
+<tr>
+<th>模块</th>
+<th>操作</th>
+<th>验证承载</th>
+<th>是否 TOTP</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>网络管理</td>
+<td>新增保存</td>
+<td>抽屉内 TOTP 分区</td>
+<td><strong>要</strong></td>
+<td>写入网络配置</td>
+</tr>
+<tr>
+<td>网络管理</td>
+<td>编辑保存</td>
+<td>抽屉内 TOTP 分区</td>
+<td><strong>要</strong></td>
+<td>变更开关/限额/模板等</td>
+</tr>
+<tr>
+<td>网络管理</td>
+<td>启用</td>
+<td>独立 TOTP 弹窗</td>
+<td><strong>要</strong></td>
+<td>恢复客户端可选</td>
+</tr>
+<tr>
+<td>网络管理</td>
+<td>禁用</td>
+<td>独立 TOTP 弹窗</td>
+<td><strong>要</strong></td>
+<td>下线路由</td>
+</tr>
+<tr>
+<td>资产管理</td>
+<td>新增保存</td>
+<td>抽屉内 TOTP 分区</td>
+<td><strong>要</strong></td>
+<td>写入资产与合约</td>
+</tr>
+<tr>
+<td>资产管理</td>
+<td>编辑保存</td>
+<td>抽屉内 TOTP 分区</td>
+<td><strong>要</strong></td>
+<td>变更开关/Logo 等</td>
+</tr>
+<tr>
+<td>资产管理</td>
+<td>启用</td>
+<td>独立 TOTP 弹窗</td>
+<td><strong>要</strong></td>
+<td>—</td>
+</tr>
+<tr>
+<td>资产管理</td>
+<td>禁用</td>
+<td>独立 TOTP 弹窗</td>
+<td><strong>要</strong></td>
+<td>—</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>本期不做 TOTP 的能力（随模块暂不做）：</strong> 提现人工审核通过/拒绝；金库水位保存；金库暂停提现；紧急控制与黑名单相关写操作。</p>
+</blockquote>
+<h4 id="263-不需要-totp-的操作">2.6.3 不需要 TOTP 的操作</h4>
+<table>
+<thead>
+<tr>
+<th>模块</th>
+<th>操作</th>
+<th>原因</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>各模块</td>
+<td>进入列表、筛选、分页、排序</td>
+<td>只读查询</td>
+</tr>
+<tr>
+<td>充值记录</td>
+<td>详情</td>
+<td>只读；本版无改账</td>
+</tr>
+<tr>
+<td>提现记录</td>
+<td>详情、列表查询</td>
+<td>只读；本期无人工审核写操作</td>
+</tr>
+<tr>
+<td>金库监控等</td>
+<td>全部（暂不做）</td>
+<td>模块未交付，不纳入本期 TOTP 验收</td>
+</tr>
+<tr>
+<td>全局</td>
+<td>重置筛选、关闭抽屉/弹窗（未提交）</td>
+<td>无写库</td>
+</tr>
+</tbody>
+</table>
+<h4 id="264-交互形态">2.6.4 交互形态</h4>
+<table>
+<thead>
+<tr>
+<th>形态</th>
+<th>适用</th>
+<th>交互要点</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>抽屉内嵌 TOTP</td>
+<td>新增/编辑网络、资产</td>
+<td>表单末节「安全验证（TOTP）」；6 位数字；点保存时校验</td>
+</tr>
+<tr>
+<td>独立 TOTP 弹窗</td>
+<td>启用/禁用网络或资产</td>
+<td>标题标明操作类型与对象名称；通过后执行业务写</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p>原「提现审核弹窗内嵌 TOTP」「金库配置水位 / 暂停提现 TOTP」随对应能力暂不做，本期原型与验收不覆盖。</p>
+</blockquote>
+<p><strong>字段与校验</strong></p>
+<table>
+<thead>
+<tr>
+<th>项</th>
+<th>规则</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>输入</td>
+<td>仅数字，长度 6；支持粘贴后自动截断</td>
+</tr>
+<tr>
+<td>未满 6 位</td>
+<td>阻断，提示「请输入完整的 6 位验证码」</td>
+</tr>
+<tr>
+<td>错误</td>
+<td>阻断，提示验证码错误；<strong>不</strong>泄露服务器侧剩余尝试策略细节给无权限方</td>
+</tr>
+<tr>
+<td>成功</td>
+<td>清除输入框；执行原写操作；页面轻提示业务成功文案</td>
+</tr>
+<tr>
+<td>打开表单/弹窗</td>
+<td>清空上次 TOTP 输入与错误态</td>
+</tr>
+<tr>
+<td>并发</td>
+<td>同一管理员短时间多次失败可触发冷却（实现可选，P1 可强制）；冷却中禁止提交</td>
+</tr>
+</tbody>
+</table>
+<h4 id="265-通用-totp-流程图">2.6.5 通用 TOTP 流程图</h4>
+<div class="mermaid">
+flowchart TD
+  Start[管理员发起受控写操作] --> Auth{登录有效且具备写权限?}
+  Auth -->|否| Deny1[拒绝：无权限或重新登录]
+  Auth -->|是| BizCheck[业务字段与状态校验]
+  BizCheck -->|不通过| ErrField[字段或页面轻提示]
+  BizCheck -->|通过| TotpUI[展示或聚焦 TOTP 输入]
+  TotpUI --> Input[输入 6 位验证码]
+  Input --> Verify{TOTP 校验}
+  Verify -->|失败| ErrTotp[提示验证码错误可重试]
+  ErrTotp --> Input
+  Verify -->|通过| Write[持久化业务变更]
+  Write --> Audit[追加审计日志含 TOTP 通过标记]
+  Audit --> Done[轻提示成功并刷新界面]
+
+</div>
+<h4 id="266-抽屉保存与列表启停分叉">2.6.6 抽屉保存与列表启停分叉</h4>
+<div class="mermaid">
+flowchart TD
+  A[受控写操作入口] --> B{操作类型}
+  B -->|新增或编辑保存| C[抽屉填写业务字段]
+  C --> D[点击保存]
+  D --> E[业务校验]
+  E -->|失败| F[定位错误字段]
+  E -->|成功| G[校验抽屉内 TOTP]
+  G -->|失败| H[TOTP 错误提示]
+  G -->|成功| I[写库并关闭抽屉]
+  B -->|启用或禁用或暂停提现| J[打开 TOTP 弹窗]
+  J --> K[输入验证码]
+  K --> L{TOTP 校验}
+  L -->|失败| M[弹窗内错误提示]
+  L -->|成功| N[更新状态或开关]
+  N --> O[关闭弹窗并刷新列表]
+
+</div>
+<h4 id="267-验收标准totp-横切">2.6.7 验收标准（TOTP 横切）</h4>
+<table>
+<thead>
+<tr>
+<th>编号</th>
+<th>验收场景</th>
+<th>预期结果</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>TOTP-01</td>
+<td>未填或不足 6 位点击网络/资产/水位保存</td>
+<td>不写库，提示完整 6 位</td>
+</tr>
+<tr>
+<td>TOTP-02</td>
+<td>错误验证码提交</td>
+<td>不写库，状态与数据不变</td>
+</tr>
+<tr>
+<td>TOTP-03</td>
+<td>正确验证码保存网络或资产</td>
+<td>写库成功，审计含操作人时间与 TOTP 通过</td>
+</tr>
+<tr>
+<td>TOTP-04</td>
+<td>列表禁用网络输入正确 TOTP</td>
+<td>状态变为已禁用，客户端不可选</td>
+</tr>
+<tr>
+<td>TOTP-05</td>
+<td>充值详情、列表查询、提现详情</td>
+<td>全程无 TOTP 输入</td>
+</tr>
+<tr>
+<td>TOTP-06</td>
+<td>尝试打开提现审核入口（若残留）</td>
+<td>无可用审核入口；或入口不可用且不改变任何提现单状态</td>
+</tr>
+<tr>
+<td>TOTP-08</td>
+<td>查看员角色</td>
+<td>无写入口；直调写接口被拒且不要求/不绕过 TOTP</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2 id="3-网络管理">3. 网络管理</h2>
+<h3 id="31-用户目标">3.1 用户目标</h3>
+<p>维护充提可用区块链网络，控制客户端可见网络名称、充提开关、限额费用与浏览器跳转模板。</p>
+<h3 id="32-模块说明">3.2 模块说明</h3>
+<table>
+<thead>
+<tr>
+<th>项</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>触发</strong></td>
+<td>进入「网络管理」</td>
+</tr>
+<tr>
+<td><strong>核心能力</strong></td>
+<td>查询、新增、编辑、启用、禁用</td>
+</tr>
+<tr>
+<td><strong>关键约束</strong></td>
+<td>链 ID 唯一；部分技术字段只读；<strong>保存与启停须 TOTP</strong></td>
+</tr>
+<tr>
+<td><strong>前台影响</strong></td>
+<td>充提网络下拉、切链提示文案、最小充提与手续费展示</td>
+</tr>
+</tbody>
+</table>
+<h3 id="33-流程步骤">3.3 流程步骤</h3>
+<div class="mermaid">
+flowchart TD
+  A[进入网络管理] --> B[查询列表]
+  B --> C{操作}
+  C -->|新增| D[填写可编辑配置]
+  C -->|编辑| E[修改可编辑字段]
+  C -->|启用或禁用| F[打开 TOTP 弹窗]
+  D --> G[业务校验]
+  E --> G
+  G -->|不通过| I[字段或页面轻提示]
+  G -->|通过| J[校验抽屉内 TOTP]
+  J -->|失败| K[TOTP 错误提示]
+  J -->|成功| H[保存并刷新列表]
+  F --> L{TOTP 校验}
+  L -->|失败| M[弹窗提示错误]
+  L -->|成功| N[更新网络状态并刷新]
+
+</div>
+<table>
+<thead>
+<tr>
+<th>步骤</th>
+<th>管理员操作</th>
+<th>系统行为</th>
+<th>结果</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>进入模块</td>
+<td>加载列表</td>
+<td>展示数据</td>
+</tr>
+<tr>
+<td>2</td>
+<td>筛选查询</td>
+<td>组合过滤</td>
+<td>更新列表</td>
+</tr>
+<tr>
+<td>3</td>
+<td>新增/编辑网络</td>
+<td>打开表单；只读项填系统默认；末节展示 TOTP</td>
+<td>可编辑项可改</td>
+</tr>
+<tr>
+<td>4</td>
+<td>保存</td>
+<td>业务校验 → <strong>TOTP 校验</strong> → 写库</td>
+<td>写入成功或报错；TOTP 失败不写库</td>
+</tr>
+<tr>
+<td>5</td>
+<td>启用/禁用</td>
+<td><strong>TOTP 弹窗</strong>通过后改状态</td>
+<td>客户端路由随状态变化</td>
+</tr>
+</tbody>
+</table>
+<h3 id="34-列表与筛选">3.4 列表与筛选</h3>
+<p><strong>筛选</strong></p>
+<table>
+<thead>
+<tr>
+<th>条件</th>
+<th>规则</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>网络名称</td>
+<td>模糊</td>
+</tr>
+<tr>
+<td>链 ID</td>
+<td>精确</td>
+</tr>
+<tr>
+<td>网络状态</td>
+<td>全部 / 启用中 / 维护中 / 已禁用</td>
+</tr>
+<tr>
+<td>充值是否开放</td>
+<td>全部 / 开放 / 关闭</td>
+</tr>
+<tr>
+<td>提现是否开放</td>
+<td>全部 / 开放 / 关闭</td>
+</tr>
+</tbody>
+</table>
+<p><strong>列表字段（左→右，状态操作在右冻结列）</strong></p>
+<p>网络名称、链 ID、充值、提现、充值确认数、最低充值、最低提现、提现手续费、预计充值(分)、预计提现(分)、提现观察确认数、网络图标、交易浏览器、地址浏览器、更新时间、更新人员、<strong>状态+操作</strong></p>
+<h3 id="35-新增与编辑">3.5 新增与编辑</h3>
+<table>
+<thead>
+<tr>
+<th>分组</th>
+<th>字段</th>
+<th>可编辑性</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>基础标识</td>
+<td>网络名称、网络图标</td>
+<td>新增和编辑时可修改</td>
+</tr>
+<tr>
+<td>基础标识</td>
+<td>链 ID</td>
+<td>新增时必填；创建成功后只读，配错时禁用旧网络并新建</td>
+</tr>
+<tr>
+<td>开关与状态</td>
+<td>网络状态、充值是否开放、提现是否开放</td>
+<td>可编辑</td>
+</tr>
+<tr>
+<td>确认数与预计时效</td>
+<td>充值确认数、提现观察确认数</td>
+<td><strong>只读</strong>（系统/部署写入）</td>
+</tr>
+<tr>
+<td>确认数与预计时效</td>
+<td>预计充值到账时间（分钟）、预计提现到账时间（分钟）</td>
+<td><strong>可配置</strong></td>
+</tr>
+<tr>
+<td>限额与手续费</td>
+<td>最低充值、最低提现、提现手续费</td>
+<td>可编辑</td>
+</tr>
+<tr>
+<td>浏览器链接</td>
+<td>交易浏览器模板、地址浏览器模板</td>
+<td>可编辑；交易模板须含 <code>{txHash}</code></td>
+</tr>
+<tr>
+<td>备注</td>
+<td>备注</td>
+<td>可编辑</td>
+</tr>
+<tr>
+<td><strong>安全验证</strong></td>
+<td><strong>Google 验证码（TOTP）</strong></td>
+<td><strong>保存必填</strong>；6 位数字</td>
+</tr>
+<tr>
+<td>审计</td>
+<td>创建/更新时间与人员</td>
+<td>只读展示于列表</td>
+</tr>
+</tbody>
+</table>
+<p><strong>不提供：</strong> 节点连接地址配置（由部署与运维通道管理，不在本表维护）。</p>
+<p><strong>校验</strong></p>
+<table>
+<thead>
+<tr>
+<th>项</th>
+<th>规则</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>网络名称</td>
+<td>必填</td>
+</tr>
+<tr>
+<td>链 ID</td>
+<td>必填，仅允许正整数，全局唯一；创建后不可修改</td>
+</tr>
+<tr>
+<td>预计到账分钟</td>
+<td>必填，非负整数</td>
+</tr>
+<tr>
+<td>金额字段</td>
+<td>非负十进制</td>
+</tr>
+<tr>
+<td>交易浏览器模板</td>
+<td>必含 <code>{txHash}</code></td>
+</tr>
+<tr>
+<td>地址浏览器模板</td>
+<td>若填写须含 <code>{address}</code></td>
+</tr>
+<tr>
+<td>TOTP</td>
+<td>必填 6 位；错误则整单不保存</td>
+</tr>
+</tbody>
+</table>
+<h3 id="36-状态">3.6 状态</h3>
+<table>
+<thead>
+<tr>
+<th>状态</th>
+<th>含义</th>
+<th>客户端</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>启用中</td>
+<td>网络可参与充提路由</td>
+<td>对应充值或提现开关打开时可选</td>
+</tr>
+<tr>
+<td>维护中</td>
+<td>网络临时不接受新充提</td>
+<td>可展示“维护中”但不可选；已在途记录继续处理</td>
+</tr>
+<tr>
+<td>已禁用</td>
+<td>网络长期停用</td>
+<td>不展示；历史记录仍可查</td>
+</tr>
+</tbody>
+</table>
+<h3 id="37-交互规则">3.7 交互规则</h3>
+<table>
+<thead>
+<tr>
+<th>规则</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>启停安全</td>
+<td><strong>启用/禁用必须 TOTP 通过</strong>（可用弹窗文案说明后果，不再以无 TOTP 的弱确认代替）</td>
+</tr>
+<tr>
+<td>只读字段</td>
+<td>样式区分，不可聚焦修改</td>
+</tr>
+<tr>
+<td>保存成功</td>
+<td>TOTP 通过后：页面轻提示 + 关闭抽屉 + 刷新列表</td>
+</tr>
+<tr>
+<td>关闭充值</td>
+<td>禁止生成新充值指引；不停止已发生链上交易的监听与入账</td>
+</tr>
+<tr>
+<td>关闭提现</td>
+<td>禁止新建提现；已进入处理中或之后的提现不因开关变更被自动取消</td>
+</tr>
+</tbody>
+</table>
+<h3 id="38-数据管理">3.8 数据管理</h3>
+<table>
+<thead>
+<tr>
+<th>字段</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>主键</td>
+<td>内部 ID</td>
+</tr>
+<tr>
+<td>网络名称</td>
+<td>客户端显示名</td>
+</tr>
+<tr>
+<td>链 ID</td>
+<td>钱包与校验</td>
+</tr>
+<tr>
+<td>充值/提现开放</td>
+<td>布尔</td>
+</tr>
+<tr>
+<td>网络状态</td>
+<td>枚举</td>
+</tr>
+<tr>
+<td>确认数</td>
+<td>系统只读</td>
+</tr>
+<tr>
+<td>预计充/提分钟</td>
+<td>运营配置</td>
+</tr>
+<tr>
+<td>最低充/提、手续费</td>
+<td>USDC</td>
+</tr>
+<tr>
+<td>浏览器模板</td>
+<td>跳转</td>
+</tr>
+<tr>
+<td>图标、备注</td>
+<td>可选</td>
+</tr>
+<tr>
+<td>创建/更新人时</td>
+<td>审计</td>
+</tr>
+</tbody>
+</table>
+<h3 id="39-验收标准">3.9 验收标准</h3>
+<table>
+<thead>
+<tr>
+<th>编号</th>
+<th>验收场景</th>
+<th>预期结果</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>网络-01</td>
+<td>使用重复链 ID 新增网络</td>
+<td>保存被阻断，明确提示链 ID 已存在</td>
+</tr>
+<tr>
+<td>网络-02</td>
+<td>编辑已创建网络</td>
+<td>链 ID、充值确认数、提现观察确认数为只读</td>
+</tr>
+<tr>
+<td>网络-03</td>
+<td>关闭提现开关</td>
+<td>新提现不再可选该网络，已处理记录状态不变</td>
+</tr>
+<tr>
+<td>网络-04</td>
+<td>将网络改为维护中</td>
+<td>客户端不得发起新充提，历史记录可继续查询</td>
+</tr>
+<tr>
+<td>网络-05</td>
+<td>提交不包含占位符的浏览器模板</td>
+<td>保存被阻断并定位到错误字段</td>
+</tr>
+<tr>
+<td>网络-06</td>
+<td>业务字段合法但 TOTP 错误或未填</td>
+<td>不写库，网络数据不变</td>
+</tr>
+<tr>
+<td>网络-07</td>
+<td>禁用网络时 TOTP 正确</td>
+<td>状态为已禁用，客户端不可选该网发起新充提</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2 id="4-资产管理">4. 资产管理</h2>
+<h3 id="41-用户目标">4.1 用户目标</h3>
+<p>维护各网络上的抵押资产（S1 为 USDC），绑定代币合约，控制资产级充提开关。</p>
+<h3 id="42-模块说明">4.2 模块说明</h3>
+<table>
+<thead>
+<tr>
+<th>项</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>触发</strong></td>
+<td>进入「资产管理」</td>
+</tr>
+<tr>
+<td><strong>核心能力</strong></td>
+<td>查询、新增、编辑、启用、禁用</td>
+</tr>
+<tr>
+<td><strong>关键约束</strong></td>
+<td>必须选择所属网络；资产编码系统生成；同网合约唯一；<strong>保存与启停须 TOTP</strong></td>
+</tr>
+<tr>
+<td><strong>前台影响</strong></td>
+<td>充提资产与合约校验</td>
+</tr>
+</tbody>
+</table>
+<h3 id="43-流程步骤">4.3 流程步骤</h3>
+<div class="mermaid">
+flowchart TD
+  A[进入资产管理] --> B[查询列表]
+  B --> C{操作}
+  C -->|新增或编辑| D[填写或修改可编辑字段]
+  C -->|启用或禁用| E[打开 TOTP 弹窗]
+  D --> F[点击保存]
+  F --> G[业务校验与编码生成]
+  G -->|失败| H[字段提示]
+  G -->|成功| I[校验抽屉内 TOTP]
+  I -->|失败| J[TOTP 错误]
+  I -->|成功| K[写库并刷新]
+  E --> L{TOTP}
+  L -->|失败| M[提示错误]
+  L -->|成功| N[更新资产状态并刷新]
+
+</div>
+<table>
+<thead>
+<tr>
+<th>步骤</th>
+<th>管理员操作</th>
+<th>系统行为</th>
+<th>结果</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>进入模块</td>
+<td>加载资产列表</td>
+<td>展示</td>
+</tr>
+<tr>
+<td>2</td>
+<td>筛选</td>
+<td>按网络/编码/符号/状态/开关/合约过滤</td>
+<td>更新列表</td>
+</tr>
+<tr>
+<td>3</td>
+<td>新增</td>
+<td>选网络、填符号与合约等；末节 TOTP</td>
+<td>预览资产编码</td>
+</tr>
+<tr>
+<td>4</td>
+<td>保存</td>
+<td>生成编码、校验合约 → <strong>TOTP</strong> → 写库</td>
+<td>写入或报错</td>
+</tr>
+<tr>
+<td>5</td>
+<td>启用/禁用</td>
+<td><strong>TOTP 弹窗</strong>通过后改状态</td>
+<td>刷新列表</td>
+</tr>
+</tbody>
+</table>
+<h3 id="44-列表与筛选">4.4 列表与筛选</h3>
+<p><strong>筛选：</strong> 所属网络、资产编码、链上符号、状态、充值开放、提现开放、代币合约（模糊）</p>
+<p><strong>列表字段（左→右）：</strong><br>
+资产编码、链上符号、所属网络、充值、提现、代币精度、代币合约、充值桥、提现桥、资产 Logo、备注、主键、创建时间、创建人员、更新时间、更新人员、<strong>状态+操作</strong></p>
+<h3 id="45-新增与编辑">4.5 新增与编辑</h3>
+<table>
+<thead>
+<tr>
+<th>字段</th>
+<th>可编辑性</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>所属网络</td>
+<td>新增必选；创建后只读</td>
+</tr>
+<tr>
+<td>链上符号</td>
+<td>新增必填；创建后只读</td>
+</tr>
+<tr>
+<td>资产编码</td>
+<td><strong>系统自动生成，只读</strong></td>
+</tr>
+<tr>
+<td>代币精度</td>
+<td>新增必填，取值 0～36；创建后只读</td>
+</tr>
+<tr>
+<td>资产 Logo</td>
+<td>可编辑</td>
+</tr>
+<tr>
+<td>代币合约地址</td>
+<td>新增必填，<code>0x</code> + 40 位十六进制；创建后只读</td>
+</tr>
+<tr>
+<td>充值桥或网关合约</td>
+<td><strong>只读</strong>（部署注入）</td>
+</tr>
+<tr>
+<td>提现桥或出金合约</td>
+<td><strong>只读</strong>（部署注入）</td>
+</tr>
+<tr>
+<td>状态、充/提开关</td>
+<td>可编辑</td>
+</tr>
+<tr>
+<td>备注</td>
+<td>可编辑</td>
+</tr>
+<tr>
+<td><strong>Google 验证码（TOTP）</strong></td>
+<td><strong>保存必填</strong></td>
+</tr>
+</tbody>
+</table>
+<p><strong>资产编码规则</strong></p>
+<table>
+<thead>
+<tr>
+<th>项</th>
+<th>规则</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>格式</td>
+<td><code>{链上符号}_{链ID}</code>，符号规范化为大写字母数字</td>
+</tr>
+<tr>
+<td>唯一性</td>
+<td>同一网络下链上符号唯一；重复时阻断保存，不自动追加后缀</td>
+</tr>
+<tr>
+<td>编辑</td>
+<td>编码创建后不变</td>
+</tr>
+</tbody>
+</table>
+<h3 id="46-状态与交互">4.6 状态与交互</h3>
+<table>
+<thead>
+<tr>
+<th>状态</th>
+<th>客户端</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>启用中</td>
+<td>开关打开时可充提</td>
+</tr>
+<tr>
+<td>已禁用</td>
+<td>不可用</td>
+</tr>
+</tbody>
+</table>
+<table>
+<thead>
+<tr>
+<th>规则</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>同网同资产编码</td>
+<td>生成逻辑保证不冲突</td>
+</tr>
+<tr>
+<td>同网同合约</td>
+<td>阻断重复</td>
+</tr>
+<tr>
+<td>上层网络不可用</td>
+<td>资产即使自身启用也不可在客户端充提</td>
+</tr>
+<tr>
+<td>关闭资产充值</td>
+<td>仅禁止该网络资产的新充值指引，已发生充值继续监听</td>
+</tr>
+<tr>
+<td>关闭资产提现</td>
+<td>仅禁止新提现，不中断已处理记录</td>
+</tr>
+</tbody>
+</table>
+<h3 id="47-数据管理">4.7 数据管理</h3>
+<table>
+<thead>
+<tr>
+<th>字段</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>主键</td>
+<td>记录 ID</td>
+</tr>
+<tr>
+<td>所属网络</td>
+<td>外键</td>
+</tr>
+<tr>
+<td>资产编码</td>
+<td>系统生成</td>
+</tr>
+<tr>
+<td>链上符号、精度、合约</td>
+<td>链上实例</td>
+</tr>
+<tr>
+<td>桥合约</td>
+<td>只读</td>
+</tr>
+<tr>
+<td>充/提开放、状态</td>
+<td>运营</td>
+</tr>
+<tr>
+<td>Logo、备注、审计</td>
+<td>展示与追踪</td>
+</tr>
+</tbody>
+</table>
+<h3 id="48-验收标准">4.8 验收标准</h3>
+<table>
+<thead>
+<tr>
+<th>编号</th>
+<th>验收场景</th>
+<th>预期结果</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>资产-01</td>
+<td>选择网络并输入 USDC</td>
+<td>系统预览并保存为 <code>USDC_链ID</code></td>
+</tr>
+<tr>
+<td>资产-02</td>
+<td>同网络重复新增同符号或同合约资产</td>
+<td>保存被阻断，不自动生成带后缀的资产编码</td>
+</tr>
+<tr>
+<td>资产-03</td>
+<td>编辑已创建资产</td>
+<td>所属网络、链上符号、资产编码、精度和合约地址为只读</td>
+</tr>
+<tr>
+<td>资产-04</td>
+<td>上层网络禁用，资产仍启用</td>
+<td>客户端不展示该网络资产为可充提</td>
+</tr>
+<tr>
+<td>资产-05</td>
+<td>输入非法合约地址或 0～36 之外的精度</td>
+<td>保存被阻断并给出字段级提示</td>
+</tr>
+<tr>
+<td>资产-06</td>
+<td>TOTP 错误时保存</td>
+<td>不写库</td>
+</tr>
+<tr>
+<td>资产-07</td>
+<td>启停资产 TOTP 正确</td>
+<td>状态变更成功并写审计</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2 id="5-充值记录">5. 充值记录</h2>
+<h3 id="51-用户目标">5.1 用户目标</h3>
+<p>查询用户充值进度与结果，支持按状态与关键字段排查。</p>
+<h3 id="52-模块说明">5.2 模块说明</h3>
+<table>
+<thead>
+<tr>
+<th>项</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>触发</strong></td>
+<td>进入「充值记录」</td>
+</tr>
+<tr>
+<td><strong>核心能力</strong></td>
+<td>列表查询、详情</td>
+</tr>
+<tr>
+<td><strong>无</strong></td>
+<td>人工改账（本版）</td>
+</tr>
+<tr>
+<td><strong>TOTP</strong></td>
+<td><strong>不需要</strong>（只读模块）</td>
+</tr>
+</tbody>
+</table>
+<h3 id="53-列表与筛选">5.3 列表与筛选</h3>
+<table>
+<thead>
+<tr>
+<th>筛选项</th>
+<th>匹配规则</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>网络名称</td>
+<td>模糊匹配</td>
+</tr>
+<tr>
+<td>充值资产</td>
+<td>模糊匹配</td>
+</tr>
+<tr>
+<td>充值状态</td>
+<td>全部 / 确认中 / 充值成功 / 充值失败</td>
+</tr>
+<tr>
+<td>主账户</td>
+<td>匹配账户 ID、账户标识或钱包地址片段</td>
+</tr>
+<tr>
+<td>交易哈希</td>
+<td>模糊匹配，忽略字母大小写</td>
+</tr>
+<tr>
+<td>异常类型</td>
+<td>全部 / 无 / 确认超时 / 金额不匹配 / 无效备注 / 链重组</td>
+</tr>
+</tbody>
+</table>
+<p><strong>列表字段（左→右）：</strong><br>
+网络名称、充值资产、充值金额、确认入账金额、当前确认数/所需确认数、主账户、钱包地址、发送地址、接收地址、交易哈希、提交时间、入账时间、失败原因、异常类型、备注、创建时间、更新时间、<strong>状态+操作</strong></p>
+<p><strong>充值金额展示</strong></p>
+<table>
+<thead>
+<tr>
+<th>状态</th>
+<th>充值金额列含义</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>充值成功</td>
+<td>入账额</td>
+</tr>
+<tr>
+<td>确认中 / 失败</td>
+<td>请求额</td>
+</tr>
+</tbody>
+</table>
+<h3 id="54-状态">5.4 状态</h3>
+<table>
+<thead>
+<tr>
+<th>状态</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>确认中</td>
+<td>未达确认或处理中</td>
+</tr>
+<tr>
+<td>充值成功</td>
+<td>已入账</td>
+</tr>
+<tr>
+<td>充值失败</td>
+<td>终态失败</td>
+</tr>
+</tbody>
+</table>
+<p><strong>异常类型：</strong> 无、确认超时、金额不匹配、无效备注、链重组。异常类型用于排查，不替代充值状态。</p>
+<h3 id="55-详情">5.5 详情</h3>
+<p>详情抽屉只读展示列表全部字段，并补充充值单号、链 ID、资产编码、交易日志序号等唯一追踪字段。名称与值颜色区分；地址和交易哈希可复制，已配置浏览器模板时可跳转链上浏览器。</p>
+<h3 id="56-操作">5.6 操作</h3>
+<table>
+<thead>
+<tr>
+<th>操作</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>详情</td>
+<td>打开详情抽屉</td>
+</tr>
+</tbody>
+</table>
+<h3 id="57-业务规则">5.7 业务规则</h3>
+<div class="mermaid">
+flowchart LR
+  A[监听到链上充值] --> B[确认中]
+  B -->|"确认数达标且校验通过"| C[充值成功]
+  B -->|"超时或校验失败"| D[充值失败]
+
+</div>
+<table>
+<thead>
+<tr>
+<th>规则</th>
+<th>要求</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>唯一识别</td>
+<td>使用“链 ID + 交易哈希 + 交易日志序号”识别链上入金事件，同一事件不得重复入账</td>
+</tr>
+<tr>
+<td>确认数</td>
+<td>所需确认数取创建记录时的网络配置快照；后续修改网络配置不回溯改写历史记录</td>
+</tr>
+<tr>
+<td>入账原子性</td>
+<td>账户余额增加、确认入账金额写入和状态转为充值成功必须作为一个不可拆分的业务结果</td>
+</tr>
+<tr>
+<td>终态保护</td>
+<td>充值成功和充值失败为终态，后台不提供人工改状态或改金额入口</td>
+</tr>
+<tr>
+<td>链重组</td>
+<td>标记异常并触发事件处理；不允许运营员在记录页直接扣减用户余额</td>
+</tr>
+<tr>
+<td>默认排序</td>
+<td>按提交时间倒序，最新记录在前</td>
+</tr>
+</tbody>
+</table>
+<h3 id="58-验收标准">5.8 验收标准</h3>
+<table>
+<thead>
+<tr>
+<th>编号</th>
+<th>验收场景</th>
+<th>预期结果</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>充值-01</td>
+<td>按账户 ID、地址片段或交易哈希查询</td>
+<td>返回匹配记录并回到第 1 页</td>
+</tr>
+<tr>
+<td>充值-02</td>
+<td>当前确认数未达所需确认数</td>
+<td>状态为确认中，确认入账金额和入账时间为空</td>
+</tr>
+<tr>
+<td>充值-03</td>
+<td>链上事件被重复消费</td>
+<td>仅保留一条充值记录，用户余额仅增加一次</td>
+</tr>
+<tr>
+<td>充值-04</td>
+<td>打开充值详情</td>
+<td>展示全量字段，空值为 <code>—</code>，地址与交易哈希可复制</td>
+</tr>
+<tr>
+<td>充值-05</td>
+<td>尝试从后台修改充值状态或金额</td>
+<td>页面不提供相关操作，接口也不接受此类修改</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2 id="6-提现记录">6. 提现记录</h2>
+<h3 id="61-用户目标">6.1 用户目标</h3>
+<p>查询提现单进度与结果。本期<strong>不支持人工审核</strong>，后台<strong>不展示审核状态、审核人、审核时间、审核备注</strong>；用户提现锁定成功后业务状态直接进入「处理中」。</p>
+<h3 id="62-模块说明">6.2 模块说明</h3>
+<table>
+<thead>
+<tr>
+<th>项</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>触发</strong></td>
+<td>进入「提现记录」</td>
+</tr>
+<tr>
+<td><strong>核心能力</strong></td>
+<td>列表查询、详情（只读）</td>
+</tr>
+<tr>
+<td><strong>审核</strong></td>
+<td><strong>本期不支持人工审核</strong>；<strong>不展示审核相关字段与操作</strong>；不提供审核弹窗</td>
+</tr>
+<tr>
+<td><strong>TOTP</strong></td>
+<td>本期提现模块无写操作，无需 TOTP</td>
+</tr>
+</tbody>
+</table>
+<h3 id="63-列表与筛选">6.3 列表与筛选</h3>
+<table>
+<thead>
+<tr>
+<th>筛选项</th>
+<th>匹配规则</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>网络名称</td>
+<td>模糊匹配</td>
+</tr>
+<tr>
+<td>提现资产</td>
+<td>模糊匹配</td>
+</tr>
+<tr>
+<td>状态</td>
+<td>全部 / 处理中 / 提现成功 / 提现失败 / 已拒绝（兼容）</td>
+</tr>
+<tr>
+<td>主账户</td>
+<td>匹配账户 ID 或账户标识片段</td>
+</tr>
+<tr>
+<td>目标地址</td>
+<td>模糊匹配，忽略字母大小写</td>
+</tr>
+<tr>
+<td>交易哈希</td>
+<td>模糊匹配，未广播记录的交易哈希为空</td>
+</tr>
+</tbody>
+</table>
+<p><strong>列表字段（左→右）：</strong><br>
+网络名称、提现资产、主账户、目标地址、总扣减金额、实际到账金额、提现手续费、交易哈希、失败原因、创建时间、锁定时间、完成时间、备注、<strong>状态+操作</strong></p>
+<blockquote>
+<p>操作列本期仅「详情」。不展示「审核」。不展示审核状态/审核人/审核时间/审核备注。</p>
+</blockquote>
+<h3 id="64-状态">6.4 状态</h3>
+<table>
+<thead>
+<tr>
+<th>业务状态</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>处理中</td>
+<td>锁定成功后进入出金处理</td>
+</tr>
+<tr>
+<td>提现成功</td>
+<td>终态成功</td>
+</tr>
+<tr>
+<td>提现失败</td>
+<td>出金失败</td>
+</tr>
+<tr>
+<td>已拒绝</td>
+<td>兼容历史数据；<strong>本期主路径不产生</strong></td>
+</tr>
+<tr>
+<td>待审核</td>
+<td>兼容历史数据；<strong>本期主路径不停留此状态</strong></td>
+</tr>
+</tbody>
+</table>
+<p><strong>本期主路径</strong></p>
+<table>
+<thead>
+<tr>
+<th>业务状态</th>
+<th>资金处理</th>
+<th>是否终态</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>处理中</td>
+<td>已进入出金队列或链上确认中</td>
+<td>否</td>
+</tr>
+<tr>
+<td>提现成功</td>
+<td>锁定金额已最终扣减</td>
+<td>是</td>
+</tr>
+<tr>
+<td>提现失败</td>
+<td>未成功出金的锁定金额已释放回账户</td>
+<td>是</td>
+</tr>
+</tbody>
+</table>
+<h3 id="65-审核策略本期">6.5 审核策略（本期）</h3>
+<div class="mermaid">
+flowchart TD
+  A[用户提交提现并锁定资金] --> B[业务状态=处理中]
+  B --> C[进入出金处理队列]
+
+</div>
+<table>
+<thead>
+<tr>
+<th>规则</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>无人工入口</td>
+<td>列表/详情不展示「审核」；不提供审核弹窗；接口不接受人工通过/拒绝（若残留须拒绝）</td>
+</tr>
+<tr>
+<td>无审核字段</td>
+<td>后台列表、详情、筛选均不展示审核状态、审核人、审核时间、审核备注</td>
+</tr>
+<tr>
+<td>主路径</td>
+<td>锁定总扣减金额成功后，业务状态为「处理中」并进入出金队列</td>
+</tr>
+<tr>
+<td>后续扩展预留</td>
+<td>若恢复人工审核，须另行评审字段、流程、TOTP 与权限</td>
+</tr>
+</tbody>
+</table>
+<h3 id="66-详情与操作">6.6 详情与操作</h3>
+<p>详情抽屉只读展示提现单号、网络、资产、主账户、目标地址、金额、业务状态、交易哈希、失败原因及各阶段时间。目标地址和交易哈希可复制，已配置浏览器模板时可跳转链上浏览器。<strong>不展示审核类字段。</strong></p>
+<table>
+<thead>
+<tr>
+<th>操作</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>详情</td>
+<td>只读全字段（不含审核类字段）</td>
+</tr>
+<tr>
+<td>审核</td>
+<td><strong>本期不做</strong>；不展示该操作入口</td>
+</tr>
+</tbody>
+</table>
+<h3 id="67-业务规则">6.7 业务规则</h3>
+<div class="mermaid">
+flowchart TD
+  A[用户提交提现并锁定资金] --> B[处理中]
+  B -->|"链上出金成功"| C[提现成功]
+  B -->|"链上出金失败"| D[提现失败并释放锁定资金]
+
+</div>
+<table>
+<thead>
+<tr>
+<th>规则</th>
+<th>要求</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>金额恒等</td>
+<td>总扣减金额 = 实际到账金额 + 提现手续费；全部金额使用申请时快照</td>
+</tr>
+<tr>
+<td>锁定优先</td>
+<td>只有成功锁定总扣减金额后才能生成提现记录并进入处理中</td>
+</tr>
+<tr>
+<td>入队</td>
+<td>锁定成功即送入出金处理队列；交易哈希必须在真实链上交易广播成功后写入</td>
+</tr>
+<tr>
+<td>处理失败</td>
+<td>记录链上或系统失败原因，并仅释放一次未完成出金的锁定资金</td>
+</tr>
+<tr>
+<td>幂等</td>
+<td>同一提现单不得重复入队或重复释放资金</td>
+</tr>
+<tr>
+<td>默认排序</td>
+<td>按创建时间倒序，最新记录在前</td>
+</tr>
+</tbody>
+</table>
+<h3 id="68-验收标准">6.8 验收标准</h3>
+<table>
+<thead>
+<tr>
+<th>编号</th>
+<th>验收场景</th>
+<th>预期结果</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>提现-01</td>
+<td>用户成功提交提现并锁定</td>
+<td>业务状态为处理中；无人工审核步骤</td>
+</tr>
+<tr>
+<td>提现-02</td>
+<td>打开提现列表/详情</td>
+<td><strong>无审核状态/审核人/审核时间/审核备注</strong>；无「审核」按钮</td>
+</tr>
+<tr>
+<td>提现-03</td>
+<td>链上出金成功</td>
+<td>业务状态提现成功；交易哈希在广播后出现；金额恒等成立</td>
+</tr>
+<tr>
+<td>提现-04</td>
+<td>出金失败</td>
+<td>业务状态提现失败；锁定金额仅释放一次</td>
+</tr>
+<tr>
+<td>提现-05</td>
+<td>查看员或运营配置员打开提现记录</td>
+<td>可查看详情；不展示审核操作与审核字段</td>
+</tr>
+<tr>
+<td>提现-06</td>
+<td>调用残留人工审核接口（若有）</td>
+<td>请求被拒绝，提现单状态不变</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2 id="7-金库监控暂不做">7. 金库监控（暂不做）</h2>
+<blockquote>
+<p><strong>本期范围：暂不做。</strong> 本章保留需求草案供后续启用，不纳入本期 P0 交付、联调与上线验收。导航若保留入口，须标注「暂不做」，且不提供可写操作。</p>
+</blockquote>
+<h3 id="71-用户目标">7.1 用户目标</h3>
+<p>按网络监控出金金库余额、在途与可用，配置水位区间，识别低/高水位风险。</p>
+<h3 id="72-模块说明">7.2 模块说明</h3>
+<table>
+<thead>
+<tr>
+<th>项</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>触发</strong></td>
+<td>进入「金库监控」</td>
+</tr>
+<tr>
+<td><strong>对象</strong></td>
+<td>出金热钱包（网络 × 资产）</td>
+</tr>
+<tr>
+<td><strong>核心能力</strong></td>
+<td>列表、筛选、刷新余额、配置水位</td>
+</tr>
+<tr>
+<td><strong>TOTP</strong></td>
+<td><strong>保存水位、暂停提现须 TOTP</strong>；刷新余额不需要</td>
+</tr>
+<tr>
+<td><strong>不做</strong></td>
+<td>编辑金库地址；公众策略金库份额</td>
+</tr>
+</tbody>
+</table>
+<h3 id="73-指标口径">7.3 指标口径</h3>
+<table>
+<thead>
+<tr>
+<th>指标</th>
+<th>口径</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>余额</td>
+<td>链上余额</td>
+</tr>
+<tr>
+<td>在途</td>
+<td>已审核通过、尚未进入成功或失败终态的提现实际到账金额合计</td>
+</tr>
+<tr>
+<td>可用</td>
+<td>取 0 与“余额 − 在途 − 安全缓冲”中的较大值</td>
+</tr>
+<tr>
+<td>水位</td>
+<td>[低水位 L, 高水位 H]</td>
+</tr>
+<tr>
+<td>水位状态</td>
+<td>可用 &lt; L → 低于低水位；可用 &gt; H → 高于高水位；L ≤ 可用 ≤ H → 健康</td>
+</tr>
+</tbody>
+</table>
+<h3 id="74-列表与筛选">7.4 列表与筛选</h3>
+<p><strong>筛选：</strong> 网络名称、链 ID、资产、水位状态</p>
+<p><strong>列表字段：</strong><br>
+网络名称、链 ID、金库地址、资产、余额、在途、可用、水位、同步时间、<strong>状态+操作</strong></p>
+<p><strong>行样式：</strong> 低水位浅红、高水位浅黄；可用金额低/高用箭头与颜色强调。</p>
+<h3 id="75-配置水位编辑">7.5 配置水位（编辑）</h3>
+<table>
+<thead>
+<tr>
+<th>字段</th>
+<th>可编辑性</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>所属网络、链 ID、资产、金库角色</td>
+<td>只读</td>
+</tr>
+<tr>
+<td><strong>金库地址</strong></td>
+<td><strong>只读，不可编辑</strong></td>
+</tr>
+<tr>
+<td>低水位 L、高水位 H</td>
+<td>可编辑，H &gt; L</td>
+</tr>
+<tr>
+<td>安全缓冲</td>
+<td>可编辑</td>
+</tr>
+<tr>
+<td>低水位自动暂停提现</td>
+<td>P1 可编辑；P1 上线前不展示或明确标记未生效</td>
+</tr>
+<tr>
+<td>备注</td>
+<td>可编辑</td>
+</tr>
+<tr>
+<td><strong>Google 验证码（TOTP）</strong></td>
+<td><strong>保存必填</strong></td>
+</tr>
+<tr>
+<td>余额、在途、可用、同步时间</td>
+<td>只读快照</td>
+</tr>
+</tbody>
+</table>
+<h3 id="76-操作与流程">7.6 操作与流程</h3>
+<div class="mermaid">
+flowchart TD
+  A[进入金库监控] --> B[查看水位列表]
+  B --> C{操作}
+  C -->|刷新余额| D[重拉链上与在途 无需 TOTP]
+  D --> E[重算可用与水位状态]
+  C -->|配置水位| F[打开配置抽屉]
+  F --> G[修改 L H 缓冲等]
+  G --> H[业务校验 H 大于 L]
+  H -->|失败| I[字段提示]
+  H -->|成功| J[校验抽屉内 TOTP]
+  J -->|失败| K[TOTP 错误]
+  J -->|成功| L[保存阈值并重算状态]
+  C -->|暂停提现| M[打开 TOTP 弹窗]
+  M --> N{TOTP}
+  N -->|失败| O[不改开关]
+  N -->|成功| P[关闭对应网络提现开关]
+  P --> Q[写审计日志]
+
+</div>
+<table>
+<thead>
+<tr>
+<th>操作</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>配置水位</td>
+<td>打开配置抽屉；<strong>保存须 TOTP</strong></td>
+</tr>
+<tr>
+<td>暂停提现</td>
+<td>低水位且对应网络提现尚开放时展示；<strong>TOTP 通过后</strong>关闭对应网络的提现开关</td>
+</tr>
+<tr>
+<td>刷新余额</td>
+<td>重新获取链上余额和提现在途数据，重算可用金额与水位；<strong>无需 TOTP</strong></td>
+</tr>
+</tbody>
+</table>
+<h3 id="77-状态">7.7 状态</h3>
+<table>
+<thead>
+<tr>
+<th>水位状态</th>
+<th>标签</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>健康</td>
+<td>绿色</td>
+</tr>
+<tr>
+<td>低于低水位</td>
+<td>红色</td>
+</tr>
+<tr>
+<td>高于高水位</td>
+<td>黄色</td>
+</tr>
+<tr>
+<td>同步异常</td>
+<td>灰色或红色异常标签，展示最后成功同步时间，不将过期数据标记为健康</td>
+</tr>
+</tbody>
+</table>
+<h3 id="78-业务规则">7.8 业务规则</h3>
+<table>
+<thead>
+<tr>
+<th>规则</th>
+<th>要求</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>唯一性</td>
+<td>每个“网络 + 资产 + 金库角色”仅对应一条有效金库监控记录</td>
+</tr>
+<tr>
+<td>地址保护</td>
+<td>金库地址由部署或环境配置注入，后台仅可查看，不提供新增、编辑、删除和私钥操作</td>
+</tr>
+<tr>
+<td>刷新事实</td>
+<td>手动刷新必须读取真实数据源，不得生成随机余额或人工改写链上余额</td>
+</tr>
+<tr>
+<td>手动暂停</td>
+<td>仅关闭新提现入口，不撤销已审核或处理中提现；操作结果须同时写入网络配置和审计日志</td>
+</tr>
+<tr>
+<td>不自动恢复</td>
+<td>水位恢复健康后不自动开启提现，须由有权限管理员复核并手动开启</td>
+</tr>
+<tr>
+<td>配置生效</td>
+<td>保存新水位后立即按当前快照重算状态，但不回溯改写历史告警</td>
+</tr>
+</tbody>
+</table>
+<h3 id="79-验收标准">7.9 验收标准</h3>
+<table>
+<thead>
+<tr>
+<th>编号</th>
+<th>验收场景</th>
+<th>预期结果</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>金库-01</td>
+<td>余额 100、在途 30、安全缓冲 10</td>
+<td>可用金额为 60</td>
+</tr>
+<tr>
+<td>金库-02</td>
+<td>可用金额分别小于 L、等于 L、等于 H、大于 H</td>
+<td>依次显示低水位、健康、健康、高水位</td>
+</tr>
+<tr>
+<td>金库-03</td>
+<td>设置高水位小于或等于低水位</td>
+<td>保存被阻断</td>
+</tr>
+<tr>
+<td>金库-04</td>
+<td>在低水位行点击暂停提现并确认</td>
+<td>对应网络提现开关真实关闭，客户端无法新建该网络提现</td>
+</tr>
+<tr>
+<td>金库-05</td>
+<td>余额同步失败</td>
+<td>保留最后成功快照与时间，明确标记同步异常</td>
+</tr>
+<tr>
+<td>金库-06</td>
+<td>保存水位时 TOTP 错误</td>
+<td>阈值不变更</td>
+</tr>
+<tr>
+<td>金库-07</td>
+<td>暂停提现 TOTP 正确</td>
+<td>网络提现开关关闭，客户端无法新建该网提现</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2 id="7a-紧急控制暂不做">7A. 紧急控制（暂不做）</h2>
+<blockquote>
+<p><strong>本期范围：暂不做。</strong> 不纳入本期交付与验收。</p>
+</blockquote>
+<table>
+<thead>
+<tr>
+<th>项</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>目标（后续）</td>
+<td>在极端风险下快速限制充提或交易相关能力</td>
+</tr>
+<tr>
+<td>本期要求</td>
+<td>侧栏可保留入口并标注「暂不做」；页面可为占位说明，不提供生效中的控制操作</td>
+</tr>
+<tr>
+<td>与本期关系</td>
+<td>不影响网络/资产开关与提现锁定后直进处理中的主路径</td>
+</tr>
+</tbody>
+</table>
+<h2 id="7b-黑名单暂不做">7B. 黑名单（暂不做）</h2>
+<blockquote>
+<p><strong>本期范围：暂不做。</strong> 不纳入本期交付与验收。</p>
+</blockquote>
+<table>
+<thead>
+<tr>
+<th>项</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>目标（后续）</td>
+<td>限制特定用户/地址的提现等资金操作</td>
+</tr>
+<tr>
+<td>本期要求</td>
+<td>侧栏可保留入口并标注「暂不做」；不提供添加/编辑/生效黑名单能力</td>
+</tr>
+<tr>
+<td>与本期关系</td>
+<td>本期提现仅依赖网络/资产开关，不读取黑名单</td>
+</tr>
+</tbody>
+</table>
+<h2 id="8-横切规则">8. 横切规则</h2>
+<h3 id="81-实体关系">8.1 实体关系</h3>
+<pre><code>网络 1 ── n 资产
+网络 1 ── n 充值记录 / 提现记录
+网络 × 资产 ── 金库监控行（出金热钱包）
+提现处理中 ── 汇总计入对应金库「在途」
+</code></pre>
+<h3 id="82-状态联动">8.2 状态联动</h3>
+<table>
+<thead>
+<tr>
+<th>变化</th>
+<th>影响</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>网络禁用/维护</td>
+<td>客户端不可选；已有流水仍可查</td>
+</tr>
+<tr>
+<td>网络关闭提现</td>
+<td>新提现不可选该网</td>
+</tr>
+<tr>
+<td>资产禁用</td>
+<td>该网该资产不可充提</td>
+</tr>
+<tr>
+<td>金库低水位且手动暂停</td>
+<td>关闭该网络提现开关，并保留操作审计</td>
+</tr>
+<tr>
+<td>金库低水位且开启自动暂停</td>
+<td>P1 上线后自动关闭该网络提现开关，不自动恢复</td>
+</tr>
+</tbody>
+</table>
+<p><strong>最终生效条件</strong></p>
+<table>
+<thead>
+<tr>
+<th>能力</th>
+<th>客户端可用条件</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>充值</td>
+<td>网络状态为启用中 且 网络充值开关打开 且 资产状态为启用中 且 资产充值开关打开</td>
+</tr>
+<tr>
+<td>提现</td>
+<td>网络状态为启用中 且 网络提现开关打开 且 资产状态为启用中 且 资产提现开关打开</td>
+</tr>
+</tbody>
+</table>
+<h3 id="83-前台生效">8.3 前台生效</h3>
+<table>
+<thead>
+<tr>
+<th>配置</th>
+<th>交易端</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>网络名称</td>
+<td>充提下拉与提示</td>
+</tr>
+<tr>
+<td>预计到账分钟</td>
+<td>展示预估（若产品展示）</td>
+</tr>
+<tr>
+<td>最低充提/手续费</td>
+<td>表单校验与摘要</td>
+</tr>
+<tr>
+<td>资产编码</td>
+<td>内部；用户见符号 USDC</td>
+</tr>
+<tr>
+<td>链 ID / 代币合约</td>
+<td>用于系统识别和校验，不作为客户端主要展示信息</td>
+</tr>
+<tr>
+<td>充值接收地址 / 提现目标地址</td>
+<td>在对应充提流程中完整展示并支持复制</td>
+</tr>
+</tbody>
+</table>
+<h3 id="84-审计">8.4 审计</h3>
+<table>
+<thead>
+<tr>
+<th>操作</th>
+<th>记录</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>网络/资产保存、启停</td>
+<td>操作人、操作时间、操作类型、变更前后值、操作结果、<strong>TOTP 校验结果</strong></td>
+</tr>
+<tr>
+<td>提现人工审核/金库写操作</td>
+<td><strong>暂不做</strong>，本期无对应审计要求</td>
+</tr>
+<tr>
+<td>TOTP 失败</td>
+<td>可记安全审计（操作人、时间、模块、操作类型、失败）；<strong>不得</strong>记录验证码明文</td>
+</tr>
+</tbody>
+</table>
+<p>审计日志仅追加，普通管理员不得修改或删除。成功写操作必须能证明「权限校验 + TOTP 通过」均已发生。</p>
+<h3 id="85-金额与精度">8.5 金额与精度</h3>
+<table>
+<thead>
+<tr>
+<th>规则</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>存储</td>
+<td>定点十进制语义</td>
+</tr>
+<tr>
+<td>展示</td>
+<td>可读格式；金库可用千分位</td>
+</tr>
+<tr>
+<td>禁止</td>
+<td>二进制浮点作为事实源</td>
+</tr>
+</tbody>
+</table>
+<h3 id="86-配置快照">8.6 配置快照</h3>
+<table>
+<thead>
+<tr>
+<th>场景</th>
+<th>规则</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>充值</td>
+<td>创建充值监听记录时保存所需确认数快照</td>
+</tr>
+<tr>
+<td>提现</td>
+<td>用户提交时保存最低提现、手续费、实际到账金额和目标地址快照</td>
+</tr>
+<tr>
+<td>配置变更</td>
+<td>新配置仅影响新申请；不回溯改写已有记录的金额、确认数或状态</td>
+</tr>
+</tbody>
+</table>
+<h3 id="87-安全与数据保护">8.7 安全与数据保护</h3>
+<table>
+<thead>
+<tr>
+<th>项目</th>
+<th>规则</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>鉴权</td>
+<td>每次读写请求均校验登录态和模块权限，不仅依赖前端隐藏按钮</td>
+</tr>
+<tr>
+<td><strong>TOTP</strong></td>
+<td>受控写接口必须在服务端校验 TOTP（或一次性挑战码）；禁止仅前端拦截</td>
+</tr>
+<tr>
+<td>敏感信息</td>
+<td>金库私钥、签名材料、完整鉴权凭据、<strong>TOTP 种子</strong>不得在页面、接口返回或日志中出现</td>
+</tr>
+<tr>
+<td>地址与哈希</td>
+<td>列表缩略展示，详情可查全文和复制；仅有权限的内部人员可查看</td>
+</tr>
+<tr>
+<td>高风险操作</td>
+<td>见 <a href="#26-totp-安全验证">2.6 TOTP 清单</a>；本期仅网络/资产抽屉保存内嵌验证码，启停走独立 TOTP 弹窗</td>
+</tr>
+</tbody>
+</table>
+<h3 id="88-一致性与可恢复性">8.8 一致性与可恢复性</h3>
+<table>
+<thead>
+<tr>
+<th>项目</th>
+<th>规则</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>幂等</td>
+<td>充值入账、提现入队/资金释放、网络启停必须能识别重复请求</td>
+</tr>
+<tr>
+<td>并发校验</td>
+<td>写操作提交时校验最新状态，状态已变更时不覆盖新数据</td>
+</tr>
+<tr>
+<td>失败恢复</td>
+<td>页面超时不等于业务失败；用户重试前先查询最新结果</td>
+</tr>
+<tr>
+<td>事实源</td>
+<td>链上余额和交易结果以经确认的链上数据为准；账户余额以资金账本为准</td>
+</tr>
+</tbody>
+</table>
+<h3 id="89-性能与可用性">8.9 性能与可用性</h3>
+<table>
+<thead>
+<tr>
+<th>项目</th>
+<th>验收口径</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>列表查询</td>
+<td>常规数据量下 95% 的查询在 2 秒内返回</td>
+</tr>
+<tr>
+<td>写操作反馈</td>
+<td>提交后立即进入加载态；返回成功、失败或结果未知的明确反馈</td>
+</tr>
+<tr>
+<td>长表格</td>
+<td>分页查询，不一次性加载全量充提记录</td>
+</tr>
+<tr>
+<td>空态与错误态</td>
+<td>无数据、无匹配、无权限、加载失败必须展示不同反馈</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2 id="9-异常与提示">9. 异常与提示</h2>
+<h3 id="91-通用">9.1 通用</h3>
+<table>
+<thead>
+<tr>
+<th>异常</th>
+<th>处理</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>列表失败</td>
+<td>错误 + 重试</td>
+</tr>
+<tr>
+<td>无权限</td>
+<td>无权限提示</td>
+</tr>
+<tr>
+<td>提交中重复点击</td>
+<td>按钮置为加载中并锁定，同一业务请求仅生效一次</td>
+</tr>
+<tr>
+<td>未绑定 TOTP</td>
+<td>受控写操作引导绑定，在完成绑定前不可提交</td>
+</tr>
+</tbody>
+</table>
+<h3 id="92-表单">9.2 表单</h3>
+<table>
+<thead>
+<tr>
+<th>异常</th>
+<th>处理</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>必填缺失</td>
+<td>字段级报错或页面轻提示</td>
+</tr>
+<tr>
+<td>链 ID 重复</td>
+<td>阻断</td>
+</tr>
+<tr>
+<td>合约格式错误</td>
+<td>阻断</td>
+</tr>
+<tr>
+<td>高水位 ≤ 低水位</td>
+<td>阻断</td>
+</tr>
+<tr>
+<td>TOTP 未填/不足 6 位</td>
+<td>阻断，提示完整验证码</td>
+</tr>
+<tr>
+<td>TOTP 错误</td>
+<td>阻断，业务数据不变</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p>「拒绝未填原因」随提现人工审核暂不做。</p>
+</blockquote>
+<h3 id="93-业务">9.3 业务</h3>
+<table>
+<thead>
+<tr>
+<th>异常</th>
+<th>处理</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>网络或资产配置已被他人更新</td>
+<td>不覆盖新数据，提示重新打开编辑</td>
+</tr>
+<tr>
+<td>出金队列暂时不可用</td>
+<td>处理中的提现保持可恢复状态，不重复扣减或释放资金</td>
+</tr>
+<tr>
+<td>链上数据源不可用</td>
+<td>保留最后成功数据和时间，明确标记过期或同步异常</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p>金库同步异常、人工审核并发/超时等异常随对应能力暂不做。</p>
+</blockquote>
+<hr>
+<h2 id="10-上线验收">10. 上线验收</h2>
+<h3 id="101-端到端验收场景">10.1 端到端验收场景</h3>
+<table>
+<thead>
+<tr>
+<th>编号</th>
+<th>场景</th>
+<th>验收结果</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>端到端-01</td>
+<td>新增启用网络和 USDC 资产，同时打开充值开关</td>
+<td>客户端充值网络可选，最低充值和预计时效与后台一致</td>
+</tr>
+<tr>
+<td>端到端-02</td>
+<td>关闭资产充值开关</td>
+<td>客户端不得新建该网络资产充值，已发生链上充值仍能继续确认并入账</td>
+</tr>
+<tr>
+<td>端到端-03</td>
+<td>同一链上充值事件被重复处理</td>
+<td>后台只有一条有效记录，账户只入账一次</td>
+</tr>
+<tr>
+<td>端到端-04</td>
+<td>用户提交提现并链上成功</td>
+<td>锁定成功后业务状态为处理中，再至提现成功；交易哈希在广播后出现；金额恒等成立；无审核字段</td>
+</tr>
+<tr>
+<td>端到端-05</td>
+<td>打开提现记录并查看详情</td>
+<td>无审核状态/审核人/审核时间/审核备注；无审核按钮与审核弹窗</td>
+</tr>
+<tr>
+<td>端到端-06</td>
+<td>无写权限的管理员调用网络/资产写操作</td>
+<td>页面无可用入口，写请求被拒绝，业务数据不变</td>
+</tr>
+<tr>
+<td>端到端-07</td>
+<td>配置员保存网络时输入错误 TOTP</td>
+<td>配置不生效，客户端表现不变</td>
+</tr>
+<tr>
+<td>端到端-08</td>
+<td>侧栏打开金库监控/紧急控制/黑名单</td>
+<td>标注或表现为「暂不做」，不产生生效中的写操作</td>
+</tr>
+</tbody>
+</table>
+<h3 id="102-上线门槛">10.2 上线门槛</h3>
+<table>
+<thead>
+<tr>
+<th>类别</th>
+<th>必须满足</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>功能</td>
+<td>本文档 <strong>本期 P0</strong> 能力与端到端验收场景全部通过；标注「暂不做」的不纳入门槛</td>
+</tr>
+<tr>
+<td>权限</td>
+<td>查看、运营配置、资金只读等权限分离，绕过前端的请求同样受限</td>
+</tr>
+<tr>
+<td><strong>TOTP</strong></td>
+<td>本期清单内网络/资产写操作均服务端强制 TOTP；演示码不可用于生产；种子与验证码不落日志</td>
+</tr>
+<tr>
+<td>资金安全</td>
+<td>充值防重入账、提现锁定与释放、入队幂等通过专项测试</td>
+</tr>
+<tr>
+<td>数据一致性</td>
+<td>网络/资产开关与客户端可用性一致</td>
+</tr>
+<tr>
+<td>审计</td>
+<td>网络/资产配置变更可追溯到人、时间、变更前后值、结果与 <strong>TOTP 结果</strong></td>
+</tr>
+<tr>
+<td>异常恢复</td>
+<td>重复请求、页面超时、链上数据同步失败不造成重复资金变动</td>
+</tr>
+<tr>
+<td>暂不做</td>
+<td>金库监控、紧急控制、黑名单、提现人工审核及审核字段不作为上线必过项</td>
+</tr>
+</tbody>
+</table>
+      </article>
+    </main>
+  </div>
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.min.js"></script>
+  <script>
+    mermaid.initialize({ startOnLoad: true, theme: "default", securityLevel: "loose" });
+    (function () {
+      var links = Array.prototype.slice.call(document.querySelectorAll(".sidebar-toc a"));
+      var map = links.map(function (a) {
+        var id = decodeURIComponent(a.getAttribute("href").slice(1));
+        return { a: a, el: document.getElementById(id) };
+      }).filter(function (x) { return x.el; });
+      var content = document.querySelector(".content");
+      function sync() {
+        var top = content.scrollTop + 80;
+        var current = map[0] && map[0].a;
+        for (var i = 0; i < map.length; i++) {
+          if (map[i].el.offsetTop - content.offsetTop <= top) current = map[i].a;
+        }
+        links.forEach(function (a) { a.classList.toggle("active", a === current); });
+      }
+      content.addEventListener("scroll", sync, { passive: true });
+      sync();
+    })();
+  </script>
+</body>
+</html>

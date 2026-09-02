@@ -203,6 +203,38 @@
 
     .nav-item-icon { width: 16px; height: 16px; opacity: 0.8; flex-shrink: 0; }
 
+    .nav-badge-deferred {
+      margin-left: auto;
+      font-size: 10px;
+      font-weight: 600;
+      line-height: 1;
+      padding: 3px 6px;
+      border-radius: 999px;
+      background: rgba(251, 191, 36, 0.18);
+      color: #FBBF24;
+      border: 1px solid rgba(251, 191, 36, 0.35);
+      flex-shrink: 0;
+    }
+
+    .scope-deferred-banner {
+      margin: 0 0 16px;
+      padding: 12px 14px;
+      border-radius: 8px;
+      background: #FFFBEB;
+      border: 1px solid #FDE68A;
+      color: #92400E;
+      font-size: 13px;
+      line-height: 1.5;
+    }
+
+    .scope-deferred-banner strong { color: #78350F; }
+
+    .page-view.is-deferred [data-deferred-write] {
+      opacity: 0.45;
+      pointer-events: none;
+      cursor: not-allowed;
+    }
+
     .nav-sub-item {
       display: flex;
       align-items: center;
@@ -1242,6 +1274,83 @@
   
     .page-view { display: none; min-width: 0; max-width: 100%; }
     .page-view.active { display: block; }
+
+    /* 紧急控制 */
+    .ec-stack { display: flex; flex-direction: column; gap: 12px; max-width: 960px; }
+    .ec-card {
+      background: var(--bg-container);
+      border: 1px solid var(--border-default);
+      border-radius: 12px;
+      padding: 18px 20px;
+      box-shadow: var(--shadow-xs);
+    }
+    .ec-card-title {
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin: 0 0 4px;
+    }
+    .ec-card-desc {
+      margin: 0;
+      font-size: 13px;
+      color: var(--text-muted);
+    }
+    .ec-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      background: var(--bg-container);
+      border: 1px solid var(--border-default);
+      border-radius: 12px;
+      padding: 18px 20px;
+      box-shadow: var(--shadow-xs);
+    }
+    .ec-row.is-disabled { opacity: 0.55; }
+    .ec-row-main { min-width: 0; }
+    .ec-row-title {
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin: 0 0 8px;
+    }
+    .ec-badges { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+    .ec-badge {
+      display: inline-flex;
+      align-items: center;
+      height: 22px;
+      padding: 0 8px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 500;
+      border: 1px solid transparent;
+    }
+    .ec-badge-ok {
+      color: #027A48;
+      background: #ECFDF3;
+      border-color: #A6F4C5;
+    }
+    .ec-badge-off {
+      color: #667085;
+      background: #F2F4F7;
+      border-color: #E4E7EC;
+    }
+    .ec-badge-on {
+      color: #B42318;
+      background: #FEF3F2;
+      border-color: #FECDCA;
+    }
+    .ec-row-action { flex-shrink: 0; }
+    .ec-banner {
+      margin-bottom: 12px;
+      padding: 10px 12px;
+      border-radius: 8px;
+      background: #FEF3F2;
+      border: 1px solid #FECDCA;
+      color: #B42318;
+      font-size: 13px;
+    }
+
     .mono-sm { font-family: "SF Mono", "Cascadia Mono", monospace; font-size: 12px; word-break: break-all; }
     .addr-cell { max-width: 140px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 
@@ -1332,11 +1441,22 @@
         <svg class="nav-item-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M8 13V5M5 8l3-3 3 3"/><path d="M3 3h10"/></svg>
         提现记录
       </div>
-      <div class="nav-item" data-nav="treasury">
+      <div class="nav-item" data-nav="treasury" title="本期暂不做">
         <svg class="nav-item-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 6h12v7H2z"/><path d="M4 6V5a4 4 0 018 0v1"/><path d="M8 9v2"/></svg>
         金库监控
+        <span class="nav-badge-deferred">暂不做</span>
       </div>
       <div class="nav-group-label">风控</div>
+      <div class="nav-item" data-nav="emergency" title="本期暂不做">
+        <svg class="nav-item-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M8 2l6 11H2L8 2z"/><path d="M8 7v3M8 12h.01" stroke-linecap="round"/></svg>
+        紧急控制
+        <span class="nav-badge-deferred">暂不做</span>
+      </div>
+      <div class="nav-item" data-nav="blacklist" title="本期暂不做">
+        <svg class="nav-item-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="8" cy="8" r="6"/><path d="M5 5l6 6" stroke-linecap="round"/></svg>
+        黑名单
+        <span class="nav-badge-deferred">暂不做</span>
+      </div>
       <div class="nav-item" style="opacity:.45;cursor:default" title="后续模块">
         <svg class="nav-item-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M8 2l5 2v4c0 3-2.2 5.2-5 6-2.8-.8-5-3-5-6V4l5-2z"/></svg>
         清算与偿付
@@ -1645,7 +1765,7 @@
         <div class="page-header">
           <div>
             <h1 class="page-title">提现记录</h1>
-            <p class="page-desc">查看提现请求，对待审核记录进行通过或拒绝。提交审核结论需 TOTP 验证（原型码 111111）。</p>
+            <p class="page-desc">查看提现请求与出金结果。本期不支持人工审核，不展示审核相关字段；操作仅提供详情。</p>
           </div>
         </div>
         <div class="filter-card">
@@ -1662,19 +1782,9 @@
               <div class="field-label">状态</div>
               <select class="field-select" id="wfStatus">
                 <option value="">全部</option>
-                <option value="pending_review">待审核</option>
                 <option value="processing">处理中</option>
                 <option value="success">提现成功</option>
                 <option value="failed">提现失败</option>
-                <option value="rejected">已拒绝</option>
-              </select>
-            </div>
-            <div class="form-field">
-              <div class="field-label">审核状态</div>
-              <select class="field-select" id="wfAudit">
-                <option value="">全部</option>
-                <option value="pending">待审核</option>
-                <option value="approved">已通过</option>
                 <option value="rejected">已拒绝</option>
               </select>
             </div>
@@ -1712,12 +1822,8 @@
                   <th>总扣减金额</th>
                   <th>实际到账金额</th>
                   <th>提现手续费</th>
-                  <th>审核状态</th>
                   <th>交易哈希</th>
                   <th>失败原因</th>
-                  <th>审核人</th>
-                  <th>审核时间</th>
-                  <th>审核备注</th>
                   <th>创建时间</th>
                   <th>锁定时间</th>
                   <th>完成时间</th>
@@ -1736,16 +1842,17 @@
       </div><!-- /pageWithdraw -->
 
       <!-- ========== 金库监控 ========== -->
-      <div class="page-view" id="pageTreasury">
+      <div class="page-view is-deferred" id="pageTreasury">
         <div class="page-header">
           <div>
-            <h1 class="page-title">金库监控</h1>
-            <p class="page-desc">按网络监控出金金库余额、在途与可用水位。金库地址只读；保存水位配置需 TOTP 验证（原型码 111111）。</p>
+            <h1 class="page-title">金库监控 <span class="nav-badge-deferred" style="display:inline-flex;vertical-align:middle;margin-left:8px">暂不做</span></h1>
+            <p class="page-desc">本期暂不做。以下为后续草案只读预览，不提供配置水位、暂停提现等写操作。</p>
           </div>
           <div class="page-header-actions">
-            <button type="button" class="btn btn-md btn-secondary" id="btnTreasuryRefresh">刷新余额</button>
+            <button type="button" class="btn btn-md btn-secondary" id="btnTreasuryRefresh" data-deferred-write disabled title="本期暂不做">刷新余额</button>
           </div>
         </div>
+        <div class="scope-deferred-banner"><strong>暂不做：</strong>金库监控不纳入本期交付与验收。可浏览列表示意，不可保存水位或暂停提现。</div>
         <div class="filter-card">
           <div class="filter-grid-5">
             <div class="form-field">
@@ -1805,6 +1912,114 @@
           </div>
         </div>
       </div><!-- /pageTreasury -->
+
+      <!-- ========== 紧急控制 ========== -->
+      <div class="page-view is-deferred" id="pageEmergency">
+        <div class="page-header">
+          <div>
+            <h1 class="page-title">紧急控制 <span class="nav-badge-deferred" style="display:inline-flex;vertical-align:middle;margin-left:8px">暂不做</span></h1>
+            <p class="page-desc">本期暂不做。页面仅作占位说明，不提供生效中的紧急开关操作。</p>
+          </div>
+        </div>
+        <div class="scope-deferred-banner"><strong>暂不做：</strong>紧急控制不纳入本期交付与验收。不影响网络/资产开关与提现锁定后直进处理中的主路径。</div>
+        <div class="ec-stack">
+          <div class="ec-card">
+            <h2 class="ec-card-title">紧急控制</h2>
+            <p class="ec-card-desc">后续可用于管理关键系统开关。本期所有控制操作已禁用。</p>
+          </div>
+
+          <div class="ec-row is-disabled" id="ecTradeRow" title="本版暂未开放">
+            <div class="ec-row-main">
+              <h3 class="ec-row-title">暂停交易</h3>
+              <div class="ec-badges">
+                <span class="ec-badge ec-badge-ok">已确认</span>
+                <span class="ec-badge ec-badge-off">即将支持</span>
+              </div>
+            </div>
+            <div class="ec-row-action">
+              <button type="button" class="btn btn-md btn-secondary" disabled>启用</button>
+            </div>
+          </div>
+
+          <div class="ec-row is-disabled" id="ecWithdrawRow" title="本期暂不做">
+            <div class="ec-row-main">
+              <h3 class="ec-row-title">暂停提现</h3>
+              <div class="ec-badges" id="ecWithdrawBadges"></div>
+              <p class="ec-card-desc" style="margin-top:8px" id="ecWithdrawHint">本期暂不做，按钮已禁用。</p>
+            </div>
+            <div class="ec-row-action">
+              <button type="button" class="btn btn-md btn-primary" id="btnEcToggleWithdraw" data-deferred-write disabled title="本期暂不做">启用</button>
+            </div>
+          </div>
+        </div>
+      </div><!-- /pageEmergency -->
+
+      <!-- ========== 黑名单 ========== -->
+      <div class="page-view is-deferred" id="pageBlacklist">
+        <div class="page-header">
+          <div>
+            <h1 class="page-title">黑名单 <span class="nav-badge-deferred" style="display:inline-flex;vertical-align:middle;margin-left:8px">暂不做</span></h1>
+            <p class="page-desc">本期暂不做。以下为后续草案只读预览，不提供添加/编辑/启停。</p>
+          </div>
+          <div class="page-header-actions">
+            <button type="button" class="btn btn-md btn-primary" id="btnAddBlacklist" data-deferred-write disabled title="本期暂不做">+ 添加黑名单</button>
+          </div>
+        </div>
+        <div class="scope-deferred-banner"><strong>暂不做：</strong>黑名单不纳入本期交付与验收。本期提现不读取黑名单。</div>
+        <div id="blGlobalBanner" class="ec-banner" style="display:none"></div>
+        <div class="filter-card">
+          <div class="filter-grid-5">
+            <div class="form-field">
+              <div class="field-label">用户标识</div>
+              <input class="field-input" type="text" id="blfUser" placeholder="用户标识 / 地址片段" />
+            </div>
+            <div class="form-field">
+              <div class="field-label">状态</div>
+              <select class="field-select" id="blfStatus">
+                <option value="">全部</option>
+                <option value="active">生效中</option>
+                <option value="disabled">已停用</option>
+              </select>
+            </div>
+            <div class="form-field">
+              <div class="field-label">原因关键词</div>
+              <input class="field-input" type="text" id="blfReason" placeholder="模糊搜索" />
+            </div>
+            <div class="filter-actions">
+              <button type="button" class="btn btn-md btn-primary" id="btnBlSearch">查询</button>
+              <button type="button" class="btn btn-md btn-secondary" id="btnBlReset">重置</button>
+            </div>
+          </div>
+        </div>
+        <div class="list-card">
+          <div class="list-toolbar">
+            <div class="list-toolbar-left">共 <strong id="blTotalCount">0</strong> 条黑名单</div>
+            <div class="list-toolbar-right"><span class="text-small text-muted">生效中的用户禁止提现</span></div>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>用户标识</th>
+                  <th>限制范围</th>
+                  <th>原因</th>
+                  <th>备注</th>
+                  <th>创建时间</th>
+                  <th>创建人员</th>
+                  <th>更新时间</th>
+                  <th>更新人员</th>
+                  <th class="th-sticky-ops"><div class="sticky-ops-head"><span>状态</span><span>操作</span></div></th>
+                </tr>
+              </thead>
+              <tbody id="blTableBody"></tbody>
+            </table>
+          </div>
+          <div class="pagination">
+            <div class="pagination-info" id="blPageInfo">—</div>
+            <div class="pagination-btns" id="blPageBtns"></div>
+          </div>
+        </div>
+      </div><!-- /pageBlacklist -->
 
     </main>
   </div>
@@ -2097,8 +2312,8 @@
 </div>
 
 
-<!-- 提现审核 -->
-<div class="modal-overlay" id="auditModal">
+<!-- 提现审核（本期暂不做：保留 DOM 结构但不开放） -->
+<div class="modal-overlay" id="auditModal" hidden aria-hidden="true" style="display:none !important">
   <div class="modal modal-md">
     <div class="modal-header">
       <span class="modal-title">提现审核</span>
@@ -2280,6 +2495,61 @@
     <div class="drawer-footer">
       <button type="button" class="btn btn-md btn-secondary" id="btnCancelTreasuryDrawer">取消</button>
       <button type="button" class="btn btn-md btn-primary" id="btnSaveTreasury">保存水位</button>
+    </div>
+  </div>
+</div>
+
+
+
+<!-- 黑名单 新增/编辑 -->
+<div class="drawer-overlay" id="blacklistDrawer">
+  <div class="drawer" onclick="event.stopPropagation()">
+    <div class="drawer-header">
+      <span class="drawer-title" id="blDrawerTitle">添加黑名单</span>
+      <button type="button" class="modal-close" id="btnCloseBlDrawer">✕</button>
+    </div>
+    <div class="drawer-body">
+      <input type="hidden" id="blEditId" value="" />
+      <div class="form-section">
+        <h3 class="form-section-title">① 用户信息</h3>
+        <div class="form-grid">
+          <div class="form-field form-grid-full">
+            <div class="field-label">用户标识 <span class="req">*</span></div>
+            <input class="field-input td-mono" id="blFldUser" type="text" placeholder="钱包地址或展示标识，如 0xEd36…F167" />
+          </div>
+        </div>
+      </div>
+      <div class="form-section">
+        <h3 class="form-section-title">② 限制与原因</h3>
+        <div class="form-grid">
+          <div class="form-field">
+            <div class="field-label">限制范围</div>
+            <select class="field-select" id="blFldScope">
+              <option value="withdraw">禁止提现</option>
+            </select>
+            <p class="field-hint">本版仅支持禁止提现</p>
+          </div>
+          <div class="form-field">
+            <div class="field-label">状态 <span class="req">*</span></div>
+            <select class="field-select" id="blFldStatus">
+              <option value="active">生效中</option>
+              <option value="disabled">已停用</option>
+            </select>
+          </div>
+          <div class="form-field form-grid-full">
+            <div class="field-label">原因 <span class="req">*</span></div>
+            <textarea class="field-textarea" id="blFldReason" placeholder="请填写加入黑名单的原因"></textarea>
+          </div>
+          <div class="form-field form-grid-full">
+            <div class="field-label">备注</div>
+            <textarea class="field-textarea" id="blFldRemark" placeholder="选填"></textarea>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="drawer-footer">
+      <button type="button" class="btn btn-md btn-secondary" id="btnCancelBlDrawer">取消</button>
+      <button type="button" class="btn btn-md btn-primary" id="btnSaveBlacklist">保存</button>
     </div>
   </div>
 </div>
@@ -2511,7 +2781,9 @@
       asset: "pageAsset",
       deposit: "pageDeposit",
       withdraw: "pageWithdraw",
-      treasury: "pageTreasury"
+      treasury: "pageTreasury",
+      emergency: "pageEmergency",
+      blacklist: "pageBlacklist"
     };
     Object.keys(map).forEach(function (k) {
       var el = document.getElementById(map[k]);
@@ -2522,9 +2794,18 @@
       asset: "资产管理",
       deposit: "充值记录",
       withdraw: "提现记录",
-      treasury: "金库监控"
+      treasury: "金库监控",
+      emergency: "紧急控制",
+      blacklist: "黑名单"
+    };
+    var groups = {
+      network: "运营配置", asset: "运营配置",
+      deposit: "资金", withdraw: "资金", treasury: "资金",
+      emergency: "风控", blacklist: "风控"
     };
     document.getElementById("bcCurrent").textContent = titles[page] || page;
+    var bcRoot = document.querySelector(".breadcrumb span");
+    if (bcRoot && groups[page]) bcRoot.textContent = groups[page];
     if (page === "asset") {
       fillAssetNetworkSelects();
       renderAssetTable();
@@ -2534,6 +2815,10 @@
       renderWdTable();
     } else if (page === "treasury") {
       renderTreasuryTable();
+    } else if (page === "emergency") {
+      renderEmergency();
+    } else if (page === "blacklist") {
+      renderBlacklistTable();
     } else {
       renderNetTable();
     }
@@ -3225,26 +3510,26 @@
 
   var withdraws = [
     {
-      id: "wd_review_1", networkName: "Arbitrum One", asset: "USDC",
+      id: "wd_proc_new_1", networkName: "Arbitrum One", asset: "USDC",
       accountId: "acc_10086", accountLabel: "0xEd36…F167",
       toAddress: "0xEd36a1b2c3d4e5f678901234567890abcdefF167",
       totalDebit: "101", receiveAmount: "100", fee: "1",
-      auditStatus: "pending", status: "pending_review",
+      auditStatus: "auto_pass", status: "processing",
       createdAt: "2025-09-24 16:00:00",
       txHash: "", failReason: "",
-      auditor: "", auditedAt: "", auditRemark: "",
+      auditor: "system", auditedAt: "2025-09-24 16:00:01", auditRemark: "",
       lockedAt: "2025-09-24 16:00:01", completedAt: "",
-      remark: "大额提现待审"
+      remark: "锁定后进入处理中"
     },
     {
-      id: "wd_review_2", networkName: "Arbitrum One", asset: "USDC",
+      id: "wd_proc_new_2", networkName: "Arbitrum One", asset: "USDC",
       accountId: "acc_10087", accountLabel: "0xBb11…a8b9",
       toAddress: "0xBb11c2d3e4f5a6b7c8d9e0f1a2b3c4d5e6f7a8b9",
       totalDebit: "51", receiveAmount: "50", fee: "1",
-      auditStatus: "pending", status: "pending_review",
+      auditStatus: "auto_pass", status: "processing",
       createdAt: "2025-09-24 16:30:00",
       txHash: "", failReason: "",
-      auditor: "", auditedAt: "", auditRemark: "",
+      auditor: "system", auditedAt: "2025-09-24 16:30:01", auditRemark: "",
       lockedAt: "2025-09-24 16:30:01", completedAt: "",
       remark: ""
     },
@@ -3253,11 +3538,11 @@
       accountId: "acc_10088", accountLabel: "0xCc22…b9c0",
       toAddress: "0xCc22d3e4f5a6b7c8d9e0f1a2b3c4d5e6f7a8b9c0",
       totalDebit: "21", receiveAmount: "20", fee: "1",
-      auditStatus: "approved", status: "processing",
+      auditStatus: "auto_pass", status: "processing",
       createdAt: "2025-09-23 10:00:00",
       txHash: "0xwdproc111222333444555666777888999000aaabbbcccdddeeefff000111222",
       failReason: "",
-      auditor: "Miller", auditedAt: "2025-09-23 10:05:00", auditRemark: "审核通过",
+      auditor: "system", auditedAt: "2025-09-23 10:00:01", auditRemark: "",
       lockedAt: "2025-09-23 10:00:01", completedAt: "",
       remark: "出金广播中"
     },
@@ -3266,11 +3551,11 @@
       accountId: "acc_10086", accountLabel: "0xEd36…F167",
       toAddress: "0xEd36a1b2c3d4e5f678901234567890abcdefF167",
       totalDebit: "11", receiveAmount: "10", fee: "1",
-      auditStatus: "approved", status: "success",
+      auditStatus: "auto_pass", status: "success",
       createdAt: "2025-09-15 09:10:00",
       txHash: "0xwdsuccessaaaabbbbccccddddeeeeffff000011112222333344445555666677",
       failReason: "",
-      auditor: "Terry", auditedAt: "2025-09-15 09:12:00", auditRemark: "OK",
+      auditor: "system", auditedAt: "2025-09-15 09:10:01", auditRemark: "",
       lockedAt: "2025-09-15 09:10:01", completedAt: "2025-09-15 09:25:33",
       remark: ""
     },
@@ -3279,27 +3564,27 @@
       accountId: "acc_10089", accountLabel: "0xDd33…c0d1",
       toAddress: "0xDd33e4f5a6b7c8d9e0f1a2b3c4d5e6f7a8b9c0d1",
       totalDebit: "31", receiveAmount: "30", fee: "1",
-      auditStatus: "approved", status: "failed",
+      auditStatus: "auto_pass", status: "failed",
       createdAt: "2025-09-12 13:00:00",
       txHash: "0xwdfail9999888877776666555544443333222211110000ffffeeeeddddcccc",
       failReason: "链上交易失败，资金已释放回账户",
-      auditor: "emilyn", auditedAt: "2025-09-12 13:05:00", auditRemark: "通过",
+      auditor: "system", auditedAt: "2025-09-12 13:00:01", auditRemark: "",
       lockedAt: "2025-09-12 13:00:01", completedAt: "2025-09-12 13:40:00",
       remark: "失败释放"
     },
     {
-      id: "wd_rej_1", networkName: "Arbitrum One", asset: "USDC",
+      id: "wd_rej_hist_1", networkName: "Arbitrum One", asset: "USDC",
       accountId: "acc_10090", accountLabel: "0xEe44…d1e2",
       toAddress: "0xSuspicious000000000000000000000000000001",
       totalDebit: "1001", receiveAmount: "1000", fee: "1",
       auditStatus: "rejected", status: "rejected",
       createdAt: "2025-09-11 08:00:00",
       txHash: "",
-      failReason: "目标地址命中风险名单",
+      failReason: "历史人工拒绝样例（兼容）",
       auditor: "Miller", auditedAt: "2025-09-11 08:20:00",
-      auditRemark: "目标地址命中风险名单",
+      auditRemark: "历史兼容数据",
       lockedAt: "2025-09-11 08:00:01", completedAt: "2025-09-11 08:20:00",
-      remark: ""
+      remark: "本期主路径不产生"
     }
   ];
 
@@ -3321,9 +3606,7 @@
     return '<span class="tag ' + m[0] + '">' + m[1] + "</span>";
   }
   function auditTag(s) {
-    if (s === "pending") return '<span class="tag tag-pending">待审核</span>';
-    if (s === "approved") return '<span class="tag tag-success">已通过</span>';
-    if (s === "rejected") return '<span class="tag tag-error">已拒绝</span>';
+    /* 本期不展示审核状态 */
     return "—";
   }
   function exceptionLabel(t) {
@@ -3359,7 +3642,6 @@
       if (f.network && r.networkName.toLowerCase().indexOf(f.network.toLowerCase()) < 0) return false;
       if (f.asset && r.asset.toLowerCase().indexOf(f.asset.toLowerCase()) < 0) return false;
       if (f.status && r.status !== f.status) return false;
-      if (f.audit && r.auditStatus !== f.audit) return false;
       if (f.account) {
         var q = f.account.toLowerCase();
         if ((r.accountId + r.accountLabel).toLowerCase().indexOf(q) < 0) return false;
@@ -3432,14 +3714,11 @@
       total === 0 ? "暂无数据" : "第 " + state.wd.page + " / " + pages + " 页 · 每页 " + PAGE_SIZE + " 条";
     var body = document.getElementById("wdTableBody");
     if (!rows.length) {
-      body.innerHTML = '<tr class="empty-row"><td colspan="18">无匹配提现记录</td></tr>';
+      body.innerHTML = '<tr class="empty-row"><td colspan="14">无匹配提现记录</td></tr>';
     } else {
       body.innerHTML = rows.map(function (r) {
         var ops =
-          '<button type="button" class="btn-link" data-wact="detail">详情</button>' +
-          (r.status === "pending_review"
-            ? '<button type="button" class="btn-link" data-wact="audit">审核</button>'
-            : "");
+          '<button type="button" class="btn-link" data-wact="detail">详情</button>';
         return (
           '<tr data-id="' + escapeAttr(r.id) + '">' +
           "<td>" + escapeHtml(r.networkName) + "</td>" +
@@ -3449,12 +3728,8 @@
           "<td><strong>" + escapeHtml(r.totalDebit) + "</strong></td>" +
           "<td>" + escapeHtml(r.receiveAmount) + "</td>" +
           "<td>" + escapeHtml(r.fee) + "</td>" +
-          "<td>" + auditTag(r.auditStatus) + "</td>" +
           '<td class="td-mono addr-cell" title="' + escapeAttr(r.txHash || "") + '">' + escapeHtml(shortHash(r.txHash)) + "</td>" +
           '<td class="td-muted text-small">' + escapeHtml(r.failReason || "—") + "</td>" +
-          '<td class="td-muted">' + escapeHtml(r.auditor || "—") + "</td>" +
-          '<td class="td-muted text-small">' + escapeHtml(r.auditedAt || "—") + "</td>" +
-          '<td class="td-muted text-small">' + escapeHtml(r.auditRemark || "—") + "</td>" +
           '<td class="td-muted text-small">' + escapeHtml(r.createdAt) + "</td>" +
           '<td class="td-muted text-small">' + escapeHtml(r.lockedAt || "—") + "</td>" +
           '<td class="td-muted text-small">' + escapeHtml(r.completedAt || "—") + "</td>" +
@@ -3497,62 +3772,20 @@
   }
 
   function openAudit(row) {
-    document.getElementById("auditId").value = row.id;
-    document.getElementById("auditAccount").textContent = row.accountLabel + " / " + row.accountId;
-    document.getElementById("auditNetAsset").textContent = row.networkName + " · " + row.asset;
-    document.getElementById("auditTo").textContent = row.toAddress;
-    document.getElementById("auditAmounts").textContent =
-      row.totalDebit + " / " + row.receiveAmount + " / " + row.fee + " USDC";
-    document.querySelector('input[name="auditResult"][value="approve"]').checked = true;
-    document.getElementById("auditRejectReason").value = "";
-    document.getElementById("auditRemark").value = "";
-    document.getElementById("auditRejectWrap").style.display = "none";
-    document.getElementById("auditApproveWrap").style.display = "block";
-    clearTotpField("auditTotp", "auditTotpError");
-    document.getElementById("auditModal").classList.add("open");
+    toast("本期不支持人工审核", "err");
   }
   function closeAudit() {
-    document.getElementById("auditModal").classList.remove("open");
+    var modal = document.getElementById("auditModal");
+    if (modal) {
+      modal.classList.remove("open");
+      modal.hidden = true;
+      modal.setAttribute("aria-hidden", "true");
+    }
   }
-  function syncAuditUi() {
-    var rej = document.querySelector('input[name="auditResult"]:checked').value === "reject";
-    document.getElementById("auditRejectWrap").style.display = rej ? "block" : "none";
-    document.getElementById("auditApproveWrap").style.display = rej ? "none" : "block";
-  }
+  function syncAuditUi() { /* 本期不做 */ }
   function submitAudit() {
-    var id = document.getElementById("auditId").value;
-    var row = withdraws.find(function (w) { return w.id === id; });
-    if (!row) return;
-    var result = document.querySelector('input[name="auditResult"]:checked').value;
-    if (result === "reject") {
-      var reasonPre = document.getElementById("auditRejectReason").value.trim();
-      if (!reasonPre) return toast("拒绝时必须填写拒绝原因", "err");
-    }
-    if (!requireTotp("auditTotp", "auditTotpError")) return;
-    var now = nowStr();
-    if (result === "reject") {
-      var reason = document.getElementById("auditRejectReason").value.trim();
-      if (!reason) return toast("拒绝时必须填写拒绝原因", "err");
-      row.auditStatus = "rejected";
-      row.status = "rejected";
-      row.failReason = reason;
-      row.auditRemark = reason;
-      row.auditor = "运营管理员";
-      row.auditedAt = now;
-      row.completedAt = now;
-      toast("已拒绝提现");
-    } else {
-      row.auditStatus = "approved";
-      row.status = "processing";
-      row.auditRemark = document.getElementById("auditRemark").value.trim() || "审核通过";
-      row.auditor = "运营管理员";
-      row.auditedAt = now;
-      row.failReason = "";
-      row.txHash = row.txHash || ("0xwd" + Date.now().toString(16) + "aaaabbbbccccddddeeeeffff0000111122223333");
-      toast("审核通过，进入处理中");
-    }
+    toast("本期不支持人工审核", "err");
     closeAudit();
-    renderWdTable();
   }
 
   document.getElementById("btnDepSearch").addEventListener("click", function () {
@@ -3580,7 +3813,6 @@
       network: document.getElementById("wfNetwork").value.trim(),
       asset: document.getElementById("wfAsset").value.trim(),
       status: document.getElementById("wfStatus").value,
-      audit: document.getElementById("wfAudit").value,
       account: document.getElementById("wfAccount").value.trim(),
       to: document.getElementById("wfTo").value.trim(),
       tx: document.getElementById("wfTx").value.trim()
@@ -3589,7 +3821,7 @@
     renderWdTable();
   });
   document.getElementById("btnWdReset").addEventListener("click", function () {
-    ["wfNetwork", "wfAsset", "wfStatus", "wfAudit", "wfAccount", "wfTo", "wfTx"].forEach(function (id) {
+    ["wfNetwork", "wfAsset", "wfStatus", "wfAccount", "wfTo", "wfTx"].forEach(function (id) {
       document.getElementById(id).value = "";
     });
     state.wd.filters = {};
@@ -3634,12 +3866,15 @@
     var row = withdraws.find(function (w) { return w.id === id; });
     if (!row) return;
     var act = btn.getAttribute("data-wact");
+    if (act === "audit") {
+      openAudit(row);
+      return;
+    }
     if (act === "detail") {
       showDetail("提现详情", [
         ["网络名称", row.networkName],
         ["提现资产", row.asset],
         ["状态", ({ pending_review: "待审核", processing: "处理中", success: "提现成功", failed: "提现失败", rejected: "已拒绝" })[row.status] || row.status],
-        ["审核状态", ({ pending: "待审核", approved: "已通过", rejected: "已拒绝" })[row.auditStatus] || row.auditStatus],
         ["主账户", row.accountId + " / " + row.accountLabel],
         ["目标地址", row.toAddress, true],
         ["总扣减金额", row.totalDebit],
@@ -3647,16 +3882,12 @@
         ["提现手续费", row.fee],
         ["交易哈希", row.txHash || "—", true],
         ["失败原因", row.failReason || "—"],
-        ["审核人", row.auditor || "—"],
-        ["审核时间", row.auditedAt || "—"],
-        ["审核备注", row.auditRemark || "—"],
         ["创建时间", row.createdAt],
         ["锁定时间", row.lockedAt || "—"],
         ["完成时间", row.completedAt || "—"],
         ["备注", row.remark || "—"]
       ]);
     }
-    if (act === "audit") openAudit(row);
   });
 
   document.getElementById("btnCloseDetail").addEventListener("click", closeDetail);
@@ -3819,11 +4050,7 @@
     } else {
       body.innerHTML = rows.map(function (r) {
         var lv = treasuryLevel(r);
-        var ops =
-          '<button type="button" class="btn-link" data-tact="config">配置水位</button>' +
-          (lv === "low"
-            ? '<button type="button" class="btn-link-warning" data-tact="pause">暂停提现</button>'
-            : "");
+        var ops = '<span class="text-small text-muted">暂不做</span>';
         return (
           '<tr data-id="' + escapeAttr(r.id) + '" class="' + rowLevelClass(lv) + '">' +
           "<td>" + escapeHtml(r.networkName) + "</td>" +
@@ -3848,6 +4075,8 @@
   }
 
   function openTreasuryDrawer(row) {
+    toast("金库监控本期暂不做，不可配置水位", "err");
+    return;
     state.tf.editId = row.id;
     document.getElementById("tfEditId").value = row.id;
     document.getElementById("tfFldNetwork").value = row.networkName;
@@ -3873,6 +4102,8 @@
     state.tf.editId = null;
   }
   function saveTreasury() {
+    toast("金库监控本期暂不做", "err");
+    return;
     var id = document.getElementById("tfEditId").value;
     var row = treasuries.find(function (x) { return x.id === id; });
     if (!row) return;
@@ -3894,6 +4125,8 @@
     renderTreasuryTable();
   }
   function refreshTreasuryBalances() {
+    toast("金库监控本期暂不做，不可刷新余额", "err");
+    return;
     // 模拟链上刷新：轻微抖动余额
     treasuries.forEach(function (r) {
       var delta = Math.floor(Math.random() * 2000) - 1000;
@@ -3942,6 +4175,10 @@
     var row = treasuries.find(function (x) { return x.id === id; });
     if (!row) return;
     var act = btn.getAttribute("data-tact");
+    if (act === "config" || act === "pause") {
+      toast("金库监控本期暂不做", "err");
+      return;
+    }
     if (act === "config") openTreasuryDrawer(row);
     if (act === "pause") {
       openTotpModal(
@@ -3970,6 +4207,309 @@
   document.getElementById("totpModalInput").addEventListener("keydown", function (e) {
     if (e.key === "Enter") confirmTotpModal();
   });
+
+
+  /* ========== 紧急控制 & 黑名单 ========== */
+  state.emergency = {
+    pauseWithdraw: false,
+    confirmed: true,
+    updatedAt: "",
+    updatedBy: ""
+  };
+  state.bl = { page: 1, filters: {}, editId: null };
+
+  var blacklists = [
+    {
+      id: "bl_1",
+      userLabel: "0xSuspicious…0001",
+      scope: "withdraw",
+      reason: "目标地址命中风险名单",
+      remark: "来自提现审核拒绝同步",
+      status: "active",
+      createdAt: "2025-09-11 08:20:00",
+      createdBy: "Miller",
+      updatedAt: "2025-09-11 08:20:00",
+      updatedBy: "Miller"
+    },
+    {
+      id: "bl_2",
+      userLabel: "0xDd33…c0d1",
+      scope: "withdraw",
+      reason: "异常提现行为观察",
+      remark: "",
+      status: "disabled",
+      createdAt: "2025-09-01 10:00:00",
+      createdBy: "Terry",
+      updatedAt: "2025-09-15 12:00:00",
+      updatedBy: "Terry"
+    }
+  ];
+
+  function isWithdrawGloballyPaused() {
+    return !!state.emergency.pauseWithdraw;
+  }
+
+  function isAccountBlacklistedForWithdraw(accountId, userLabel) {
+    var label = String(userLabel || accountId || "").toLowerCase();
+    if (!label) return false;
+    return blacklists.some(function (b) {
+      if (b.status !== "active") return false;
+      if (b.scope !== "withdraw") return false;
+      var bl = String(b.userLabel || "").toLowerCase();
+      return bl && (bl === label || label.indexOf(bl) >= 0 || bl.indexOf(label) >= 0);
+    });
+  }
+
+  function renderEmergency() {
+    var paused = isWithdrawGloballyPaused();
+    var badges = document.getElementById("ecWithdrawBadges");
+    var btn = document.getElementById("btnEcToggleWithdraw");
+    var hint = document.getElementById("ecWithdrawHint");
+    if (badges) {
+      badges.innerHTML =
+        '<span class="ec-badge ec-badge-ok">已确认</span>' +
+        (paused
+          ? '<span class="ec-badge ec-badge-on">已启用 · 全站禁提现</span>'
+          : '<span class="ec-badge ec-badge-off">已停用</span>');
+    }
+    if (btn) {
+      btn.textContent = paused ? "停用" : "启用";
+      btn.className = paused ? "btn btn-md btn-secondary" : "btn btn-md btn-primary";
+    }
+    if (hint) {
+      hint.textContent = paused
+        ? ("暂停提现已启用：所有用户不可发起提现。" +
+          (state.emergency.updatedAt ? " 更新于 " + state.emergency.updatedAt + " · " + (state.emergency.updatedBy || "") : ""))
+        : "启用后，所有用户将无法发起提现。";
+    }
+    updateWithdrawPauseBanners();
+  }
+
+  function updateWithdrawPauseBanners() {
+    var blBanner = document.getElementById("blGlobalBanner");
+    if (blBanner) {
+      if (isWithdrawGloballyPaused()) {
+        blBanner.style.display = "block";
+        blBanner.textContent = "全局「暂停提现」已启用：即使不在黑名单中，全站用户也不可提现。";
+      } else {
+        blBanner.style.display = "none";
+      }
+    }
+    var wdPage = document.getElementById("pageWithdraw");
+    if (wdPage) {
+      var exist = document.getElementById("wdPauseBanner");
+      if (isWithdrawGloballyPaused()) {
+        if (!exist) {
+          var div = document.createElement("div");
+          div.id = "wdPauseBanner";
+          div.className = "ec-banner";
+          div.textContent = "紧急控制：暂停提现已启用，全站用户不可发起新提现。";
+          var header = wdPage.querySelector(".page-header");
+          if (header && header.nextSibling) wdPage.insertBefore(div, header.nextSibling);
+          else wdPage.insertBefore(div, wdPage.firstChild);
+        }
+      } else if (exist) {
+        exist.parentNode.removeChild(exist);
+      }
+    }
+  }
+
+  function togglePauseWithdraw() {
+    var next = !isWithdrawGloballyPaused();
+    var title = next ? "启用暂停提现" : "停用暂停提现";
+    var msg = next
+      ? "确认启用「暂停提现」？启用后，所有用户将无法发起提现。"
+      : "确认停用「暂停提现」？停用后，用户可按黑名单与常规规则提现。";
+    openConfirm(title, msg, function () {
+      state.emergency.pauseWithdraw = next;
+      state.emergency.updatedAt = nowStr();
+      state.emergency.updatedBy = "运营管理员";
+      toast(next ? "已启用暂停提现（全站禁提现）" : "已停用暂停提现");
+      renderEmergency();
+    });
+  }
+
+  function blStatusTag(s) {
+    if (s === "active") return '<span class="tag tag-error">生效中</span>';
+    return '<span class="tag tag-draft">已停用</span>';
+  }
+
+  function filteredBlacklist() {
+    var f = state.bl.filters;
+    return blacklists.filter(function (r) {
+      if (f.user) {
+        var q = f.user.toLowerCase();
+        if ((r.userLabel || "").toLowerCase().indexOf(q) < 0) return false;
+      }
+      if (f.status && r.status !== f.status) return false;
+      if (f.reason && (r.reason || "").toLowerCase().indexOf(f.reason.toLowerCase()) < 0) return false;
+      return true;
+    });
+  }
+
+  function renderBlacklistTable() {
+    updateWithdrawPauseBanners();
+    var list = filteredBlacklist();
+    var total = list.length;
+    var pages = Math.max(1, Math.ceil(total / PAGE_SIZE));
+    if (state.bl.page > pages) state.bl.page = pages;
+    var start = (state.bl.page - 1) * PAGE_SIZE;
+    var rows = list.slice(start, start + PAGE_SIZE);
+    document.getElementById("blTotalCount").textContent = total;
+    document.getElementById("blPageInfo").textContent =
+      total === 0 ? "暂无数据" : "第 " + state.bl.page + " / " + pages + " 页 · 每页 " + PAGE_SIZE + " 条";
+    var body = document.getElementById("blTableBody");
+    if (!rows.length) {
+      body.innerHTML = '<tr class="empty-row"><td colspan="9">无匹配黑名单</td></tr>';
+    } else {
+      body.innerHTML = rows.map(function (r) {
+        return (
+          '<tr data-id="' + escapeAttr(r.id) + '">' +
+          '<td class="td-mono">' + escapeHtml(r.userLabel) + "</td>" +
+          "<td>禁止提现</td>" +
+          '<td class="text-small">' + escapeHtml(r.reason || "—") + "</td>" +
+          '<td class="td-muted text-small">' + escapeHtml(r.remark || "—") + "</td>" +
+          '<td class="td-muted text-small">' + escapeHtml(r.createdAt) + "</td>" +
+          '<td class="td-muted">' + escapeHtml(r.createdBy) + "</td>" +
+          '<td class="td-muted text-small">' + escapeHtml(r.updatedAt) + "</td>" +
+          '<td class="td-muted">' + escapeHtml(r.updatedBy) + "</td>" +
+          '<td class="td-sticky-ops"><div class="sticky-ops-cell">' +
+          '<span class="ops-status">' + blStatusTag(r.status) + "</span>" +
+          '<div class="actions-cell">' +
+          '<span class="text-small text-muted">暂不做</span>' +
+          "</div></div></td></tr>"
+        );
+      }).join("");
+    }
+    renderPager("blPageBtns", pages, state.bl.page, function (p) {
+      state.bl.page = p;
+      renderBlacklistTable();
+    });
+  }
+
+  function openBlacklistDrawer(row) {
+    toast("黑名单本期暂不做，不可添加或编辑", "err");
+    return;
+    state.bl.editId = row ? row.id : null;
+    document.getElementById("blDrawerTitle").textContent = row ? "编辑黑名单" : "添加黑名单";
+    document.getElementById("blEditId").value = row ? row.id : "";
+    document.getElementById("blFldUser").value = row ? row.userLabel : "";
+    document.getElementById("blFldScope").value = "withdraw";
+    document.getElementById("blFldStatus").value = row ? row.status : "active";
+    document.getElementById("blFldReason").value = row ? row.reason || "" : "";
+    document.getElementById("blFldRemark").value = row ? row.remark || "" : "";
+    document.getElementById("blacklistDrawer").classList.add("open");
+  }
+  function closeBlacklistDrawer() {
+    document.getElementById("blacklistDrawer").classList.remove("open");
+    state.bl.editId = null;
+  }
+  function saveBlacklist() {
+    var userLabel = document.getElementById("blFldUser").value.trim();
+    var reason = document.getElementById("blFldReason").value.trim();
+    var status = document.getElementById("blFldStatus").value;
+    var remark = document.getElementById("blFldRemark").value.trim();
+    if (!userLabel) return toast("请填写用户标识", "err");
+    if (!reason) return toast("请填写原因", "err");
+    var dup = blacklists.some(function (b) {
+      return String(b.userLabel || "").toLowerCase() === userLabel.toLowerCase() && b.id !== state.bl.editId;
+    });
+    if (dup) return toast("该用户标识已在黑名单中", "err");
+    var now = nowStr();
+    if (state.bl.editId) {
+      var idx = blacklists.findIndex(function (b) { return b.id === state.bl.editId; });
+      if (idx >= 0) {
+        blacklists[idx] = Object.assign({}, blacklists[idx], {
+          userLabel: userLabel,
+          scope: "withdraw",
+          reason: reason,
+          remark: remark,
+          status: status,
+          updatedAt: now,
+          updatedBy: "运营管理员"
+        });
+      }
+      toast("黑名单已更新");
+    } else {
+      blacklists.unshift({
+        id: "bl_" + Date.now(),
+        userLabel: userLabel,
+        scope: "withdraw",
+        reason: reason,
+        remark: remark,
+        status: status,
+        createdAt: now,
+        createdBy: "运营管理员",
+        updatedAt: now,
+        updatedBy: "运营管理员"
+      });
+      toast("已添加黑名单");
+    }
+    closeBlacklistDrawer();
+    renderBlacklistTable();
+  }
+
+  /* 提现人工审核本期不做；紧急控制/黑名单写操作已禁用 */
+
+  document.getElementById("btnEcToggleWithdraw").addEventListener("click", function () {
+    toast("紧急控制本期暂不做", "err");
+  });
+  document.getElementById("btnAddBlacklist").addEventListener("click", function () {
+    toast("黑名单本期暂不做", "err");
+  });
+  document.getElementById("btnCloseBlDrawer").addEventListener("click", closeBlacklistDrawer);
+  document.getElementById("btnCancelBlDrawer").addEventListener("click", closeBlacklistDrawer);
+  document.getElementById("btnSaveBlacklist").addEventListener("click", saveBlacklist);
+  document.getElementById("blacklistDrawer").addEventListener("click", function (e) {
+    if (e.target === this) closeBlacklistDrawer();
+  });
+  document.getElementById("btnBlSearch").addEventListener("click", function () {
+    state.bl.filters = {
+      user: document.getElementById("blfUser").value.trim(),
+      status: document.getElementById("blfStatus").value,
+      reason: document.getElementById("blfReason").value.trim()
+    };
+    state.bl.page = 1;
+    renderBlacklistTable();
+  });
+  document.getElementById("btnBlReset").addEventListener("click", function () {
+    document.getElementById("blfUser").value = "";
+    document.getElementById("blfStatus").value = "";
+    document.getElementById("blfReason").value = "";
+    state.bl.filters = {};
+    state.bl.page = 1;
+    renderBlacklistTable();
+  });
+  document.getElementById("blTableBody").addEventListener("click", function (e) {
+    var btn = e.target.closest("[data-blact]");
+    if (!btn) return;
+    var id = btn.closest("tr").getAttribute("data-id");
+    var row = blacklists.find(function (b) { return b.id === id; });
+    if (!row) return;
+    var act = btn.getAttribute("data-blact");
+    if (act === "edit" || act === "disable" || act === "enable") {
+      toast("黑名单本期暂不做", "err");
+      return;
+    }
+    if (act === "edit") openBlacklistDrawer(row);
+    if (act === "disable") {
+      openConfirm("停用黑名单", "确认停用「" + row.userLabel + "」？停用后该用户可按常规规则提现（仍受全局暂停提现约束）。", function () {
+        row.status = "disabled";
+        row.updatedAt = nowStr();
+        row.updatedBy = "运营管理员";
+        toast("已停用");
+        renderBlacklistTable();
+      });
+    }
+    if (act === "enable") {
+      row.status = "active";
+      row.updatedAt = nowStr();
+      row.updatedBy = "运营管理员";
+      toast("已启用，该用户禁止提现");
+      renderBlacklistTable();
+    }
+  });
+
 
   state.net.filters = {};
   state.asset.filters = {};
