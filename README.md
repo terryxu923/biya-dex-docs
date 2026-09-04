@@ -6,6 +6,7 @@
 | BD 域 PRD 合集（BD01–BD07） | https://terryxu923.github.io/biya-dex-docs/bd-prd-combo.html |
 | BD 域 PRD 合集（精简优化版） | https://terryxu923.github.io/biya-dex-docs/bd-prd-combo-lite.html |
 | 永续合约交互原型 | https://terryxu923.github.io/biya-dex-docs/biya-perp-prototype.html |
+| BiyaDEX 区块浏览器原型 | https://terryxu923.github.io/biya-dex-docs/BIYA-Chain-Explorer-DEXScan.html |
 | 管理后台原型 | https://terryxu923.github.io/biya-dex-docs/biya-dex-admin.html |
 | 管理后台 PRD（V1.0） | https://terryxu923.github.io/biya-dex-docs/biya-dex-admin-prd.html |
 
