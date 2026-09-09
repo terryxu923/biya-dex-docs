@@ -968,7 +968,7 @@ nav.navbar { display: none !important; }
             grid-template-columns: repeat(6, minmax(0, 1fr));
             border: 1px solid var(--line);
             border-radius: 9px;
-            overflow: hidden;
+            overflow: visible;
         }
 
         #page-home .stats.five { grid-template-columns: repeat(5, minmax(0, 1fr)); }
@@ -979,7 +979,25 @@ nav.navbar { display: none !important; }
         #page-home .stat-value { font-size: clamp(17px, 1.65vw, 24px); font-weight: 700; white-space: nowrap; }
         #page-home .stat-value.primary { color: var(--link); }
         #page-home .stat-value small { color: inherit; font-size: 13px; font-weight: 600; }
-        #page-home .stat-change { color: var(--green); font-size: 13px; font-weight: 500; }
+        #page-home .stat-change { color: var(--green); font-size: 13px; font-weight: 500; position: relative; cursor: help; }
+        #page-home .stat-change[data-tip]:hover::after {
+            content: attr(data-tip);
+            position: absolute;
+            left: 50%;
+            bottom: calc(100% + 8px);
+            transform: translateX(-50%);
+            padding: 6px 8px;
+            border-radius: 6px;
+            background: #111;
+            color: #fff;
+            font-size: 12px;
+            font-weight: 400;
+            line-height: 1.4;
+            white-space: nowrap;
+            z-index: 30;
+            box-shadow: 0 6px 18px rgba(0,0,0,0.18);
+            pointer-events: none;
+        }
         #page-home .stat.is-loading .stat-value,
         #page-home .stat.is-error .stat-value { font-size: 16px; font-weight: 600; color: #96999f; }
         #page-home .home-stat-skel {
@@ -1516,9 +1534,54 @@ nav.navbar { display: none !important; }
             cursor: pointer;
         }
 
+        #page-blocks.tz-mode .page-header {
+            padding-top: 20px;
+            padding-bottom: 8px;
+            overflow: visible;
+            position: relative;
+            z-index: 6;
+        }
+
+        #page-blocks.tz-mode .page-title {
+            font-size: 18px;
+            font-weight: 600;
+        }
+
         #page-blocks.tz-mode .page-desc,
         #page-blocks.tz-mode .breadcrumb {
             display: none;
+        }
+
+        #page-blocks .tz-height-bar {
+            display: none;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 12px;
+            padding: 4px 0 14px;
+        }
+
+        #page-blocks.tz-mode .tz-height-bar {
+            display: flex;
+        }
+
+        #page-blocks .tz-filter-input {
+            height: 36px;
+            min-width: 180px;
+            flex: 1 1 180px;
+            max-width: 280px;
+            border: 1px solid var(--border);
+            border-radius: 999px;
+            background: #fff;
+            color: #333;
+            padding: 0 14px;
+            font: inherit;
+            font-size: 13px;
+            box-sizing: border-box;
+        }
+
+        #page-blocks .tz-filter-input:focus {
+            outline: none;
+            border-color: #111;
         }
 
         #page-blocks.tz-mode .card-title {
@@ -3387,10 +3450,31 @@ nav.navbar { display: none !important; }
         #page-txs .tz-type-bar {
             display: flex;
             align-items: center;
+            flex-wrap: wrap;
             gap: 12px;
             padding: 4px 0 14px;
             position: relative;
             z-index: 5;
+        }
+
+        #page-txs .tz-filter-input {
+            height: 36px;
+            min-width: 180px;
+            flex: 1 1 180px;
+            max-width: 280px;
+            border: 1px solid var(--border);
+            border-radius: 999px;
+            background: #fff;
+            color: #333;
+            padding: 0 14px;
+            font: inherit;
+            font-size: 13px;
+            box-sizing: border-box;
+        }
+
+        #page-txs .tz-filter-input:focus {
+            outline: none;
+            border-color: #111;
         }
 
         #page-txs .tz-type-dropdown {
@@ -11046,7 +11130,7 @@ nav.navbar { display: none !important; }
         <section class="stats" id="home-dexscanStats" aria-label="DEX 数据概览">
             <div class="stat" data-home-region="stat-total"><div class="stat-label">总交易数</div><div class="stat-value primary" id="home-tzTotalTxns">293.59M <small>txns</small></div></div>
             <div class="stat" data-home-region="stat-day"><div class="stat-label">24h 链上交易数</div><div class="stat-value" id="home-tzDayTxns">2.76M <small>txns</small></div></div>
-            <div class="stat" data-home-region="stat-addr"><div class="stat-label">地址总数</div><div class="stat-value" id="home-tzAddresses">1,028,017 <span class="stat-change">+4,216</span></div></div>
+            <div class="stat" data-home-region="stat-addr"><div class="stat-label">地址总数</div><div class="stat-value" id="home-tzAddresses">1,028,017 <span class="stat-change" data-tip="24h 新增地址数" aria-label="24h 新增地址数">+4,216</span></div></div>
             <div class="stat" data-home-region="stat-active"><div class="stat-label">24h 活跃地址数</div><div class="stat-value" id="home-tzActiveAddresses">107,780</div></div>
             <div class="stat" data-home-region="stat-tps"><div class="stat-label">实时 TPS</div><div class="stat-value" id="home-tzTps">95.8 <small>笔/秒</small></div></div>
             <div class="stat" data-home-region="stat-height"><div class="stat-label">区块高度</div><div class="stat-value" id="home-tzBlockHeight">111435120</div></div>
@@ -16918,7 +17002,7 @@ const evmBlocks = [
             var parts = [
                 ["home-tzTotalTxns", "stat-total", formatMillions(tzLive.totalTxns) + " <small>txns</small>"],
                 ["home-tzDayTxns", "stat-day", formatMillions(tzLive.dayTxns) + " <small>txns</small>"],
-                ["home-tzAddresses", "stat-addr", tzLive.addresses.toLocaleString("en-US") + ' <span class="stat-change">+4,216</span>'],
+                ["home-tzAddresses", "stat-addr", tzLive.addresses.toLocaleString("en-US") + ' <span class="stat-change" data-tip="24h 新增地址数" aria-label="24h 新增地址数">+4,216</span>'],
                 ["home-tzActiveAddresses", "stat-active", tzLive.activeAddresses.toLocaleString("en-US")],
                 ["home-tzTps", "stat-tps", tzLive.tps.toFixed(1) + " <small>笔/秒</small>"],
                 ["home-tzBlockHeight", "stat-height", String(tzLive.height)]
@@ -17185,6 +17269,7 @@ const evmBlocks = [
         var tbody = table.querySelector("tbody");
         var cardHeader = root.querySelector(".card-header");
         var pagination = root.querySelector(".pagination");
+        var pageHeader = root.querySelector(".page-header");
         var pageTitle = root.querySelector(".page-title");
         var pageDesc = root.querySelector(".page-desc");
         var breadcrumb = root.querySelector(".breadcrumb");
@@ -17195,6 +17280,7 @@ const evmBlocks = [
             isTz: false,
             page: 1,
             pageSize: PAGE_SIZE,
+            height: "",
             tzDisplayTotal: 112092318,
             tzBrowsable: 10000,
             evmDisplayTotal: 12847293,
@@ -17224,8 +17310,28 @@ const evmBlocks = [
             return blocksListState.isTz ? blocksListState.tzBrowsable : blocksListState.evmBrowsable;
         }
 
+        function tzHeightQuery() {
+            return String(blocksListState.height || "").trim();
+        }
+
+        function tzHeightQueryValid() {
+            var q = tzHeightQuery();
+            return !q || /^\d+$/.test(q);
+        }
+
+        function tzBlockMatchesHeight(height, q) {
+            if (!q) return true;
+            return String(height).indexOf(q) === 0;
+        }
+
+        function matchingBlockTotal() {
+            if (!blocksListState.isTz || !tzHeightQuery()) return browsableTotal();
+            if (!tzHeightQueryValid()) return 0;
+            return collectTzBlockRows().length;
+        }
+
         function totalPages() {
-            return Math.max(1, Math.ceil(browsableTotal() / blocksListState.pageSize));
+            return Math.max(1, Math.ceil(matchingBlockTotal() / blocksListState.pageSize));
         }
 
         function displayTotal() {
@@ -17255,37 +17361,55 @@ const evmBlocks = [
             return out;
         }
 
+        function buildTzBlockRowAt(height, index) {
+            var sec = 59 - (index % 60);
+            var min = 31 - Math.floor(index / 60) % 20;
+            if (min < 0) min += 20;
+            return {
+                height: height,
+                time: "2026/09/01 14:" + pad2(min) + ":" + pad2(sec),
+                actor: tzProposers[height % tzProposers.length],
+                txCount: 5 + ((height * 17) % 36),
+                hash: tzFullHashFor(height)
+            };
+        }
+
+        function collectTzBlockRows() {
+            var tip = latestHeight(true);
+            var q = tzHeightQuery();
+            var max = blocksListState.tzBrowsable;
+            var rows = [];
+            if (q && !/^\d+$/.test(q)) return rows;
+            for (var index = 0; index < max; index++) {
+                var height = tip - index;
+                if (height < 0) break;
+                if (!tzBlockMatchesHeight(height, q)) continue;
+                rows.push(buildTzBlockRowAt(height, index));
+            }
+            return rows;
+        }
+
         function buildPageRows(page) {
             var isTz = blocksListState.isTz;
             var size = blocksListState.pageSize;
             var start = (page - 1) * size;
-            var tip = latestHeight(isTz);
+            if (isTz) {
+                var filtered = collectTzBlockRows();
+                return filtered.slice(start, start + size);
+            }
+            var tip = latestHeight(false);
             var rows = [];
             for (var i = 0; i < size; i++) {
                 var index = start + i;
                 if (index >= browsableTotal()) break;
                 var height = tip - index;
-                var txCount = 5 + ((height * 17) % 36);
-                if (isTz) {
-                    var sec = 59 - (index % 60);
-                    var min = 31 - Math.floor(index / 60) % 20;
-                    if (min < 0) min += 20;
-                    rows.push({
-                        height: height,
-                        time: "2026/09/01 14:" + pad2(min) + ":" + pad2(sec),
-                        actor: tzProposers[height % tzProposers.length],
-                        txCount: txCount,
-                        hash: tzFullHashFor(height)
-                    });
-                } else {
-                    rows.push({
-                        height: height,
-                        hash: hashFor(height),
-                        time: (3 + index * 3) + " 秒前",
-                        actor: evmValidators[height % evmValidators.length],
-                        txCount: 120 + (height % 80)
-                    });
-                }
+                rows.push({
+                    height: height,
+                    hash: hashFor(height),
+                    time: (3 + index * 3) + " 秒前",
+                    actor: evmValidators[height % evmValidators.length],
+                    txCount: 120 + (height % 80)
+                });
             }
             return rows;
         }
@@ -17294,8 +17418,16 @@ const evmBlocks = [
             var params = new URLSearchParams();
             if (blocksListState.isTz) params.set("mode", "dexscan");
             if (page > 1) params.set("page", String(page));
+            if (blocksListState.isTz && tzHeightQuery()) params.set("height", tzHeightQuery());
             var q = params.toString();
             return "#blocks" + (q ? "?" + q : "");
+        }
+
+        function blocksReplaceUrl(page) {
+            var next = blocksListHash(page);
+            if ((location.hash || "") !== next) {
+                history.replaceState(null, "", location.pathname + location.search + next);
+            }
         }
 
         function goBlocksPage(page) {
@@ -17314,8 +17446,8 @@ const evmBlocks = [
             return '<button class="' + cls + '" type="button" data-blocks-page="' + page + '"' + disabled + ">" + label + "</button>";
         }
 
-        function buildPagerButtons(page) {
-            var max = totalPages();
+        function buildPagerButtons(page, maxPages) {
+            var max = maxPages || totalPages();
             var html = "";
             html += pageButtonHtml("\u2039", page - 1, { disabled: page <= 1 });
             var pages = [];
@@ -17338,18 +17470,81 @@ const evmBlocks = [
             return html;
         }
 
+        function syncTzHeightInput(bar) {
+            if (!bar) return;
+            var input = bar.querySelector('[data-tz-blocks-filter="height"]');
+            if (!input || document.activeElement === input) return;
+            input.value = tzHeightQuery();
+        }
+
+        function ensureTzHeightBar() {
+            if (!pageHeader) return null;
+            var bar = pageHeader.querySelector(".tz-height-bar");
+            if (bar) {
+                syncTzHeightInput(bar);
+                return bar;
+            }
+            bar = document.createElement("div");
+            bar.className = "tz-height-bar";
+            bar.innerHTML =
+                '<input class="tz-filter-input" type="search" inputmode="numeric" data-tz-blocks-filter="height" placeholder="区块高度" aria-label="按区块高度查询">';
+            if (pageTitle && pageTitle.nextSibling) {
+                pageHeader.insertBefore(bar, pageTitle.nextSibling);
+            } else {
+                pageHeader.appendChild(bar);
+            }
+            var input = bar.querySelector('[data-tz-blocks-filter="height"]');
+            input.addEventListener("input", function () {
+                var raw = String(input.value || "").replace(/[^\d]/g, "");
+                if (input.value !== raw) input.value = raw;
+                blocksListState.height = raw;
+                blocksListState.page = 1;
+                blocksReplaceUrl(1);
+                renderBlocksList();
+            });
+            syncTzHeightInput(bar);
+            return bar;
+        }
+
+        function blocksEmptyMessage() {
+            return tzHeightQueryValid() ? "无匹配区块" : "区块高度格式无效";
+        }
+
         function renderBlocksList() {
             var isTz = blocksListState.isTz;
-            var page = blocksListState.page;
-            var rows = buildPageRows(page);
-            var max = totalPages();
             var size = blocksListState.pageSize;
-            var from = (page - 1) * size + 1;
-            var to = Math.min(page * size, browsableTotal());
+            var hasHeight = isTz && !!tzHeightQuery();
+            var filteredTz = hasHeight ? collectTzBlockRows() : null;
+            var matchTotal = hasHeight ? filteredTz.length : browsableTotal();
+            var max = Math.max(1, Math.ceil(matchTotal / size) || 1);
+            var page = blocksListState.page;
+            if (page > max) page = max;
+            if (page < 1) page = 1;
+            blocksListState.page = page;
+            var rows;
+            if (!isTz) {
+                rows = buildPageRows(page);
+            } else if (hasHeight) {
+                rows = filteredTz.slice((page - 1) * size, page * size);
+            } else {
+                var tip = latestHeight(true);
+                var start = (page - 1) * size;
+                rows = [];
+                for (var i = 0; i < size; i++) {
+                    var index = start + i;
+                    if (index >= matchTotal) break;
+                    rows.push(buildTzBlockRowAt(tip - index, index));
+                }
+            }
+            var from = matchTotal ? ((page - 1) * size + 1) : 0;
+            var to = Math.min(page * size, matchTotal);
 
             root.classList.toggle("tz-mode", !!isTz);
             if (pageTitle) pageTitle.textContent = "区块列表";
             document.title = (isTz ? "DEX 区块列表" : "区块列表") + " - BiyaChain";
+
+            var heightBar = ensureTzHeightBar();
+            if (heightBar) heightBar.style.display = isTz ? "flex" : "none";
 
             if (breadcrumb) {
                 breadcrumb.style.display = isTz ? "none" : "";
@@ -17361,7 +17556,9 @@ const evmBlocks = [
 
             if (cardHeader) {
                 var topTitle = isTz
-                    ? ("共计 " + displayTotal().toLocaleString("en-US") + " 个区块（仅展示近 1 万条数据）")
+                    ? (hasHeight
+                        ? ("共计 " + matchTotal.toLocaleString("en-US") + " 个区块（近 1 万条内）")
+                        : ("共计 " + displayTotal().toLocaleString("en-US") + " 个区块（仅展示近 1 万条数据）"))
                     : ("共 " + displayTotal().toLocaleString("en-US") + " 个区块");
                 var prevDisabled = page <= 1 ? " disabled" : "";
                 var nextDisabled = page >= max ? " disabled" : "";
@@ -17376,16 +17573,18 @@ const evmBlocks = [
 
             if (isTz) {
                 thead.innerHTML = "<tr><th>区块</th><th>时间</th><th>成交数</th><th>提议者</th><th>哈希</th></tr>";
-                tbody.innerHTML = rows.map(function (row) {
-                    return '<tr>' +
-                        '<td><a href="#block?mode=dexscan&number=' + row.height + '" class="link">' + row.height + '</a></td>' +
-                        '<td class="time">' + row.time + '</td>' +
-                        '<td>' + row.txCount + '</td>' +
-                        '<td><span class="copy-wrap"><a href="' + window.__exAddrHref(row.actor, "dexscan") + '" class="link mono" ' + window.__exHexTipAttrs(row.actor, "addr") + '>' + window.__exShortAddr(row.actor) + '</a>' +
-                        '<button class="copy-btn" type="button" title="复制" data-copy="' + row.actor + '" onclick="copyText(\'' + row.actor + '\', this)">' + (window.__exCopyIconHtml || "📋") + '</button></span></td>' +
-                        '<td><a href="#block?mode=dexscan&number=' + row.height + '" class="link mono" ' + window.__exHexTipAttrs(row.hash, "hash") + '>' + window.__exShortHead(row.hash) + '</a></td>' +
-                        '</tr>';
-                }).join("");
+                tbody.innerHTML = rows.length
+                    ? rows.map(function (row) {
+                        return '<tr>' +
+                            '<td><a href="#block?mode=dexscan&number=' + row.height + '" class="link">' + row.height + '</a></td>' +
+                            '<td class="time">' + row.time + '</td>' +
+                            '<td>' + row.txCount + '</td>' +
+                            '<td><span class="copy-wrap"><a href="' + window.__exAddrHref(row.actor, "dexscan") + '" class="link mono" ' + window.__exHexTipAttrs(row.actor, "addr") + '>' + window.__exShortAddr(row.actor) + '</a>' +
+                            '<button class="copy-btn" type="button" title="复制" data-copy="' + row.actor + '" onclick="copyText(\'' + row.actor + '\', this)">' + (window.__exCopyIconHtml || "📋") + '</button></span></td>' +
+                            '<td><a href="#block?mode=dexscan&number=' + row.height + '" class="link mono" ' + window.__exHexTipAttrs(row.hash, "hash") + '>' + window.__exShortHead(row.hash) + '</a></td>' +
+                            '</tr>';
+                    }).join("")
+                    : '<tr><td colspan="5" class="tz-empty">' + blocksEmptyMessage() + "</td></tr>";
             } else {
                 thead.innerHTML = "<tr><th>区块高度</th><th>区块哈希</th><th>时间</th><th>交易数</th><th>验证者</th></tr>";
                 tbody.innerHTML = rows.map(function (row) {
@@ -17403,9 +17602,9 @@ const evmBlocks = [
 
             if (pagination) {
                 pagination.innerHTML =
-                    '<div class="pagination-info">显示 ' + from + '-' + to + ' 共 ' + browsableTotal().toLocaleString("en-US") + ' 条</div>' +
+                    '<div class="pagination-info">显示 ' + from + '-' + to + ' 共 ' + matchTotal.toLocaleString("en-US") + ' 条</div>' +
                     '<div class="pagination-btns">' +
-                        buildPagerButtons(page) +
+                        buildPagerButtons(page, max) +
                         '<span class="pagination-info">每页显示 ' + size + ' 条内容</span>' +
                     '</div>';
             }
@@ -17432,14 +17631,19 @@ const evmBlocks = [
                 window.applyExplorerChromeMode(isTz ? "dexscan" : "evm");
             }
             blocksListState.isTz = isTz;
+            blocksListState.height = isTz ? (params.get("height") || "") : "";
+            blocksListState.pageSize = PAGE_SIZE;
             var page = parseInt(params.get("page") || "1", 10);
             if (!page || page < 1) page = 1;
             var max = totalPages();
             if (page > max) page = max;
             blocksListState.page = page;
-            blocksListState.pageSize = PAGE_SIZE;
             renderBlocksList();
         };
+
+        window.__tzSelfTest = window.__tzSelfTest || {};
+        window.__tzSelfTest.collectTzBlockRows = collectTzBlockRows;
+        window.__tzSelfTest.blocksListState = blocksListState;
 
     if (typeof checkLoginStatus === "function") fns.checkLoginStatus = checkLoginStatus;
     if (typeof toggleUserDropdown === "function") fns.toggleUserDropdown = toggleUserDropdown;
@@ -17995,6 +18199,8 @@ const evmBlocks = [
             page: 1,
             pageSize: TX_PAGE_SIZE,
             type: "",
+            hash: "",
+            address: "",
             displayTotal: 306847819,
             browsable: 10000
         };
@@ -18042,47 +18248,86 @@ const evmBlocks = [
             return window.__exShortAddr(addr);
         }
 
-        function txsTotalPages() {
-            return Math.max(1, Math.ceil(txsListState.browsable / txsListState.pageSize));
+        function txsTypeInvalid() {
+            var type = txsListState.type || "";
+            return !!type && tzListTxTypes.indexOf(type) === -1;
         }
 
-        function buildTzTxRows(page) {
+        function txsHasTextFilter() {
+            return !!(String(txsListState.hash || "").trim() || String(txsListState.address || "").trim());
+        }
+
+        function txsHasActiveFilter() {
+            return !!(txsListState.type || txsHasTextFilter());
+        }
+
+        function buildTzTxItem(index) {
+            var type = tzListTxTypes[index % tzListTxTypes.length];
+            var sender = tzListSenders[index % tzListSenders.length];
+            var hash = txsMockHash(900001 + index * 97 + type.length * 13);
+            var sec = 59 - (index % 60);
+            var min = 39 - Math.floor(index / 60) % 30;
+            if (min < 0) min += 30;
+            return {
+                hash: hash,
+                type: type,
+                time: "2026/09/01 15:" + txsPad2(min) + ":" + txsPad2(sec),
+                sender: sender,
+                block: String(111435120 - Math.floor(index / 3))
+            };
+        }
+
+        function filterTzTxRows() {
+            var type = txsListState.type || "";
+            var hashQ = String(txsListState.hash || "").trim().toLowerCase();
+            var addrQ = String(txsListState.address || "").trim().toLowerCase();
+            if (txsTypeInvalid()) return [];
+            var out = [];
+            for (var i = 0; i < txsListState.browsable; i++) {
+                var row = buildTzTxItem(i);
+                if (type && row.type !== type) continue;
+                if (hashQ && row.hash.toLowerCase().indexOf(hashQ) === -1) continue;
+                if (addrQ && row.sender.toLowerCase().indexOf(addrQ) === -1) continue;
+                out.push(row);
+            }
+            return out;
+        }
+
+        function txsTotalPages(filteredCount) {
+            var total = typeof filteredCount === "number" ? filteredCount : filterTzTxRows().length;
+            return Math.max(1, Math.ceil(total / txsListState.pageSize) || 1);
+        }
+
+        function buildTzTxRows(page, filtered) {
             var size = txsListState.pageSize;
             var start = (page - 1) * size;
-            var rows = [];
-            var typeFilter = txsListState.type || "";
-            for (var i = 0; i < size; i++) {
-                var index = start + i;
-                if (index >= txsListState.browsable) break;
-                var type = typeFilter || tzListTxTypes[index % tzListTxTypes.length];
-                var sender = tzListSenders[index % tzListSenders.length];
-                var hash = txsMockHash(900001 + index * 97 + type.length * 13);
-                var sec = 59 - (index % 60);
-                var min = 39 - Math.floor(index / 60) % 30;
-                if (min < 0) min += 30;
-                rows.push({
-                    hash: hash,
-                    type: type,
-                    time: "2026/09/01 15:" + txsPad2(min) + ":" + txsPad2(sec),
-                    sender: sender,
-                    block: String(111435120 - Math.floor(index / 3))
-                });
-            }
-            return rows;
+            var all = filtered || filterTzTxRows();
+            return all.slice(start, start + size);
         }
 
-        function txsListHash(page, type) {
+        function txsListHash(page) {
             var params = new URLSearchParams();
             params.set("mode", "dexscan");
             if (page > 1) params.set("page", String(page));
-            if (type) params.set("type", type);
+            if (txsListState.type) params.set("type", txsListState.type);
+            var hashQ = String(txsListState.hash || "").trim();
+            var addrQ = String(txsListState.address || "").trim();
+            if (hashQ) params.set("hash", hashQ);
+            if (addrQ) params.set("address", addrQ);
             return "#txs?" + params.toString();
+        }
+
+        function txsReplaceUrl(page) {
+            var next = txsListHash(page);
+            if ((location.hash || "") !== next) {
+                history.replaceState(null, "", location.pathname + location.search + next);
+            }
         }
 
         function goTxsPage(page) {
             var max = txsTotalPages();
             var next = Math.min(max, Math.max(1, page | 0));
-            window.__exGo(txsListHash(next, txsListState.type));
+            window.__exGo(txsListHash(next));
         }
 
         function txsPageBtn(label, page, opts) {
@@ -18095,8 +18340,8 @@ const evmBlocks = [
             return '<button class="' + cls + '" type="button" data-txs-page="' + page + '"' + disabled + ">" + label + "</button>";
         }
 
-        function buildTxsPagerButtons(page) {
-            var max = txsTotalPages();
+        function buildTxsPagerButtons(page, maxPages) {
+            var max = maxPages || txsTotalPages();
             var html = "";
             html += txsPageBtn("\u2039", page - 1, { disabled: page <= 1 });
             var pages = [];
@@ -18161,10 +18406,21 @@ const evmBlocks = [
             if (dd) dd.classList.remove("open");
         }
 
+        function syncTzTxFilterInputs(bar) {
+            if (!bar) return;
+            var hashEl = bar.querySelector('[data-tz-txs-filter="hash"]');
+            var addrEl = bar.querySelector('[data-tz-txs-filter="address"]');
+            if (hashEl && document.activeElement !== hashEl) hashEl.value = String(txsListState.hash || "").trim();
+            if (addrEl && document.activeElement !== addrEl) addrEl.value = String(txsListState.address || "").trim();
+        }
+
         function ensureTzTypeBar() {
             if (!pageHeader) return null;
             var bar = pageHeader.querySelector(".tz-type-bar");
-            if (bar) return bar;
+            if (bar) {
+                syncTzTxFilterInputs(bar);
+                return bar;
+            }
             bar = document.createElement("div");
             bar.className = "tz-type-bar";
             bar.innerHTML =
@@ -18176,7 +18432,9 @@ const evmBlocks = [
                         "</div>" +
                         '<div class="tz-type-list"></div>' +
                     "</div>" +
-                "</div>";
+                "</div>" +
+                '<input class="tz-filter-input" type="search" data-tz-txs-filter="hash" placeholder="哈希（关键字）" aria-label="按哈希关键字查询">' +
+                '<input class="tz-filter-input" type="search" data-tz-txs-filter="address" placeholder="地址（关键字）" aria-label="按地址关键字查询">';
             if (pageTitle && pageTitle.nextSibling) {
                 pageHeader.insertBefore(bar, pageTitle.nextSibling);
             } else {
@@ -18215,10 +18473,23 @@ const evmBlocks = [
                 e.stopPropagation();
                 var value = opt.getAttribute("data-type-value") || "";
                 txsListState.type = value;
+                txsListState.page = 1;
                 search.value = "";
                 closeTzTypeDropdown(bar);
                 trigger.setAttribute("aria-expanded", "false");
-                window.__exGo(txsListHash(1, value));
+                window.__exGo(txsListHash(1));
+            });
+
+            bar.querySelectorAll("[data-tz-txs-filter]").forEach(function (input) {
+                input.addEventListener("input", function () {
+                    var hashEl = bar.querySelector('[data-tz-txs-filter="hash"]');
+                    var addrEl = bar.querySelector('[data-tz-txs-filter="address"]');
+                    txsListState.hash = String(hashEl && hashEl.value || "").trim();
+                    txsListState.address = String(addrEl && addrEl.value || "").trim();
+                    txsListState.page = 1;
+                    txsReplaceUrl(1);
+                    renderTxsMode(true);
+                });
             });
 
             if (!root.dataset.tzTypeOutsideBound) {
@@ -18234,6 +18505,7 @@ const evmBlocks = [
             }
 
             syncTzTypeTrigger(bar);
+            syncTzTxFilterInputs(bar);
             return bar;
         }
 
@@ -18272,16 +18544,24 @@ const evmBlocks = [
                 closeTzTypeDropdown(typeBar);
             }
 
+            var filtered = filterTzTxRows();
+            var matchTotal = filtered.length;
+            var max = txsTotalPages(matchTotal);
             var page = txsListState.page;
-            var max = txsTotalPages();
-            var rows = buildTzTxRows(page);
+            if (page > max) page = max;
+            if (page < 1) page = 1;
+            txsListState.page = page;
+            var rows = buildTzTxRows(page, filtered);
             var copyIcon = window.__exCopyIconHtml || "📋";
 
             if (cardHeader) {
                 var prevDisabled = page <= 1 ? " disabled" : "";
                 var nextDisabled = page >= max ? " disabled" : "";
+                var cardTitle = txsHasActiveFilter()
+                    ? ("共计 " + matchTotal.toLocaleString("en-US") + " 条数据（近 1 万条内）")
+                    : ("共计 " + txsListState.displayTotal.toLocaleString("en-US") + " 条数据（仅展示近 1 万条数据）");
                 cardHeader.innerHTML =
-                    '<span class="card-title">共计 ' + txsListState.displayTotal.toLocaleString("en-US") + " 条数据（仅展示近 1 万条数据）</span>" +
+                    '<span class="card-title">' + cardTitle + "</span>" +
                     '<div class="tz-list-pager" aria-label="分页">' +
                         '<button type="button" title="上一页" data-txs-page="' + (page - 1) + '"' + prevDisabled + ">\u2039</button>" +
                         "<span>" + page + " / " + max + "</span>" +
@@ -18290,26 +18570,33 @@ const evmBlocks = [
             }
 
             thead.innerHTML = "<tr><th>哈希</th><th>交易类型</th><th>区块</th><th>时间</th><th>地址</th></tr>";
-            tbody.innerHTML = rows.map(function (row) {
-                var href = "#tx?mode=dexscan&hash=" + encodeURIComponent(row.hash) +
-                    "&type=" + encodeURIComponent(row.type) +
-                    "&block=" + encodeURIComponent(row.block);
-                return "<tr>" +
-                    '<td><a class="link mono tz-hash-link" href="' + href + '" ' + window.__exHexTipAttrs(row.hash, "hash") + '>' + shortTxHash(row.hash) + "</a></td>" +
-                    "<td>" + row.type + "</td>" +
-                    '<td><a class="link" href="#block?mode=dexscan&number=' + row.block + '">' + row.block + "</a></td>" +
-                    '<td class="time">' + row.time + "</td>" +
-                    '<td><span class="copy-wrap">' +
-                        '<a href="' + window.__exAddrHref(row.sender, "dexscan") + '" class="link mono" ' + window.__exHexTipAttrs(row.sender, "addr") + '>' + shortSender(row.sender) + "</a>" +
-                        '<button class="copy-btn" type="button" title="复制地址" data-copy="' + row.sender + '" onclick="event.preventDefault();event.stopPropagation();copyText(\'' + row.sender + '\', this)">' + copyIcon + "</button>" +
-                    "</span></td>" +
-                    "</tr>";
-            }).join("");
+            if (!rows.length) {
+                var emptyMsg = txsTypeInvalid()
+                    ? "交易类型无效"
+                    : (!txsHasTextFilter() && txsListState.type ? "暂无该类型交易" : "无匹配交易");
+                tbody.innerHTML = '<tr><td colspan="5" class="tz-empty">' + emptyMsg + "</td></tr>";
+            } else {
+                tbody.innerHTML = rows.map(function (row) {
+                    var href = "#tx?mode=dexscan&hash=" + encodeURIComponent(row.hash) +
+                        "&type=" + encodeURIComponent(row.type) +
+                        "&block=" + encodeURIComponent(row.block);
+                    return "<tr>" +
+                        '<td><a class="link mono tz-hash-link" href="' + href + '" ' + window.__exHexTipAttrs(row.hash, "hash") + '>' + shortTxHash(row.hash) + "</a></td>" +
+                        "<td>" + row.type + "</td>" +
+                        '<td><a class="link" href="#block?mode=dexscan&number=' + row.block + '">' + row.block + "</a></td>" +
+                        '<td class="time">' + row.time + "</td>" +
+                        '<td><span class="copy-wrap">' +
+                            '<a href="' + window.__exAddrHref(row.sender, "dexscan") + '" class="link mono" ' + window.__exHexTipAttrs(row.sender, "addr") + '>' + shortSender(row.sender) + "</a>" +
+                            '<button class="copy-btn" type="button" title="复制地址" data-copy="' + row.sender + '" onclick="event.preventDefault();event.stopPropagation();copyText(\'' + row.sender + '\', this)">' + copyIcon + "</button>" +
+                        "</span></td>" +
+                        "</tr>";
+                }).join("");
+            }
 
             if (pagination) {
                 pagination.innerHTML =
                     '<div class="pagination-btns">' +
-                        buildTxsPagerButtons(page) +
+                        buildTxsPagerButtons(page, max) +
                         '<span class="pagination-info">每页显示 ' + txsListState.pageSize + " 条内容</span>" +
                     "</div>";
             }
@@ -18337,14 +18624,21 @@ const evmBlocks = [
             }
             txsListState.isTz = isTz;
             txsListState.type = params.get("type") || "";
+            txsListState.hash = params.get("hash") || "";
+            txsListState.address = params.get("address") || "";
+            txsListState.pageSize = TX_PAGE_SIZE;
             var page = parseInt(params.get("page") || "1", 10);
             if (!page || page < 1) page = 1;
-            txsListState.pageSize = TX_PAGE_SIZE;
-            var max = txsTotalPages();
+            var max = isTz ? txsTotalPages() : 1;
             if (page > max) page = max;
             txsListState.page = page;
             renderTxsMode(isTz);
         };
+
+        window.__tzSelfTest = window.__tzSelfTest || {};
+        window.__tzSelfTest.buildTzTxItem = buildTzTxItem;
+        window.__tzSelfTest.filterTzTxs = filterTzTxRows;
+        window.__tzSelfTest.txsListState = txsListState;
 
     if (typeof checkLoginStatus === "function") fns.checkLoginStatus = checkLoginStatus;
     if (typeof toggleUserDropdown === "function") fns.toggleUserDropdown = toggleUserDropdown;
@@ -21568,6 +21862,8 @@ window.__exShow();
       <button type="button" data-dex-scene="blocks-loading">加载中</button>
       <button type="button" data-dex-scene="blocks-empty">暂无区块</button>
       <button type="button" data-dex-scene="blocks-error">加载失败</button>
+      <button type="button" data-dex-scene="blocks-height">筛选 · 区块高度</button>
+      <button type="button" data-dex-scene="blocks-height-none">筛选 · 无匹配</button>
     </div>
     <div class="ex-dex-demo-title" style="margin-top:10px">区块详情页</div>
     <div class="ex-dex-demo-grid">
@@ -21586,6 +21882,9 @@ window.__exShow();
       <button type="button" data-dex-scene="txs-loading">加载中</button>
       <button type="button" data-dex-scene="txs-type">筛选 · 交易类型</button>
       <button type="button" data-dex-scene="txs-type-empty">筛选 · 无该类型</button>
+      <button type="button" data-dex-scene="txs-hash">筛选 · 哈希</button>
+      <button type="button" data-dex-scene="txs-addr">筛选 · 地址</button>
+      <button type="button" data-dex-scene="txs-filter-none">筛选 · 无匹配</button>
       <button type="button" data-dex-scene="txs-error">加载失败</button>
     </div>
     <div class="ex-dex-demo-title" style="margin-top:10px">交易详情页</div>
@@ -21853,6 +22152,18 @@ window.__exShow();
           showToast("区块列表 · 表格加载失败");
         });
       },
+      "blocks-height": function () {
+        ensureBiyaDex("#blocks?mode=dexscan", function () {
+          var first = document.querySelector("#page-blocks.tz-mode tbody a.link");
+          var tip = first ? first.textContent.trim() : (window.__tzLive && window.__tzLive.height ? String(window.__tzLive.height) : "111435120");
+          ensureBiyaDex("#blocks?mode=dexscan&height=" + encodeURIComponent(tip));
+          showToast("区块列表 · 按高度");
+        });
+      },
+      "blocks-height-none": function () {
+        ensureBiyaDex("#blocks?mode=dexscan&height=000000");
+        showToast("区块列表 · 无匹配区块");
+      },
       "block-normal": function () {
         ensureBiyaDex("#block?mode=dexscan&number=" + BLOCK_WITH_TX + "&tab=txs");
         showToast("区块详情 · 有交易");
@@ -21921,6 +22232,20 @@ window.__exShow();
           setTableState("#page-txs", "暂无该类型交易", "empty");
           showToast("交易列表 · 无该类型");
         });
+      },
+      "txs-hash": function () {
+        var item = window.__tzSelfTest && window.__tzSelfTest.buildTzTxItem && window.__tzSelfTest.buildTzTxItem(0);
+        var q = item && item.hash ? item.hash.slice(0, 12) : "0x";
+        ensureBiyaDex("#txs?mode=dexscan&hash=" + encodeURIComponent(q));
+        showToast("交易列表 · 按哈希");
+      },
+      "txs-addr": function () {
+        ensureBiyaDex("#txs?mode=dexscan&address=" + ADDR_WITH_TX.slice(0, 10));
+        showToast("交易列表 · 按地址");
+      },
+      "txs-filter-none": function () {
+        ensureBiyaDex("#txs?mode=dexscan&hash=nomatch999");
+        showToast("交易列表 · 无匹配交易");
       },
       "txs-error": function () {
         ensureBiyaDex("#txs?mode=dexscan", function () {

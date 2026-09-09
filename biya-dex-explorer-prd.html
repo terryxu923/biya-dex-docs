@@ -422,7 +422,7 @@ document.addEventListener("DOMContentLoaded", function () {
 </tr>
 <tr>
 <td>编写规范</td>
-<td><a href="../../PRD%E8%A7%84%E8%8C%83/%E4%BA%A7%E5%93%81%E9%9C%80%E6%B1%82%E6%96%87%E6%A1%A3%E7%BC%96%E5%86%99%E8%A7%84%E8%8C%83.md">产品需求文档编写规范</a></td>
+<td><a href="../../PRD规范/产品需求文档编写规范.md">产品需求文档编写规范</a></td>
 </tr>
 <tr>
 <td>需求范围</td>
@@ -442,42 +442,40 @@ document.addEventListener("DOMContentLoaded", function () {
 <hr>
 <h2 id="目录">目录 </h2>
 <ul>
-<li><a href="#1-%E6%9C%AC%E6%9C%9F%E4%BA%A4%E4%BB%98%E6%91%98%E8%A6%81">1. 本期交付摘要</a></li>
-<li><a href="#2-%E4%BA%A7%E5%93%81%E6%A6%82%E8%BF%B0">2. 产品概述</a></li>
-<li><a href="#3-%E5%8A%9F%E8%83%BD%E5%88%97%E8%A1%A8%E4%B8%8E%E4%BC%98%E5%85%88%E7%BA%A7">3. 功能列表与优先级</a></li>
-<li><a href="#4-%E5%8A%9F%E8%83%BD%E8%AF%A6%E7%BB%86%E8%AF%B4%E6%98%8E">4. 功能详细说明</a>
-<ul>
-<li><a href="#41-%E5%85%A8%E5%B1%80%E5%AF%BC%E8%88%AA%E6%A8%A1%E5%BC%8F%E4%B8%8E%E6%90%9C%E7%B4%A2">4.1 全局导航、模式与搜索</a></li>
-<li><a href="#42-dex-%E9%A6%96%E9%A1%B5">4.2 DEX 首页</a></li>
-<li><a href="#43-%E5%8C%BA%E5%9D%97%E5%88%97%E8%A1%A8">4.3 区块列表</a></li>
-<li><a href="#44-%E5%8C%BA%E5%9D%97%E8%AF%A6%E6%83%85">4.4 区块详情</a></li>
-<li><a href="#45-%E4%BA%A4%E6%98%93%E5%88%97%E8%A1%A8">4.5 交易列表</a></li>
-<li><a href="#46-%E4%BA%A4%E6%98%93%E8%AF%A6%E6%83%85">4.6 交易详情</a></li>
-<li><a href="#47-%E5%9C%B0%E5%9D%80%E8%AF%A6%E6%83%85">4.7 地址详情</a></li>
-</ul>
-</li>
-<li><a href="#5-%E6%A8%AA%E5%88%87%E4%B8%9A%E5%8A%A1%E8%A7%84%E5%88%99%E4%B8%8E%E5%BC%82%E5%B8%B8%E5%A4%84%E7%90%86">5. 横切业务规则与异常处理</a></li>
-<li><a href="#6-%E4%BE%9D%E8%B5%96%E5%8E%86%E5%8F%B2%E5%BD%B1%E5%93%8D%E4%B8%8E%E9%A3%8E%E9%99%A9">6. 依赖、历史影响与风险</a></li>
-<li><a href="#7-%E4%BA%A7%E5%93%81%E9%AA%8C%E6%94%B6%E6%9D%A1%E4%BB%B6%E4%B8%8E%E5%AE%A3%E8%AE%B2%E8%B7%AF%E5%BE%84">7. 产品验收条件与宣讲路径</a></li>
-<li><a href="#8-%E6%9B%B4%E6%96%B0%E8%AE%B0%E5%BD%95">8. 更新记录</a></li>
+<li><a href="#1-本期交付摘要">1. 本期交付摘要</a></li>
+<li><a href="#2-产品概述">2. 产品概述</a></li>
+<li><a href="#3-功能列表与优先级">3. 功能列表与优先级</a></li>
+<li><a href="#4-功能详细说明">4. 功能详细说明</a></li>
+<li><a href="#41-全局导航模式与搜索">4.1 全局导航、模式与搜索</a></li>
+<li><a href="#42-dex-首页">4.2 DEX 首页</a></li>
+<li><a href="#43-区块列表">4.3 区块列表</a></li>
+<li><a href="#44-区块详情">4.4 区块详情</a></li>
+<li><a href="#45-交易列表">4.5 交易列表</a></li>
+<li><a href="#46-交易详情">4.6 交易详情</a></li>
+<li><a href="#47-地址详情">4.7 地址详情</a></li>
+<li><a href="#5-横切业务规则与异常处理">5. 横切业务规则与异常处理</a></li>
+<li><a href="#6-依赖历史影响与风险">6. 依赖、历史影响与风险</a></li>
+<li><a href="#7-产品验收条件与宣讲路径">7. 产品验收条件与宣讲路径</a></li>
+<li><a href="#8-更新记录">8. 更新记录</a></li>
 </ul>
 <hr>
 <h2 id="1-本期交付摘要">1. 本期交付摘要 </h2>
 <h3 id="11-交付结果">1.1 交付结果 </h3>
 <p>本期交付一套 BiyaDEX 公共数据查询产品，形成以下查询闭环：</p>
 <div class="mermaid">flowchart TD
-    DEXHome[DEX首页] --&gt; BlockList[区块列表]
-    DEXHome --&gt; TxList[交易列表]
-    BlockList --&gt; BlockDetail[区块详情]
-    BlockDetail --&gt; TxDetail[交易详情]
-    BlockDetail --&gt; AddressDetail[地址详情]
-    TxList --&gt; TxDetail
-    TxList --&gt; AddressDetail
-    TxDetail --&gt; BlockDetail
-    TxDetail --&gt; AddressDetail
-    AddressDetail --&gt; TxDetail
-    AddressDetail --&gt; BlockDetail
-</div><p>用户可以从首页了解网络概况，从区块或交易列表进入详情，再通过区块、交易和地址之间的链接交叉核验链上活动。所有详情页均支持直接打开和分享，不依赖从首页逐级进入。</p>
+    DEXHome[DEX首页] --> BlockList[区块列表]
+    DEXHome --> TxList[交易列表]
+    BlockList --> BlockDetail[区块详情]
+    BlockDetail --> TxDetail[交易详情]
+    BlockDetail --> AddressDetail[地址详情]
+    TxList --> TxDetail
+    TxList --> AddressDetail
+    TxDetail --> BlockDetail
+    TxDetail --> AddressDetail
+    AddressDetail --> TxDetail
+    AddressDetail --> BlockDetail
+</div>
+<p>用户可以从首页了解网络概况，从区块或交易列表进入详情，再通过区块、交易和地址之间的链接交叉核验链上活动。所有详情页均支持直接打开和分享，不依赖从首页逐级进入。</p>
 <h3 id="12-p0-核心能力">1.2 P0 核心能力 </h3>
 <table>
 <thead>
@@ -543,8 +541,8 @@ document.addEventListener("DOMContentLoaded", function () {
 <td>不在 DEX 前台展示</td>
 </tr>
 <tr>
-<td>交易详情中的原始请求/返回 JSON</td>
-<td>原型中虽有隐藏结构，P0 不展示</td>
+<td>交易详情中的交易结果、其他信息（Nonce）、交易数据 JSON、交易返回 JSON</td>
+<td>原型中为隐藏结构，P0 不展示</td>
 </tr>
 <tr>
 <td>区块或地址的代币转账 Tab</td>
@@ -860,7 +858,7 @@ document.addEventListener("DOMContentLoaded", function () {
 <td>交易</td>
 <td>交易详情</td>
 <td>P0</td>
-<td>5 项核心字段与关联跳转</td>
+<td>哈希、区块、时间、地址、交易类型与关联跳转</td>
 </tr>
 <tr>
 <td>地址</td>
@@ -890,7 +888,7 @@ document.addEventListener("DOMContentLoaded", function () {
 </table>
 <hr>
 <h2 id="4-功能详细说明">4. 功能详细说明 </h2>
-<h2 id="41-全局导航-模式与搜索">4.1 全局导航、模式与搜索 </h2>
+<h2 id="41-全局导航模式与搜索">4.1 全局导航、模式与搜索 </h2>
 <p><strong>用户目标</strong></p>
 <p>用户从任意 DEX 页面都能识别当前网络和模式，进入区块或交易主路径，搜索目标对象，并分享当前查询状态。</p>
 <h3 id="411-流程步骤">4.1.1 流程步骤 </h3>
@@ -1340,7 +1338,7 @@ document.addEventListener("DOMContentLoaded", function () {
 <td>2</td>
 <td>等待数据返回</td>
 <td>展示已完成索引的最新数据</td>
-<td>看到 6 项统计和两组列表</td>
+<td>看到 6 项统计（地址总数旁含 24h 新增数字）和两组列表</td>
 </tr>
 <tr>
 <td>3</td>
@@ -1399,8 +1397,15 @@ document.addEventListener("DOMContentLoaded", function () {
 <td>地址总数</td>
 <td>从创世区块至当前最高已索引区块，至少发起过一笔 BiyaDEX 交易的唯一地址数</td>
 <td>BiyaDEX 公开索引数据</td>
-<td>按发起地址去重，非负整数；旁侧增量为滚动 24 小时首次发起交易的新增地址数</td>
-<td>单项不可用显示 <code>--</code>；新增地址数不可用时只隐藏增量</td>
+<td>按发起地址去重，非负整数</td>
+<td>单项不可用显示 <code>--</code>；此时旁侧 24h 新增一并隐藏</td>
+</tr>
+<tr>
+<td>24h 新增地址数</td>
+<td>以当前时刻向前滚动 24 小时，首次发起 BiyaDEX 交易的唯一地址数</td>
+<td>BiyaDEX 公开索引数据</td>
+<td>不是独立统计卡片。显示在「地址总数」右侧，仅展示带正号的绿色数字（如 <code>+4,216</code>），不展示字段名称；鼠标移入该数字后气泡提示“24h 新增地址数”</td>
+<td>增量不可用时只隐藏该数字，地址总数仍展示</td>
 </tr>
 <tr>
 <td>24 小时活跃地址数</td>
@@ -1564,6 +1569,7 @@ document.addEventListener("DOMContentLoaded", function () {
 <li>自动更新不得打断用户正在进行的点击、文本选择或菜单操作。</li>
 <li>新记录加入后，列表仍最多保留 10 条。</li>
 <li>单个统计值不可用时只降级该字段，不阻断两组列表。</li>
+<li>「24h 新增地址数」只以地址总数旁的绿色数字出现，不单独占一格；悬停提示文案固定为“24h 新增地址数”。</li>
 <li>“查看全部区块”和“查看全部交易”必须保留 DEX 模式。</li>
 <li>产品介绍支持展开与收起；切换后不影响数据加载。</li>
 </ul>
@@ -1580,7 +1586,7 @@ document.addEventListener("DOMContentLoaded", function () {
 <tr>
 <td>AC-H01</td>
 <td>用户进入数据正常的 DEX 首页</td>
-<td>展示 6 项统计、最多 10 条最新区块和最多 10 条最新交易</td>
+<td>展示 6 项统计、地址总数旁的 24h 新增数字、最多 10 条最新区块和最多 10 条最新交易</td>
 </tr>
 <tr>
 <td>AC-H02</td>
@@ -1606,6 +1612,16 @@ document.addEventListener("DOMContentLoaded", function () {
 <td>AC-H06</td>
 <td>首页一组列表加载失败</td>
 <td>失败组可独立重试，成功区域不被清空</td>
+</tr>
+<tr>
+<td>AC-H07</td>
+<td>用户将鼠标移到地址总数旁的绿色数字</td>
+<td>出现气泡提示“24h 新增地址数”；页面上该增量本身只显示数字</td>
+</tr>
+<tr>
+<td>AC-H08</td>
+<td>24h 新增地址数不可用，地址总数可用</td>
+<td>绿色数字隐藏，地址总数和其他统计仍展示</td>
 </tr>
 </tbody>
 </table>
@@ -2447,7 +2463,7 @@ document.addEventListener("DOMContentLoaded", function () {
 <hr>
 <h2 id="46-交易详情">4.6 交易详情 </h2>
 <p><strong>用户目标</strong></p>
-<p>用户通过交易哈希核验一笔 DEX 协议动作是否被收录，以及它的交易类型、所属区块、发生时间和发起地址。</p>
+<p>用户通过交易哈希核验一笔 DEX 协议动作是否被收录，以及它的交易类型、所属区块、发生时间和地址。界面字段名与 DEXScan 原型交易详情保持一致，不改成列表页或术语表中的别名。</p>
 <h3 id="461-流程步骤">4.6.1 流程步骤 </h3>
 <table>
 <thead>
@@ -2469,17 +2485,17 @@ document.addEventListener("DOMContentLoaded", function () {
 <td>2</td>
 <td>数据返回</td>
 <td>展示交易概览</td>
-<td>用户看到 5 项核心字段</td>
+<td>用户看到 5 项可见字段</td>
 </tr>
 <tr>
 <td>3</td>
-<td>点击区块高度</td>
+<td>点击区块</td>
 <td>打开所属区块详情</td>
 <td>可在块内交易中核验该交易</td>
 </tr>
 <tr>
 <td>4</td>
-<td>点击发起地址</td>
+<td>点击地址</td>
 <td>打开地址详情</td>
 <td>可查看该地址其他活动</td>
 </tr>
@@ -2492,6 +2508,7 @@ document.addEventListener("DOMContentLoaded", function () {
 </tbody>
 </table>
 <h3 id="462-展示字段">4.6.2 展示字段 </h3>
+<p>本页可见字段以原型标签为准。</p>
 <table>
 <thead>
 <tr>
@@ -2504,15 +2521,15 @@ document.addEventListener("DOMContentLoaded", function () {
 </thead>
 <tbody>
 <tr>
-<td>交易哈希</td>
+<td>哈希</td>
 <td>交易唯一标识</td>
 <td>完整值</td>
 <td>不允许为空</td>
 <td>可复制</td>
 </tr>
 <tr>
-<td>区块高度</td>
-<td>收录该交易的区块</td>
+<td>区块</td>
+<td>收录该交易的区块高度</td>
 <td>完整整数</td>
 <td>不允许为空</td>
 <td>点击进区块详情</td>
@@ -2520,13 +2537,13 @@ document.addEventListener("DOMContentLoaded", function () {
 <tr>
 <td>时间</td>
 <td>交易被区块收录的时间</td>
-<td>绝对时间</td>
+<td>绝对时间，括号内可附相对时间，例如 <code>2026/09/01 15:14:45 (6 分钟前)</code></td>
 <td>不可用显示 <code>--</code></td>
 <td>只读</td>
 </tr>
 <tr>
-<td>发起地址</td>
-<td>发起该笔交易的地址</td>
+<td>地址</td>
+<td>发起该笔交易的链上账户</td>
 <td>完整值</td>
 <td>不可用显示 <code>--</code></td>
 <td>点击进地址详情；可复制</td>
@@ -2540,7 +2557,39 @@ document.addEventListener("DOMContentLoaded", function () {
 </tr>
 </tbody>
 </table>
-<p>P0 不展示交易请求 JSON、返回 JSON、Nonce、执行结果详情、Gas、代币金额或 EVM 方法字段。</p>
+<p>以下字段在原型中存在但为隐藏结构，<strong>P0 界面不展示</strong>，也不进入本期验收可见范围：</p>
+<table>
+<thead>
+<tr>
+<th>界面字段</th>
+<th>业务含义</th>
+<th>P0 要求</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>交易结果</td>
+<td>该笔协议动作的执行结果</td>
+<td>不展示</td>
+</tr>
+<tr>
+<td>其他信息（Nonce）</td>
+<td>交易附加序号等信息</td>
+<td>不展示</td>
+</tr>
+<tr>
+<td>交易数据</td>
+<td>原始请求 JSON</td>
+<td>不展示</td>
+</tr>
+<tr>
+<td>交易返回</td>
+<td>原始返回 JSON</td>
+<td>不展示</td>
+</tr>
+</tbody>
+</table>
+<p>P0 亦不展示 Gas、代币金额、EVM 方法字段或代币转账 Tab。</p>
 <h3 id="463-页面状态矩阵">4.6.3 页面状态矩阵 </h3>
 <table>
 <thead>
@@ -2561,7 +2610,7 @@ document.addEventListener("DOMContentLoaded", function () {
 <tr>
 <td>正常</td>
 <td>找到交易</td>
-<td>5 项核心字段</td>
+<td>哈希、区块、时间、地址、交易类型</td>
 <td>跳转区块、跳转地址、复制</td>
 </tr>
 <tr>
@@ -2598,16 +2647,16 @@ document.addEventListener("DOMContentLoaded", function () {
 <tr>
 <td>AC-TD01</td>
 <td>用户打开已收录交易</td>
-<td>页面展示与该交易一致的哈希、区块、时间、地址和交易类型</td>
+<td>页面展示与该交易一致的哈希、区块、时间、地址和交易类型，标签与原型一致</td>
 </tr>
 <tr>
 <td>AC-TD02</td>
-<td>用户点击所属区块</td>
+<td>用户点击区块</td>
 <td>打开对应区块详情，区块内可核验该交易</td>
 </tr>
 <tr>
 <td>AC-TD03</td>
-<td>用户点击发起地址</td>
+<td>用户点击地址</td>
 <td>打开对应地址详情</td>
 </tr>
 <tr>
@@ -2623,7 +2672,7 @@ document.addEventListener("DOMContentLoaded", function () {
 <tr>
 <td>AC-TD06</td>
 <td>P0 交易详情正常展示</td>
-<td>页面不出现 EVM Gas/方法字段、代币转账 Tab 或隐藏 JSON 区域</td>
+<td>页面不出现交易结果、其他信息（Nonce）、交易数据、交易返回，也不出现 EVM Gas/方法字段或代币转账 Tab</td>
 </tr>
 </tbody>
 </table>
@@ -3047,7 +3096,7 @@ document.addEventListener("DOMContentLoaded", function () {
 <li>用户从列表进入详情再返回时，应恢复进入前状态。</li>
 <li>分享 URL 不得包含登录凭据、个人标识或其他敏感信息。</li>
 </ul>
-<h2 id="56-加载-错误-空态与重试">5.6 加载、错误、空态与重试 </h2>
+<h2 id="56-加载错误空态与重试">5.6 加载、错误、空态与重试 </h2>
 <table>
 <thead>
 <tr>
@@ -3121,7 +3170,7 @@ document.addEventListener("DOMContentLoaded", function () {
 <li>窄屏可使用横向滚动承载表格，但不得改变字段含义和数据顺序。</li>
 </ul>
 <hr>
-<h2 id="6-依赖-历史影响与风险">6. 依赖、历史影响与风险 </h2>
+<h2 id="6-依赖历史影响与风险">6. 依赖、历史影响与风险 </h2>
 <h3 id="61-产品级依赖">6.1 产品级依赖 </h3>
 <table>
 <thead>
@@ -3144,8 +3193,8 @@ document.addEventListener("DOMContentLoaded", function () {
 </tr>
 <tr>
 <td>网络统计数据</td>
-<td>提供首页 6 项指标</td>
-<td>单项失败可降级为 <code>--</code>，不阻断列表</td>
+<td>提供首页 6 项指标，以及地址总数旁的 24h 新增地址数</td>
+<td>单项失败可降级为 <code>--</code>；24h 新增不可用时只隐藏绿色数字</td>
 </tr>
 <tr>
 <td>交易类型定义</td>
@@ -3414,6 +3463,12 @@ document.addEventListener("DOMContentLoaded", function () {
 <tbody>
 <tr>
 <td>V1.0.0</td>
+<td>2026-09-09</td>
+<td>补齐首页「地址总数」旁 24h 新增地址数（仅绿色数字，悬停提示“24h 新增地址数”）；交易详情按原型字段名说明可见 5 项，并写明交易结果 / Nonce / 交易数据 / 交易返回为 P0 不展示</td>
+<td>Terry</td>
+</tr>
+<tr>
+<td>V1.0.0</td>
 <td>2026-09-04</td>
 <td>基于 DEXScan 原型形成生产可交付 P0 PRD；交互基线为 <code>BIYA-Chain-Explorer-DEXScan.html</code>；补齐真实数据、状态、筛选、前缀搜索、深链与验收边界</td>
 <td>Terry</td>
@@ -3421,7 +3476,6 @@ document.addEventListener("DOMContentLoaded", function () {
 </tbody>
 </table>
 
-      
       </div>
 
     <script type="module">
