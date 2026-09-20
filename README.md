@@ -8,7 +8,9 @@
 | 永续合约交互原型 | https://terryxu923.github.io/biya-dex-docs/biya-perp-prototype.html |
 | BiyaDEX 区块浏览器原型 | https://terryxu923.github.io/biya-dex-docs/BIYA-Chain-Explorer-DEXScan.html |
 | BiyaDEX 区块浏览器 PRD（V1.0.0） | https://terryxu923.github.io/biya-dex-docs/biya-dex-explorer-prd.html |
-| 管理后台原型 | https://terryxu923.github.io/biya-dex-docs/biya-dex-admin.html |
+| 管理后台原型（V1.0） | https://terryxu923.github.io/biya-dex-docs/biya-dex-admin.html |
 | 管理后台 PRD（V1.0） | https://terryxu923.github.io/biya-dex-docs/biya-dex-admin-prd.html |
+| 管理后台原型（V1.1.0） | https://terryxu923.github.io/biya-dex-docs/biya-dex-admin-v1.1.0.html |
+| 管理后台 PRD（V1.1.0） | https://terryxu923.github.io/biya-dex-docs/biya-dex-admin-prd-v1.1.0.html |
 
 静态 HTML，由 GitHub Pages 托管。
