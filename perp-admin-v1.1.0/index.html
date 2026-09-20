@@ -1,0 +1,740 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>BIYA DEX Admin v1.1.0</title>
+  <link rel="stylesheet" href="admin-contract-assets/styles.css" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg-page: #f5f7fa; --bg-container: #fff; --bg-subtle: #fafbfc; --bg-hover: #f2f4f7;
+      --border: #e5e7eb; --border-strong: #d0d5dd; --text: #111827; --text-secondary: #344054;
+      --text-muted: #667085; --text-disabled: #98a2b3; --primary: #3b82f6; --primary-hover: #2563eb;
+      --primary-subtle: #dbeafe; --success: #027a48; --success-bg: #ecfdf3; --warning: #b54708;
+      --warning-bg: #fffaeb; --danger: #b42318; --danger-bg: #fef3f2; --info: #175cd3; --info-bg: #eff8ff;
+      --sidebar-width: 220px; --header-height: 56px; --radius: 6px; --shadow: 0 2px 8px rgba(16,24,40,.06);
+    }
+    body { font: 13px/1.5 -apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif; color: var(--text); background: var(--bg-page); }
+    button, input, select { font: inherit; }
+    button { cursor: pointer; }
+    .app { min-height: 100vh; }
+    .sidebar { position: fixed; inset: 0 auto 0 0; z-index: 20; width: var(--sidebar-width); background: #1c2333; color: #fff; display: flex; flex-direction: column; }
+    .brand { height: var(--header-height); display: flex; align-items: center; padding: 0 16px; border-bottom: 1px solid rgba(255,255,255,.08); }
+    .brand-name { font-size: 16px; font-weight: 700; }
+    .brand-badge { margin-left: 6px; padding: 1px 5px; border-radius: 4px; background: var(--primary); font-size: 10px; }
+    .nav { flex: 1; overflow-y: auto; padding: 8px 0; }
+    .nav-label { padding: 9px 16px 4px; color: rgba(255,255,255,.35); font-size: 10px; font-weight: 600; letter-spacing: .06em; }
+    .nav-item { height: 36px; padding: 0 16px; display: flex; align-items: center; gap: 8px; color: rgba(255,255,255,.62); user-select: none; }
+    .nav-item svg { width: 16px; height: 16px; flex: 0 0 auto; }
+    .nav-item:hover { background: rgba(255,255,255,.06); color: rgba(255,255,255,.9); }
+    .nav-item.active { background: rgba(59,130,246,.2); color: #93c5fd; }
+    .nav-item.nav-static { cursor: default; }
+    .nav-item.nav-static:hover { background: transparent; color: rgba(255,255,255,.62); }
+    .nav-count { margin-left: auto; padding: 1px 6px; border-radius: 8px; background: rgba(255,255,255,.1); font-size: 10px; }
+    .sidebar-foot { padding: 12px 16px; border-top: 1px solid rgba(255,255,255,.08); color: rgba(255,255,255,.45); font-size: 11px; }
+    .main { min-height: 100vh; margin-left: var(--sidebar-width); min-width: 0; }
+    .topbar { position: sticky; top: 0; z-index: 10; height: var(--header-height); display: flex; align-items: center; justify-content: space-between; padding: 0 24px; background: #fff; border-bottom: 1px solid var(--border); }
+    .breadcrumb { display: flex; gap: 8px; align-items: center; color: var(--text-muted); }
+    .breadcrumb-current { color: var(--text-secondary); font-weight: 500; }
+    .operator { display: flex; align-items: center; gap: 10px; color: var(--text-secondary); }
+    .avatar { width: 28px; height: 28px; display: grid; place-items: center; border-radius: 50%; background: var(--primary-subtle); color: var(--primary-hover); font-weight: 600; }
+    .content { padding: 24px; min-width: 0; }
+    .page { display: none; }
+    .page.active { display: block; }
+    .page-header { min-height: 40px; margin-bottom: 16px; display: flex; justify-content: space-between; gap: 16px; align-items: flex-start; }
+    .page-title { font-size: 20px; line-height: 1.25; font-weight: 600; }
+    .page-desc { margin-top: 4px; color: var(--text-muted); }
+    .actions { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+    .btn { height: 32px; padding: 0 12px; border: 1px solid var(--border-strong); border-radius: var(--radius); background: #fff; color: var(--text-secondary); display: inline-flex; align-items: center; justify-content: center; gap: 6px; white-space: nowrap; }
+    .btn:hover { background: var(--bg-hover); }
+    .btn.primary { color: #fff; border-color: var(--primary); background: var(--primary); }
+    .btn.primary:hover { background: var(--primary-hover); }
+    .btn-link { padding: 0; border: 0; background: none; color: var(--primary-hover); }
+    .btn-link:hover { text-decoration: underline; }
+    .icon { width: 15px; height: 15px; }
+    .filter-card, .list-card, .panel { border: 1px solid var(--border); border-radius: 8px; background: #fff; box-shadow: 0 1px 2px rgba(16,24,40,.02); }
+    .filter-card { margin-bottom: 16px; padding: 16px; }
+    .filter-grid { display: grid; grid-template-columns: repeat(4,minmax(150px,1fr)); gap: 14px 16px; }
+    .field { min-width: 0; }
+    .field-label { margin-bottom: 6px; color: var(--text-secondary); font-size: 12px; font-weight: 500; }
+    .control { width: 100%; height: 32px; padding: 0 10px; border: 1px solid var(--border-strong); border-radius: var(--radius); background: #fff; color: var(--text); outline: 0; }
+    .control:focus { border-color: #60a5fa; box-shadow: 0 0 0 2px var(--primary-subtle); }
+    .filter-actions { grid-column: 1/-1; display: flex; justify-content: flex-end; gap: 8px; padding-top: 2px; }
+    .list-toolbar { min-height: 48px; padding: 0 16px; display: flex; align-items: center; justify-content: space-between; gap: 12px; border-bottom: 1px solid var(--border); }
+    .toolbar-summary { color: var(--text-muted); }
+    .toolbar-summary strong { color: var(--text); }
+    .table-wrap { width: 100%; max-width: 100%; overflow-x: auto; overflow-y: hidden; -webkit-overflow-scrolling: touch; overscroll-behavior-x: contain; scrollbar-gutter: stable; }
+    .table-wrap::-webkit-scrollbar { height: 10px; }
+    .table-wrap::-webkit-scrollbar-track { background: var(--bg-subtle); border-radius: 8px; }
+    .table-wrap::-webkit-scrollbar-thumb { background: #c5cbd3; border-radius: 8px; }
+    .table-wrap::-webkit-scrollbar-thumb:hover { background: #98a2b3; }
+    table { width: 100%; border-collapse: collapse; }
+    .list-card > .table-wrap table { min-width: 1460px; }
+    th { height: 40px; padding: 8px 12px; background: var(--bg-subtle); border-bottom: 1px solid var(--border); border-right: 1px solid var(--border); color: var(--text-secondary); font-weight: 500; text-align: left; white-space: nowrap; }
+    td { height: 48px; padding: 8px 12px; border-bottom: 1px solid #eef0f3; border-right: 1px solid #eef0f3; vertical-align: middle; white-space: nowrap; }
+    th:last-child, td:last-child { border-right: 0; }
+    tbody tr:hover td { background: #f8faff; }
+    tbody tr:last-child td { border-bottom: 0; }
+    .mono { font-family: ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,monospace; font-size: 12px; }
+    .muted { color: var(--text-muted); }
+    .strong { font-weight: 500; color: var(--text); }
+    .negative { color: var(--danger); }
+    .positive { color: var(--success); }
+    .tag { min-height: 22px; padding: 1px 8px; display: inline-flex; align-items: center; border: 1px solid; border-radius: 6px; font-size: 12px; font-weight: 500; }
+    .tag.success { color: var(--success); background: var(--success-bg); border-color: #a6f4c5; }
+    .tag.warning { color: var(--warning); background: var(--warning-bg); border-color: #fedf89; }
+    .tag.danger { color: var(--danger); background: var(--danger-bg); border-color: #fecdca; }
+    .tag.info { color: var(--info); background: var(--info-bg); border-color: #b2ddff; }
+    .tag.neutral { color: #475467; background: #f2f4f7; border-color: #e4e7ec; }
+    .tag + .tag { margin-left: 4px; }
+    .status-dot { width: 6px; height: 6px; margin-right: 6px; border-radius: 50%; background: currentColor; }
+    .wallet-cell { display: flex; align-items: center; gap: 6px; }
+    .copy { width: 24px; height: 24px; border: 0; border-radius: 4px; background: transparent; color: var(--text-muted); display: grid; place-items: center; }
+    .copy:hover { background: var(--bg-hover); color: var(--primary-hover); }
+    .operation { display: flex; gap: 12px; }
+    .pagination { min-height: 52px; padding: 0 16px; display: flex; justify-content: space-between; align-items: center; border-top: 1px solid var(--border); color: var(--text-muted); }
+    .pager { display: flex; gap: 4px; }
+    .page-btn { min-width: 30px; height: 30px; padding: 0 8px; border: 1px solid var(--border); border-radius: 5px; background: #fff; color: var(--text-secondary); }
+    .page-btn.active { color: #fff; background: var(--primary); border-color: var(--primary); }
+    .page-btn:disabled { cursor: not-allowed; color: var(--text-disabled); background: var(--bg-subtle); }
+    .empty { padding: 46px 20px; text-align: center; color: var(--text-muted); }
+    .empty-mark { width: 44px; height: 44px; margin: 0 auto 12px; display: grid; place-items: center; border-radius: 50%; background: var(--bg-hover); color: var(--text-disabled); }
+    .detail-top { display: flex; align-items: flex-start; gap: 10px; min-width: 0; }
+    .back-btn { width: 32px; height: 32px; padding: 0; flex: 0 0 auto; }
+    .account-id { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+    .account-id .page-title { max-width: min(880px, calc(100vw - var(--sidebar-width) - 420px)); overflow-wrap: anywhere; }
+    .header-meta { margin-top: 7px; display: flex; flex-wrap: wrap; gap: 8px; color: var(--text-muted); }
+    .header-meta span { display: inline-flex; align-items: center; gap: 4px; }
+    .metrics { display: grid; grid-template-columns: repeat(4,minmax(0,1fr)); gap: 12px; margin-bottom: 16px; }
+    .metric { min-width: 0; padding: 14px 16px; border: 1px solid var(--border); border-radius: 8px; background: #fff; }
+    .metric-label { color: var(--text-muted); font-size: 12px; }
+    .metric-value { margin-top: 4px; font-size: 20px; font-weight: 600; line-height: 1.25; }
+    .metric-note { margin-top: 5px; color: var(--text-muted); font-size: 11px; }
+    .detail-layout { display: block; min-width: 0; }
+    .panel { min-width: 0; overflow: hidden; }
+    .tabs { height: 45px; padding: 0 16px; display: flex; gap: 24px; align-items: flex-end; border-bottom: 1px solid var(--border); overflow-x: auto; }
+    .tab { height: 45px; padding: 0 2px; border: 0; border-bottom: 2px solid transparent; background: none; color: var(--text-muted); white-space: nowrap; }
+    .tab:hover { color: var(--text-secondary); }
+    .tab.active { color: var(--primary-hover); border-color: var(--primary); font-weight: 500; }
+    .tab[hidden], .tab-panel[hidden] { display: none; }
+    .tab-panel { display: none; padding: 20px; min-width: 0; }
+    .tab-panel.active { display: block; }
+    .subtabs { min-height: 43px; margin: -4px 0 20px; display: flex; gap: 4px; align-items: center; overflow-x: auto; border-bottom: 1px solid var(--border); }
+    .subtab { height: 34px; padding: 0 12px; border: 1px solid transparent; border-radius: 5px; background: transparent; color: var(--text-muted); white-space: nowrap; }
+    .subtab:hover { color: var(--text-secondary); background: var(--bg-hover); }
+    .subtab.active { color: var(--primary-hover); border-color: #bfdbfe; background: var(--primary-subtle); font-weight: 500; }
+    .subtab[hidden], .subtab-pane[hidden] { display: none !important; }
+    .subtab-pane { display: none; min-width: 0; }
+    .subtab-pane.active { display: block; }
+    .section { min-width: 0; }
+    .section + .section { margin-top: 24px; }
+    .section-title { margin-bottom: 12px; font-size: 15px; font-weight: 600; }
+    .section-subtitle { margin: -8px 0 12px; color: var(--text-muted); font-size: 12px; }
+    .descriptions { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); border-top: 1px solid var(--border); border-left: 1px solid var(--border); }
+    .desc-item { min-height: 58px; display: grid; grid-template-columns: 132px minmax(0,1fr); border-right: 1px solid var(--border); border-bottom: 1px solid var(--border); }
+    .desc-label { padding: 10px 12px; background: var(--bg-subtle); color: var(--text-muted); }
+    .desc-value { min-width: 0; padding: 10px 12px; color: var(--text-secondary); overflow-wrap: anywhere; }
+    .side-panel { padding: 16px; }
+    .side-panel + .side-panel { margin-top: 12px; }
+    .side-title { margin-bottom: 12px; font-size: 14px; font-weight: 600; }
+    .side-row { padding: 10px 0; display: flex; justify-content: space-between; gap: 12px; border-bottom: 1px solid #eef0f3; }
+    .side-row:last-child { border-bottom: 0; padding-bottom: 0; }
+    .side-key { color: var(--text-muted); }
+    .side-value { text-align: right; color: var(--text-secondary); font-weight: 500; }
+    .risk-banner { margin-bottom: 16px; padding: 12px 14px; display: flex; gap: 10px; border: 1px solid #fedf89; border-radius: 8px; background: var(--warning-bg); color: #7a2e0e; }
+    .timeline { position: relative; padding-left: 20px; }
+    .timeline::before { content: ""; position: absolute; left: 5px; top: 8px; bottom: 10px; width: 1px; background: var(--border-strong); }
+    .timeline-item { position: relative; padding: 0 0 20px 10px; }
+    .timeline-dot { position: absolute; left: -19px; top: 5px; width: 9px; height: 9px; border: 2px solid #fff; border-radius: 50%; background: var(--primary); box-shadow: 0 0 0 1px var(--primary); }
+    .timeline-title { color: var(--text-secondary); font-weight: 500; }
+    .timeline-meta { margin-top: 3px; color: var(--text-muted); font-size: 12px; }
+    .mini-table { width: 100%; max-width: 100%; min-width: 0; border: 1px solid var(--border); border-radius: 6px; overflow-x: auto; overflow-y: hidden; }
+    .mini-table table { width: 100%; min-width: 100%; }
+    .mini-table.wide table { min-width: 100%; }
+    .mini-table.xwide table { min-width: 2480px; width: 100%; }
+    .mini-table td { height: 42px; }
+    .mini-table.xwide th:first-child, .mini-table.xwide td:first-child {
+      position: sticky; left: 0; z-index: 1; background: #fff; box-shadow: 1px 0 0 var(--border);
+    }
+    .mini-table.xwide thead th:first-child { background: var(--bg-subtle); z-index: 2; }
+    .mini-table.xwide tbody tr:hover td:first-child { background: #f8faff; }
+    .section-head { margin-bottom: 12px; display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+    .section-head .section-title { margin-bottom: 0; }
+    .record-toolbar { min-height: 42px; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; }
+    .record-search { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; flex: 1; }
+    .record-search .control { width: 240px; }
+    .record-search select.control { width: 150px; }
+    .record-meta { color: var(--text-muted); font-size: 12px; }
+    .inner-pagination { min-height: 46px; padding: 8px 0 0; display: flex; justify-content: space-between; align-items: center; gap: 12px; color: var(--text-muted); }
+    .hash-link, .account-link { color: var(--primary-hover); text-decoration: none; }
+    .hash-link:hover, .account-link:hover { text-decoration: underline; }
+    .status-table { width: 100%; min-width: 100%; }
+    .status-reason { max-width: 440px; white-space: normal; line-height: 1.5; }
+    .batch-id { margin-top: 2px; color: var(--text-muted); font-size: 11px; }
+    .inherited-note { margin-bottom: 16px; padding: 10px 12px; border-left: 3px solid var(--primary); background: var(--info-bg); color: var(--text-secondary); }
+    .code-list { display: flex; gap: 6px; flex-wrap: wrap; }
+    .readonly-note { margin-top: 16px; padding: 10px 12px; border: 1px solid var(--border); border-radius: 6px; color: var(--text-muted); background: var(--bg-subtle); }
+    .toast { position: fixed; z-index: 80; right: 24px; top: 72px; min-width: 260px; max-width: 380px; padding: 11px 14px; border: 1px solid #a6f4c5; border-radius: 7px; background: var(--success-bg); color: var(--success); box-shadow: var(--shadow); transform: translateY(-12px); opacity: 0; pointer-events: none; transition: .2s; }
+    .toast.show { transform: translateY(0); opacity: 1; }
+    .modal-backdrop { position: fixed; inset: 0; z-index: 60; display: none; align-items: center; justify-content: center; padding: 20px; background: rgba(17,24,39,.42); }
+    .modal-backdrop.open { display: flex; }
+    .modal { width: min(620px,100%); max-height: calc(100vh - 40px); overflow-y: auto; border-radius: 8px; background: #fff; box-shadow: 0 20px 40px rgba(16,24,40,.18); }
+    .modal-head { min-height: 56px; padding: 0 20px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--border); }
+    .modal-title { font-size: 16px; font-weight: 600; }
+    .icon-btn { width: 32px; height: 32px; border: 0; border-radius: 5px; background: transparent; color: var(--text-muted); font-size: 20px; }
+    .icon-btn:hover { background: var(--bg-hover); }
+    .modal-body { padding: 20px; }
+    .domain-card { padding: 14px; border: 1px solid var(--border); border-radius: 6px; }
+    .domain-card + .domain-card { margin-top: 10px; }
+    .domain-head { display: flex; align-items: center; gap: 8px; font-weight: 500; }
+    .domain-grid { margin-top: 12px; display: grid; grid-template-columns: 1fr 24px 1fr; align-items: end; gap: 10px; }
+    .domain-arrow { padding-bottom: 7px; color: var(--text-disabled); text-align: center; }
+    .textarea { width: 100%; min-height: 88px; margin-top: 6px; padding: 9px 10px; resize: vertical; border: 1px solid var(--border-strong); border-radius: var(--radius); outline: 0; font: inherit; }
+    .textarea:focus { border-color: #60a5fa; box-shadow: 0 0 0 2px var(--primary-subtle); }
+    .required { color: var(--danger); }
+    .modal-preview { margin-top: 12px; padding: 10px 12px; border-radius: 6px; background: var(--bg-subtle); color: var(--text-muted); }
+    .modal-foot { min-height: 60px; padding: 12px 20px; display: flex; justify-content: flex-end; gap: 8px; border-top: 1px solid var(--border); }
+    @media (max-width: 1100px) {
+      .filter-grid { grid-template-columns: repeat(2,minmax(0,1fr)); }
+      .metrics { grid-template-columns: repeat(2,minmax(0,1fr)); }
+      .record-search .control { width: 240px; }
+    }
+    @media (max-width: 760px) {
+      :root { --sidebar-width: 0px; }
+      .sidebar { display: none; }
+      .main { margin-left: 0; }
+      .topbar { padding: 0 16px; }
+      .operator-name { display: none; }
+      .content { padding: 16px; }
+      .page-header { flex-direction: column; }
+      .filter-grid, .metrics, .descriptions { grid-template-columns: 1fr; }
+      .filter-actions { justify-content: stretch; }
+      .filter-actions .btn { flex: 1; }
+      .desc-item { grid-template-columns: 112px minmax(0,1fr); }
+      .metric-value { font-size: 18px; }
+      .account-id .page-title { max-width: 100%; font-size: 16px; }
+      .tabs { gap: 18px; }
+      .record-toolbar, .record-search, .inner-pagination { align-items: stretch; flex-direction: column; }
+      .record-search .control { width: 100%; }
+      .domain-grid { grid-template-columns: 1fr; }
+      .domain-arrow { display: none; }
+    }
+  </style>
+</head>
+<body>
+<div class="app">
+  <aside class="sidebar">
+    <div class="brand"><span class="brand-name">BIYA DEX</span><span class="brand-badge">Admin</span></div>
+    <nav class="nav">
+      <div class="nav-label">账户与授权</div>
+      <div class="nav-item active" id="accountNav" role="button" tabindex="0">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="8" r="4"/><path d="M4 21c.8-4.2 3.5-6.3 8-6.3s7.2 2.1 8 6.3"/></svg>
+        账户管理
+      </div>
+      <div class="nav-label">合约管理</div>
+      <div class="nav-item">
+        <i data-lucide="layers-3"></i>
+        合约品种
+      </div>
+      <div class="nav-item nav-static" aria-disabled="true"><i data-lucide="chart-no-axes-column"></i>当前持仓</div>
+      <div class="nav-item nav-static" aria-disabled="true"><i data-lucide="list"></i>当前委托</div>
+      <div class="nav-item nav-static" aria-disabled="true"><i data-lucide="history"></i>历史委托</div>
+      <div class="nav-item nav-static" aria-disabled="true"><i data-lucide="receipt-text"></i>成交记录</div>
+      <div class="nav-item nav-static" aria-disabled="true"><i data-lucide="archive"></i>持仓记录</div>
+      <div class="nav-item nav-static" aria-disabled="true"><i data-lucide="shield-alert"></i>清算记录</div>
+      <div class="nav-item nav-static" aria-disabled="true"><i data-lucide="circle-dollar-sign"></i>资金费记录</div>
+    </nav>
+    <div class="sidebar-foot">Prototype V1.1 · 2026-09-10</div>
+  </aside>
+
+  <div class="main">
+    <header class="topbar">
+      <div class="breadcrumb"><span id="breadcrumbParent">账户与授权</span><span>/</span><span class="breadcrumb-current" id="breadcrumb">账户列表</span></div>
+      <div class="operator"><span class="muted">原型环境</span><span class="avatar">OP</span><span class="operator-name">运营管理员</span></div>
+    </header>
+
+    <main class="content">
+      <section class="page active" id="listPage">
+        <div class="page-header">
+          <div>
+            <h1 class="page-title">账户列表</h1>
+            <p class="page-desc">默认进入账户列表；点击操作列“查看详情”后进入账户详情页。</p>
+          </div>
+          <div class="actions"><button class="btn" id="exportBtn">导出当前结果</button></div>
+        </div>
+
+        <div class="filter-card">
+          <div class="filter-grid">
+            <div class="field"><div class="field-label">钱包地址 / 主账户地址</div><input class="control" id="keyword" placeholder="输入钱包地址或主账户地址" /></div>
+            <div class="field"><div class="field-label">账户类型</div><select class="control" id="typeFilter"><option value="">全部</option><option value="MAIN">主账户</option><option value="SUB">子账户</option></select></div>
+            <div class="field"><div class="field-label">合约交易状态</div><select class="control" id="contractStatusFilter"><option value="">全部</option><option value="ENABLED">正常交易</option><option value="REDUCE_ONLY">只减仓</option><option value="DISABLED">已暂停</option></select></div>
+            <div class="field"><div class="field-label">提现状态</div><select class="control" id="withdrawStatusFilter"><option value="">全部</option><option value="ENABLED">可提现</option><option value="DISABLED">暂停提现</option></select></div>
+            <div class="field"><div class="field-label">是否有子账户</div><select class="control" id="subFilter"><option value="">全部</option><option value="yes">有子账户</option><option value="no">无子账户</option></select></div>
+            <div class="field"><div class="field-label">最后活跃开始</div><input class="control" id="dateFrom" type="date" /></div>
+            <div class="field"><div class="field-label">最后活跃结束</div><input class="control" id="dateTo" type="date" /></div>
+            <div class="filter-actions"><button class="btn" id="resetBtn">重置</button><button class="btn primary" id="searchBtn">查询</button></div>
+          </div>
+        </div>
+
+        <div class="list-card">
+          <div class="list-toolbar"><div class="toolbar-summary">账户列表 · 共 <strong id="totalCount">0</strong> 个账户</div><div class="muted">列表仅保留运营可查询、判断和处置所需字段</div></div>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>钱包地址</th><th>账户类型</th><th>归属主账户</th><th>合约交易状态</th><th>提现状态</th>
+                  <th>账户总权益</th><th>合约账户权益</th><th>可用余额</th><th>冻结金额</th><th>持仓 / 委托</th><th>最后活跃</th><th>操作</th>
+                </tr>
+              </thead>
+              <tbody id="accountBody"></tbody>
+            </table>
+          </div>
+          <div class="pagination"><span id="pageInfo">-</span><div class="pager" id="pager"></div></div>
+        </div>
+      </section>
+
+      <section class="page" id="detailPage">
+        <div class="page-header">
+          <div class="detail-top">
+            <button class="btn back-btn" id="backBtn" title="返回账户列表" aria-label="返回账户列表">←</button>
+            <div>
+              <div class="account-id">
+                <h1 class="page-title" id="detailWallet">-</h1>
+                <button class="copy" id="detailCopy" data-copy="" title="复制地址" aria-label="复制地址"></button>
+              </div>
+              <div class="header-meta">
+                <span id="detailType">-</span><span id="detailContractStatus"></span><span id="detailWithdrawStatus"></span><span>最后活跃 <strong id="detailActive">-</strong></span>
+              </div>
+            </div>
+          </div>
+          <div class="actions"><button class="btn" id="refreshBtn">刷新数据</button><button class="btn" id="exportDetailBtn">导出账户数据</button></div>
+        </div>
+
+        <div class="metrics">
+          <div class="metric"><div class="metric-label">账户总权益</div><div class="metric-value" id="metricTotalEquity">-</div><div class="metric-note">全部业务资产总估值 · USDC</div></div>
+          <div class="metric"><div class="metric-label">合约账户权益</div><div class="metric-value" id="metricContractEquity">-</div><div class="metric-note" id="metricContractNote">保证金余额 + 未实现盈亏</div></div>
+          <div class="metric"><div class="metric-label">可用余额</div><div class="metric-value" id="metricAvailable">-</div><div class="metric-note" id="metricAvailableNote">可用于交易或提现 · USDC</div></div>
+          <div class="metric"><div class="metric-label">冻结金额</div><div class="metric-value" id="metricFrozen">-</div><div class="metric-note">业务占用，只读展示</div></div>
+        </div>
+
+        <div class="detail-layout">
+          <div class="panel">
+            <div class="tabs" role="tablist">
+              <button class="tab active" data-tab="overview">概览</button>
+              <button class="tab" data-tab="subaccounts" id="subTab">子账户</button>
+              <button class="tab" data-tab="contract">合约账户</button>
+              <button class="tab" data-tab="assets">资产与资金</button>
+              <button class="tab" data-tab="login">登录与连接</button>
+            </div>
+
+            <div class="tab-panel active" data-panel="overview">
+              <div class="section"><h2 class="section-title">账户信息</h2><div class="descriptions" id="accountInfo"></div></div>
+              <div class="section">
+                <div class="section-head"><h2 class="section-title">功能状态</h2></div>
+                <div class="table-wrap"><table class="status-table"><thead><tr><th>功能</th><th>当前状态</th><th>状态更新时间</th><th>最近操作原因</th><th>操作</th></tr></thead><tbody id="functionStatusBody"></tbody></table></div>
+              </div>
+              <div class="section"><h2 class="section-title">资产汇总</h2><div class="descriptions" id="assetSummary"></div></div>
+              <div class="section"><h2 class="section-title">登录与连接摘要</h2><div class="descriptions" id="loginSummary"></div></div>
+            </div>
+
+            <div class="tab-panel" data-panel="subaccounts" id="subPanel">
+              <div class="section">
+                <h2 class="section-title">子账户列表</h2>
+                <p class="section-subtitle">仅主账户详情展示；子账户由主账户签名管理，后台不提供创建、删除或转移关系操作。</p>
+                <div class="record-toolbar">
+                  <div class="record-search">
+                    <input class="control" data-record-search="subAccounts" placeholder="关键字：子账户地址" />
+                    <select class="control" data-record-filter="subAccounts" data-filter-key="contractStatus"><option value="">合约交易：全部</option><option value="ENABLED">正常交易</option><option value="REDUCE_ONLY">只减仓</option><option value="DISABLED">已暂停</option></select>
+                    <button class="btn primary" data-record-submit="subAccounts">查询</button>
+                    <button class="btn" data-record-reset="subAccounts">重置</button>
+                  </div>
+                </div>
+                <div class="table-wrap mini-table wide"><table><thead><tr><th>子账户地址</th><th>合约交易状态</th><th>账户总权益</th><th>合约账户权益</th><th>可用余额</th><th>冻结金额</th><th>持仓 / 委托</th><th>最后活跃</th><th>操作</th></tr></thead><tbody id="subAccountBody"></tbody></table></div>
+              </div>
+              <div class="readonly-note">子账户关系来源于账户服务，后台当前仅查询关系和风险状态。</div>
+            </div>
+
+            <div class="tab-panel" data-panel="contract">
+              <div class="subtabs" role="tablist">
+                <button class="subtab active" data-group="contract" data-subtab="contract-summary">合约账户概览</button><button class="subtab" data-group="contract" data-subtab="positions">当前仓位</button><button class="subtab" data-group="contract" data-subtab="open-orders">当前委托</button><button class="subtab" data-group="contract" data-subtab="history-orders">历史订单</button><button class="subtab" data-group="contract" data-subtab="trades">成交记录</button><button class="subtab" data-group="contract" data-subtab="funding">资金费记录</button><button class="subtab" data-group="contract" data-subtab="liquidations">清算记录</button>
+              </div>
+              <div class="subtab-pane active" data-group-panel="contract" data-subpanel="contract-summary"><h2 class="section-title">合约账户概览</h2><div class="descriptions" id="contractSummary"></div></div>
+              <div class="subtab-pane" data-group-panel="contract" data-subpanel="positions"><div class="record-toolbar"><h2 class="section-title">当前仓位</h2><span class="record-meta">实时快照，不分页 · 列较多时可左右滑动</span></div><div class="record-toolbar"><div class="record-search"><input class="control" data-record-search="positions" placeholder="关键字：合约" /><select class="control" data-record-filter="positions" data-filter-key="side"><option value="">方向：全部</option><option value="多">多</option><option value="空">空</option></select><select class="control" data-record-filter="positions" data-filter-key="risk"><option value="">风险状态：全部</option><option value="正常">正常</option><option value="预警">预警</option><option value="可清算">可清算</option><option value="清算中">清算中</option><option value="状态恢复中">状态恢复中</option></select><select class="control" data-record-filter="positions" data-filter-key="tradeStatus"><option value="">仓位交易：全部</option><option value="ENABLED">可交易</option><option value="REDUCE_ONLY">只减仓</option></select><button class="btn primary" data-record-submit="positions">查询</button><button class="btn" data-record-reset="positions">重置</button></div></div><div class="table-wrap mini-table xwide"><table><thead><tr><th>合约</th><th>保证金模式</th><th>方向</th><th>持仓数量</th><th>名义价值</th><th>开仓均价</th><th>标记价格</th><th>杠杆</th><th>保证金</th><th>维持保证金</th><th>未实现盈亏</th><th>未实现盈亏收益率</th><th>保证金率</th><th>预估强平价格</th><th>仓位风险状态</th><th>累计资金费</th><th>仓位交易状态</th><th>操作</th></tr></thead><tbody id="positionBody"></tbody></table></div></div>
+              <div class="subtab-pane" data-group-panel="contract" data-subpanel="open-orders"><div class="record-toolbar"><div class="record-search"><input class="control" data-record-search="openOrders" placeholder="关键字：订单编号 / 合约"/><select class="control" data-record-filter="openOrders" data-filter-key="side"><option value="">方向：全部</option><option value="买入">买入</option><option value="卖出">卖出</option></select><select class="control" data-record-filter="openOrders" data-filter-key="status"><option value="">订单状态：全部</option><option value="开放中">开放中</option><option value="部分成交">部分成交</option></select><button class="btn primary" data-record-submit="openOrders">查询</button><button class="btn" data-record-reset="openOrders">重置</button></div><span class="record-meta">活动委托支持分页 · 列较多时可左右滑动</span></div><div class="table-wrap mini-table xwide"><table><thead><tr><th>订单编号</th><th>合约</th><th>保证金模式</th><th>杠杆</th><th>方向</th><th>订单类型</th><th>有效方式</th><th>只减仓</th><th>委托价格</th><th>委托数量</th><th>已成交数量</th><th>剩余数量</th><th>成交均价</th><th>委托价值 / 成交价值</th><th>止盈止损</th><th>委托时间</th><th>订单状态</th></tr></thead><tbody id="openOrderBody"></tbody></table></div><div class="inner-pagination"><span id="openOrdersInfo"></span><div class="pager" id="openOrdersPager"></div></div></div>
+              <div class="subtab-pane" data-group-panel="contract" data-subpanel="history-orders"><div class="record-toolbar"><div class="record-search"><input class="control" data-record-search="historyOrders" placeholder="关键字：订单编号 / 合约"/><select class="control" data-record-filter="historyOrders" data-filter-key="side"><option value="">方向：全部</option><option value="买入">买入</option><option value="卖出">卖出</option></select><select class="control" data-record-filter="historyOrders" data-filter-key="status"><option value="">订单状态：全部</option><option value="已成交">已成交</option><option value="已撤销">已撤销</option><option value="部分成交后取消">部分成交后取消</option><option value="已过期">已过期</option></select><button class="btn primary" data-record-submit="historyOrders">查询</button><button class="btn" data-record-reset="historyOrders">重置</button></div><span class="record-meta">列较多时可左右滑动</span></div><div class="table-wrap mini-table xwide"><table><thead><tr><th>订单编号</th><th>合约</th><th>保证金模式</th><th>杠杆</th><th>方向</th><th>订单类型</th><th>有效方式</th><th>只减仓</th><th>委托价格</th><th>委托数量</th><th>成交数量</th><th>剩余数量</th><th>成交均价</th><th>委托价值 / 成交价值</th><th>已实现盈亏</th><th>委托收益率</th><th>手续费</th><th>止盈止损</th><th>终态原因</th><th>自成交保护取消对手</th><th>订单状态</th><th>创建时间</th><th>完成时间</th></tr></thead><tbody id="historyOrderBody"></tbody></table></div><div class="inner-pagination"><span id="historyOrdersInfo"></span><div class="pager" id="historyOrdersPager"></div></div></div>
+              <div class="subtab-pane" data-group-panel="contract" data-subpanel="trades"><div class="record-toolbar"><div class="record-search"><input class="control" data-record-search="trades" placeholder="关键字：成交编号 / 订单编号 / 合约"/><select class="control" data-record-filter="trades" data-filter-key="side"><option value="">方向：全部</option><option value="买入">买入</option><option value="卖出">卖出</option></select><select class="control" data-record-filter="trades" data-filter-key="source"><option value="">成交来源：全部</option><option value="普通">普通</option><option value="强平">强平</option><option value="ADL">ADL</option></select><button class="btn primary" data-record-submit="trades">查询</button><button class="btn" data-record-reset="trades">重置</button></div><span class="record-meta">列较多时可左右滑动</span></div><div class="table-wrap mini-table xwide"><table><thead><tr><th>成交编号</th><th>订单编号</th><th>合约</th><th>方向</th><th>成交价格</th><th>成交数量</th><th>成交价值</th><th>Maker/Taker</th><th>手续费</th><th>已实现盈亏</th><th>成交来源</th><th>成交时间</th></tr></thead><tbody id="tradeBody"></tbody></table></div><div class="inner-pagination"><span id="tradesInfo"></span><div class="pager" id="tradesPager"></div></div></div>
+              <div class="subtab-pane" data-group-panel="contract" data-subpanel="funding"><div class="record-toolbar"><div class="record-search"><input class="control" data-record-search="funding" placeholder="关键字：合约"/><select class="control" data-record-filter="funding" data-filter-key="side"><option value="">持仓方向：全部</option><option value="多">多</option><option value="空">空</option></select><select class="control" data-record-filter="funding" data-filter-key="dir"><option value="">收付方向：全部</option><option value="收取">收取</option><option value="支付">支付</option></select><button class="btn primary" data-record-submit="funding">查询</button><button class="btn" data-record-reset="funding">重置</button></div></div><div class="table-wrap mini-table wide"><table><thead><tr><th>合约</th><th>持仓方向</th><th>结算时持仓数量</th><th>结算标记价格</th><th>资金费率</th><th>收付方向</th><th>结算金额</th><th>结算时间</th></tr></thead><tbody id="fundingBody"></tbody></table></div><div class="inner-pagination"><span id="fundingInfo"></span><div class="pager" id="fundingPager"></div></div></div>
+              <div class="subtab-pane" data-group-panel="contract" data-subpanel="liquidations"><div class="record-toolbar"><div class="record-search"><input class="control" data-record-search="liquidations" placeholder="关键字：清算编号 / 合约"/><select class="control" data-record-filter="liquidations" data-filter-key="side"><option value="">清算方向：全部</option><option value="多">多</option><option value="空">空</option></select><select class="control" data-record-filter="liquidations" data-filter-key="status"><option value="">清算状态：全部</option><option value="处理中">处理中</option><option value="已完成">已完成</option></select><select class="control" data-record-filter="liquidations" data-filter-key="route"><option value="">路由结果：全部</option><option value="订单簿强平">订单簿强平</option><option value="保险基金">保险基金</option><option value="ADL">ADL</option><option value="受阻">受阻</option></select><button class="btn primary" data-record-submit="liquidations">查询</button><button class="btn" data-record-reset="liquidations">重置</button></div><span class="record-meta">列较多时可左右滑动</span></div><div class="table-wrap mini-table xwide"><table><thead><tr><th>清算编号</th><th>合约</th><th>清算方向</th><th>清算数量</th><th>清算价格</th><th>清算损益</th><th>触发时账户权益</th><th>触发时维持保证金</th><th>尝试后剩余仓位</th><th>路由结果</th><th>清算状态</th><th>清算时间</th></tr></thead><tbody id="liquidationBody"></tbody></table></div><div class="inner-pagination"><span id="liquidationsInfo"></span><div class="pager" id="liquidationsPager"></div></div></div>
+            </div>
+
+            <div class="tab-panel" data-panel="assets">
+              <div class="inherited-note" id="subAssetNote" hidden>子账户不承接链外充值和提现，仅展示独立余额、业务占用及与主账户之间的链上划转。</div>
+              <div class="subtabs" role="tablist"><button class="subtab active" data-group="assets" data-subtab="funds">资金信息</button><button class="subtab" data-group="assets" data-subtab="deposits" id="depositSubtab">充值记录</button><button class="subtab" data-group="assets" data-subtab="withdrawals" id="withdrawSubtab">提现记录</button><button class="subtab" data-group="assets" data-subtab="transfers">划转记录</button></div>
+              <div class="subtab-pane active" data-group-panel="assets" data-subpanel="funds"><div class="section"><h2 class="section-title">资产余额</h2><div class="table-wrap mini-table"><table><thead><tr><th>资产</th><th>总余额</th><th>可用余额</th><th>冻结金额</th><th>当前估值</th><th>更新时间</th></tr></thead><tbody id="balanceBody"></tbody></table></div></div><div class="section"><h2 class="section-title">冻结明细</h2><p class="section-subtitle">占用类型仅区分委托预占与提现锁定，不代表运营人员可以冻结链上资产。</p><div class="table-wrap mini-table"><table><thead><tr><th>占用类型</th><th>占用资产</th><th>占用金额</th><th>开始时间</th><th>当前状态</th></tr></thead><tbody id="frozenBody"></tbody></table></div></div></div>
+              <div class="subtab-pane" data-group-panel="assets" data-subpanel="deposits" id="depositPane"><div class="record-toolbar"><div class="record-search"><input class="control" data-record-search="deposits" placeholder="关键字：交易哈希 / 来源地址"/><select class="control" data-record-filter="deposits" data-filter-key="status"><option value="">状态：全部</option><option value="确认中">确认中</option><option value="已到账">已到账</option></select><select class="control" data-record-filter="deposits" data-filter-key="network"><option value="">网络：全部</option><option value="Arbitrum One">Arbitrum One</option></select><button class="btn primary" data-record-submit="deposits">查询</button><button class="btn" data-record-reset="deposits">重置</button></div></div><div class="table-wrap mini-table wide"><table><thead><tr><th>交易哈希</th><th>来源地址</th><th>网络</th><th>资产</th><th>数量</th><th>确认数</th><th>状态</th><th>发现时间</th><th>到账时间</th></tr></thead><tbody id="depositBody"></tbody></table></div><div class="inner-pagination"><span id="depositsInfo"></span><div class="pager" id="depositsPager"></div></div></div>
+              <div class="subtab-pane" data-group-panel="assets" data-subpanel="withdrawals" id="withdrawPane"><div class="record-toolbar"><div class="record-search"><input class="control" data-record-search="withdrawals" placeholder="关键字：目标地址 / 交易哈希"/><select class="control" data-record-filter="withdrawals" data-filter-key="status"><option value="">状态：全部</option><option value="待审核">待审核</option><option value="处理中">处理中</option><option value="已完成">已完成</option><option value="已失败">已失败</option></select><select class="control" data-record-filter="withdrawals" data-filter-key="network"><option value="">网络：全部</option><option value="Arbitrum One">Arbitrum One</option></select><button class="btn primary" data-record-submit="withdrawals">查询</button><button class="btn" data-record-reset="withdrawals">重置</button></div><span class="record-meta">列较多时可左右滑动</span></div><div class="table-wrap mini-table xwide"><table><thead><tr><th>目标地址</th><th>网络</th><th>资产</th><th>数量</th><th>实际到账</th><th>手续费</th><th>总扣减</th><th>状态</th><th>失败原因</th><th>交易哈希</th><th>创建时间</th><th>完成时间</th></tr></thead><tbody id="withdrawBody"></tbody></table></div><div class="inner-pagination"><span id="withdrawalsInfo"></span><div class="pager" id="withdrawalsPager"></div></div></div>
+              <div class="subtab-pane" data-group-panel="assets" data-subpanel="transfers"><div class="record-toolbar"><div class="record-search"><input class="control" data-record-search="transfers" placeholder="关键字：划转编号 / 转出地址 / 转入地址 / L1 交易哈希"/><select class="control" data-record-filter="transfers" data-filter-key="status"><option value="">状态：全部</option><option value="成功">成功</option></select><button class="btn primary" data-record-submit="transfers">查询</button><button class="btn" data-record-reset="transfers">重置</button></div></div><div class="table-wrap mini-table wide"><table><thead><tr><th>划转编号</th><th>转出账户</th><th>转入账户</th><th>资产</th><th>数量</th><th>状态</th><th>L1 交易哈希</th><th>时间</th></tr></thead><tbody id="transferBody"></tbody></table></div><div class="inner-pagination"><span id="transfersInfo"></span><div class="pager" id="transfersPager"></div></div></div>
+            </div>
+
+            <div class="tab-panel" data-panel="login">
+              <div class="inherited-note" id="subLoginNote" hidden>子账户没有独立私钥或登录入口，交易与账户操作由主账户签名；以下展示继承的主账户连接关系。</div>
+              <div class="section"><h2 class="section-title">登录信息</h2><p class="section-subtitle">登录标识默认脱敏，仅授权角色可申请查看明文。</p><div class="descriptions" id="loginInfo"></div></div>
+              <div class="section"><h2 class="section-title">钱包信息</h2><div class="descriptions" id="walletInfo"></div></div>
+              <div class="readonly-note">登录与钱包信息只保留运营可识别、可追踪、可审计的字段。</div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+</div>
+<div class="toast" id="toast">操作成功</div>
+<div class="modal-backdrop" id="statusModal" role="dialog" aria-modal="true" aria-labelledby="statusModalTitle">
+  <div class="modal">
+    <div class="modal-head"><h2 class="modal-title" id="statusModalTitle">调整合约交易状态</h2><button class="icon-btn" id="closeStatusModal" aria-label="关闭">×</button></div>
+    <div class="modal-body">
+      <div class="domain-card">
+        <div class="domain-grid">
+          <div><div class="field-label">当前状态</div><div id="currentSingleStatus">-</div></div>
+          <div class="domain-arrow">→</div>
+          <div><div class="field-label">目标状态</div><select class="control" id="newSingleStatus"></select></div>
+        </div>
+      </div>
+      <div class="field" style="margin-top:16px"><div class="field-label">操作原因 <span class="required">*</span></div><textarea class="textarea" id="statusReason" maxlength="200" placeholder="请输入状态调整原因，最多 200 字"></textarea></div>
+    </div>
+    <div class="modal-foot"><button class="btn" id="cancelStatusModal">取消</button><button class="btn primary" id="confirmStatusChange">确认调整</button></div>
+  </div>
+</div>
+
+<script>
+(function () {
+  var dataUpdatedAt = "2026-09-10 10:40:18";
+  var operationSeq = 1058;
+  var accounts = [
+    {id:"a1",wallet:"0x7B2c8a96393Cd9f4F2eD3D7C1A6E11D8B3148A21",type:"MAIN",childIds:["a6","a7"],tradingEnabled:true,tradingExpiresAt:"2026-09-16 10:21:08",contractStatus:"ENABLED",withdrawStatus:"ENABLED",riskStatus:"正常",abnormalReason:"",totalEquity:128450.72,contractEquity:121844.36,settledBalance:117606.18,available:86212.54,frozen:7978.64,unrealizedPnl:4238.18,mmRequired:38259.13,withdrawable:77590.90,accountLeverage:"2.8x",marginRate:31.4,positions:2,openOrders:7,active:"2026-09-10 10:36:12",activeDate:"2026-09-10",connection:"Google",login:"te***@example.com",registeredAt:"2026-08-19 14:22:31",lastLogin:"2026-09-10 10:21:08",connectStatus:"已连接",chain:"Arbitrum One",firstBoundAt:"2026-08-19 14:22:28",lastWalletUsed:"2026-09-10 10:21:08",statusUpdatedAt:"2026-09-08 19:14:22",statusOps:{contract:null,withdraw:null},frozenItems:[{type:"委托预占",ref:"ORD-20260910-8841",asset:"USDC",amount:6820,start:"2026-09-10 10:20:04",status:"占用中"},{type:"提现锁定",ref:"WD-20260910-0162",asset:"USDC",amount:1158.64,start:"2026-09-10 09:58:33",status:"处理中"}]},
+    {id:"a2",wallet:"0x1d84F30CbaE41E05B09D88E4B73F290539bd8F15",type:"MAIN",childIds:[],tradingEnabled:true,tradingExpiresAt:"2026-09-14 09:42:11",contractStatus:"REDUCE_ONLY",withdrawStatus:"ENABLED",riskStatus:"预警",abnormalReason:"异常下单行为复核中。",totalEquity:44382.19,contractEquity:41792.6,settledBalance:43175.04,available:39201.03,frozen:812.28,unrealizedPnl:-1382.44,mmRequired:6185.30,withdrawable:35280.93,accountLeverage:"1.6x",marginRate:14.8,positions:1,openOrders:5,active:"2026-09-10 09:52:44",activeDate:"2026-09-10",connection:"外部钱包连接",walletType:"OKX Wallet",login:"0x1d84...8F15",registeredAt:"2026-07-28 09:18:06",lastLogin:"2026-09-10 09:42:11",connectStatus:"未连接",chain:"Arbitrum One",firstBoundAt:"2026-07-28 09:18:02",lastWalletUsed:"2026-09-10 09:42:11",statusUpdatedAt:"2026-09-10 09:48:16",statusOps:{contract:{reason:"异常下单行为复核中，仅允许减仓和撤单。",batch:"OP-20260910-1047",joint:true},withdraw:{reason:"异常下单行为复核中，提现进入人工复核。",batch:"OP-20260910-1047",joint:true}},frozenItems:[{type:"委托预占",ref:"ORD-20260910-7729",asset:"USDC",amount:812.28,start:"2026-09-10 09:49:55",status:"占用中"}]},
+    {id:"a3",wallet:"0x93B55Af1A17285Cde92899F3CB37f39B72DeA6E8",type:"MAIN",childIds:[],tradingEnabled:false,tradingExpiresAt:"",contractStatus:"DISABLED",withdrawStatus:"DISABLED",riskStatus:"状态恢复中",abnormalReason:"账户恢复流程未完成，合约交易和提现临时暂停。",totalEquity:8206.45,contractEquity:8206.45,settledBalance:8206.45,available:8206.45,frozen:0,unrealizedPnl:0,mmRequired:0,withdrawable:7385.81,accountLeverage:"--",marginRate:0,positions:0,openOrders:0,active:"2026-09-08 22:16:09",activeDate:"2026-09-08",connection:"Twitter",login:"@ma***",registeredAt:"2026-06-03 18:41:55",lastLogin:"2026-09-08 21:58:40",connectStatus:"未连接",chain:"Arbitrum One",firstBoundAt:"2026-06-03 18:41:49",lastWalletUsed:"2026-09-08 21:58:40",statusUpdatedAt:"2026-09-08 22:01:12",statusOps:{contract:{reason:"账户恢复流程未完成，暂停交易。",batch:"OP-20260908-0812",joint:true},withdraw:{reason:"账户恢复流程未完成，暂停提现。",batch:"OP-20260908-0812",joint:true}},frozenItems:[]},
+    {id:"a4",wallet:"0x5EF3A6659408DC99CCB08945283eA76b62E4B893",type:"MAIN",childIds:[],tradingEnabled:false,tradingExpiresAt:"",contractStatus:"DISABLED",withdrawStatus:"DISABLED",riskStatus:"正常",abnormalReason:"",totalEquity:0,contractEquity:0,settledBalance:0,available:0,frozen:0,unrealizedPnl:0,mmRequired:0,withdrawable:0,accountLeverage:"--",marginRate:0,positions:0,openOrders:0,active:"-",activeDate:"",connection:"邮箱验证码",login:"li***@example.com",registeredAt:"2026-09-10 10:28:14",lastLogin:"2026-09-10 10:27:56",connectStatus:"已连接",chain:"Arbitrum One",firstBoundAt:"2026-09-10 10:28:08",lastWalletUsed:"2026-09-10 10:28:08",statusUpdatedAt:"2026-09-10 10:28:14",statusOps:{contract:null,withdraw:null},frozenItems:[]},
+    {id:"a5",wallet:"0xF10C2dB16B93D895Bea2B6A60b250Dd36bd63a59",type:"MAIN",childIds:[],tradingEnabled:true,tradingExpiresAt:"2026-09-07 08:33:27",contractStatus:"REDUCE_ONLY",withdrawStatus:"ENABLED",riskStatus:"预警",abnormalReason:"市场风险策略触发，只允许减仓和撤单。",totalEquity:286004.11,contractEquity:276901.79,settledBalance:257999.47,available:174827.9,frozen:12273.42,unrealizedPnl:18902.32,mmRequired:107714.80,withdrawable:157345.11,accountLeverage:"4.1x",marginRate:38.9,positions:3,openOrders:6,active:"2026-09-10 10:35:50",activeDate:"2026-09-10",connection:"外部钱包连接",walletType:"MetaMask",login:"0xF10C...3a59",registeredAt:"2026-04-12 12:06:33",lastLogin:"2026-09-10 08:33:27",connectStatus:"已连接",chain:"Arbitrum One",firstBoundAt:"2026-04-12 12:06:28",lastWalletUsed:"2026-09-10 08:33:27",statusUpdatedAt:"2026-09-10 08:40:03",statusOps:{contract:{reason:"市场风险策略触发，仅允许减仓和撤单。",batch:"OP-20260910-0992",joint:false},withdraw:null},frozenItems:[{type:"委托预占",ref:"ORD-20260910-9022",asset:"USDC",amount:12273.42,start:"2026-09-10 10:30:12",status:"占用中"}]},
+    {id:"a6",wallet:"0xBC18a4c8392EE08602828b5f107AE1b6BC3f7091",type:"SUB",parentId:"a1",childIds:[],tradingEnabled:true,tradingExpiresAt:"2026-09-16 10:21:08",contractStatus:"ENABLED",withdrawStatus:"NA",riskStatus:"正常",abnormalReason:"",totalEquity:18420.18,contractEquity:16812.45,settledBalance:16184.25,available:12003.71,frozen:924,unrealizedPnl:628.2,mmRequired:3127.12,withdrawable:null,accountLeverage:"1.9x",marginRate:18.6,positions:1,openOrders:5,active:"2026-09-10 09:44:17",activeDate:"2026-09-10",registeredAt:"2026-08-22 11:08:02",statusUpdatedAt:"2026-09-09 17:30:41",statusOps:{contract:null},frozenItems:[{type:"委托预占",ref:"ORD-20260910-6102",asset:"USDC",amount:924,start:"2026-09-10 09:41:08",status:"占用中"}]},
+    {id:"a7",wallet:"0xED21a73380D7dd8128E8934e617D0d7fD1F9c1B4",type:"SUB",parentId:"a1",childIds:[],tradingEnabled:true,tradingExpiresAt:"2026-09-16 10:21:08",contractStatus:"REDUCE_ONLY",withdrawStatus:"NA",riskStatus:"预警",abnormalReason:"子账户策略风险阈值触发，仅允许减仓。",totalEquity:9204.33,contractEquity:8750.9,settledBalance:8610.2,available:5022.12,frozen:160,unrealizedPnl:140.7,mmRequired:1933.95,withdrawable:null,accountLeverage:"2.3x",marginRate:22.1,positions:1,openOrders:4,active:"2026-09-09 22:18:02",activeDate:"2026-09-09",registeredAt:"2026-08-24 15:42:19",statusUpdatedAt:"2026-09-09 22:20:11",statusOps:{contract:{reason:"子账户策略风险阈值触发，仅允许减仓。",batch:"OP-20260909-0736",joint:false}},frozenItems:[{type:"委托预占",ref:"ORD-20260909-5218",asset:"USDC",amount:160,start:"2026-09-09 21:58:14",status:"占用中"}]}
+  ];
+  var state={page:1,size:5,filtered:accounts.slice(),selected:null,statusMode:"contract",recordSize:4,recordPages:{},recordQueries:{},records:{}};
+  var labels={MAIN:"主账户",SUB:"子账户"};
+  var nowTs="2026-09-10 10:40:18";
+  var contractLabels={ENABLED:"正常交易",REDUCE_ONLY:"只减仓",DISABLED:"已暂停"};
+  var withdrawLabels={ENABLED:"可提现",DISABLED:"暂停提现",NA:"不适用"};
+  function esc(v){return String(v==null?"":v).replace(/[&<>"']/g,function(c){return({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"})[c];});}
+  function short(v,l,r){return v&&v.length>l+r+3?v.slice(0,l)+"..."+v.slice(-r):v;}
+  function money(v){return Number(v||0).toLocaleString("zh-CN",{minimumFractionDigits:2,maximumFractionDigits:2});}
+  function signed(v){return(v>0?"+":"")+money(v);}
+  function byId(id){return accounts.find(function(a){return a.id===id;});}
+  function copyIcon(){return '<svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M15 9V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7a2 2 0 002 2h3"/></svg>';}
+  function copyButton(v){return '<button class="copy" data-copy="'+esc(v)+'" title="复制" aria-label="复制">'+copyIcon()+'</button>';}
+  function tradingState(a){
+    var owner=a.parentId?byId(a.parentId):a;
+    if(!owner.tradingEnabled)return{on:false,expired:false,label:"未开启",expires:"-",period:"7 天"};
+    var exp=owner.tradingExpiresAt||"";
+    var expired=!!exp&&exp<nowTs;
+    if(expired)return{on:false,expired:true,label:"已过期，需重新开启",expires:exp,period:"7 天"};
+    return{on:true,expired:false,label:"已开启",expires:exp,period:"7 天"};
+  }
+  function contractTag(s){return '<span class="tag '+(s==="ENABLED"?"success":s==="DISABLED"?"danger":"warning")+'">'+contractLabels[s]+'</span>';}
+  function withdrawTag(s){var key=s==="NA"?"NA":s==="DISABLED"?"DISABLED":"ENABLED";return '<span class="tag '+(key==="ENABLED"?"success":key==="DISABLED"?"danger":"neutral")+'">'+withdrawLabels[key]+'</span>';}
+  function riskTag(s){var t=s==="正常"?"success":s==="预警"?"warning":s==="可清算"||s==="清算中"?"danger":"info";return '<span class="tag '+t+'">'+esc(s)+'</span>';}
+  function tradingTag(a){var s=tradingState(a);return '<span class="tag '+(s.on?"success":"warning")+'">'+s.label+'</span>';}
+  function pnlCell(v){var n=typeof v==="number"?v:Number(String(v).replace(/[+,]/g,""));return '<span class="'+(n<0?"negative":"positive")+'">'+(typeof v==="number"?signed(v)+" USDC":esc(v))+'</span>';}
+  function emptyRow(n,t){return '<tr><td colspan="'+n+'"><div class="empty"><div class="empty-mark">-</div><strong>'+esc(t)+'</strong></div></td></tr>';}
+  function desc(items){return items.map(function(x){return '<div class="desc-item"><div class="desc-label">'+x[0]+'</div><div class="desc-value '+(x[2]||"")+'">'+x[1]+'</div></div>';}).join("");}
+  function accountLink(a,text){return '<button class="btn-link account-link" data-open-account="'+a.id+'">'+esc(text||short(a.wallet,10,8))+'</button>';}
+  function hash(seed,index){var n=(seed.charCodeAt(seed.length-1)*1000+index*97).toString(16);return "0x"+(n.repeat(64).slice(0,64));}
+  function hashLink(h,network){var base=network==="hyper"?"https://app.hyperliquid.xyz/explorer/tx/":"https://arbiscan.io/tx/";return '<a class="hash-link mono" href="'+base+h+'" target="_blank" rel="noreferrer" title="'+h+'">'+short(h,8,6)+'</a>';}
+
+  function renderList(){var start=(state.page-1)*state.size,rows=state.filtered.slice(start,start+state.size);document.getElementById("totalCount").textContent=state.filtered.length;document.getElementById("accountBody").innerHTML=rows.length?rows.map(function(a){var p=a.parentId?byId(a.parentId):null;return '<tr data-id="'+a.id+'"><td><div class="wallet-cell"><span class="mono">'+short(a.wallet,8,6)+'</span>'+copyButton(a.wallet)+'</div>'+'</td><td>'+labels[a.type]+'</td><td>'+(p?accountLink(p,short(p.wallet,8,6))+copyButton(p.wallet):'<span class="muted">-</span>')+'</td><td>'+contractTag(a.contractStatus)+'</td><td>'+withdrawTag(a.withdrawStatus)+'</td><td class="strong">'+money(a.totalEquity)+' USDC</td><td>'+money(a.contractEquity)+' USDC</td><td>'+money(a.available)+' USDC</td><td>'+money(a.frozen)+' USDC</td><td>'+a.positions+' / '+a.openOrders+'</td><td>'+a.active+'</td><td><button class="btn-link" data-open-account="'+a.id+'">查看详情</button></td></tr>';}).join(""):emptyRow(12,"未找到匹配账户");var pages=Math.max(1,Math.ceil(state.filtered.length/state.size));state.page=Math.min(state.page,pages);document.getElementById("pageInfo").textContent="第 "+state.page+" / "+pages+" 页 · 每页 "+state.size+" 条";var html='<button class="page-btn" data-list-page="prev" '+(state.page===1?"disabled":"")+'>上一页</button>';for(var i=1;i<=pages;i++)html+='<button class="page-btn '+(i===state.page?"active":"")+'" data-list-page="'+i+'">'+i+'</button>';html+='<button class="page-btn" data-list-page="next" '+(state.page===pages?"disabled":"")+'>下一页</button>';document.getElementById("pager").innerHTML=html;}
+  function applyFilters(){var k=document.getElementById("keyword").value.trim().toLowerCase(),type=document.getElementById("typeFilter").value,cs=document.getElementById("contractStatusFilter").value,ws=document.getElementById("withdrawStatusFilter").value,sub=document.getElementById("subFilter").value,from=document.getElementById("dateFrom").value,to=document.getElementById("dateTo").value;state.filtered=accounts.filter(function(a){var p=a.parentId?byId(a.parentId):null;return(!k||a.wallet.toLowerCase().includes(k)||(a.type==="MAIN"&&a.wallet.toLowerCase().includes(k))||(p&&p.wallet.toLowerCase().includes(k)))&&(!type||a.type===type)&&(!cs||a.contractStatus===cs)&&(!ws||(ws==="DISABLED"?a.withdrawStatus==="DISABLED":a.withdrawStatus!=="DISABLED"&&a.withdrawStatus!=="NA"))&&(!sub||(a.type==="MAIN"&&(sub==="yes"?a.childIds.length>0:a.childIds.length===0)))&&(!from||(a.activeDate&&a.activeDate>=from))&&(!to||(a.activeDate&&a.activeDate<=to));});state.page=1;renderList();}
+
+  function makeRecords(a){
+    var coins=["BTCUSDC","ETHUSDC","SOLUSDC","HYPEUSDC","DOGEUSDC","AVAXUSDC","LINKUSDC","SUIUSDC","ARBUSDC","XRPUSDC"];
+    var bases=["BTC","ETH","SOL","HYPE","DOGE","AVAX","LINK","SUI","ARB","XRP"];
+    var dirs=["买入","卖出"], sources=["用户","用户","强平","ADL"], routes=["订单簿强平","订单簿强平","保险基金","ADL","受阻","订单簿强平"];
+    var endReasons=["撤销","IOC 剩余取消","过期","拒绝"];
+    function time(i){return "2026-09-"+String(10-Math.floor(i/3)).padStart(2,"0")+" "+String(10+i).padStart(2,"0")+":"+String(12+i*3).slice(-2)+":18";}
+    function posQty(i){return (i?12.6+i:0.842).toFixed(3)+" "+bases[i%bases.length];}
+    var positions=coins.slice(0,a.positions).map(function(c,i){
+      var qty=i?12.6+i:0.842, mark=109120/(i+1), im=9200/(i+1), pnl=i%2?-328.16:a.unrealizedPnl, mm=im*0.1;
+      var saved=(a.positionOps||{})[c], tradeStatus=saved&&saved.status?saved.status:(a.contractStatus==="REDUCE_ONLY"||a.contractStatus==="DISABLED"?"REDUCE_ONLY":"ENABLED");
+      return {market:c,marginMode:"全仓",side:i%2?"空":"多",qty:qty.toFixed(3)+" "+bases[i],notional:money(qty*mark)+" USDC",entry:money(108240/(i+1)),mark:money(mark),leverage:"10x",margin:money(im)+" USDC",mm:money(mm)+" USDC",pnl:pnl,roe:im?((pnl/im)*100).toFixed(2)+"%":"--",marginRate:a.marginRate.toFixed(1)+"%",liq:qty?money(86420/(i+1)):"--",risk:a.riskStatus,funding:(i%2?"-":"+")+(8.4+i*1.3).toFixed(2)+" USDC",tradeStatus:tradeStatus};
+    });
+    var open=Array.from({length:a.openOrders},function(_,i){
+      var isMkt=i%3===0, qty=0.22+i/10, filled=i%2?(i/20):0, remain=Math.max(0,qty-filled), px=isMkt?0:112900/(i%3+1), src="用户";
+      return {id:"ORD-20260910-"+(8841+i),market:coins[i%coins.length],marginMode:"全仓",leverage:"10x",side:dirs[i%2],type:isMkt?"市价":"限价",tif:isMkt?"IOC":"GTC",reduceOnly:i%4===0||src!=="用户"?"是":"否",price:isMkt?"市价":money(px),qty:qty.toFixed(3),filled:filled.toFixed(3),remain:remain.toFixed(3),avg:filled?money(px||109120):"--",values:money(qty*(px||109120))+" / "+money(filled*(px||109120))+" USDC",source:src,tpsl:"--",time:time(i),status:filled?"部分成交":"开放中"};
+    });
+    var history=Array.from({length:a.totalEquity?11:0},function(_,i){
+      var isMkt=i%3===0, qty=0.12+i/10, filled=i%4===1?0:qty, px=isMkt?109880:113102/(i%4+1), pnl=i%3===0?0:(i%2?-86.4-i:124.8+i), fee=filled?0:0, st=["已成交","已撤销","部分成交后取消","已过期"][i%4];
+      return {id:"ORD-2026090"+(9-i%6)+"-"+(7710+i),market:coins[i%coins.length],marginMode:"全仓",leverage:"10x",side:dirs[i%2],type:isMkt?"市价":"限价",tif:isMkt?"IOC":"GTC",reduceOnly:i%5===0?"是":"否",price:isMkt?"市价":money(px),qty:qty.toFixed(3),filled:filled.toFixed(3),remain:"0.000",avg:filled?money(px):"--",values:money(qty*px)+" / "+money(filled*px)+" USDC",pnl:filled&&i%3?pnl:0,roe:filled&&i%3?((pnl/1200)*100).toFixed(2)+"%":"--",fee:money(fee)+" USDC",source:i===2?"强平":"用户",tpsl:"--",reason:st==="已成交"?"—":endReasons[i%4],selfTrade:st==="已撤销"&&i%3===1?"是":"否",status:st,created:time(i),done:time(i+1)};
+    });
+    var trades=Array.from({length:a.totalEquity?10:0},function(_,i){
+      var qty=0.12+i/10, px=113102/(i%4+1), close=i%3!==0, src=["普通","普通","强平","ADL"][i%4];
+      return {id:"TRD-20260910-"+(4418+i),order:src==="普通"?history.filter(function(o){return o.source==="用户";})[i%history.filter(function(o){return o.source==="用户";}).length].id:"SYS-ORD-"+(7710+i),market:coins[i%coins.length],side:dirs[i%2],price:money(px),qty:qty.toFixed(3),value:money(qty*px)+" USDC",role:i%2?"Maker":"Taker",fee:money(2.18+i*.63)+" USDC",pnl:close?(i%2?-42.6-i:88.4+i):0,source:src,time:time(i)};
+    });
+    var funding=Array.from({length:a.totalEquity?9:0},function(_,i){
+      var pay=i%2===1, amt=4.28+i*1.7;
+      return {market:coins[i%coins.length],side:i%2?"空":"多",qty:(0.42+i*0.08).toFixed(3)+" "+bases[i%bases.length],mark:money(109120/(i%4+1)),rate:(pay?"-":"")+"0.00"+(42+i)+"%",dir:pay?"支付":"收取",amount:(pay?"-":"+")+amt.toFixed(2)+" USDC",time:time(i)};
+    });
+    var liquidations=Array.from({length:a.id==="a1"||a.id==="a3"||a.id==="a7"?6:0},function(_,i){
+      var remain=i===5?0:(0.04+i/50);
+      return {id:"LIQ-202608"+(20+i)+"-"+(1208+i),market:coins[i%coins.length],side:i%2?"空":"多",qty:(0.18+i/10).toFixed(3),price:money(92400/(i%3+1)),pnl:"-"+(128+i*43).toFixed(2)+" USDC",equity:money(a.contractEquity*0.82)+" USDC",mm:money((a.mmRequired||1200)*(0.9+i/20))+" USDC",remain:remain.toFixed(3),route:routes[i%routes.length],status:remain?"处理中":"已完成",time:time(i+8)};
+    });
+    var deposits=a.type==="MAIN"?Array.from({length:9},function(_,i){
+      var done=i!==8;
+      return {tx:hash(a.id,i+1),from:i%2?a.wallet:"0x91C4e0A18B2d9F44C8E1A7D03B5F62A9C1D84E20",network:"Arbitrum One",asset:"USDC",amount:money(25000-i*917),confirms:done?"12 / 12":"7 / 12",status:done?"已到账":"确认中",found:time(i),time:done?time(i+1):"--"};
+    }):[];
+    var withdrawals=a.type==="MAIN"?Array.from({length:8},function(_,i){
+      var amt=1158+i*207, fee=1.2, reviewing=false, processing=i===0&&a.withdrawStatus==="ENABLED", failed=i===6;
+      var status=failed?"已失败":reviewing?"待审核":processing?"处理中":"已完成";
+      var broadcast=!reviewing&&!failed;
+      return {id:"WD-202609"+(10-i)+"-"+(162+i),to:i%2?a.wallet:"0x4A71C6292dD5D8cFf91e2E125F91A741FB892a71",network:"Arbitrum One",asset:"USDC",amount:money(amt),received:money(amt-fee),fee:money(fee),total:money(amt),status:status,reason:failed?"外部执行失败，资金已释放":"--",tx:broadcast?hash(a.id,i+21):"--",created:time(i),done:status==="已完成"?time(i+1):"-"};
+    }):[];
+    var p=a.parentId?byId(a.parentId):a, children=p.childIds.map(byId), peers=[p].concat(children);
+    var transfers=Array.from({length:10},function(_,i){var from=peers[i%peers.length],to=peers[(i+1)%peers.length];return{id:"TF-20260910-"+(3101+i),from:from.wallet,to:to.wallet,asset:"USDC",amount:money(5000-i*211),status:"成功",tx:hash(p.id,i+41),time:time(i)};}).filter(function(t){return a.type==="MAIN"||t.from===a.wallet||t.to===a.wallet;});
+    return {positions:positions,openOrders:open.filter(function(o){return o.source==="用户";}),historyOrders:history.filter(function(o){return o.source==="用户";}),trades:trades,funding:funding,liquidations:liquidations,deposits:deposits,withdrawals:withdrawals,transfers:transfers,frozenItems:a.frozenItems||[],subAccounts:[]};
+  }
+  function orderIdCell(id){return '<span class="mono">'+esc(id)+'</span>'+copyButton(id);}
+  function wdStatusTag(s){var t=s==="已完成"?"success":s==="已失败"?"danger":s==="待审核"?"warning":"info";return '<span class="tag '+t+'">'+esc(s)+'</span>';}
+  var posTradeLabels={ENABLED:"可交易",REDUCE_ONLY:"只减仓"};
+  function posTradeTag(s){return '<span class="tag '+(s==="ENABLED"?"success":"warning")+'">'+(posTradeLabels[s]||s)+'</span>';}
+  var configs={
+    subAccounts:{body:"subAccountBody",cols:9,paged:false,keys:["wallet"],row:function(c){return '<tr><td><div class="wallet-cell"><span class="mono">'+short(c.wallet,8,6)+'</span>'+copyButton(c.wallet)+'</div></td><td>'+contractTag(c.contractStatus)+'</td><td>'+money(c.totalEquity)+' USDC</td><td>'+money(c.contractEquity)+' USDC</td><td>'+money(c.available)+' USDC</td><td>'+money(c.frozen)+' USDC</td><td>'+c.positions+' / '+c.openOrders+'</td><td>'+c.active+'</td><td><button class="btn-link" data-open-account="'+c.id+'">查看详情</button></td></tr>';}},
+    positions:{body:"positionBody",cols:18,paged:false,keys:["market"],row:function(r){return '<tr><td>'+r.market+'</td><td>'+r.marginMode+'</td><td><span class="tag '+(r.side==="多"?"success":"danger")+'">'+r.side+'</span></td><td>'+r.qty+'</td><td>'+r.notional+'</td><td>'+r.entry+'</td><td>'+r.mark+'</td><td>'+r.leverage+'</td><td>'+r.margin+'</td><td>'+r.mm+'</td><td class="'+(r.pnl<0?"negative":"positive")+'">'+signed(r.pnl)+' USDC</td><td>'+r.roe+'</td><td>'+r.marginRate+'</td><td>'+r.liq+'</td><td>'+riskTag(r.risk)+'</td><td class="'+(String(r.funding).charAt(0)==="-"?"negative":"positive")+'">'+r.funding+'</td><td>'+posTradeTag(r.tradeStatus)+'</td><td><button class="btn-link" data-position-action="'+esc(r.market)+'">调整</button></td></tr>';}},
+    openOrders:{body:"openOrderBody",info:"openOrdersInfo",pager:"openOrdersPager",cols:17,keys:["id","market"],row:function(o){return '<tr><td>'+orderIdCell(o.id)+'</td><td>'+o.market+'</td><td>'+o.marginMode+'</td><td>'+o.leverage+'</td><td>'+o.side+'</td><td>'+o.type+'</td><td>'+o.tif+'</td><td>'+o.reduceOnly+'</td><td>'+o.price+'</td><td>'+o.qty+'</td><td>'+o.filled+'</td><td>'+o.remain+'</td><td>'+o.avg+'</td><td>'+o.values+'</td><td>'+o.tpsl+'</td><td>'+o.time+'</td><td><span class="tag info">'+o.status+'</span></td></tr>'; }},
+    historyOrders:{body:"historyOrderBody",info:"historyOrdersInfo",pager:"historyOrdersPager",cols:23,keys:["id","market"],row:function(o){return '<tr><td>'+orderIdCell(o.id)+'</td><td>'+o.market+'</td><td>'+o.marginMode+'</td><td>'+o.leverage+'</td><td>'+o.side+'</td><td>'+o.type+'</td><td>'+o.tif+'</td><td>'+o.reduceOnly+'</td><td>'+o.price+'</td><td>'+o.qty+'</td><td>'+o.filled+'</td><td>'+o.remain+'</td><td>'+o.avg+'</td><td>'+o.values+'</td><td>'+pnlCell(o.pnl)+'</td><td>'+o.roe+'</td><td>'+o.fee+'</td><td>'+o.tpsl+'</td><td>'+o.reason+'</td><td>'+o.selfTrade+'</td><td>'+o.status+'</td><td>'+o.created+'</td><td>'+o.done+'</td></tr>'; }},
+    trades:{body:"tradeBody",info:"tradesInfo",pager:"tradesPager",cols:12,keys:["id","order","market"],row:function(o){return '<tr><td class="mono">'+o.id+'</td><td>'+(o.source==="普通"?'<button class="btn-link" data-jump-history="'+esc(o.order)+'">'+esc(o.order)+'</button>':orderIdCell(o.order))+'</td><td>'+o.market+'</td><td>'+o.side+'</td><td>'+o.price+'</td><td>'+o.qty+'</td><td>'+o.value+'</td><td>'+o.role+'</td><td>'+o.fee+'</td><td>'+pnlCell(o.pnl)+'</td><td>'+o.source+'</td><td>'+o.time+'</td></tr>'; }},
+    funding:{body:"fundingBody",info:"fundingInfo",pager:"fundingPager",cols:8,keys:["market"],row:function(o){return '<tr><td>'+o.market+'</td><td>'+o.side+'</td><td>'+o.qty+'</td><td>'+o.mark+'</td><td>'+o.rate+'</td><td>'+o.dir+'</td><td class="'+(o.amount.charAt(0)==="-"?"negative":"positive")+'">'+o.amount+'</td><td>'+o.time+'</td></tr>'; }},
+    liquidations:{body:"liquidationBody",info:"liquidationsInfo",pager:"liquidationsPager",cols:12,keys:["id","market"],row:function(o){return '<tr><td class="mono">'+o.id+'</td><td>'+o.market+'</td><td>'+o.side+'</td><td>'+o.qty+'</td><td>'+o.price+'</td><td class="negative">'+o.pnl+'</td><td>'+o.equity+'</td><td>'+o.mm+'</td><td>'+o.remain+'</td><td>'+o.route+'</td><td>'+o.status+'</td><td>'+o.time+'</td></tr>'; }},
+    deposits:{body:"depositBody",info:"depositsInfo",pager:"depositsPager",cols:9,keys:["tx","from"],row:function(o){return '<tr><td>'+hashLink(o.tx,"arb")+'</td><td><span class="mono">'+short(o.from,8,6)+'</span>'+copyButton(o.from)+'</td><td>'+o.network+'</td><td>'+o.asset+'</td><td>'+o.amount+'</td><td>'+o.confirms+'</td><td><span class="tag '+(o.status==="已到账"?"success":"info")+'">'+o.status+'</span></td><td>'+o.found+'</td><td>'+o.time+'</td></tr>'; }},
+    withdrawals:{body:"withdrawBody",info:"withdrawalsInfo",pager:"withdrawalsPager",cols:12,keys:["to","tx"],row:function(o){return '<tr><td class="mono">'+short(o.to,8,6)+'</td><td>'+o.network+'</td><td>'+o.asset+'</td><td>'+o.amount+'</td><td>'+o.received+'</td><td>'+o.fee+'</td><td>'+o.total+'</td><td>'+wdStatusTag(o.status)+'</td><td>'+o.reason+'</td><td>'+(o.tx==="--"? "--":hashLink(o.tx,"arb"))+'</td><td>'+o.created+'</td><td>'+o.done+'</td></tr>'; }},
+    transfers:{body:"transferBody",info:"transfersInfo",pager:"transfersPager",cols:8,keys:["id","from","to","tx"],row:function(o){return '<tr><td class="mono">'+o.id+'</td><td><span class="mono">'+short(o.from,8,6)+'</span>'+copyButton(o.from)+'</td><td><span class="mono">'+short(o.to,8,6)+'</span>'+copyButton(o.to)+'</td><td>'+o.asset+'</td><td>'+o.amount+'</td><td><span class="tag success">'+o.status+'</span></td><td>'+hashLink(o.tx,"hyper")+'</td><td>'+o.time+'</td></tr>'; }},
+    frozenItems:{body:"frozenBody",cols:5,paged:false,keys:[],row:function(f){return '<tr><td>'+f.type+'</td><td>'+f.asset+'</td><td>'+money(f.amount)+'</td><td>'+f.start+'</td><td><span class="tag info">'+f.status+'</span></td></tr>';}}
+  };
+  function collectQuery(name){
+    var input=document.querySelector('[data-record-search="'+name+'"]');
+    var q=input?input.value.trim().toLowerCase():"";
+    var filters={};
+    document.querySelectorAll('[data-record-filter="'+name+'"]').forEach(function(s){filters[s.dataset.filterKey]=s.value;});
+    return {q:q,filters:filters};
+  }
+  function matchRecord(item,c,query){
+    if(query.q){
+      var keys=c.keys||[];
+      var hit=keys.some(function(k){return String(item[k]==null?"":item[k]).toLowerCase().indexOf(query.q)>=0;});
+      if(!hit)return false;
+    }
+    return Object.keys(query.filters||{}).every(function(k){return !query.filters[k]||String(item[k])===query.filters[k];});
+  }
+  function renderRecord(name){
+    var c=configs[name]; if(!c)return;
+    var query=state.recordQueries[name]||{q:"",filters:{}};
+    var all=(state.records[name]||[]).filter(function(x){return matchRecord(x,c,query);});
+    var emptyText=name==="positions"?"暂无当前仓位":name==="subAccounts"?"该主账户暂无子账户":name==="frozenItems"?"暂无冻结明细":"暂无匹配数据";
+    if(c.paged===false){
+      document.getElementById(c.body).innerHTML=all.length?all.map(c.row).join(""):emptyRow(c.cols,emptyText);
+      return;
+    }
+    var pages=Math.max(1,Math.ceil(all.length/state.recordSize)),page=Math.min(state.recordPages[name]||1,pages);
+    state.recordPages[name]=page;
+    var rows=all.slice((page-1)*state.recordSize,page*state.recordSize);
+    document.getElementById(c.body).innerHTML=rows.length?rows.map(c.row).join(""):emptyRow(c.cols,emptyText);
+    document.getElementById(c.info).textContent="共 "+all.length+" 条 · 第 "+page+" / "+pages+" 页";
+    var html='<button class="page-btn" data-record-page="'+name+'" data-value="prev" '+(page===1?"disabled":"")+'>上一页</button>';
+    for(var i=1;i<=pages;i++)html+='<button class="page-btn '+(i===page?"active":"")+'" data-record-page="'+name+'" data-value="'+i+'">'+i+'</button>';
+    html+='<button class="page-btn" data-record-page="'+name+'" data-value="next" '+(page===pages?"disabled":"")+'>下一页</button>';
+    document.getElementById(c.pager).innerHTML=html;
+  }
+  function applyRecordQuery(name){
+    state.recordQueries[name]=collectQuery(name);
+    state.recordPages[name]=1;
+    renderRecord(name);
+  }
+  function resetRecordQuery(name){
+    var input=document.querySelector('[data-record-search="'+name+'"]');
+    if(input)input.value="";
+    document.querySelectorAll('[data-record-filter="'+name+'"]').forEach(function(s){s.value="";});
+    state.recordQueries[name]={q:"",filters:{}};
+    state.recordPages[name]=1;
+    renderRecord(name);
+  }
+  function renderStatus(a){function op(domain){return a.statusOps&&a.statusOps[domain];}function reason(domain){var item=op(domain);return item?'<div class="status-reason">'+esc(item.reason)+'</div><div class="batch-id">'+item.batch+'</div>':'<span class="muted">暂无人工操作记录</span>';}function updated(domain){return op(domain)&&op(domain).time?op(domain).time:a.statusUpdatedAt;}document.getElementById("functionStatusBody").innerHTML='<tr><td class="strong">合约交易</td><td>'+contractTag(a.contractStatus)+'</td><td>'+updated("contract")+'</td><td>'+reason("contract")+'</td><td><button class="btn-link" data-status-action="contract">调整</button></td></tr>'+(a.type==="SUB"?'<tr><td class="strong">提现</td><td>'+withdrawTag("NA")+'</td><td>-</td><td><span class="muted">子账户不承接充值与提现</span></td><td><button class="btn-link" disabled>不适用</button></td></tr>':'<tr><td class="strong">提现</td><td>'+withdrawTag(a.withdrawStatus)+'</td><td>'+updated("withdraw")+'</td><td>'+reason("withdraw")+'</td><td><button class="btn-link" data-status-action="withdraw">调整</button></td></tr>');}
+  function renderDetail(a){
+    var parent=a.parentId?byId(a.parentId):null;
+    var posMargin=Math.max(0,a.contractEquity-a.available-a.frozen);
+    document.getElementById("detailWallet").textContent=a.wallet;
+    document.getElementById("detailCopy").dataset.copy=a.wallet;
+    document.getElementById("detailCopy").innerHTML=copyIcon();
+    document.getElementById("detailType").textContent=labels[a.type];
+    document.getElementById("detailContractStatus").innerHTML=contractTag(a.contractStatus);
+    document.getElementById("detailWithdrawStatus").innerHTML=withdrawTag(a.withdrawStatus);
+    document.getElementById("detailActive").textContent=a.active;
+    document.getElementById("metricTotalEquity").textContent=money(a.totalEquity);
+    document.getElementById("metricContractEquity").textContent=money(a.contractEquity);
+    document.getElementById("metricAvailable").textContent=money(a.available);
+    document.getElementById("metricFrozen").textContent=money(a.frozen);
+    document.getElementById("metricContractNote").textContent="已结算余额 "+money(a.settledBalance)+" / 未实现盈亏 "+signed(a.unrealizedPnl);
+    document.getElementById("metricAvailableNote").textContent=a.type==="SUB"?"可用于交易或划转 · USDC":"可用于交易或提现 · USDC";
+    var info=[["钱包地址",'<span class="mono">'+a.wallet+'</span> '+copyButton(a.wallet)],["账户类型",labels[a.type]],["交易权限",tradingTag(a)],[a.type==="SUB"?"创建时间":"注册时间",a.registeredAt],["最后活跃时间",a.active]];
+    if(parent)info.splice(2,0,["归属主账户",accountLink(parent,short(parent.wallet,10,8))+copyButton(parent.wallet)]);
+    else info.splice(2,0,["子账户数量",String(a.childIds.length)]);
+    document.getElementById("accountInfo").innerHTML=desc(info);
+    renderStatus(a);
+    document.getElementById("assetSummary").innerHTML=desc([["账户总权益",money(a.totalEquity)+" USDC"],["合约账户权益",money(a.contractEquity)+" USDC"],["可用余额",money(a.available)+" USDC"],["冻结金额",money(a.frozen)+" USDC"],["未实现盈亏",'<span class="'+(a.unrealizedPnl<0?"negative":"positive")+'">'+signed(a.unrealizedPnl)+' USDC</span>'],["数据更新时间",dataUpdatedAt]]);
+    var owner=parent||a;
+    document.getElementById("loginSummary").innerHTML=desc([["连接方式",owner.connection],["脱敏登录标识",owner.login],["最近连接时间",owner.lastLogin],["当前连接状态",owner.connectStatus]]);
+    document.getElementById("contractSummary").innerHTML=desc([
+      ["合约账户权益",money(a.contractEquity)+" USDC"],
+      ["保证金模式","全仓"],
+      ["可用保证金",money(a.available)+" USDC"],
+      ["委托占用保证金",money(a.frozen)+" USDC"],
+      ["持仓占用保证金",money(posMargin)+" USDC"],
+      ["维持保证金",money(a.mmRequired)+" USDC"],
+      ["未实现盈亏",'<span class="'+(a.unrealizedPnl<0?"negative":"positive")+'">'+signed(a.unrealizedPnl)+' USDC</span>'],
+      ["保证金率",a.marginRate.toFixed(1)+"%"],
+      ["账户实际杠杆",a.accountLeverage],
+      ["已结算余额",money(a.settledBalance)+" USDC"],
+      ["可提现",a.type==="SUB"?"不适用":money(a.withdrawable)+" USDC"],
+      ["账户风险状态",riskTag(a.riskStatus)],
+      ["合约交易状态",contractTag(a.contractStatus)]
+    ]);
+    document.getElementById("loginInfo").innerHTML=desc([["连接方式",owner.connection],["外部钱包类型",owner.connection==="外部钱包连接"?(owner.walletType||"--"):"不适用"],["当前连接状态",owner.connectStatus],["登录标识",owner.login],["注册时间",owner.registeredAt],["最后登录时间",owner.lastLogin],["最后活跃时间",owner.lastWalletUsed]]);
+    var walletRows=parent?[["子账户地址",'<span class="mono">'+a.wallet+'</span> '+copyButton(a.wallet)],["归属主账户",accountLink(parent,short(parent.wallet,10,8))+copyButton(parent.wallet)],["签名关系",'<span class="tag info">主账户代理签名</span>']]:[["钱包地址",'<span class="mono">'+a.wallet+'</span> '+copyButton(a.wallet)],["当前关联状态",'<span class="tag success">已关联</span>'],["首次关联时间",a.firstBoundAt],["最近使用时间",a.lastWalletUsed]];
+    document.getElementById("walletInfo").innerHTML=desc(walletRows);
+    document.getElementById("subLoginNote").hidden=!parent;
+    document.getElementById("subAssetNote").hidden=!parent;
+    document.getElementById("subTab").hidden=a.type!=="MAIN";
+    document.getElementById("subPanel").hidden=a.type!=="MAIN";
+    document.getElementById("depositSubtab").hidden=!!parent;
+    document.getElementById("withdrawSubtab").hidden=!!parent;
+    document.getElementById("depositPane").hidden=!!parent;
+    document.getElementById("withdrawPane").hidden=!!parent;
+    var children=a.type==="MAIN"?a.childIds.map(byId).filter(Boolean):[];
+    state.records=makeRecords(a);
+    state.records.subAccounts=children;
+    state.records.frozenItems=a.frozenItems||[];
+    state.recordPages={};
+    state.recordQueries={};
+    document.querySelectorAll("[data-record-search]").forEach(function(i){i.value="";});
+    document.querySelectorAll("[data-record-filter]").forEach(function(s){s.value="";});
+    Object.keys(configs).forEach(renderRecord);
+    document.getElementById("balanceBody").innerHTML='<tr><td>USDC</td><td>'+money(a.settledBalance)+'</td><td>'+money(a.available)+'</td><td>'+money(a.frozen)+'</td><td>'+money(a.totalEquity)+' USDC</td><td>'+dataUpdatedAt+'</td></tr>';
+  }
+  function openDetail(id,updateUrl){var a=byId(id);if(!a)return;state.selected=a;if(updateUrl!==false)accountHistory(id);document.getElementById("listPage").classList.remove("active");document.getElementById("detailPage").classList.add("active");document.getElementById("breadcrumb").textContent=labels[a.type]+"详情";renderDetail(a);switchTab("overview");switchSubtab("contract","contract-summary");switchSubtab("assets","funds");window.scrollTo(0,0);}
+  function switchTab(name){document.querySelectorAll(".tabs .tab").forEach(function(t){t.classList.toggle("active",t.dataset.tab===name);});document.querySelectorAll(".tab-panel").forEach(function(p){p.classList.toggle("active",p.dataset.panel===name);});}
+  function switchSubtab(group,name){var target=document.querySelector('.subtab[data-group="'+group+'"][data-subtab="'+name+'"]');if(!target||target.hidden)return;document.querySelectorAll('.subtab[data-group="'+group+'"]').forEach(function(t){t.classList.toggle("active",t.dataset.subtab===name);});document.querySelectorAll('.subtab-pane[data-group-panel="'+group+'"]').forEach(function(p){p.classList.toggle("active",p.dataset.subpanel===name);});}
+  function showList(updateUrl){state.selected=null;document.getElementById("detailPage").classList.remove("active");document.getElementById("listPage").classList.add("active");document.getElementById("breadcrumb").textContent="账户列表";if(updateUrl!==false)accountHistory();renderList();window.scrollTo(0,0);}
+  function showToast(msg){var e=document.getElementById("toast");e.textContent=msg;e.classList.add("show");clearTimeout(showToast.timer);showToast.timer=setTimeout(function(){e.classList.remove("show");},2200);}
+  function openStatusModal(mode,market){
+    var a=state.selected;
+    if(mode==="withdraw"&&a.type==="SUB"){showToast("子账户不支持调整提现状态");return;}
+    state.statusMode=mode;
+    state.positionMarket=market||"";
+    var options,current,title,currentHtml;
+    if(mode==="position"){
+      var pos=(state.records.positions||[]).find(function(p){return p.market===market;});
+      if(!pos){showToast("未找到该仓位");return;}
+      options=[["ENABLED","可交易"],["REDUCE_ONLY","只减仓"]];
+      current=pos.tradeStatus||"ENABLED";
+      title="调整仓位交易状态 · "+market;
+      currentHtml=posTradeTag(current);
+    }else if(mode==="contract"){
+      options=[["ENABLED","正常交易"],["REDUCE_ONLY","只减仓"],["DISABLED","已暂停"]];
+      current=a.contractStatus; title="调整合约交易状态"; currentHtml=contractTag(a.contractStatus);
+    }else{
+      options=[["ENABLED","可提现"],["DISABLED","暂停提现"]];
+      current=a.withdrawStatus; title="调整提现状态"; currentHtml=withdrawTag(a.withdrawStatus);
+    }
+    document.getElementById("statusModalTitle").textContent=title;
+    document.getElementById("currentSingleStatus").innerHTML=currentHtml;
+    document.getElementById("newSingleStatus").innerHTML=options.map(function(o){return '<option value="'+o[0]+'"'+(o[0]===current?" selected":"")+'>'+o[1]+'</option>';}).join("");
+    document.getElementById("statusReason").value="";
+    document.getElementById("statusModal").classList.add("open");
+  }
+  function closeStatusModal(){document.getElementById("statusModal").classList.remove("open");}
+  function confirmStatus(){
+    var a=state.selected,mode=state.statusMode,next=document.getElementById("newSingleStatus").value,reason=document.getElementById("statusReason").value.trim();
+    if(!reason){showToast("请填写操作原因");document.getElementById("statusReason").focus();return;}
+    var current=mode==="contract"?a.contractStatus:mode==="withdraw"?a.withdrawStatus:((state.records.positions||[]).find(function(p){return p.market===state.positionMarket;})||{}).tradeStatus;
+    if(next===current){showToast("目标状态未发生变化");return;}
+    var batch="OP-20260910-"+(operationSeq++),now="2026-09-10 "+new Date().toLocaleTimeString("zh-CN",{hour12:false});
+    if(mode==="contract"){a.contractStatus=next;a.statusOps.contract={reason:reason,batch:batch,time:now};}
+    else if(mode==="withdraw"){a.withdrawStatus=next;a.statusOps.withdraw={reason:reason,batch:batch,time:now};}
+    else{
+      if(!a.positionOps)a.positionOps={};
+      a.positionOps[state.positionMarket]={status:next,reason:reason,batch:batch,time:now};
+    }
+    closeStatusModal();
+    renderDetail(a);
+    if(mode==="position"){switchTab("contract");switchSubtab("contract","positions");}
+    else switchTab("overview");
+    renderList();
+    showToast(mode==="position"?(state.positionMarket+" 已设为"+posTradeLabels[next]):((mode==="contract"?"合约交易":"提现")+"状态已调整"));
+  }
+  function exportCsv(filename,header,rows){var blob=new Blob(["\ufeff"+header+"\n"+rows.join("\n")],{type:"text/csv;charset=utf-8"}),link=document.createElement("a");link.href=URL.createObjectURL(blob);link.download=filename;link.click();URL.revokeObjectURL(link.href);}
+
+  document.getElementById("accountBody").addEventListener("click",function(e){var copy=e.target.closest("[data-copy]");if(copy){navigator.clipboard.writeText(copy.dataset.copy).then(function(){showToast("已复制");});return;}var link=e.target.closest("[data-open-account]");if(link)openDetail(link.dataset.openAccount);});
+  document.getElementById("detailPage").addEventListener("click",function(e){
+    var copy=e.target.closest("[data-copy]");
+    if(copy){navigator.clipboard.writeText(copy.dataset.copy).then(function(){showToast("已复制");});return;}
+    var jump=e.target.closest("[data-jump-history]");
+    if(jump){
+      switchTab("contract");switchSubtab("contract","history-orders");
+      resetRecordQuery("historyOrders");
+      var input=document.querySelector('[data-record-search="historyOrders"]');
+      input.value=jump.dataset.jumpHistory;
+      applyRecordQuery("historyOrders");
+      showToast("已定位历史订单");
+      return;
+    }
+    var account=e.target.closest("[data-open-account]");
+    if(account){openDetail(account.dataset.openAccount);return;}
+    var posAct=e.target.closest("[data-position-action]");
+    if(posAct){openStatusModal("position",posAct.dataset.positionAction);return;}
+    var status=e.target.closest("[data-status-action]");
+    if(status){openStatusModal(status.dataset.statusAction);return;}
+    var submit=e.target.closest("[data-record-submit]");
+    if(submit){applyRecordQuery(submit.dataset.recordSubmit);return;}
+    var reset=e.target.closest("[data-record-reset]");
+    if(reset){resetRecordQuery(reset.dataset.recordReset);return;}
+    var page=e.target.closest("[data-record-page]");
+    if(page&&!page.disabled){
+      var n=page.dataset.recordPage,c=configs[n],query=state.recordQueries[n]||{q:"",filters:{}};
+      var count=(state.records[n]||[]).filter(function(x){return matchRecord(x,c,query);}).length;
+      var pages=Math.max(1,Math.ceil(count/state.recordSize)),current=state.recordPages[n]||1;
+      state.recordPages[n]=page.dataset.value==="prev"?current-1:page.dataset.value==="next"?current+1:Number(page.dataset.value);
+      state.recordPages[n]=Math.max(1,Math.min(pages,state.recordPages[n]));
+      renderRecord(n);
+    }
+  });
+  document.querySelectorAll(".tab").forEach(function(t){t.addEventListener("click",function(){switchTab(t.dataset.tab);});});
+  document.querySelectorAll(".subtab").forEach(function(t){t.addEventListener("click",function(){switchSubtab(t.dataset.group,t.dataset.subtab);});});
+  document.querySelectorAll("[data-record-search]").forEach(function(i){i.addEventListener("keydown",function(e){if(e.key==="Enter")applyRecordQuery(i.dataset.recordSearch);});});
+  document.getElementById("pager").addEventListener("click",function(e){var b=e.target.closest("[data-list-page]");if(!b||b.disabled)return;var pages=Math.max(1,Math.ceil(state.filtered.length/state.size));state.page=b.dataset.listPage==="prev"?state.page-1:b.dataset.listPage==="next"?state.page+1:Number(b.dataset.listPage);state.page=Math.max(1,Math.min(pages,state.page));renderList();});
+  document.getElementById("searchBtn").addEventListener("click",applyFilters);document.getElementById("keyword").addEventListener("keydown",function(e){if(e.key==="Enter")applyFilters();});document.getElementById("resetBtn").addEventListener("click",function(){document.querySelectorAll(".filter-card input,.filter-card select").forEach(function(e){e.value="";});state.filtered=accounts.slice();state.page=1;renderList();});
+  document.getElementById("backBtn").addEventListener("click",function(){showList(true);});document.getElementById("closeStatusModal").addEventListener("click",closeStatusModal);document.getElementById("cancelStatusModal").addEventListener("click",closeStatusModal);document.getElementById("confirmStatusChange").addEventListener("click",confirmStatus);document.getElementById("statusModal").addEventListener("click",function(e){if(e.target===this)closeStatusModal();});
+  document.getElementById("refreshBtn").addEventListener("click",function(){dataUpdatedAt="2026-09-10 "+new Date().toLocaleTimeString("zh-CN",{hour12:false});if(state.selected)renderDetail(state.selected);showToast("账户数据已刷新");});
+  document.getElementById("exportBtn").addEventListener("click",function(){exportCsv("BIYA-DEX账户列表-20260910.csv","钱包地址,账户类型,归属主账户,合约交易状态,提现状态,账户总权益,合约账户权益,可用余额,冻结金额,最后活跃",state.filtered.map(function(a){var p=a.parentId?byId(a.parentId):null;return[a.wallet,labels[a.type],p?p.wallet:"",contractLabels[a.contractStatus],withdrawLabels[a.withdrawStatus],a.totalEquity,a.contractEquity,a.available,a.frozen,a.active].join(",");}));showToast("已导出当前查询结果");});document.getElementById("exportDetailBtn").addEventListener("click",function(){if(!state.selected)return;var a=state.selected,ts=tradingState(a);exportCsv("BIYA-DEX账户详情-"+a.wallet+".csv","字段,值",["钱包地址,"+a.wallet,"账户类型,"+labels[a.type],"交易权限,"+ts.label,"合约交易状态,"+contractLabels[a.contractStatus],"提现状态,"+withdrawLabels[a.withdrawStatus],"账户总权益,"+a.totalEquity,"合约账户权益,"+a.contractEquity,"可用余额,"+a.available,"冻结金额,"+a.frozen]);showToast("已导出账户数据");});
+  function accountHistory(id){var route=id?'#account='+encodeURIComponent(id):'#accounts';try{history.pushState({},'',route);}catch(e){location.hash=route;}}
+  window.BIYA_ACCOUNT_BRIDGE={list:function(){return accounts.map(function(a){return{id:a.id,wallet:a.wallet,type:a.type,parentId:a.parentId};});},open:function(id){openDetail(id,false);},showList:function(){showList(false);}};
+  window.addEventListener("popstate",function(){if(location.hash.startsWith("#contracts")||location.hash.startsWith("#sources"))return;var m=location.hash.match(/^#account=([^&]+)/);if(m)openDetail(decodeURIComponent(m[1]),false);else showList(false);});renderList();
+})();
+</script>
+<script src="admin-contract-assets/vendor/decimal.js"></script>
+<script src="admin-contract-assets/vendor/lucide.js"></script>
+<script src="admin-contract-assets/schema.js"></script>
+<script src="admin-contract-assets/model.js"></script>
+<script src="admin-contract-assets/price-catalogue.js"></script>
+<script src="admin-contract-assets/price-model.js"></script>
+<script src="admin-contract-assets/price-ui.js"></script>
+<script src="admin-contract-assets/pyth-pricing.js"></script>
+<script src="admin-contract-assets/pyth-ui.js"></script>
+<script src="admin-contract-assets/app.js"></script>
+</body>
+</html>
