@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>金库监控 / 紧急控制 — BIYA DEX Admin V1.1.0</title>
+  <title>金库监控 — BIYA DEX Admin V1.1.0</title>
   <style>
     /* ========================================================
      * Design Tokens — copied from ui-foundation.css v1.1
@@ -1446,9 +1446,10 @@
         金库监控
       </div>
       <div class="nav-group-label">风控</div>
-      <div class="nav-item" data-nav="emergency">
+      <div class="nav-item" data-nav="emergency" title="本期暂不做">
         <svg class="nav-item-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M8 2l6 11H2L8 2z"/><path d="M8 7v3M8 12h.01" stroke-linecap="round"/></svg>
         紧急控制
+        <span class="nav-badge-deferred">暂不做</span>
       </div>
       <div class="nav-item" data-nav="blacklist" title="本期暂不做">
         <svg class="nav-item-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="8" cy="8" r="6"/><path d="M5 5l6 6" stroke-linecap="round"/></svg>
@@ -1472,7 +1473,7 @@
       </div>
       <div class="header-spacer"></div>
       <div class="header-actions">
-        <span class="text-small text-muted">V1.1.0 原型 · 金库监控 + 紧急控制</span>
+        <span class="text-small text-muted">V1.1.0 原型 · 仅金库监控</span>
         <div class="header-avatar" title="运营管理员">运</div>
       </div>
     </header>
@@ -1844,7 +1845,7 @@
         <div class="page-header">
           <div>
             <h1 class="page-title">金库监控</h1>
-            <p class="page-desc">监控出金热钱包余额、在途与可用；配置水位须 TOTP。低水位可暂停该网络新提现。刷新余额无需 TOTP。</p>
+            <p class="page-desc">监控出金热钱包余额、在途与可用；配置水位须 TOTP。低水位可暂停该网络新提现。刷新余额无需 TOTP。紧急控制本版不做。</p>
           </div>
           <div class="page-header-actions">
             <button type="button" class="btn btn-md btn-secondary" id="btnTreasuryRefresh">刷新余额</button>
@@ -1912,41 +1913,41 @@
       </div><!-- /pageTreasury -->
 
       <!-- ========== 紧急控制 ========== -->
-      <div class="page-view" id="pageEmergency">
+      <div class="page-view is-deferred" id="pageEmergency">
         <div class="page-header">
           <div>
-            <h1 class="page-title">紧急控制</h1>
-            <p class="page-desc">V1.1.0 交付全站「暂停提现」。启用/停用须 TOTP。暂停交易本版不交付。处理中提现不受暂停影响。</p>
+            <h1 class="page-title">紧急控制 <span class="nav-badge-deferred" style="display:inline-flex;vertical-align:middle;margin-left:8px">暂不做</span></h1>
+            <p class="page-desc">V1.1.0 不纳入紧急控制。页面仅作占位说明，不提供生效中的紧急开关操作。</p>
           </div>
         </div>
+        <div class="scope-deferred-banner"><strong>暂不做：</strong>紧急控制不纳入本期交付与验收。不影响网络/资产开关与金库行内暂停该网提现的主路径。</div>
         <div class="ec-stack">
           <div class="ec-card">
             <h2 class="ec-card-title">紧急控制</h2>
-            <p class="ec-card-desc">暂停提现为全局总闸，优先级高于网络/资产提现开关。停用总闸后，被金库关掉的网络提现不会自动打开。</p>
+            <p class="ec-card-desc">后续可用于管理关键系统开关。本期所有控制操作已禁用。</p>
           </div>
 
-          <div class="ec-row is-disabled" id="ecTradeRow" title="V1.1.0 不交付暂停交易">
+          <div class="ec-row is-disabled" id="ecTradeRow" title="本版暂未开放">
             <div class="ec-row-main">
               <h3 class="ec-row-title">暂停交易</h3>
               <div class="ec-badges">
                 <span class="ec-badge ec-badge-ok">已确认</span>
-                <span class="ec-badge ec-badge-off">本版不交付</span>
+                <span class="ec-badge ec-badge-off">即将支持</span>
               </div>
-              <p class="ec-card-desc" style="margin-top:8px">不提供全站停交易 / 只减仓。本行仅占位，不产生写操作。</p>
             </div>
             <div class="ec-row-action">
-              <button type="button" class="btn btn-md btn-secondary" disabled title="本版不交付">启用</button>
+              <button type="button" class="btn btn-md btn-secondary" disabled>启用</button>
             </div>
           </div>
 
-          <div class="ec-row" id="ecWithdrawRow">
+          <div class="ec-row is-disabled" id="ecWithdrawRow" title="本期暂不做">
             <div class="ec-row-main">
               <h3 class="ec-row-title">暂停提现</h3>
               <div class="ec-badges" id="ecWithdrawBadges"></div>
-              <p class="ec-card-desc" style="margin-top:8px" id="ecWithdrawHint">启用后，所有用户将无法发起新提现。处理中提现继续出金。</p>
+              <p class="ec-card-desc" style="margin-top:8px" id="ecWithdrawHint">本期暂不做，按钮已禁用。</p>
             </div>
             <div class="ec-row-action">
-              <button type="button" class="btn btn-md btn-primary" id="btnEcToggleWithdraw">启用</button>
+              <button type="button" class="btn btn-md btn-primary" id="btnEcToggleWithdraw" data-deferred-write disabled title="本期暂不做">启用</button>
             </div>
           </div>
         </div>
@@ -4206,9 +4207,7 @@
         toast("未找到对应网络，无法关闭提现开关", "err");
         return;
       }
-      var extra = isWithdrawGloballyPaused()
-        ? "当前全局暂停提现已启用。本操作仍会关闭该网络提现开关；停用总闸后该网不会自动打开。"
-        : "仅关闭该网络新提现，不撤销处理中提现。";
+      var extra = "仅关闭该网络新提现，不撤销处理中提现。";
       openTotpModal(
         "安全验证 — 暂停提现",
         "确认暂停网络「" + row.networkName + "」提现？" + extra + " 请输入验证码。",
@@ -4298,27 +4297,23 @@
   }
 
   function renderEmergency() {
-    var paused = isWithdrawGloballyPaused();
     var badges = document.getElementById("ecWithdrawBadges");
     var btn = document.getElementById("btnEcToggleWithdraw");
     var hint = document.getElementById("ecWithdrawHint");
     if (badges) {
       badges.innerHTML =
         '<span class="ec-badge ec-badge-ok">已确认</span>' +
-        (paused
-          ? '<span class="ec-badge ec-badge-on">已启用 · 全站禁提现</span>'
-          : '<span class="ec-badge ec-badge-off">已停用</span>');
+        '<span class="ec-badge ec-badge-off">本期暂不做</span>';
     }
     if (btn) {
-      btn.textContent = paused ? "停用" : "启用";
-      btn.className = paused ? "btn btn-md btn-secondary" : "btn btn-md btn-primary";
+      btn.textContent = "启用";
+      btn.className = "btn btn-md btn-primary";
+      btn.disabled = true;
+      btn.setAttribute("data-deferred-write", "");
+      btn.title = "本期暂不做";
     }
-    if (hint) {
-      hint.textContent = paused
-        ? ("暂停提现已启用：所有用户不可发起新提现。处理中提现继续出金。" +
-          (state.emergency.updatedAt ? " 更新于 " + state.emergency.updatedAt + " · " + (state.emergency.updatedBy || "") : ""))
-        : "启用后，所有用户将无法发起新提现。处理中提现继续出金。";
-    }
+    if (hint) hint.textContent = "本期暂不做，按钮已禁用。";
+    state.emergency.pauseWithdraw = false;
     updateWithdrawPauseBanners();
   }
 
@@ -4361,18 +4356,7 @@
   }
 
   function togglePauseWithdraw() {
-    var next = !isWithdrawGloballyPaused();
-    var title = next ? "安全验证 — 启用暂停提现" : "安全验证 — 停用暂停提现";
-    var msg = next
-      ? "确认启用全站「暂停提现」？启用后所有用户无法发起新提现，处理中提现不受影响。请输入验证码。"
-      : "确认停用全站「暂停提现」？停用后按网络/资产开关判断；被金库关掉的网络不会自动打开。请输入验证码。";
-    openTotpModal(title, msg, function () {
-      state.emergency.pauseWithdraw = next;
-      state.emergency.updatedAt = nowStr();
-      state.emergency.updatedBy = "运营管理员";
-      toast(next ? "已启用暂停提现（全站禁提现）" : "已停用暂停提现");
-      renderEmergency();
-    });
+    toast("紧急控制本期暂不做", "err");
   }
 
   function blStatusTag(s) {
@@ -4495,10 +4479,10 @@
     renderBlacklistTable();
   }
 
-  /* 提现人工审核、黑名单写操作本期仍禁用；紧急暂停提现 V1.1.0 交付 */
+  /* 提现人工审核、紧急控制、黑名单写操作本期仍禁用 */
 
   document.getElementById("btnEcToggleWithdraw").addEventListener("click", function () {
-    togglePauseWithdraw();
+    toast("紧急控制本期暂不做", "err");
   });
   document.getElementById("btnAddBlacklist").addEventListener("click", function () {
     toast("黑名单本期暂不做", "err");
