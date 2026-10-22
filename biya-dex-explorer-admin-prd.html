@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>BIYA DEX Explorer Admin · 产品需求文档 V1.0</title>
+  <title>BIYA DEX Explorer Admin · 产品需求文档 V1.1.6</title>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/github-markdown-css@5.6.1/github-markdown-light.min.css" />
   <style>
     * { box-sizing: border-box; }
@@ -103,7 +103,7 @@
 <tbody>
 <tr>
 <td>文档版本</td>
-<td><strong>V1.1.4</strong></td>
+<td><strong>V1.1.6</strong></td>
 </tr>
 <tr>
 <td>创建日期</td>
@@ -380,12 +380,12 @@
 <tr>
 <td>筛选区</td>
 <td>条件</td>
-<td>查询回第一页；重置恢复默认</td>
+<td>查询回第一页、恢复默认排序</td>
 </tr>
 <tr>
 <td>列表区</td>
 <td>表格、条数、分页</td>
-<td>每页 <strong>10</strong> 条；切换页保留筛选</td>
+<td>见下方「数据列表」；切换页保留筛选与当前排序</td>
 </tr>
 <tr>
 <td>抽屉</td>
@@ -409,8 +409,12 @@
 </thead>
 <tbody>
 <tr>
+<td>数据列表</td>
+<td>凡表格均须写清排序、默认条数、是否分页。规则见下表</td>
+</tr>
+<tr>
 <td>分页</td>
-<td>每页 10 条；展示「共 x 条」「时间 UTC+8 · 每页 10 条」「显示 a–b 条，共 x 条」</td>
+<td>告警中心每页 <strong>10</strong> 条；展示「共 x 条」「时间 UTC+8 · 每页 10 条」「显示 a–b 条，共 x 条」</td>
 </tr>
 <tr>
 <td>时间</td>
@@ -430,6 +434,62 @@
 </tr>
 </tbody>
 </table>
+<p><strong>数据列表（排序与条数）</strong></p>
+<table>
+<thead>
+<tr>
+<th>列表</th>
+<th>数据范围</th>
+<th>默认排序</th>
+<th>可改排序</th>
+<th>默认条数</th>
+<th>超出时</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>运行总览 · 需要关注</td>
+<td>仅「告警中」</td>
+<td>最近发生降序 → 首次发生降序 → 告警编号降序</td>
+<td>否</td>
+<td>最多 <strong>5</strong> 条</td>
+<td>第 6 条及以后不在本卡展示；点右上「全部告警 →」进入告警中心查看</td>
+</tr>
+<tr>
+<td>告警中心</td>
+<td>当前筛选结果（默认全部）</td>
+<td>同上（最近发生降序）</td>
+<td>可点列：首次发生、类别、状态；再点同一列切换升/降序</td>
+<td>每页 <strong>10</strong> 条，默认第 1 页</td>
+<td>分页翻看；筛选 / 重置后回第 1 页并恢复默认排序</td>
+</tr>
+<tr>
+<td>详情 · Lark 通知记录</td>
+<td>该条 <code>lark</code></td>
+<td>发送时间升序（最早在上）</td>
+<td>否</td>
+<td>全部展示，不分页</td>
+<td>—</td>
+</tr>
+<tr>
+<td>详情 · 状态变更</td>
+<td>该条 <code>statusChanges</code></td>
+<td>写入时间升序</td>
+<td>否</td>
+<td>全部展示，不分页</td>
+<td>—</td>
+</tr>
+<tr>
+<td>详情 · 备注</td>
+<td>该条 <code>notes</code></td>
+<td>写入时间升序</td>
+<td>否</td>
+<td>全部展示，不分页</td>
+<td>—</td>
+</tr>
+</tbody>
+</table>
+<p>时间相同则比较下一关键字。告警编号按字符串降序（如 <code>ALT-1003</code> 在 <code>ALT-1001</code> 前）。</p>
 <p><strong>全局搜索</strong></p>
 <p>占位文案：<code>区块高度 / 区块哈希</code></p>
 <table>
@@ -1036,7 +1096,7 @@
 </tr>
 </tbody>
 </table>
-<p><strong>需要关注：</strong> 入口 <code>全部告警 →</code>。列：告警、影响对象、处理状态、操作（查看处理）。告警中最多 <strong>4</strong> 条。无则空态：<code>当前没有待处理告警</code>。</p>
+<p><strong>需要关注：</strong> 入口 <code>全部告警 →</code>。列：告警、影响对象、处理状态、操作（查看处理）。只含「告警中」，按最近发生降序，最多展示 <strong>5</strong> 条。第 6 条及以后不出现在本卡，须点「全部告警 →」进入告警中心查看。无则空态：<code>当前没有待处理告警</code>。角标与待处理告警数字仍为全部告警中条数，不受 5 条截断影响。</p>
 <h3 id="35">3.5 交互规则</h3>
 <table>
 <thead>
@@ -1099,8 +1159,8 @@
 <td>主结论为自有节点正常；底栏按钮为查看告警记录</td>
 </tr>
 <tr>
-<td>告警中有 5 条</td>
-<td>「需要关注」最多展示 4 条；角标为 5</td>
+<td>告警中有 6 条</td>
+<td>「需要关注」最多展示 5 条；第 6 条只在告警中心列表可见；角标与待处理数字为 6</td>
 </tr>
 <tr>
 <td>当前巡检三项均通过但对应告警仍为告警中</td>
@@ -1176,8 +1236,8 @@
 </tr>
 <tr>
 <td>2</td>
-<td>筛选或 Tab「告警中」</td>
-<td>过滤，回第一页</td>
+<td>按告警类别或告警状态筛选</td>
+<td>过滤，回第一页，恢复默认排序（最近发生降序）</td>
 <td>每页 10 条</td>
 </tr>
 <tr>
@@ -1303,11 +1363,74 @@
 </table>
 <p><strong>不进目录：</strong> 查询服务不可用、数据同步延迟、未知类型、首页统计不一致、协议拒绝、某提议者不出块、两块间隔几秒、每秒交易数（TPS）偏低。动作与结果不成对并入缺口「内容不完整」。</p>
 <h3 id="45">4.5 列表与筛选</h3>
-<p><strong>Tab：</strong> 全部告警 / 告警中</p>
-<p><strong>筛选：</strong> 告警关键字（标题与类别模糊，占位 <code>不可达 / 不前进 / 缺口</code>）、类别（3 类）、状态（告警中 / 已处理）</p>
+<p>无 Tab。不提供「全部告警 / 告警中」页签，也不提供告警关键字。从运行总览「全部告警 →」进入时打开本页，筛选为默认（类别、状态均为全部）。</p>
+<p><strong>筛选：</strong> 仅告警类别（3 类）、告警状态（告警中 / 已处理）。两项均为下拉，空值为「全部」。</p>
 <p><strong>列：</strong> 告警编号 / 内容、类别、首次发生、Lark、状态、操作（详情；告警中另有处理；备注）</p>
 <p>Lark 列展示最近一条：已通知 / 通知失败。无记录时 <code>未发送</code>。</p>
 <p>已处理行不展示「处理」。</p>
+<p><strong>排序</strong></p>
+<table>
+<thead>
+<tr>
+<th>项</th>
+<th>规则</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>默认</td>
+<td>最近发生降序 → 首次发生降序 → 告警编号降序</td>
+</tr>
+<tr>
+<td>可点列</td>
+<td>首次发生、类别、状态。第一次点击该列为降序，再点切换升序</td>
+</tr>
+<tr>
+<td>不可点列</td>
+<td>告警编号 / 内容、Lark、操作</td>
+</tr>
+<tr>
+<td>恢复默认</td>
+<td>查询、重置</td>
+</tr>
+</tbody>
+</table>
+<p>列表不展示「最近发生」列，默认仍按该字段排，保证刚更新快照的告警中排在前面。</p>
+<p><strong>分页</strong></p>
+<table>
+<thead>
+<tr>
+<th>项</th>
+<th>规则</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>每页</td>
+<td><strong>10</strong> 条</td>
+</tr>
+<tr>
+<td>默认页</td>
+<td>第 1 页</td>
+</tr>
+<tr>
+<td>表头</td>
+<td><code>共 x 条</code>；<code>时间 UTC+8 · 每页 10 条</code></td>
+</tr>
+<tr>
+<td>表尾</td>
+<td><code>显示 a–b 条，共 x 条</code>；上一页 / 页码 / 下一页</td>
+</tr>
+<tr>
+<td>筛选或重置</td>
+<td>回到第 1 页</td>
+</tr>
+<tr>
+<td>切换页</td>
+<td>保留当前筛选与排序</td>
+</tr>
+</tbody>
+</table>
 <h3 id="46">4.6 状态</h3>
 <p>系统写入的状态 <strong>只有「告警中」</strong>。无「已恢复」。值班仅可将「告警中」处理为「已处理」，<strong>不可改回</strong>。</p>
 <table>
@@ -2000,7 +2123,7 @@
 <tbody>
 <tr>
 <td>进入告警中心</td>
-<td>可见 3 类筛选；告警中有「处理」；已处理无「处理」；无补齐、分派、已恢复、查看关联数据</td>
+<td>无 Tab、无告警关键字；筛选仅告警类别与告警状态；告警中有「处理」；已处理无「处理」；无补齐、分派、已恢复、查看关联数据</td>
 </tr>
 <tr>
 <td>连续 3 次探测失败</td>
@@ -2386,8 +2509,13 @@
 </tr>
 <tr>
 <td>总览</td>
-<td>告警中 5 条</td>
-<td>需要关注最多 4 条；角标为 5</td>
+<td>告警中 6 条</td>
+<td>需要关注最多 5 条；第 6 条只在告警中心列表；角标为 6</td>
+</tr>
+<tr>
+<td>告警</td>
+<td>进入告警中心</td>
+<td>默认最近发生降序、每页 10 条、第 1 页</td>
 </tr>
 <tr>
 <td>总览</td>
@@ -2397,7 +2525,7 @@
 <tr>
 <td>告警</td>
 <td>进入告警中心</td>
-<td>可见 3 类；告警中有处理；已处理无处理；无已恢复、无查看关联数据</td>
+<td>无 Tab、无告警关键字；筛选仅类别与状态；告警中有处理；已处理无处理；无已恢复、无查看关联数据</td>
 </tr>
 <tr>
 <td>告警</td>
@@ -2666,6 +2794,18 @@
 <td>V1.1.4</td>
 <td>2026-10-22</td>
 <td>4.7 告警详情按字段补数据来源与显示逻辑</td>
+<td>Terry</td>
+</tr>
+<tr>
+<td>V1.1.5</td>
+<td>2026-10-22</td>
+<td>数据列表补排序与默认条数；需要关注最多 5 条</td>
+<td>Terry</td>
+</tr>
+<tr>
+<td>V1.1.6</td>
+<td>2026-10-22</td>
+<td>告警中心去掉 Tab 与告警关键字，筛选仅类别与状态</td>
 <td>Terry</td>
 </tr>
 </tbody>
