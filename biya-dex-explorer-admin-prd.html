@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta http-equiv="Cache-Control" content="no-cache" />
-  <title>BIYA DEX Explorer Admin · 产品需求文档 V1.1.7</title>
+  <title>BIYA DEX Explorer Admin · 产品需求文档 V1.1.8</title>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/github-markdown-css@5.6.1/github-markdown-light.min.css" />
   <style>
     * { box-sizing: border-box; }
@@ -34,7 +34,7 @@
   </style>
 </head>
 <body>
-  <!-- generated from BIYA_DEX_Explorer_Admin_PRD_V1.0.md · V1.1.7 -->
+  <!-- generated from BIYA_DEX_Explorer_Admin_PRD_V1.0.md · V1.1.8 -->
   <div class="topbar">
     <a href="./index.html">文档入口</a>
     <a href="./biya-dex-explorer-admin.html">打开管理端原型</a>
@@ -42,13 +42,14 @@
   </div>
   <div class="layout">
     <nav class="sidebar">
-      <div class="sidebar-header">Explorer Admin PRD V1.1.7</div>
+      <div class="sidebar-header">Explorer Admin PRD V1.1.8</div>
       <ul class="sidebar-toc">
       <li class="l2"><a href="#文档说明">文档说明</a></li>
       <li class="l2"><a href="#1-本版交付摘要">1. 本版交付摘要</a></li>
       <li class="l3"><a href="#11-产品目标">1.1 产品目标</a></li>
-      <li class="l3"><a href="#12-核心数据模型">1.2 核心数据模型</a></li>
-      <li class="l3"><a href="#13-本版交付能力">1.3 本版交付能力</a></li>
+      <li class="l3"><a href="#12-v10-功能清单">1.2 V1.0 功能清单</a></li>
+      <li class="l3"><a href="#13-核心数据模型">1.3 核心数据模型</a></li>
+      <li class="l3"><a href="#14-本版不做">1.4 本版不做</a></li>
       <li class="l2"><a href="#2-后台框架与通用规则">2. 后台框架与通用规则</a></li>
       <li class="l3"><a href="#21-模块说明">2.1 模块说明</a></li>
       <li class="l3"><a href="#22-页面框架">2.2 页面框架</a></li>
@@ -105,7 +106,7 @@
 <tbody>
 <tr>
 <td>文档版本</td>
-<td><strong>V1.1.7</strong></td>
+<td><strong>V1.1.8</strong></td>
 </tr>
 <tr>
 <td>创建日期</td>
@@ -125,7 +126,7 @@
 </tr>
 <tr>
 <td>核心能力</td>
-<td>运行总览 → 告警中心（查看 / 备注 / 处理 / Lark）</td>
+<td>运行总览、告警中心、Lark 通知、区块核对（顶栏）</td>
 </tr>
 </tbody>
 </table>
@@ -178,14 +179,47 @@
 </tbody>
 </table>
 <p><strong>非目标：</strong> 节点修复、回补/重放、独立查询菜单、操作记录页、登录页、角色与权限配置、交易运营、EVM/Token/合约、告警关联交易。</p>
-<h3 id="12-核心数据模型">1.2 核心数据模型</h3>
+<h3 id="12-v10-功能清单">1.2 V1.0 功能清单</h3>
+<p>本期验收以此表为准。侧栏只有 1、2；3 挂在告警上，不单独成菜单；4 为顶栏附属，不单独成菜单。</p>
+<table>
+<thead>
+<tr>
+<th>序号</th>
+<th>模块</th>
+<th>功能说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>运行总览</td>
+<td>作为 Explorer 后台落地页，只读展示自有节点：最新高度、共识轮次、最新区块时间、待处理告警条数；按连通 → 进度 → 连续性给出一条主结论（节点不可达 / 不前进 / 区块缺口 / 自有节点正常）；观察与前台同一窗口的总交易数、24h 链上交易、地址总数、24h 活跃地址，以及节点连通 / 区块查询两行耗时；「需要关注」只列告警中、最多 5 条。不配 TPS、不改高度或阈值、不把节点观测改成正常，首页统计不单独告警</td>
+</tr>
+<tr>
+<td>2</td>
+<td>告警中心</td>
+<td>值班查看与结案台：目录仅节点不可达、节点不前进、区块缺口三类；列表按类别 / 状态筛选，默认最近发生降序、每页 10 条；详情只读告警当时快照，可备注（≥3 字）、将告警中处理为已处理且不可改回。巡检不自动结案、无「已恢复」、无分派 / 补齐 / 重处理、无查看关联数据、不打开交易或地址</td>
+</tr>
+<tr>
+<td>3</td>
+<td>Lark 通知</td>
+<td>仅新开「告警中」按三类模板向 <code>BIYA-DEX Explorer 告警</code> 发一条「产生」；列表与详情记录已通知 / 通知失败。去重更新快照、备注、处理、巡检条件消失都不发、不写恢复消息；失败不改告警状态，后台不重发</td>
+</tr>
+<tr>
+<td>4</td>
+<td>区块核对</td>
+<td>顶栏按区块高度 / 区块哈希打开只读抽屉（区块概览 / 数据来源），供核对某一高度是否可查询或为缺口；无侧栏查询菜单，无块内交易、无交易 / 地址抽屉、无前后翻页，不匹配父哈希，不作为告警结案路径</td>
+</tr>
+</tbody>
+</table>
+<h3 id="13-核心数据模型">1.3 核心数据模型</h3>
 <table>
 <thead>
 <tr>
 <th>层级</th>
 <th>实体</th>
 <th>标识</th>
-<th>核心作用</th>
+<th>对应 1.2</th>
 <th>人工可改</th>
 </tr>
 </thead>
@@ -194,28 +228,28 @@
 <td>L1</td>
 <td>节点观测</td>
 <td>自有节点</td>
-<td>可达性、执行高度、共识轮次、最新区块时间</td>
+<td>1 运行总览</td>
 <td>不可改</td>
 </tr>
 <tr>
 <td>L2</td>
 <td>告警</td>
 <td>告警编号</td>
-<td>3 类目录、状态、证据快照、备注</td>
+<td>2 告警中心</td>
 <td>追加备注；将告警中处理为已处理</td>
 </tr>
 <tr>
 <td>L2</td>
 <td>Lark 记录</td>
 <td>告警子记录</td>
-<td>产生与发送结果</td>
+<td>3 Lark 通知</td>
 <td>系统写</td>
 </tr>
 <tr>
 <td>L3</td>
 <td>区块</td>
 <td>高度 / 区块哈希</td>
-<td>顶栏只读核验</td>
+<td>4 区块核对</td>
 <td>不可改</td>
 </tr>
 </tbody>
@@ -227,35 +261,8 @@
 <li>值班把「告警中」处理为「已处理」后，该条不再计入待处理；<strong>不可</strong>改回告警中。</li>
 <li>协议执行拒绝、未登记交易类型：前台照常展示，不进告警目录。本期告警不关联具体交易。</li>
 </ul>
-<h3 id="13-本版交付能力">1.3 本版交付能力</h3>
-<table>
-<thead>
-<tr>
-<th>优先级</th>
-<th>能力</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><strong>P0</strong></td>
-<td>运行总览只读（高度、轮次、最新块时间、巡检、首页统计观察、待处理告警入口）</td>
-</tr>
-<tr>
-<td><strong>P0</strong></td>
-<td>告警中心：3 类列表、筛选、详情、告警当时快照、备注、将告警中处理为已处理</td>
-</tr>
-<tr>
-<td><strong>P0</strong></td>
-<td>新开告警按类型发送 Lark（三类模板）；记录发送成功/失败</td>
-</tr>
-<tr>
-<td><strong>P0</strong></td>
-<td>顶栏按区块高度 / 区块哈希打开只读区块抽屉（可选核对，不是告警结案路径）</td>
-</tr>
-</tbody>
-</table>
-<p>后续（不在本期验收）：交易类型中文映射、地址标签、回补操作台、DEX 只读 API、角色与权限配置。</p>
-<p><strong>本版不做</strong></p>
+<h3 id="14-本版不做">1.4 本版不做</h3>
+<p>不在 1.2 四项之内的能力本期不验收。后续（不在本期）：交易类型中文映射、地址标签、回补操作台、DEX 只读 API、角色与权限配置。</p>
 <table>
 <thead>
 <tr>
@@ -274,7 +281,7 @@
 </tr>
 <tr>
 <td>独立查询菜单</td>
-<td>区块/交易/地址/数据检查/交易类型/提议者不是侧栏模块</td>
+<td>区块/交易/地址/数据检查/交易类型/提议者不是侧栏模块；区块核对只走顶栏</td>
 </tr>
 <tr>
 <td>告警关联交易</td>
@@ -319,11 +326,15 @@
 </tr>
 <tr>
 <td><strong>管理模块</strong></td>
-<td>仅运行总览、告警中心；无独立查询菜单</td>
+<td>侧栏仅 1.2 的「运行总览」「告警中心」</td>
+</tr>
+<tr>
+<td><strong>系统能力</strong></td>
+<td>1.2 的「Lark 通知」：新开告警时发送，无独立菜单</td>
 </tr>
 <tr>
 <td><strong>附属</strong></td>
-<td>顶栏搜索；命中高度或区块哈希时打开区块抽屉</td>
+<td>1.2 的「区块核对」：顶栏搜索打开区块抽屉，无独立菜单</td>
 </tr>
 </tbody>
 </table>
@@ -673,6 +684,10 @@
 </thead>
 <tbody>
 <tr>
+<td><strong>对应</strong></td>
+<td><a href="#12-v10-功能清单">1.2</a> 序号 4</td>
+</tr>
+<tr>
 <td><strong>触发</strong></td>
 <td>顶栏搜索区块高度或区块哈希</td>
 </tr>
@@ -848,6 +863,10 @@
 </tr>
 </thead>
 <tbody>
+<tr>
+<td><strong>对应</strong></td>
+<td><a href="#12-v10-功能清单">1.2</a> 序号 1</td>
+</tr>
 <tr>
 <td><strong>触发</strong></td>
 <td>进入「运行总览」；后台落地页</td>
@@ -1189,6 +1208,10 @@
 </tr>
 </thead>
 <tbody>
+<tr>
+<td><strong>对应</strong></td>
+<td><a href="#12-v10-功能清单">1.2</a> 序号 2；Lark 见序号 3</td>
+</tr>
 <tr>
 <td><strong>触发</strong></td>
 <td>告警中心菜单或总览跳转</td>
@@ -2725,6 +2748,12 @@
 <td>V1.1.7</td>
 <td>2026-10-22</td>
 <td>去掉已拍板口径 A1–A4；§2 按原型区分运行总览与告警中心页面框架</td>
+<td>Terry</td>
+</tr>
+<tr>
+<td>V1.1.8</td>
+<td>2026-10-22</td>
+<td>1.2 改为 V1.0 功能清单；数据模型与页面模块按四项对齐</td>
 <td>Terry</td>
 </tr>
 </tbody>
