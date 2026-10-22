@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>运行总览 · BIYA DEX Explorer Admin</title>
+<style>
+/* BIYA Admin: shared visual language with the deposit/withdraw Admin V1.1.0. */
+:root{--bg:#f5f7fa;--surface:#fff;--subtle:#fafbfc;--line:#e5e7eb;--line-light:#eef0f3;--text:#111827;--secondary:#344054;--muted:#667085;--disabled:#98a2b3;--blue:#3b82f6;--blue-hover:#2563eb;--blue-light:#eff6ff;--green:#027a48;--green-light:#ecfdf3;--red:#b42318;--red-light:#fef3f2;--orange:#b54708;--orange-light:#fffaeb;--sidebar:220px;--header:56px;--radius:8px;--shadow:0 2px 8px rgba(16,24,40,.04)}
+*{box-sizing:border-box}body{margin:0;color:var(--text);background:var(--bg);font:13px/1.5 -apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif}button,input,select,textarea{font:inherit}button,a,input,select,textarea{outline-offset:3px}button:focus-visible,a:focus-visible{outline:2px solid #60a5fa}button{cursor:pointer}button:disabled{cursor:not-allowed;opacity:.45}a{color:var(--blue-hover);text-decoration:none}a:hover{text-decoration:underline}h1,h2,h3,p{margin:0}h1{font-size:20px;font-weight:600;line-height:1.3}h2{font-size:15px;font-weight:600}h3{font-size:13px;font-weight:600}svg{flex-shrink:0}.icon{width:16px;height:16px;vertical-align:-3px;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}.sidebar{position:fixed;inset:0 auto 0 0;width:var(--sidebar);background:#1c2333;display:flex;flex-direction:column;z-index:30;color:#fff}.brand{height:56px;display:flex;align-items:center;gap:9px;padding:0 18px;border-bottom:1px solid #ffffff14;font-weight:700;letter-spacing:.5px}.brand-mark{width:25px;height:25px;background:#3b82f6;border-radius:7px;display:grid;place-items:center;font-size:16px}.brand small{font-size:9px;color:#a5b4fc;border:1px solid #ffffff24;border-radius:4px;padding:1px 4px;font-weight:500}.product{padding:16px 18px 12px}.product-title{color:#f1f5f9;font-size:13px;font-weight:500}.product-desc{color:#7e8ca5;font-size:11px;margin-top:3px}.navigation{overflow:auto;flex:1;padding-bottom:10px}.nav-label{color:#77839a;font-size:10px;letter-spacing:1px;padding:17px 18px 6px}.nav-item{display:flex;gap:10px;align-items:center;width:100%;height:37px;background:none;border:0;color:#9ea9bc;padding:0 18px;text-align:left;border-left:3px solid transparent}.nav-item:hover{color:#fff;background:#ffffff08}.nav-item.active{background:#3b82f629;color:#93c5fd;border-left-color:#60a5fa}.nav-count{margin-left:auto;background:#ef44442b;color:#fda4a4;border-radius:4px;font:11px/18px ui-monospace,monospace;padding:0 5px}.sidebar-bottom{padding:14px 18px;border-top:1px solid #ffffff12;color:#7e8ca5;font-size:11px}.status-dot{display:inline-block;width:6px;height:6px;border-radius:50%;background:#22c55e;margin-right:7px}.status-dot.warn{background:#f59e0b}.main{margin-left:var(--sidebar);min-width:0}.header{height:var(--header);background:#fff;border-bottom:1px solid var(--line);display:flex;align-items:center;gap:20px;padding:0 24px;position:sticky;top:0;z-index:25}.crumb{white-space:nowrap;display:flex;gap:10px;color:var(--muted);font-size:12px}.crumb b{font-weight:500;color:var(--text)}.global-search{margin-left:auto;position:relative;width:300px}.global-search form{display:flex;align-items:center;border:1px solid var(--line);border-radius:6px;padding-left:10px;background:var(--subtle)}.global-search input{width:100%;border:0;background:none;padding:7px 8px;font-size:12px;min-width:0}.search-shortcut{font-size:10px;color:#98a2b3;border:1px solid #e5e7eb;border-radius:3px;padding:0 4px;margin-right:6px;white-space:nowrap}.search-results{position:absolute;top:38px;width:430px;right:0;background:white;border:1px solid var(--line);border-radius:8px;box-shadow:0 12px 30px #10182820;max-height:430px;overflow:auto;z-index:40}.search-group{padding:9px 12px 5px;font-size:11px;color:var(--muted);background:var(--subtle)}.search-result{display:block;width:100%;text-align:left;background:#fff;border:0;padding:10px 12px;border-bottom:1px solid var(--line-light);font-size:12px;overflow:hidden;text-overflow:ellipsis}.search-result:hover{background:var(--blue-light)}.network-pill{color:var(--muted);white-space:nowrap;font-size:12px}.user-button{border:0;background:none;display:flex;align-items:center;gap:8px;color:var(--secondary);padding:0;white-space:nowrap;font-size:12px}.avatar{width:28px;height:28px;background:#dbeafe;border-radius:50%;display:grid;place-items:center;color:#2563eb;font-size:12px;font-weight:600}.page{padding:24px;max-width:1900px;margin:auto}.page-heading{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;margin-bottom:20px}.description{color:var(--muted);font-size:12px;margin-top:6px}.actions{display:flex;align-items:center;gap:8px;flex-wrap:wrap}.btn{border:1px solid var(--line);border-radius:6px;background:white;color:var(--secondary);height:32px;padding:0 12px;display:inline-flex;align-items:center;justify-content:center;gap:6px;white-space:nowrap;font-size:12px}.btn:hover{background:#f2f4f7;border-color:#d0d5dd}.btn.primary{background:var(--blue);border-color:var(--blue);color:white}.btn.primary:hover{background:var(--blue-hover)}.btn.danger{color:var(--red);border-color:#fecdca;background:white}.btn.small{height:28px;padding:0 9px;font-size:12px}.link-btn{border:0;padding:0;background:none;color:var(--blue-hover);font-size:12px;line-height:1.7;white-space:nowrap}.link-btn:hover{text-decoration:underline}.link-btn.danger{color:var(--red)}.muted{color:var(--muted)}.tiny{font-size:11px}.strong{font-weight:600}.mono{font:12px/1.5 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-variant-numeric:tabular-nums}.num{font-variant-numeric:tabular-nums}.badge{display:inline-flex;gap:5px;align-items:center;border:1px solid #e4e7ec;background:#f2f4f7;color:#475467;border-radius:5px;padding:2px 7px;font-size:11px;white-space:nowrap;font-weight:500}.badge.green{color:var(--green);border-color:#a6f4c5;background:var(--green-light)}.badge.orange{color:var(--orange);border-color:#fedf89;background:var(--orange-light)}.badge.red{color:var(--red);border-color:#fecdca;background:var(--red-light)}.badge.blue{color:#1d4ed8;border-color:#bfdbfe;background:#eff6ff}.card{background:white;border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden;margin-bottom:18px}.card-head{padding:14px 16px;border-bottom:1px solid var(--line-light);display:flex;align-items:center;justify-content:space-between;gap:12px}.card-body{padding:16px}.card-head small{font-weight:400;color:var(--muted);font-size:11px;margin-left:8px}.metrics{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px;margin-bottom:18px}.metric{background:white;border:1px solid var(--line);border-radius:8px;padding:16px;min-width:0;position:relative;box-shadow:var(--shadow)}.metric-label{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--muted);margin-bottom:8px}.metric-label .icon{margin-left:auto;color:#98a2b3}.metric-value{font-size:24px;letter-spacing:-.5px;font-weight:600;line-height:1.3;white-space:normal;font-variant-numeric:tabular-nums}.metric-foot{font-size:11px;color:var(--muted);margin-top:7px;display:flex;gap:6px;align-items:center}.green-text{color:var(--green)}.red-text{color:var(--red)}.orange-text{color:var(--orange)}.two-col{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,1fr);gap:18px;align-items:stretch;margin-bottom:18px}.two-col>.card{height:100%;display:flex;flex-direction:column;margin-bottom:0}.two-col>.card>.card-body{flex:1}.two-col.equal{grid-template-columns:1fr 1fr}.overview-line{display:flex;align-items:center;gap:8px;flex-wrap:wrap;font-size:11px;color:var(--muted)}.stages{display:grid;grid-template-columns:repeat(3,1fr);gap:0;padding:20px 16px;background:#fff}.stage{position:relative;padding:0 14px;border-right:1px solid var(--line-light)}.stage:last-child{border:0}.stage-title{font-size:11px;color:var(--muted);display:flex;gap:5px;align-items:center}.stage-value{font-size:17px;font-weight:600;margin:6px 0}.stage-note{font-size:11px;line-height:1.7;color:var(--muted);min-height:38px}.stage-status{font-size:11px;margin-top:8px}.sync-summary{padding:12px 18px;display:flex;justify-content:space-between;align-items:center;gap:16px;border-top:1px solid var(--line-light);background:var(--subtle);color:var(--muted);font-size:12px}.sync-summary>span{max-width:80%}.service-row{display:flex;align-items:center;gap:10px;padding:11px 0;border-bottom:1px solid var(--line-light)}.service-row:last-child{border:0}.service-name{font-size:12px;flex:1}.service-name small{display:block;color:var(--muted);font-size:10px;margin-top:2px}.chart{height:125px;width:100%;display:block}.chart-labels{display:flex;justify-content:space-between;color:var(--disabled);font-size:10px;margin-top:5px}.filters{display:flex;gap:12px;align-items:flex-end;flex-wrap:wrap;padding:16px}.field{display:flex;flex-direction:column;gap:6px;min-width:0}.field label{font-size:12px;color:var(--muted)}.field input,.field select,.field textarea{height:32px;padding:5px 10px;border:1px solid #d0d5dd;border-radius:5px;background:#fff;color:var(--secondary);min-width:0;width:100%}.field textarea{height:75px;resize:vertical}.field input:focus,.field select:focus,.field textarea:focus{border-color:#60a5fa;outline:2px solid #dbeafe}.field-grow{flex:1;min-width:170px}.field-date{width:145px}.field-select{width:150px}.table-wrap{overflow:auto;max-width:100%}table{width:100%;border-collapse:separate;border-spacing:0;text-align:left;white-space:nowrap}th{height:40px;background:#fafbfc;border-bottom:1px solid var(--line);font-weight:500;font-size:12px;color:#475467;padding:0 12px}td{height:44px;border-bottom:1px solid var(--line-light);padding:8px 12px;font-size:12px;color:var(--secondary)}tbody tr:last-child td{border-bottom:0}tbody tr:hover td{background:#fafbfc}th.sort{cursor:pointer}th.sort:hover{color:var(--blue)}.ops{position:sticky;right:0;background:white;box-shadow:-1px 0 0 var(--line-light);min-width:100px}.ops .actions{flex-wrap:nowrap;gap:12px}th.ops{background:#fafbfc}table .sub{display:block;font-size:10px;color:var(--muted);margin-top:2px}.copy{border:0;background:none;color:#98a2b3;padding:0 3px;font-size:12px}.copy:hover{color:var(--blue)}.table-foot{display:flex;align-items:center;justify-content:space-between;border-top:1px solid var(--line-light);padding:11px 16px;gap:12px;font-size:11px;color:var(--muted)}.pagination{display:flex;gap:5px;align-items:center}.pagination button{width:27px;height:27px;border:1px solid var(--line);border-radius:4px;background:#fff;color:var(--secondary);font-size:11px}.pagination button.active{background:var(--blue);border-color:var(--blue);color:#fff}.tabs{display:flex;gap:20px;border-bottom:1px solid var(--line);padding:0 16px;background:white}.tab{border:0;background:none;padding:12px 1px 10px;color:var(--muted);border-bottom:2px solid transparent;font-size:12px;white-space:nowrap}.tab.active{border-bottom-color:var(--blue);color:var(--blue-hover);font-weight:500}.empty{text-align:center;padding:52px 24px;color:var(--muted)}.empty-symbol{font-size:25px;color:#98a2b3;margin-bottom:10px}.empty p{font-size:12px;margin:8px 0 16px}.summary-strip{display:flex;gap:24px;flex-wrap:wrap;margin-bottom:16px;color:var(--muted);font-size:12px}.summary-strip strong{font-weight:600;color:var(--text);margin-left:6px}.progress{height:5px;background:#eef2f6;border-radius:8px;overflow:hidden;min-width:90px}.progress span{display:block;background:var(--blue);height:100%;transition:width .3s}.detail-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px 24px}.kv{min-width:0}.kv label{display:block;color:var(--muted);font-size:11px;margin-bottom:5px}.kv .value{font-size:12px;word-break:break-all}.kv.full{grid-column:1/-1}.section{margin-bottom:24px}.section h3{padding-bottom:10px;margin-bottom:14px;border-bottom:1px solid var(--line-light)}.drawer-overlay,.modal-overlay{position:fixed;inset:0;z-index:80;background:#10182850;display:none}.drawer-overlay.open,.modal-overlay.open{display:block}.drawer{width:680px;max-width:calc(100vw - 30px);height:100%;position:absolute;right:0;top:0;background:white;display:flex;flex-direction:column;box-shadow:-8px 0 32px #10182815;animation:slide .18s ease}.drawer-head{height:56px;padding:0 20px;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid var(--line);flex-shrink:0}.drawer-head h2{font-size:16px}.drawer-body{padding:20px;overflow:auto;flex:1;min-height:0}.drawer-foot{padding:12px 20px;border-top:1px solid var(--line);display:flex;justify-content:space-between;gap:8px;flex-shrink:0}.close{border:0;background:none;color:var(--muted);width:28px;height:28px;border-radius:5px;font-size:20px}.close:hover{background:#f2f4f7}.drawer .tabs{padding:0;margin-top:-8px;margin-bottom:20px}.drawer table{font-size:11px}.drawer td,.drawer th{padding-left:8px;padding-right:8px;font-size:11px}.modal-overlay{z-index:100;overflow:auto;padding:40px 16px}.modal{width:600px;max-width:100%;margin:0 auto;background:white;border-radius:12px;box-shadow:0 20px 40px #10182830;overflow:hidden;max-height:calc(100vh - 80px);display:flex;flex-direction:column}.modal-head{padding:16px 20px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:center}.modal-body{padding:20px;overflow:auto;flex:1}.modal-foot{display:flex;justify-content:flex-end;gap:8px;padding:12px 20px;border-top:1px solid var(--line)}.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}.form-grid .full{grid-column:1/-1}.form-error{font-size:12px;color:var(--red);margin-bottom:12px;background:var(--red-light);border-radius:5px;padding:8px 10px}.preflight{border:1px solid #bfdbfe;background:#eff6ff;border-radius:6px;padding:12px;font-size:12px;line-height:1.9}.stepper{display:flex;gap:12px;margin-bottom:20px}.stepper span{font-size:11px;color:var(--disabled);display:flex;align-items:center;gap:5px;flex:1}.stepper i{font-style:normal;background:#f2f4f7;width:20px;height:20px;display:grid;place-items:center;border-radius:50%}.stepper .active{color:var(--blue)}.stepper .active i{background:#dbeafe}.timeline{list-style:none;padding:0;margin:0}.timeline li{position:relative;padding:0 0 20px 22px;border-left:1px solid var(--line);margin-left:4px}.timeline li:before{content:"";position:absolute;left:-4px;top:6px;width:7px;height:7px;border-radius:50%;background:#3b82f6}.timeline li small{display:block;color:var(--muted);font-size:10px;margin-top:3px}.timeline li:last-child{border:0;padding-bottom:0}pre{margin:0;padding:14px;border:1px solid var(--line);border-radius:6px;background:#fafbfc;color:#344054;font:11px/1.8 ui-monospace,monospace;white-space:pre-wrap;overflow-wrap:anywhere}.drawer-filter{display:flex;gap:8px;align-items:end;flex-wrap:wrap;margin-bottom:12px}.drawer-filter input,.drawer-filter select{max-width:190px}.drawer-filter label{display:block;font-size:10px;color:var(--muted);margin-bottom:4px}.drawer-filter input,.drawer-filter select{border:1px solid #d0d5dd;height:30px;border-radius:4px;padding:4px 8px}.note{font-size:11px;color:var(--muted);line-height:1.7;margin-top:10px}.toast{position:fixed;top:72px;left:calc(50% + 110px);transform:translateX(-50%);z-index:150;padding:10px 18px;border-radius:6px;background:#1c2333;color:#fff;font-size:12px;box-shadow:0 4px 16px #10182820;pointer-events:none;max-width:70vw}/* ── 页面演示指南（对齐钱包原型悬浮窗） ── */
+.demo-guide-toggle{position:fixed;top:24px;right:24px;z-index:9998;display:inline-flex;align-items:center;gap:6px;padding:10px 16px;background:linear-gradient(135deg,#00D4AA,#00B894);color:#0D0D0D;border:none;border-radius:999px;font-size:13px;font-weight:600;cursor:pointer;box-shadow:0 6px 20px rgba(0,212,170,.35);transition:transform .18s ease,box-shadow .18s ease}
+.demo-guide-toggle:hover{transform:translateY(-1px);box-shadow:0 8px 24px rgba(0,212,170,.45)}
+.demo-guide-toggle:active{transform:translateY(0)}
+.demo-guide-toggle svg{display:block}
+.demo-guide-panel{position:fixed;top:72px;right:24px;max-height:calc(100vh - 96px);width:360px;max-width:92vw;background:#fff;border-radius:8px;box-shadow:0 16px 40px rgba(15,23,42,.22),0 4px 12px rgba(15,23,42,.08);z-index:9999;opacity:0;transform:translateY(-8px) scale(.98);transform-origin:top right;pointer-events:none;transition:opacity .2s ease,transform .2s cubic-bezier(.4,0,.2,1);display:flex;flex-direction:column;overflow:hidden;resize:both}
+.demo-guide-panel.open{opacity:1;transform:translateY(0) scale(1);pointer-events:auto}
+.demo-guide-head{flex-shrink:0;padding:14px 18px 12px;background:linear-gradient(135deg,#00D4AA 0%,#00B894 100%);color:#0D0D0D;display:flex;align-items:flex-start;justify-content:space-between;gap:12px;cursor:move;user-select:none}
+.demo-guide-head-title{font-size:17px;font-weight:700;margin-bottom:4px}
+.demo-guide-head-sub{font-size:12px;opacity:.75;line-height:1.5}
+.demo-guide-close{background:rgba(0,0,0,.12);border:none;color:#0D0D0D;width:28px;height:28px;border-radius:50%;font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.demo-guide-close:hover{background:rgba(0,0,0,.2)}
+.demo-guide-body{flex:1;overflow-y:auto;padding:16px 20px 28px}
+.demo-cat{margin-top:18px}
+.demo-cat:first-child{margin-top:4px}
+.demo-cat-head{display:flex;align-items:center;gap:8px;margin-bottom:8px;padding:6px 10px;border-radius:8px;font-size:13px;font-weight:700}
+.demo-cat-head.cat-entry{background:#ecfdf5;color:#047857}
+.demo-cat-head.cat-sys{background:#f1f5f9;color:#475569}
+.demo-cat-head.cat-error{background:#fef2f2;color:#b91c1c}
+.demo-cat-head.cat-chain{background:#f5f3ff;color:#6d28d9}
+.demo-cat-icon{width:22px;height:22px;border-radius:6px;background:rgba(255,255,255,.6);display:inline-flex;align-items:center;justify-content:center;font-size:13px}
+.demo-kw-list{display:flex;flex-wrap:wrap;gap:5px}
+.demo-kw{display:inline-block;max-width:100%;font-family:inherit;line-height:1.5;text-align:left;overflow-wrap:anywhere;padding:4px 9px;background:#f1f5f9;color:#334155;border:1px solid #e2e8f0;border-radius:6px;font-size:11.5px;cursor:pointer;transition:all .15s;user-select:none}
+.demo-kw:hover{background:#00D4AA;color:#0D0D0D;border-color:#00D4AA;transform:translateY(-1px)}
+.demo-kw.active{background:#00B894;color:#fff;border-color:#00B894;font-weight:600}
+.demo-guide-tip{margin-top:12px;padding:10px 12px;background:#ecfdf5;border:1px solid #99f6e4;border-radius:8px;font-size:11.5px;color:#047857;line-height:1.6}
+.demo-guide-tip strong{color:#065f46}.skeleton{height:14px;background:linear-gradient(90deg,#eef0f3,#f8fafc,#eef0f3);background-size:200%;animation:shimmer 1.3s infinite;border-radius:4px;margin:16px}.skeleton.large{height:65px}.footer{padding:0 24px 50px;color:var(--disabled);display:flex;justify-content:space-between;font-size:10px}.shortcut-card{padding:16px;display:flex;align-items:center;justify-content:space-between}.shortcut-card:hover{background:#fafbfc}.health-pill{padding:5px 9px;border:1px solid #fedf89;border-radius:5px;background:#fffaeb;color:#b54708;font-size:11px}.chip{padding:2px 6px;background:#f2f4f7;border-radius:4px;font-size:10px;color:var(--muted)}.sort-mark{color:#98a2b3;margin-left:5px;font-size:9px}.table-check{width:30px}.scope-note{padding:8px 12px;font-size:11px;color:var(--muted);background:#fafbfc;border-bottom:1px solid var(--line-light)}[hidden]{display:none!important}@keyframes shimmer{to{background-position:-200%}}@keyframes slide{from{transform:translateX(20px);opacity:.5}to{transform:translateX(0);opacity:1}}@media(min-width:1600px){.page{padding:28px 32px}.header{padding:0 32px}}@media(max-width:1250px){.global-search{width:245px}.header{gap:12px}.metric-value{font-size:21px}.two-col{grid-template-columns:1fr 1fr}.crumb span:first-child{display:none}}@media(max-width:1000px){:root{--sidebar:190px}.header{padding:0 16px}.page{padding:20px 16px}.metrics{grid-template-columns:repeat(2,1fr)}.two-col{grid-template-columns:1fr!important}.global-search{width:230px}.network-pill{display:none}}@media(max-width:720px){.stages{grid-template-columns:repeat(2,1fr);gap:18px 0}.stage:nth-child(2){border:0}.sync-summary{align-items:flex-start}.sync-summary>span{max-width:none}:root{--sidebar:58px}.brand{padding:0 14px}.brand-text,.brand small,.product,.nav-label,.nav-item span,.sidebar-bottom{display:none}.nav-item{padding:0 17px;height:43px}.header{gap:10px}.crumb{display:none}.global-search{width:100%}.user-button .user-name{display:none}.page-heading{flex-direction:column}.metrics{gap:8px}.metric{padding:12px}.metric-value{font-size:19px}.search-results{width:min(430px,calc(100vw - 90px))}.form-grid{grid-template-columns:1fr}.stage{padding:0 6px}.stage-value{font-size:12px}.toast{left:55%;max-width:80vw}}
+</style>
+</head>
+<body>
+<aside class="sidebar">
+  <div class="brand"><span class="brand-mark">B</span><span class="brand-text">BIYA DEX</span><small>Admin</small></div>
+  <div class="product"><div class="product-title">Explorer 管理后台</div><div class="product-desc">直连自有节点 · 告警值班台 · V1.0</div></div>
+  <nav class="navigation" id="navigation" aria-label="管理后台导航"></nav>
+  <div class="sidebar-bottom"><span class="status-dot"></span>BIYA Mainnet · DEX<br><span style="padding-left:13px">告警值班台</span></div>
+</aside>
+<div class="main">
+  <header class="header">
+    <div class="crumb"><span>DEX 浏览器</span><span>/</span><b id="breadcrumb">运行总览</b></div>
+    <div class="global-search"><form id="searchForm"><span id="searchIcon"></span><input id="globalSearch" aria-label="全局搜索" placeholder="区块高度 / 区块哈希" autocomplete="off"><span class="search-shortcut">⌘ K</span></form><div class="search-results" id="searchResults" hidden></div></div>
+    <button class="user-button" id="userButton" type="button" title="当前账号"><span class="avatar" id="userAvatar">林</span><span class="user-name" id="userName">林晨</span></button>
+  </header>
+  <main class="page" id="page"></main>
+</div>
+<div class="drawer-overlay" id="drawerOverlay"><section class="drawer" role="dialog" aria-modal="true" aria-labelledby="drawerTitle"><div class="drawer-head"><h2 id="drawerTitle"></h2><button class="close" data-action="close-drawer" aria-label="关闭详情">×</button></div><div class="drawer-body" id="drawerBody"></div><div class="drawer-foot" id="drawerFoot"></div></section></div>
+<div class="modal-overlay" id="modalOverlay"><section class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle"><div class="modal-head"><h2 id="modalTitle"></h2><button class="close" data-action="close-modal" aria-label="关闭弹窗">×</button></div><div class="modal-body" id="modalBody"></div><div class="modal-foot" id="modalFoot"></div></section></div>
+<!-- 页面演示指南 -->
+<button class="demo-guide-toggle" id="demoGuideToggle" type="button" aria-label="打开页面演示">
+  <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M4 6h16v2H4V6zm0 5h16v2H4v-2zm0 5h16v2H4v-2z"/></svg>
+  页面演示
+</button>
+<aside class="demo-guide-panel" id="demoGuidePanel" aria-hidden="true">
+  <div class="demo-guide-head">
+    <div>
+      <div class="demo-guide-head-title">页面演示 · DEX Explorer Admin</div>
+      <div class="demo-guide-head-sub">V1.0 · 告警值班台 · 直连自有节点</div>
+    </div>
+    <button class="demo-guide-close" id="demoGuideClose" type="button" aria-label="关闭">✕</button>
+  </div>
+  <div class="demo-guide-body">
+    <section class="demo-cat">
+      <div class="demo-cat-head cat-entry"><span class="demo-cat-icon">1</span>页面入口</div>
+      <div class="demo-kw-list">
+        <button type="button" class="demo-kw" data-demo="nav-overview">运行总览</button>
+        <button type="button" class="demo-kw" data-demo="nav-alerts">告警中心</button>
+      </div>
+    </section>
+    <section class="demo-cat">
+      <div class="demo-cat-head cat-error"><span class="demo-cat-icon">2</span>数据场景</div>
+      <div class="demo-kw-list">
+        <button type="button" class="demo-kw" data-demo="scene-incident">异常待处理</button>
+        <button type="button" class="demo-kw" data-demo="scene-healthy">数据正常</button>
+      </div>
+    </section>
+    <section class="demo-cat">
+      <div class="demo-cat-head cat-sys"><span class="demo-cat-icon">3</span>页面状态</div>
+      <div class="demo-kw-list">
+        <button type="button" class="demo-kw" data-demo="view-normal">正常展示</button>
+        <button type="button" class="demo-kw" data-demo="view-loading">加载中</button>
+        <button type="button" class="demo-kw" data-demo="view-empty">空数据</button>
+        <button type="button" class="demo-kw" data-demo="view-error">网络错误 / 可重试</button>
+        <button type="button" class="demo-kw" data-demo="view-session">会话失效</button>
+      </div>
+    </section>
+    <section class="demo-cat">
+      <div class="demo-cat-head cat-chain"><span class="demo-cat-icon">4</span>告警与 Lark</div>
+      <div class="demo-kw-list">
+        <button type="button" class="demo-kw" data-demo="alert-unreachable">节点不可达</button>
+        <button type="button" class="demo-kw" data-demo="alert-stall">节点不前进</button>
+        <button type="button" class="demo-kw" data-demo="alert-gap">区块缺口</button>
+        <button type="button" class="demo-kw" data-demo="lark-ok">Lark 发送成功</button>
+        <button type="button" class="demo-kw" data-demo="lark-fail">Lark 发送失败</button>
+        <button type="button" class="demo-kw" data-demo="reset-demo">重置演示数据</button>
+      </div>
+    </section>
+    <div class="demo-guide-tip"><strong>说明：</strong>后台可查看告警、写备注、人工改为已处理。正式巡检按连通 → 进度 → 连续性互斥，主结论只展示最先未通过的一项；演示可同时展示 3 类告警便于对照。</div>
+  </div>
+</aside>
+<div class="toast" id="toast" role="status" hidden></div>
+<script>
+'use strict';
+const $=(s,r=document)=>r.querySelector(s), $$=(s,r=document)=>Array.from(r.querySelectorAll(s));
+const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const fmt=v=>Number(v).toLocaleString('en-US'), short=(s,a=8,b=6)=>s.length>a+b+3?s.slice(0,a)+'…'+s.slice(-b):s;
+const paths={grid:'M3 3h7v7H3z M14 3h7v7h-7z M3 14h7v7H3z M14 14h7v7h-7z',box:'m12 3 9 5v8l-9 5-9-5V8z M3 8l9 5 9-5 M12 13v8',tx:'M4 7h16m-4-4 4 4-4 4 M20 17H4m4-4-4 4 4 4',address:'M20 21v-2a7 7 0 0 0-14 0v2 M12 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8',task:'M9 5h10v16H5V5h4 M9 3h6v4H9z M9 12h6 M9 16h4',quality:'m12 3 8 3v6c0 5-8 9-8 9s-8-4-8-9V6z m-4 9 3 3 5-6',type:'M4 4h7v7H4z M15 4h5v5h-5z M4 15h5v5H4z M15 13v8 M11 17h8',bell:'M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9 M10 21h4',audit:'M6 3h9l4 4v14H5V3z M14 3v5h5 M8 12h8 M8 16h6',search:'m21 21-5-5 M10 18a8 8 0 1 0 0-16 8 8 0 0 0 0 16',refresh:'M20 7v5h-5 M4 17v-5h5 M5 8a8 8 0 0 1 13-3l2 2 M19 16a8 8 0 0 1-13 3l-2-2',arrow:'M5 12h14 m-5-5 5 5-5 5',clock:'M12 3a9 9 0 1 0 0 18 9 9 0 0 0 0-18 M12 7v5l3 2',check:'m5 12 4 4 10-10',link:'M10 13a5 5 0 0 0 7 0l4-4a5 5 0 0 0-7-7l-2 2 M14 11a5 5 0 0 0-7 0l-4 4a5 5 0 0 0 7 7l2-2',chart:'M4 3v17h17 M7 15l4-6 4 3 6-8',copy:'M9 9h12v12H9z M15 5V3H3v12h2'};
+function icon(n){return `<svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="${paths[n]||paths.box}"/></svg>`}
+const baseDate='2026-10-16', BASE=Date.UTC(2026,9,16,6,32,48), CHAIN=111435120, STORE='biya-explorer-admin-v10';
+function stamp(t=Date.now()){return new Intl.DateTimeFormat('sv-SE',{timeZone:'Asia/Shanghai',year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit',second:'2-digit',hour12:false}).format(t)}
+function fixedTime(i=0){return stamp(BASE-i*3000)}
+function makeHex(seed,len=64){let s='',n=(seed*7919+104729)>>>0;for(let i=0;i<len;i++){n=(Math.imul(n,1664525)+1013904223)>>>0;s+=(n>>>28).toString(16)}return '0x'+s}
+const PROPOSERS=Array.from({length:4},(_,i)=>makeHex(700+i,40));
+let blocks=[];
+for(let b=0;b<28;b++){
+ const count=b===16?0:3+b%4, height=CHAIN-b;
+ blocks.push({height,hash:makeHex(2000+b),parent:makeHex(2001+b),time:fixedTime(b),proposer:PROPOSERS[b%4],count});
+}
+const CURRENT_OPERATOR={name:'林晨'};
+const LARK_GROUP='BIYA-DEX Explorer 告警';
+function larkBody(a){
+  const first=a.first,id=a.id,snap=a.snapshot||{};
+  if(a.category==='节点不可达')return `【节点不可达】自有节点连续 3 次探测失败\n告警编号：${id}\n影响对象：自有节点\n首次发生：${first}\n探测结果：失败 / 超时\n最近高度：—\n共识轮次：—\n请到 Explorer Admin 告警中心查看证据并备注。`;
+  if(a.category==='节点不前进')return `【节点不前进】节点可达，但进度未推进\n告警编号：${id}\n影响对象：自有节点\n首次发生：${first}\n节点高度：${snap.nodeHeight??'—'}\n共识轮次：${snap.nodeRound??'—'}\n最新区块时间：${snap.lastBlockTime??'—'}\n请到 Explorer Admin 告警中心查看证据并备注。`;
+  const h=snap.object||a.ref;
+  return `【区块缺口】高度不连续或内容不完整\n告警编号：${id}\n影响对象：区块 ${h}\n缺失/不完整高度：${h}\n首次发生：${first}\n请到 Explorer Admin 告警中心查看证据并备注。`;
+}
+function larkItem(event,status,summary,time,body=''){return {time:time||'2026-10-16 14:30:01',event,group:LARK_GROUP,status,summary,body}}
+function seedAlert(id,title,category,ref,detail,snapshot,first,larkTime,notes=[]){let a={id,title,category,ref,status:'告警中',first,last:'2026-10-16 14:32:48',detail,snapshot,notes,statusChanges:[],lark:[]};a.lark=[larkItem('产生','成功',snapshot.summary||detail.slice(0,80),larkTime,larkBody(a))];return a}
+function seed(){return {version:10,scenario:'incident',larkSend:'ok',nodeReachable:true,nodeAdvancing:false,fixedGap:false,nodeHeight:CHAIN,nodeRound:5021840,lastBlockTime:'2026-10-16 14:02:48',audits:[{id:'AUD-001',time:'2026-10-16 14:31:02',actor:'林晨',action:'添加告警备注',object:'ALT-1002',before:'—',after:'已在 Lark 群知会节点值班，等待进度恢复。',reason:'已在 Lark 群知会节点值班，等待进度恢复。',result:'成功',request:'REQ-demo-001'}],alerts:[
+ seedAlert('ALT-1001','节点不可达','节点不可达','自有节点','连续 3 次向自有节点请求最新高度均超时（NODE_TIMEOUT）。',{nodeHeight:null,nodeRound:null,object:'自有节点',error:'NODE_TIMEOUT',summary:'连续 3 次探测失败',lastBlockTime:null},'2026-10-16 14:28:12','2026-10-16 14:28:12'),
+ seedAlert('ALT-1002','节点不前进','节点不前进','自有节点','节点可达，但共识轮次与最新区块时间均未推进。',{nodeHeight:CHAIN,nodeRound:5021840,object:'自有节点',error:'PROGRESS_STALL',summary:'轮次与最新块时间均停滞',lastBlockTime:'2026-10-16 14:02:48'},'2026-10-16 14:30:01','2026-10-16 14:30:01',[{time:'2026-10-16 14:31:02',actor:'林晨',text:'已在 Lark 群知会节点值班，等待进度恢复。'}]),
+ seedAlert('ALT-1003','区块缺口：111435112','区块缺口',String(CHAIN-8),'高度不连续：111435111 与 111435113 可查，111435112 按高度查询不到完整块。',{nodeHeight:CHAIN,nodeRound:5021840,object:String(CHAIN-8),error:'HEIGHT_GAP',summary:'高度 111435112 缺失',actionCount:null,resultCount:null,lastBlockTime:'2026-10-16 14:02:48'},'2026-10-16 14:32:10','2026-10-16 14:32:10')
+],checksTime:'2026-10-16 14:32:45'}}
+let db;try{db=JSON.parse(localStorage.getItem(STORE));if(db?.version!==10)db=seed()}catch{db=seed()}
+function save(){try{localStorage.setItem(STORE,JSON.stringify(db))}catch{}}
+let currentPage='overview', filters={}, pages={}, sorts={}, alertTab='all',viewState='normal', drawerState=null, modalState=null,globalQuery='',lastFocus=null,refreshAt=fixedTime(),toastTimer;
+function audit(action,object,before,after,reason,result='成功'){db.audits.unshift({id:'AUD-'+String(db.audits.length+1).padStart(3,'0'),time:stamp(),actor:CURRENT_OPERATOR.name,action,object,before:typeof before==='string'?before:JSON.stringify(before),after:typeof after==='string'?after:JSON.stringify(after),reason,result,request:'REQ-'+Date.now().toString(36)});save()}
+function toast(msg){clearTimeout(toastTimer);$('#toast').textContent=msg;$('#toast').hidden=false;toastTimer=setTimeout(()=>$('#toast').hidden=true,3500)}
+function uiLabel(value){return ({'已索引':'可查询','索引延迟':'节点滞后','未解析':'原文展示','缺失':'区块缺口','复验中':'检查中','超出可修复窗口':'超出可核对范围'})[value]||value}
+function readableText(value){let text=String(value??'');for(const [from,to] of [
+ ['超出可修复窗口','超出可核对范围'],['查询层','自有节点'],['链头','节点最新高度'],['索引延迟','节点滞后'],['原始 payload','原始交易内容'],['一致性复验通过','数据检查通过'],['复验未通过','数据检查未通过'],['复验','检查'],['校验结果不一致','检查结果不一致'],['校验通过','检查通过'],['待校验','待检查']
+ ])text=text.split(from).join(to);return text}
+function badge(t,color){const colors={'正常':'green','已索引':'green','执行成功':'green','已完成':'green','通过':'green','已处理':'green','可查询':'green','已通知':'green','告警中':'orange','待执行':'blue','运行中':'blue','复验中':'blue','已确认':'blue','已识别':'green','索引延迟':'orange','待确认':'orange','已暂停':'orange','警告':'orange','未知类型':'orange','缺失':'red','失败':'red','通知失败':'red','未通过':'red','执行拒绝':'red','严重':'red','未解析':'orange','已取消':'','超出可修复窗口':'orange','超出可核对范围':'orange','节点不可达':'red','节点不前进':'red','区块缺口':'red'};return `<span class="badge ${color??colors[t]??''}">${esc(uiLabel(t))}</span>`}
+function hexCopy(value){return `<span class="mono" title="${esc(value)}">${esc(short(value))}</span><button class="copy" data-action="copy" data-id="${esc(value)}" aria-label="复制">${icon('copy')}</button>`}
+function title(name,desc,action=''){return `<div class="page-heading"><div><h1>${name}</h1>${desc?`<p class="description">${desc}</p>`:''}</div><div class="actions">${action||`<span class="tiny muted">更新于 ${esc(refreshAt)} UTC+8</span><button class="btn" data-action="refresh">${icon('refresh')}刷新</button>`}</div></div>`}
+function kv(label,value,full=false){return `<div class="kv${full?' full':''}"><label>${label}</label><div class="value">${value}</div></div>`}
+const navs=[['','overview','运行总览','grid'],['','alerts','告警中心','bell']];
+function openAlerts(){return db.alerts.filter(a=>a.status==='告警中')}
+function lastLark(a){return (a.lark||[]).at(-1)}
+function renderNav(){let count=openAlerts().length;$('#navigation').innerHTML=navs.map(([group,id,label,ic])=>`${group?`<div class="nav-label">${group}</div>`:''}<button class="nav-item ${currentPage===id?'active':''}" data-action="nav" data-id="${id}" ${currentPage===id?'aria-current="page"':''}>${icon(ic)}<span>${label}</span>${id==='alerts'&&count?`<span class="nav-count">${count}</span>`:''}</button>`).join('');$('#breadcrumb').textContent=navs.find(n=>n[1]===currentPage)?.[2]||'查询结果';document.title=$('#breadcrumb').textContent+' · BIYA DEX Explorer Admin';$('#userName').textContent=CURRENT_OPERATOR.name;$('#userAvatar').textContent=CURRENT_OPERATOR.name.slice(0,1);syncDemoGuideActive()}
+function blockStatus(b){return !db.fixedGap&&b.height===CHAIN-8?'区块缺口':'可查询'}
+const health=()=>db.nodeReachable&&db.nodeAdvancing&&db.fixedGap;
+function navigation(route){closeDrawer();closeModal();location.hash=route;if(location.hash.slice(1)===route)renderRoute()}
+function renderRoute(){let [p,qs='']=(location.hash.slice(1)||'overview').split('?');let params=new URLSearchParams(qs);currentPage=navs.some(n=>n[1]===p)?p:'overview';viewState='normal';render();if(params.has('block'))openBlock(Number(params.get('block')));}
+window.addEventListener('hashchange',renderRoute);
+function render(){if(!navs.some(n=>n[1]===currentPage))currentPage='overview';renderNav();let content='';if(viewState==='loading')content=title($('#breadcrumb').textContent,'正在读取节点数据')+`<div class="card"><div class="skeleton large"></div>${Array.from({length:7},()=>'<div class="skeleton"></div>').join('')}</div>`;else if(viewState==='session')content=title($('#breadcrumb').textContent,'会话已失效')+`<div class="card">${empty('会话已失效','联系管理员重新进入。')}</div>`;else if(['empty','error'].includes(viewState))content=title($('#breadcrumb').textContent,'DEX Explorer 告警值班台')+`<div class="card">${empty(viewState==='error'?'查询服务暂时不可用':'暂无数据',viewState==='error'?'网络请求失败，请重试。当前筛选条件将保留。':'当前没有可展示记录。','retry-view',viewState==='error'?'重试':'恢复正常展示')}</div>`;else content=({overview:overview,alerts:alertPage}[currentPage]||overview)();$('#page').innerHTML=content;}
+function empty(heading,desc,action,label='重试'){return `<div class="empty"><div class="empty-symbol">${icon('search')}</div><h3>${esc(heading)}</h3>${desc?`<p>${esc(desc)}</p>`:''}${action?`<button class="btn small" data-action="${action}">${label}</button>`:''}</div>`}
+function metric(label,value,foot,ic='chart'){return `<div class="metric"><div class="metric-label">${label}${icon(ic)}</div><div class="metric-value">${value}</div><div class="metric-foot">${foot}</div></div>`}
+function overview(){let open=openAlerts(),ok=health();return title('运行总览')+`<div class="metrics">${metric('节点最新高度',db.nodeReachable?fmt(db.nodeHeight):'—',db.nodeReachable?'<span class="status-dot"></span>自有节点返回的执行高度':'<span class="red-text">探测失败，高度未知</span>','box')}${metric('共识轮次',db.nodeReachable?fmt(db.nodeRound):'—',db.nodeAdvancing?'<span class="green-text">进度推进中</span>':db.nodeReachable?'<span class="orange-text">进度已停滞</span>':'<span class="red-text">无法读取</span>','chart')}${metric('最新区块时间',db.nodeReachable?(db.lastBlockTime||'—'):'—',db.nodeReachable?'UTC+8 · 有交易时高度才递增':'节点不可达','clock')}${metric('待处理告警',open.length,open.length?'请到告警中心查看、备注或处理':'当前无告警中记录','bell')}</div>
+<div class="card"><div class="card-head"><h2>节点巡检状态</h2><span class="overview-line">${badge(ok?'自有节点正常':!db.nodeReachable?'节点不可达':!db.nodeAdvancing?'节点不前进':'存在区块缺口')}</span></div><div class="stages">${[
+ ['连通检查',db.nodeReachable?'可达':'不可达','连续 3 次请求最新高度或健康检查。',db.nodeReachable?'探测成功':'连续失败或超时',db.nodeReachable?'ok':'fail'],
+ db.nodeReachable?['进度检查',db.nodeAdvancing?'推进中':'已停滞','优先看共识轮次是否增加；没有轮次时看最新区块时间。',db.nodeAdvancing?'无交易时高度可不增':'轮次与区块时间未推进',db.nodeAdvancing?'ok':'fail']:['进度检查','—','优先看共识轮次是否增加；没有轮次时看最新区块时间。','本轮未检查','skip'],
+ (db.nodeReachable&&db.nodeAdvancing)?['连续性检查',db.fixedGap?'连续':'有缺口','按高度能查到的区块是否连续、内容是否完整。',db.fixedGap?'无缺口':'高度 111435112 缺失',db.fixedGap?'ok':'fail']:['连续性检查','—','按高度能查到的区块是否连续、内容是否完整。','本轮未检查','skip']
+ ].map((s,i)=>`<div class="stage"><div class="stage-title"><span class="chip">0${i+1}</span>${s[0]}</div><div class="stage-value mono">${esc(s[1])}</div><div class="stage-note">${s[2]}</div><div class="stage-status ${s[4]==='ok'?'green-text':s[4]==='fail'?'orange-text':'muted'}">${s[3]}</div></div>`).join('')}</div></div>
+<div class="two-col"><div class="card"><div class="card-head"><h2>浏览器首页数据</h2></div><div class="card-body"><div class="detail-grid">${kv('总交易数',`<strong class="num">${fmt(293590120)}</strong> <span class="tiny muted">笔</span>`)}${kv('24h 链上交易数','<strong class="num">2,760,421</strong> 笔')}${kv('地址总数','<strong class="num">1,028,017</strong>')}${kv('24h 活跃地址','<strong class="num">107,780</strong>')}</div></div></div>
+<div class="card"><div class="card-head"><h2>节点与查询状态</h2><span class="tiny muted">最近检查 ${esc(refreshAt)} UTC+8</span></div><div class="card-body" style="padding-top:4px;padding-bottom:4px">${[
+ ['自有节点连通','浏览器直连节点请求最新高度',db.nodeReachable?'18 ms':'超时',db.nodeReachable],
+ ['区块查询','按高度或哈希向节点取整块',db.nodeReachable?'42 ms':'超时',db.nodeReachable]
+ ].map(s=>`<div class="service-row"><span class="status-dot ${s[3]?'':'warn'}"></span><div class="service-name">${s[0]}<small>${s[1]}</small></div><span class="mono muted">${s[2]}</span>${badge(s[3]?'正常':'异常')}</div>`).join('')}</div></div></div>
+<div class="card"><div class="card-head"><h2>需要关注</h2><button class="link-btn" data-action="nav" data-id="alerts">全部告警 →</button></div>${open.length?simpleTable(['告警','影响对象','处理状态','操作'],open.slice(0,4).map(a=>[esc(readableText(a.title)),`<span class="mono" title="${esc(a.ref)}">${esc(short(a.ref,14,8))}</span>`,badge(a.status),`<button class="link-btn" data-action="open-alert" data-id="${a.id}">查看处理</button>`])):empty('当前没有待处理告警')}</div>`}
+function simpleTable(headers,rows){return `<div class="table-wrap"><table><thead><tr>${headers.map(h=>`<th>${h}</th>`).join('')}</tr></thead><tbody>${rows.map(row=>'<tr>'+row.map(v=>`<td>${v}</td>`).join('')+'</tr>').join('')}</tbody></table></div>`}
+function filterForm(id,fields){let vals=filters[id]||{};return `<div class="card"><form class="filters" data-filter="${id}">${fields.map(f=>`<div class="field ${f[2]==='select'?'field-select':f[2]==='date'?'field-date':'field-grow'}"><label for="${id}-${f[0]}">${f[1]}</label>${f[2]==='select'?`<select name="${f[0]}" id="${id}-${f[0]}"><option value="">全部</option>${(f[3]||[]).map(o=>`<option value="${esc(o)}" ${vals[f[0]]===o?'selected':''}>${esc(uiLabel(o))}</option>`).join('')}</select>`:`<input name="${f[0]}" id="${id}-${f[0]}" type="${f[2]||'text'}" value="${esc(vals[f[0]]||'')}" placeholder="${esc(f[3]||'请输入关键字')}" autocomplete="off">`}</div>`).join('')}<div class="actions"><button class="btn primary" type="submit">查询</button><button class="btn" type="button" data-action="reset-filter" data-id="${id}">重置</button></div></form></div>`}
+function matches(val,q){return !q||String(val).toLowerCase().includes(String(q).trim().toLowerCase())}
+function table(id,headers,rows){let s=sorts[id];let data=rows.slice();if(s)data.sort((a,b)=>{let x=a.sort?.[s.key]??a.id,y=b.sort?.[s.key]??b.id;return (typeof x==='number'&&typeof y==='number'?x-y:String(x).localeCompare(String(y)))*(s.desc?-1:1)});let size=10,max=Math.max(1,Math.ceil(data.length/size)),page=Math.min(pages[id]||1,max);pages[id]=page;let slice=data.slice((page-1)*size,page*size);return `<div class="card"><div class="card-head"><span class="tiny muted">共 <strong class="strong">${data.length}</strong> 条</span><span class="tiny muted">时间 UTC+8 · 每页 ${size} 条</span></div><div class="table-wrap"><table><thead><tr>${headers.map(h=>typeof h==='string'?`<th${h==='操作'?' class="ops"':''}>${h}</th>`:`<th class="sort" data-action="sort" data-id="${id}" data-key="${h.key}">${h.label}<span class="sort-mark">${s?.key===h.key?(s.desc?'↓':'↑'):'↕'}</span></th>`).join('')}</tr></thead><tbody>${slice.length?slice.map(r=>`<tr>${r.cells.map((v,i)=>`<td${headers[i]==='操作'?' class="ops"':''}>${v}</td>`).join('')}</tr>`).join(''):`<tr><td colspan="${headers.length}">${empty('无匹配记录','请调整筛选条件后重新查询。','reset-current','清除筛选')}</td></tr>`}</tbody></table></div>${data.length?`<div class="table-foot"><span>显示 ${(page-1)*size+1}–${Math.min(page*size,data.length)} 条，共 ${data.length} 条</span><div class="pagination"><button data-action="page" data-id="${id}" data-page="${page-1}" ${page===1?'disabled':''} aria-label="上一页">‹</button>${Array.from({length:Math.min(max,7)},(_,i)=>i+1).map(n=>`<button class="${n===page?'active':''}" data-action="page" data-id="${id}" data-page="${n}">${n}</button>`).join('')}<button data-action="page" data-id="${id}" data-page="${page+1}" ${page===max?'disabled':''} aria-label="下一页">›</button><span style="margin-left:4px">${page} / ${max} 页</span></div></div>`:''}</div>`}
+function alertPage(){let f=filters.alerts||{}, list=db.alerts.filter(a=>(alertTab!=='active'||a.status==='告警中')&&matches(a.title+' '+a.category,f.title)&&(!f.status||a.status===f.status)&&(!f.category||a.category===f.category));return title('告警中心')+`<div class="card"><div class="tabs">${[['all','全部告警'],['active','告警中']].map(([id,l])=>`<button class="tab ${alertTab===id?'active':''}" data-action="alert-tab" data-id="${id}">${l}</button>`).join('')}</div></div>`+filterForm('alerts',[['title','告警关键字','text','不可达 / 不前进 / 缺口'],['category','告警类别','select',['节点不可达','节点不前进','区块缺口']],['status','告警状态','select',['告警中','已处理']]])+table('alerts',['告警编号 / 内容','类别','首次发生','Lark','状态','操作'],list.map(a=>{let lk=lastLark(a);return {id:a.id,cells:[`<button class="link-btn" data-action="open-alert" data-id="${a.id}">${esc(readableText(a.title))}</button><span class="sub mono">${a.id}</span>`,esc(readableText(a.category)),a.first,lk?badge(lk.status==='成功'?'已通知':'通知失败'):badge('未发送','orange'),badge(a.status),`<div class="actions"><button class="link-btn" data-action="open-alert" data-id="${a.id}">详情</button>${a.status==='告警中'?`<button class="link-btn" data-action="change-status" data-id="${a.id}">处理</button>`:''}<button class="link-btn" data-action="note-alert" data-id="${a.id}">备注</button></div>`]}}))}
+function openDrawer(name,body,foot=''){let existing=$('#drawerOverlay').classList.contains('open'),same=existing&&$('#drawerTitle').textContent===name,scroll=same?$('#drawerBody').scrollTop:0;if(!existing)lastFocus=document.activeElement;$('#drawerTitle').textContent=name;$('#drawerBody').innerHTML=body;$('#drawerFoot').innerHTML=foot||'<span class="tiny muted">节点数据只读</span><button class="btn small" data-action="close-drawer">关闭</button>';$('#drawerOverlay').classList.add('open');$('#drawerBody').scrollTop=scroll;document.body.style.overflow='hidden';if(!existing)$('.drawer-head .close').focus()}
+function closeDrawer(){if(!$('#drawerOverlay').classList.contains('open'))return;$('#drawerOverlay').classList.remove('open');drawerState=null;if(!$('#modalOverlay').classList.contains('open'))document.body.style.overflow='';lastFocus?.isConnected&&lastFocus.focus()}
+function drawerTabs(selected,items){return `<div class="tabs">${items.map(([id,t])=>`<button class="tab ${selected===id?'active':''}" data-action="drawer-tab" data-id="${id}">${t}</button>`).join('')}</div>`}
+function openBlock(height,tab='overview',sub={},fromAlert){let b=blocks.find(b=>b.height===height);if(fromAlert==null&&drawerState?.kind==='alert')fromAlert=drawerState.id;if(fromAlert==null)fromAlert=drawerState?.fromAlert;if(tab==='txs')tab='overview';drawerState={kind:'block',id:height,tab,sub,fromAlert};if(!b){openDrawer('区块详情',empty('未找到该区块','当前查询不到该区块，不展示默认区块。'),fromAlert?`<button class="btn" data-action="open-alert" data-id="${fromAlert}">返回告警</button><button class="btn" data-action="close-drawer">关闭</button>`:'');return}let missing=blockStatus(b)==='区块缺口';let content=drawerTabs(tab,[['overview','区块概览'],['source','数据来源']]);if(tab==='overview')content+=`<div class="section"><div class="detail-grid">${kv('区块高度',`<span class="mono">${b.height}</span>`)}${kv('查询状态',badge(blockStatus(b)))}${kv('区块哈希',hexCopy(b.hash),true)}${kv('父区块哈希',hexCopy(b.parent),true)}${kv('区块时间 · UTC+8',esc(b.time))}${kv('链上交易数',b.count+' 笔')}${kv('提议者',hexCopy(b.proposer),true)}</div></div>`;if(tab==='source')content+=`<div class="detail-grid">${kv('数据来源','自有节点 · 直连查询')}${kv('查询方式','按区块高度向节点取整块')}${kv('原始数据引用',`<span class="mono">node/blocks/${b.height}</span>`,true)}${kv('查询状态',badge(blockStatus(b)))}${kv('数据保护','节点原始数据不可在本后台编辑')}</div>`;openDrawer('区块 #'+height,content,`<div class="actions">${fromAlert?`<button class="btn small" data-action="open-alert" data-id="${fromAlert}">返回告警</button>`:missing?`<button class="btn small" data-action="nav" data-id="alerts">查看告警</button>`:''}<button class="btn" data-action="close-drawer">关闭</button></div>`)}
+function alertEvidence(a){let snap=a.snapshot||{},h=snap.nodeHeight==null?'—':`<span class="mono">${fmt(snap.nodeHeight)}</span>`,r=snap.nodeRound==null?'—':`<span class="mono">${fmt(snap.nodeRound)}</span>`;let html=kv('错误码 / 探测结果',esc(snap.error||snap.summary||'—'))+kv('节点高度',h)+kv('共识轮次',r)+kv('最新区块时间',esc(snap.lastBlockTime||'—'));if(a.category==='节点不可达')html+=kv('连续探测','3 次失败或超时');if(a.category==='区块缺口'){html+=kv('动作数 / 结果数',`${snap.actionCount??'—'} / ${snap.resultCount??'—'}`);let b=blocks.find(x=>x.height===Number(a.ref));if(!db.fixedGap&&(!b||blockStatus(b)==='区块缺口'))html+=kv('核对说明','该高度当前按节点查询不到完整块。',true)}return html}
+function openAlert(id){let a=db.alerts.find(a=>a.id===id);if(!a)return;drawerState={kind:'alert',id};let lk=lastLark(a);openDrawer('告警详情 · '+id,`<div class="section"><h2 style="margin-bottom:14px">${esc(readableText(a.title))}</h2><div class="detail-grid">${kv('状态',badge(a.status))}${kv('类别',esc(readableText(a.category)))}${kv('Lark 群',esc(LARK_GROUP))}${kv('首次发生 · UTC+8',a.first)}${kv('最近发生 · UTC+8',a.last)}${kv('影响对象',`<span class="mono">${esc(a.ref)}</span>`,true)}${kv('详情',esc(readableText(a.detail)),true)}</div></div><div class="section"><h3>证据快照 · 告警当时</h3><p class="note">以下为产生告警时的节点观测，不是运行总览的当前值。</p><div class="detail-grid">${alertEvidence(a)}</div></div><div class="section"><h3>Lark 通知记录</h3>${(a.lark||[]).length?simpleTable(['时间','事件','群','状态','摘要'],a.lark.map(x=>[x.time,esc(x.event),esc(x.group),badge(x.status==='成功'?'已通知':'通知失败'),esc(x.summary||'—')])):'<span class="muted tiny">尚未发送</span>'}${(a.lark||[]).filter(x=>x.body).map(x=>`<pre style="margin-top:12px">${esc(x.body)}</pre>`).join('')}${lk&&lk.status!=='成功'?'<p class="note">发送失败不影响告警本身，由通道侧排查，后台不重发修复。备注与处理不同步 Lark。</p>':''}</div><div class="section"><h3>状态变更</h3>${(a.statusChanges||[]).length?`<ul class="timeline">${a.statusChanges.map(n=>`<li>${esc(n.from)} → ${esc(n.to)} · ${esc(n.reason)}<small>${esc(n.time)} · ${esc(n.actor)}</small></li>`).join('')}</ul>`:'<span class="muted tiny">尚无人工状态变更。巡检三项通过也不会自动结案。</span>'}</div><div class="section"><h3>备注</h3>${(a.notes||[]).length?`<ul class="timeline">${a.notes.map(n=>`<li>${esc(readableText(n.text))}<small>${esc(n.time)} · ${esc(n.actor)}</small></li>`).join('')}</ul>`:'<span class="muted tiny">暂无备注</span>'}</div>`,`<span class="tiny muted">证据为告警当时快照</span><div class="actions">${a.status==='告警中'?`<button class="btn" data-action="change-status" data-id="${id}">处理</button>`:''}<button class="btn primary" data-action="note-alert" data-id="${id}">添加备注</button><button class="btn" data-action="close-drawer">关闭</button></div>`)}
+function openModal(name,body,footer){$('#modalTitle').textContent=name;$('#modalBody').innerHTML=body;$('#modalFoot').innerHTML=footer;$('#modalOverlay').classList.add('open');document.body.style.overflow='hidden';$('.modal-head .close').focus()}
+function closeModal(){if(!$('#modalOverlay').classList.contains('open'))return;$('#modalOverlay').classList.remove('open');modalState=null;if(!$('#drawerOverlay').classList.contains('open'))document.body.style.overflow='';}
+function modalError(text){let e=$('#modalError');if(e){e.textContent=text;e.hidden=false}}
+function addNote(id){let a=db.alerts.find(a=>a.id===id);if(!a)return;modalState={kind:'note',id};openModal('添加备注',`<p style="margin-bottom:16px">${esc(readableText(a.title))}</p><div class="field"><label for="alertNote">备注 *</label><textarea id="alertNote" placeholder="记录排查进展、群内沟通或外部修复情况"></textarea></div><p class="note">备注只保存在后台，默认不同步到 Lark。</p><div class="form-error" id="modalError" hidden></div>`,`<button class="btn" data-action="close-modal">取消</button><button class="btn primary" data-action="submit-note">保存备注</button>`)}
+function submitNote(){let a=db.alerts.find(a=>a.id===modalState.id),note=$('#alertNote').value.trim();if(note.length<3){modalError('请填写至少 3 个字符的备注。');return}a.notes=a.notes||[];a.notes.push({time:stamp(),actor:CURRENT_OPERATOR.name,text:note});audit('添加告警备注',a.id,'—',note,note);closeModal();render();openAlert(a.id);toast('备注已保存。')}
+function changeStatus(id){let a=db.alerts.find(a=>a.id===id);if(!a)return;if(a.status!=='告警中'){toast('该告警已处理。');return}modalState={kind:'status',id};openModal('处理',`<p style="margin-bottom:16px">${esc(readableText(a.title))} · 告警中 → 已处理</p><div class="field"><label for="statusReason">处理说明 *</label><textarea id="statusReason" placeholder="说明结案依据"></textarea></div><p class="note">处理不同步到 Lark。处理后不可改回告警中。巡检三项通过也不会自动改状态。</p><div class="form-error" id="modalError" hidden></div>`,`<button class="btn" data-action="close-modal">取消</button><button class="btn primary" data-action="submit-status">确认处理</button>`)}
+function submitStatus(){let a=db.alerts.find(a=>a.id===modalState.id);if(!a)return;if(a.status!=='告警中'){modalError('只能将告警中改为已处理。');return}let reason=$('#statusReason').value.trim();if(reason.length<3){modalError('请填写至少 3 个字符的原因。');return}a.statusChanges=a.statusChanges||[];a.statusChanges.push({time:stamp(),actor:CURRENT_OPERATOR.name,from:a.status,to:'已处理',reason});let from=a.status;a.status='已处理';audit('处理告警',a.id,from,'已处理',reason);save();closeModal();render();openAlert(a.id);toast('告警已处理。')}
+// Search supports exact identifiers and prefix suggestions; type search navigates to the list.
+function searchResults(q){let raw=q.trim(),lower=raw.toLowerCase(),groups=[];if(!raw)return [];if(/^\d+$/.test(raw)){let exact=blocks.filter(b=>String(b.height)===raw),prefix=blocks.filter(b=>String(b.height).startsWith(raw)&&String(b.height)!==raw).slice(0,6),bs=exact.length?exact:prefix;if(bs.length)groups.push(['区块',bs.map(b=>({kind:'block',id:b.height,label:'#'+b.height}))])}if(raw.toLowerCase().startsWith('0x')){let hs=blocks.filter(b=>b.hash.toLowerCase().startsWith(lower)).slice(0,6);if(hs.length)groups.push(['区块哈希',hs.map(b=>({kind:'block',id:b.height,label:b.hash}))])}return groups}
+function renderSearch(){let q=$('#globalSearch').value.trim(),groups=searchResults(q);globalQuery=q;let results=$('#searchResults');if(!q){results.hidden=true;return}results.innerHTML=groups.length?groups.map(([g,items])=>`<div class="search-group">${g}</div>${items.map(i=>`<button class="search-result mono" data-action="search-go" data-kind="${i.kind}" data-id="${i.id}">${esc(i.label)}</button>`).join('')}`).join(''):empty('无搜索结果','请输入区块高度或区块哈希。');results.hidden=false}
+function searchGo(kind,id){$('#searchResults').hidden=true;if(kind==='block')openBlock(Number(id))}
+function submitSearch(){let q=$('#globalSearch').value.trim();if(!q)return;if(viewState==='session'){toast('联系管理员重新进入。');return}let groups=searchResults(q),flat=groups.flatMap(g=>g[1]);if(/^\d+$/.test(q)){let exact=blocks.find(b=>String(b.height)===q);if(exact){searchGo('block',exact.height);return}if(flat.length===1){searchGo('block',flat[0].id);return}if(flat.length>1){renderSearch();toast('命中多个结果，请选择建议项。');return}openBlock(Number(q));return}if(flat.length===1){searchGo(flat[0].kind,flat[0].id);return}if(flat.length>1){renderSearch();toast('命中多个结果，请选择建议项。');return}if(/^0x[0-9a-f]{64}$/i.test(q)){toast('未找到该区块哈希。不打开交易详情。');return}if(/^0x[0-9a-f]{40}$/i.test(q)){toast('不展示地址关联交易，请搜索区块高度。');return}renderSearch();toast('未找到该搜索内容，请输入区块高度或区块哈希。')}
+async function copyText(text){try{if(navigator.clipboard&&window.isSecureContext){await navigator.clipboard.writeText(text)}else{let input=document.createElement('textarea');input.value=text;input.style.cssText='position:fixed;opacity:0';document.body.appendChild(input);input.select();let ok=document.execCommand('copy');input.remove();if(!ok)throw Error('copy')}toast('已复制完整内容。')}catch{toast('当前浏览器无法自动复制，请在详情中选择完整内容。')}}
+function refreshView(){viewState='loading';render();setTimeout(()=>{viewState='normal';refreshAt=stamp();render()},350)}
+function resetFilters(id){filters[id]={};pages[id]=1;render()}
+// Every visible action is routed here.
+document.addEventListener('click',e=>{let el=e.target.closest('[data-action]');if(!el||el.disabled)return;let act=el.dataset.action,id=el.dataset.id;e.preventDefault();if(viewState==='session'&&!el.closest('#demoGuidePanel')&&act!=='reset-demo'&&act!=='confirm-reset'){toast('联系管理员重新进入。');return}switch(act){
+case 'nav':navigation(id);break;case 'refresh':case 'retry-view':refreshView();break;
+case 'reset-filter':resetFilters(id);break;case 'reset-current':resetFilters(currentPage);break;
+case 'sort':{let prev=sorts[id];sorts[id]={key:el.dataset.key,desc:prev?.key===el.dataset.key?!prev.desc:true};render();break}
+case 'page':pages[id]=Number(el.dataset.page);render();break;
+case 'open-block':openBlock(Number(id));break;
+case 'copy':copyText(id);break;
+case 'drawer-tab':{let s=drawerState;if(s?.kind==='block')openBlock(s.id,id,s.sub||{});break}
+case 'close-drawer':closeDrawer();break;case 'close-modal':closeModal();break;
+case 'alert-tab':alertTab=id;pages.alerts=1;render();break;
+case 'open-alert':openAlert(id);break;case 'note-alert':addNote(id);break;case 'submit-note':submitNote();break;
+case 'change-status':changeStatus(id);break;case 'submit-status':submitStatus();break;
+case 'search-go':searchGo(el.dataset.kind,id);break;
+case 'reset-demo':openModal('重置原型演示',`<p>清除本原型的告警备注与 Lark 记录，恢复初始异常场景。</p><p class="note">只重置此 HTML 在浏览器内保存的演示数据。</p>`,`<button class="btn" data-action="close-modal">取消</button><button class="btn primary" data-action="confirm-reset">恢复初始数据</button>`);break;
+case 'confirm-reset':db=seed();save();closeModal();closeDrawer();viewState='normal';filters={};pages={};sorts={};alertTab='all';render();toast('已恢复初始异常场景。');break;
+}});
+document.addEventListener('submit',e=>{if(e.target.id==='searchForm'){e.preventDefault();submitSearch();return}let id=e.target.dataset.filter;if(id){e.preventDefault();filters[id]=Object.fromEntries(new FormData(e.target));pages[id]=1;render()}});
+$('#globalSearch').addEventListener('input',renderSearch);$('#globalSearch').addEventListener('focus',()=>{if($('#globalSearch').value)renderSearch()});
+
+function applyScenario(healthy){
+  db.scenario=healthy?'healthy':'incident';
+  db.nodeReachable=true;
+  db.nodeAdvancing=healthy;
+  db.fixedGap=healthy;
+  db.nodeHeight=CHAIN;
+  db.nodeRound=healthy?5021900:5021840;
+  db.lastBlockTime=healthy?'2026-10-16 14:32:48':'2026-10-16 14:02:48';
+  save();viewState='normal';render();closeDrawer();
+  toast(healthy?'已切换数据正常场景。主结论看当前巡检；告警状态保持原值，不自动结案、不发恢复 Lark。':'已切换异常待处理场景。告警状态保持原值。');
+}
+function runDemoScene(id){
+  if(id==='nav-overview'){navigation('overview');return}
+  if(id==='nav-alerts'){navigation('alerts');return}
+  if(id==='scene-incident'){applyScenario(false);return}
+  if(id==='scene-healthy'){applyScenario(true);return}
+  if(id==='view-normal'||id==='view-loading'||id==='view-empty'||id==='view-error'||id==='view-session'){viewState=id.slice(5);closeDrawer();closeModal();render();toast('页面状态：'+({normal:'正常展示',loading:'加载中',empty:'空数据',error:'网络错误',session:'会话失效'}[viewState]));return}
+  if(id==='alert-unreachable'||id==='alert-stall'||id==='alert-gap'){
+    let map={'alert-unreachable':'ALT-1001','alert-stall':'ALT-1002','alert-gap':'ALT-1003'};
+    if(db.scenario!=='incident')applyScenario(false);
+    navigation('alerts');
+    setTimeout(()=>openAlert(map[id]),0);
+    return;
+  }
+  if(id==='lark-ok'){db.larkSend='ok';save();toast('后续 Lark 记录将标记为发送成功。');syncDemoGuideActive();return}
+  if(id==='lark-fail'){db.larkSend='fail';save();toast('后续 Lark 记录将标记为发送失败。');syncDemoGuideActive();return}
+  if(id==='reset-demo'){openModal('重置原型演示',`<p>清除本原型的告警备注与 Lark 记录，恢复初始异常场景。</p><p class="note">只重置此 HTML 在浏览器内保存的演示数据。</p>`,`<button class="btn" data-action="close-modal">取消</button><button class="btn primary" data-action="confirm-reset">恢复初始数据</button>`);return}
+}
+function syncDemoGuideActive(){
+  let panel=$('#demoGuidePanel');if(!panel)return;
+  let active={
+    'nav-overview':currentPage==='overview',
+    'nav-alerts':currentPage==='alerts',
+    'scene-incident':db.scenario==='incident',
+    'scene-healthy':db.scenario==='healthy',
+    'view-normal':viewState==='normal',
+    'view-loading':viewState==='loading',
+    'view-empty':viewState==='empty',
+    'view-error':viewState==='error',
+    'view-session':viewState==='session',
+    'lark-ok':db.larkSend==='ok',
+    'lark-fail':db.larkSend==='fail'
+  };
+  panel.querySelectorAll('.demo-kw').forEach(el=>{
+    let id=el.getAttribute('data-demo');
+    el.classList.toggle('active',!!active[id]);
+  });
+}
+(function initDemoGuidePanel(){
+  const toggle=$('#demoGuideToggle'), panel=$('#demoGuidePanel'), closeBtn=$('#demoGuideClose');
+  if(!toggle||!panel||!closeBtn)return;
+  const head=panel.querySelector('.demo-guide-head');
+  function openPanel(){panel.classList.add('open');panel.setAttribute('aria-hidden','false');syncDemoGuideActive()}
+  function closePanel(){panel.classList.remove('open');panel.setAttribute('aria-hidden','true')}
+  toggle.addEventListener('click',()=>{panel.classList.contains('open')?closePanel():openPanel()});
+  closeBtn.addEventListener('click',closePanel);
+  document.addEventListener('keydown',e=>{if(e.key==='Escape'&&panel.classList.contains('open'))closePanel()});
+  let dragging=false,startX=0,startY=0,originLeft=0,originTop=0;
+  head.addEventListener('mousedown',e=>{
+    if(e.target.closest('.demo-guide-close'))return;
+    dragging=true;const rect=panel.getBoundingClientRect();startX=e.clientX;startY=e.clientY;originLeft=rect.left;originTop=rect.top;
+    panel.style.right='auto';panel.style.left=originLeft+'px';panel.style.top=originTop+'px';panel.style.transition='none';
+    document.body.style.userSelect='none';e.preventDefault();
+  });
+  document.addEventListener('mousemove',e=>{
+    if(!dragging)return;
+    let nx=Math.max(8,Math.min(window.innerWidth-panel.offsetWidth-8,originLeft+(e.clientX-startX)));
+    let ny=Math.max(8,Math.min(window.innerHeight-60,originTop+(e.clientY-startY)));
+    panel.style.left=nx+'px';panel.style.top=ny+'px';
+  });
+  document.addEventListener('mouseup',()=>{if(!dragging)return;dragging=false;panel.style.transition='';document.body.style.userSelect=''});
+  panel.addEventListener('click',e=>{
+    const chip=e.target.closest('.demo-kw');if(!chip)return;
+    const sceneId=chip.getAttribute('data-demo');if(!sceneId)return;
+    runDemoScene(sceneId);syncDemoGuideActive();
+    if(window.innerWidth<800)closePanel();
+  });
+})();
+
+document.addEventListener('click',e=>{if(!e.target.closest('.global-search'))$('#searchResults').hidden=true});
+$('#drawerOverlay').addEventListener('click',e=>{if(e.target===$('#drawerOverlay'))closeDrawer()});$('#modalOverlay').addEventListener('click',e=>{if(e.target===$('#modalOverlay'))closeModal()});
+document.addEventListener('keydown',e=>{if(e.key==='Escape'){if($('#modalOverlay').classList.contains('open'))closeModal();else if($('#drawerOverlay').classList.contains('open'))closeDrawer();$('#searchResults').hidden=true}if((e.metaKey||e.ctrlKey)&&e.key.toLowerCase()==='k'){e.preventDefault();$('#globalSearch').focus()}if(e.key==='Tab'){let scope=$('#modalOverlay').classList.contains('open')?$('.modal'):$('#drawerOverlay').classList.contains('open')?$('.drawer'):null;if(scope){let els=$$('button:not(:disabled),input:not(:disabled),select:not(:disabled),textarea:not(:disabled),a[href]',scope).filter(x=>x.offsetParent!==null);if(!els.length)return;let first=els[0],last=els.at(-1);if(e.shiftKey&&document.activeElement===first){e.preventDefault();last.focus()}else if(!e.shiftKey&&document.activeElement===last){e.preventDefault();first.focus()}}}});
+$('#searchIcon').innerHTML=icon('search');
+save();renderRoute();
+</script>
+</body>
+</html>

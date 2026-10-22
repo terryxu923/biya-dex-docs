@@ -12,5 +12,7 @@
 | 管理后台 PRD（V1.0） | https://terryxu923.github.io/biya-dex-docs/biya-dex-admin-prd.html |
 | 管理后台原型（V1.1.0） | https://terryxu923.github.io/biya-dex-docs/biya-dex-admin-v1.1.0.html |
 | 管理后台 PRD（V1.1.0） | https://terryxu923.github.io/biya-dex-docs/biya-dex-admin-prd-v1.1.0.html |
+| 区块浏览器管理端原型（Explorer Admin V1.0） | https://terryxu923.github.io/biya-dex-docs/biya-dex-explorer-admin.html |
+| 区块浏览器管理端 PRD（Explorer Admin V1.0） | https://terryxu923.github.io/biya-dex-docs/biya-dex-explorer-admin-prd.html |
 
 静态 HTML，由 GitHub Pages 托管。
