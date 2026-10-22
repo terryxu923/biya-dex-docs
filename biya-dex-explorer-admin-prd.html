@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta http-equiv="Cache-Control" content="no-cache" />
-  <title>BIYA DEX Explorer Admin · 产品需求文档 V1.1.6</title>
+  <title>BIYA DEX Explorer Admin · 产品需求文档 V1.1.7</title>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/github-markdown-css@5.6.1/github-markdown-light.min.css" />
   <style>
     * { box-sizing: border-box; }
@@ -34,7 +34,7 @@
   </style>
 </head>
 <body>
-  <!-- generated from BIYA_DEX_Explorer_Admin_PRD_V1.0.md · V1.1.6 · github-slug -->
+  <!-- generated from BIYA_DEX_Explorer_Admin_PRD_V1.0.md · V1.1.7 -->
   <div class="topbar">
     <a href="./index.html">文档入口</a>
     <a href="./biya-dex-explorer-admin.html">打开管理端原型</a>
@@ -42,7 +42,7 @@
   </div>
   <div class="layout">
     <nav class="sidebar">
-      <div class="sidebar-header">Explorer Admin PRD V1.1.6</div>
+      <div class="sidebar-header">Explorer Admin PRD V1.1.7</div>
       <ul class="sidebar-toc">
       <li class="l2"><a href="#文档说明">文档说明</a></li>
       <li class="l2"><a href="#1-本版交付摘要">1. 本版交付摘要</a></li>
@@ -105,7 +105,7 @@
 <tbody>
 <tr>
 <td>文档版本</td>
-<td><strong>V1.1.6</strong></td>
+<td><strong>V1.1.7</strong></td>
 </tr>
 <tr>
 <td>创建日期</td>
@@ -178,33 +178,6 @@
 </tbody>
 </table>
 <p><strong>非目标：</strong> 节点修复、回补/重放、独立查询菜单、操作记录页、登录页、角色与权限配置、交易运营、EVM/Token/合约、告警关联交易。</p>
-<p><strong>已拍板口径（A1–A4）</strong></p>
-<table>
-<thead>
-<tr>
-<th>编号</th>
-<th>口径</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>A1</td>
-<td>不交付登录页。会话有效才能使用后台；失效后不可操作，提示联系管理员重新进入。</td>
-</tr>
-<tr>
-<td>A2</td>
-<td>节点不可达：连续 <strong>3</strong> 次最新高度或健康检查失败/超时。节点不前进建议默认 <strong>T</strong>：有共识轮次时 <strong>30 秒</strong>内轮次不增加；节点暂不提供轮次时，最新区块时间停滞 <strong>5 分钟</strong>。禁止把「两块之间隔了几秒」当成不前进。上线前按真实出块/安静盘再校一次。验收测「停滞→告警中并发送 Lark；节点再推进 <strong>不</strong> 自动改状态」，不把秒数测成唯一通过条件。页面 <strong>不</strong> 展示「T / 不写死秒数」这类实现口径。</td>
-</tr>
-<tr>
-<td>A3</td>
-<td>总览「24h 链上交易数 / 24h 活跃地址」与 <strong>DEX 前台首页同一时间窗口</strong>，本后台不另定义。</td>
-</tr>
-<tr>
-<td>A4</td>
-<td>关闭抽屉或弹窗 <strong>无二次确认</strong>；未提交的备注/原因丢弃；已保存内容保留。</td>
-</tr>
-</tbody>
-</table>
 <h3 id="12-核心数据模型">1.2 核心数据模型</h3>
 <table>
 <thead>
@@ -346,7 +319,7 @@
 </tr>
 <tr>
 <td><strong>管理模块</strong></td>
-<td>运行总览、告警中心</td>
+<td>仅运行总览、告警中心；无独立查询菜单</td>
 </tr>
 <tr>
 <td><strong>附属</strong></td>
@@ -355,6 +328,8 @@
 </tbody>
 </table>
 <h3 id="22-页面框架">2.2 页面框架</h3>
+<p>两页共用壳，<strong>筛选区和分页列表只出现在告警中心</strong>。运行总览是指标卡 + 巡检 + 首页数据 + 需要关注，没有筛选表单。</p>
+<p><strong>共用壳</strong></p>
 <table>
 <thead>
 <tr>
@@ -365,29 +340,19 @@
 </thead>
 <tbody>
 <tr>
-<td>侧边导航</td>
-<td>运行总览、告警中心；告警中心可显示「告警中」条数角标</td>
-<td>筛选不跨模块继承</td>
+<td>侧边栏</td>
+<td>品牌 <code>BIYA DEX</code> / <code>Admin</code>；产品名 <code>Explorer 管理后台</code>；导航仅「运行总览」「告警中心」；告警中心可显示「告警中」条数角标</td>
+<td>筛选不跨模块继承。底部 <code>BIYA Mainnet · DEX</code> / <code>告警值班台</code> 为只读品牌，不是顶栏网络胶囊，不可切换</td>
 </tr>
 <tr>
 <td>顶部栏</td>
-<td>面包屑、全局搜索、当前成员姓名</td>
-<td>无登录/登出入口；无独立网络胶囊</td>
+<td>面包屑 <code>DEX 浏览器 / {当前模块}</code>、全局搜索、当前成员姓名</td>
+<td>无登录/登出；无网络胶囊</td>
 </tr>
 <tr>
 <td>标题区</td>
-<td>标题、说明、<code>更新于 {YYYY-MM-DD HH:mm:ss} UTC+8</code>、刷新</td>
-<td>无模块级主写按钮</td>
-</tr>
-<tr>
-<td>筛选区</td>
-<td>条件</td>
-<td>查询回第一页、恢复默认排序</td>
-</tr>
-<tr>
-<td>列表区</td>
-<td>表格、条数、分页</td>
-<td>见下方「数据列表」；切换页保留筛选与当前排序</td>
+<td>h1 为模块名。运行总览、告警中心 <strong>无</strong> 副标题说明。右侧 <code>更新于 {YYYY-MM-DD HH:mm:ss} UTC+8</code> 与「刷新」</td>
+<td>无模块级主写按钮（没有「新建告警」之类）</td>
 </tr>
 <tr>
 <td>抽屉</td>
@@ -401,6 +366,30 @@
 </tr>
 </tbody>
 </table>
+<p><strong>仅告警中心</strong></p>
+<table>
+<thead>
+<tr>
+<th>区域</th>
+<th>内容</th>
+<th>交互</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>筛选区</td>
+<td>仅告警类别、告警状态两个下拉；空值为「全部」</td>
+<td>「查询」「重置」。查询或重置回第 1 页并恢复默认排序。无告警关键字、无 Tab</td>
+</tr>
+<tr>
+<td>列表区</td>
+<td>表格、条数、分页</td>
+<td>见下方「数据列表」；切换页保留筛选与当前排序</td>
+</tr>
+</tbody>
+</table>
+<p><strong>仅运行总览</strong></p>
+<p>无筛选区、无分页。主体顺序：4 张指标卡 → 节点巡检状态 → 浏览器首页数据与节点与查询状态（同行同高）→ 需要关注（最多 5 条，见 2.3）。</p>
 <h3 id="23-通用交互规则">2.3 通用交互规则</h3>
 <table>
 <thead>
@@ -548,7 +537,7 @@
 </tr>
 </tbody>
 </table>
-<p>建议只匹配区块高度与区块哈希，<strong>不</strong>匹配父哈希。搜索不打开交易、地址或已下线的独立列表页。告警详情不提供「查看关联数据」。</p>
+<p>建议只匹配区块高度与区块哈希，<strong>不</strong>匹配父哈希。高度前缀、哈希前缀每组最多展示 <strong>6</strong> 条。输入过程中无建议时，下拉展示 <code>无搜索结果</code> / <code>请输入区块高度或区块哈希。</code>。搜索不打开交易、地址或已下线的独立列表页。告警详情不提供「查看关联数据」。</p>
 <h3 id="24-详情展示规则">2.4 详情展示规则</h3>
 <table>
 <thead>
@@ -596,6 +585,7 @@
 </tbody>
 </table>
 <h3 id="25-全局页面状态">2.5 全局页面状态</h3>
+<p>页级空态、错误、会话失效时，h1 仍为当前模块名；文案落在标题右侧说明或卡片空态上。</p>
 <table>
 <thead>
 <tr>
@@ -609,43 +599,43 @@
 <tbody>
 <tr>
 <td>加载中</td>
-<td>进入模块、切换筛选、刷新</td>
-<td>标题说明 <code>正在读取节点数据</code> + 占位</td>
-<td>不可对未加载行操作、不可重复提交</td>
+<td>进入模块、刷新</td>
+<td>标题说明 <code>正在读取节点数据</code> + 骨架占位</td>
+<td>不可对未加载行操作</td>
 <td>是</td>
 </tr>
 <tr>
 <td>正常</td>
 <td>加载成功</td>
-<td>筛选 + 内容</td>
+<td>运行总览：指标与卡片（无筛选）。告警中心：筛选 + 列表</td>
 <td>可查看、备注、处理</td>
 <td>—</td>
 </tr>
 <tr>
 <td>空数据</td>
 <td>无记录</td>
-<td>标题 <code>暂无数据</code>；说明 <code>当前没有可展示记录。</code></td>
-<td>可改筛选</td>
+<td>空态标题 <code>暂无数据</code>；说明 <code>当前没有可展示记录。</code>；按钮 <code>恢复正常展示</code></td>
+<td>可点恢复</td>
 <td>—</td>
 </tr>
 <tr>
 <td>筛选无结果</td>
-<td>有数据但无匹配</td>
-<td><code>无匹配记录</code>；<code>请调整筛选条件后重新查询。</code></td>
-<td>可重置</td>
-<td>筛选条件保留</td>
+<td>告警中心有数据但无匹配</td>
+<td>表格内 <code>无匹配记录</code>；<code>请调整筛选条件后重新查询。</code>；按钮 <code>清除筛选</code></td>
+<td>可清除筛选</td>
+<td>筛选条件保留至清除</td>
 </tr>
 <tr>
 <td>网络错误</td>
 <td>超时/失败</td>
-<td><code>查询服务暂时不可用</code>；<code>网络请求失败，请重试。当前筛选条件将保留。</code></td>
+<td>空态标题 <code>查询服务暂时不可用</code>；说明 <code>网络请求失败，请重试。当前筛选条件将保留。</code>；按钮 <code>重试</code></td>
 <td>重试</td>
 <td>筛选条件保留</td>
 </tr>
 <tr>
 <td>会话失效</td>
 <td>身份无效</td>
-<td><code>会话已失效</code>；<code>联系管理员重新进入。</code> 导航、搜索、刷新、抽屉均不可用</td>
+<td>标题说明与空态标题 <code>会话已失效</code>；说明 <code>联系管理员重新进入。</code> 无重试按钮。导航、搜索、刷新、抽屉点击 Toast 同一句</td>
 <td>重新进入后台</td>
 <td>—</td>
 </tr>
@@ -673,7 +663,7 @@
 </tbody>
 </table>
 <h3 id="26-顶栏区块抽屉">2.6 顶栏区块抽屉</h3>
-<p>只读核对某一高度，不作为日常查询菜单，也不是告警结案路径。</p>
+<p>只读核对某一高度，不作为日常查询菜单，也不是告警结案路径。停留在当前模块打开抽屉。</p>
 <table>
 <thead>
 <tr>
@@ -687,12 +677,16 @@
 <td>顶栏搜索区块高度或区块哈希</td>
 </tr>
 <tr>
+<td><strong>抽屉标题</strong></td>
+<td>命中：<code>区块 #{高度}</code>。未找到：<code>区块详情</code></td>
+</tr>
+<tr>
 <td><strong>约束</strong></td>
 <td>侧栏无区块菜单；查无结果不拼接默认对象；无块内交易、无交易/地址抽屉、无前后区块翻页</td>
 </tr>
 </tbody>
 </table>
-<p>Tab：区块概览 / 数据来源。</p>
+<p>命中后 Tab：区块概览 / 数据来源。未找到时无 Tab。</p>
 <p><strong>区块概览</strong></p>
 <table>
 <thead>
@@ -732,7 +726,7 @@
 </tr>
 </tbody>
 </table>
-<p>缺口时底栏可「查看告警」，无横幅提示。</p>
+<p>查询状态为区块缺口时，底栏可「查看告警」，进入告警中心列表（不打开某条详情），无横幅提示。若从告警详情打开本抽屉，底栏为「返回告警」。</p>
 <p><strong>数据来源</strong></p>
 <table>
 <thead>
@@ -764,7 +758,7 @@
 </tr>
 </tbody>
 </table>
-<p>未找到对象：标题 <code>未找到该区块</code>；说明 <code>当前查询不到该区块，不展示默认区块。</code></p>
+<p>未找到对象：空态标题 <code>未找到该区块</code>；说明 <code>当前查询不到该区块，不展示默认区块。</code></p>
 <p>关闭无确认。复制见 2.4。</p>
 <h3 id="27-产品验收条件">2.7 产品验收条件</h3>
 <table>
@@ -777,7 +771,15 @@
 <tbody>
 <tr>
 <td>侧栏</td>
-<td>仅运行总览、告警中心</td>
+<td>仅运行总览、告警中心；底部网络名为只读品牌</td>
+</tr>
+<tr>
+<td>运行总览</td>
+<td>无筛选区、无分页；标题区无副标题</td>
+</tr>
+<tr>
+<td>告警中心</td>
+<td>筛选仅告警类别、告警状态；无 Tab、无告警关键字</td>
 </tr>
 <tr>
 <td>搜索占位</td>
@@ -785,15 +787,15 @@
 </tr>
 <tr>
 <td>搜索精确命中的高度</td>
-<td>打开区块概览；无块内交易 Tab、无前后翻页</td>
+<td>抽屉标题 <code>区块 #{高度}</code>；区块概览 / 数据来源；无块内交易 Tab、无前后翻页</td>
 </tr>
 <tr>
 <td>搜索纯数字多条前缀</td>
-<td><code>命中多个结果，请选择建议项。</code></td>
+<td><code>命中多个结果，请选择建议项。</code>；建议每组最多 6 条</td>
 </tr>
 <tr>
 <td>搜索不存在的高度</td>
-<td>标题 <code>未找到该区块</code>；<code>当前查询不到该区块，不展示默认区块。</code>，不展示另一条默认块</td>
+<td>抽屉标题 <code>区块详情</code>；空态 <code>未找到该区块</code>；<code>当前查询不到该区块，不展示默认区块。</code>，不展示另一条默认块</td>
 </tr>
 <tr>
 <td>搜索建议</td>
@@ -817,7 +819,7 @@
 </tr>
 <tr>
 <td>分页</td>
-<td>每页 10 条</td>
+<td>仅告警中心每页 10 条；需要关注不分页、最多 5 条</td>
 </tr>
 <tr>
 <td>关闭弹窗/抽屉</td>
@@ -1002,7 +1004,7 @@
 </tr>
 </tbody>
 </table>
-<p>无交易时高度可不增；进度仍看轮次或最新块时间。建议默认 T 见 A2，页面不展示 T。</p>
+<p>无交易时高度可不增；进度仍看轮次或最新块时间。建议默认 T 见 <a href="#44-告警目录与判定">4.4</a>，页面不展示 T。</p>
 <p><strong>巡检</strong></p>
 <table>
 <thead>
@@ -2607,17 +2609,17 @@
 <tr>
 <td>搜索</td>
 <td>精确命中高度</td>
-<td>打开该区块；无块内交易、无前后翻页</td>
+<td>抽屉标题 <code>区块 #{高度}</code>；无块内交易、无前后翻页</td>
 </tr>
 <tr>
 <td>搜索</td>
 <td>纯数字多条前缀</td>
-<td><code>命中多个结果，请选择建议项。</code></td>
+<td><code>命中多个结果，请选择建议项。</code>；建议每组最多 6 条</td>
 </tr>
 <tr>
 <td>搜索</td>
 <td>不存在高度</td>
-<td>标题 <code>未找到该区块</code>；<code>当前查询不到该区块，不展示默认区块。</code></td>
+<td>抽屉标题 <code>区块详情</code>；<code>未找到该区块</code>；<code>当前查询不到该区块，不展示默认区块。</code></td>
 </tr>
 <tr>
 <td>搜索</td>
@@ -2642,7 +2644,12 @@
 <tr>
 <td>共用</td>
 <td>侧栏</td>
-<td>仅运行总览、告警中心</td>
+<td>仅运行总览、告警中心；底部网络名为只读品牌</td>
+</tr>
+<tr>
+<td>共用</td>
+<td>运行总览页框</td>
+<td>无筛选、无分页；标题区无副标题</td>
 </tr>
 <tr>
 <td>共用</td>
@@ -2657,7 +2664,7 @@
 <tr>
 <td>共用</td>
 <td>分页</td>
-<td>每页 10 条</td>
+<td>仅告警中心每页 10 条；需要关注最多 5 条不分页</td>
 </tr>
 <tr>
 <td>共用</td>
@@ -2712,6 +2719,12 @@
 <td>V1.0.0</td>
 <td>2026-10-22</td>
 <td>初稿，对齐原型范围</td>
+<td>Terry</td>
+</tr>
+<tr>
+<td>V1.1.7</td>
+<td>2026-10-22</td>
+<td>去掉已拍板口径 A1–A4；§2 按原型区分运行总览与告警中心页面框架</td>
 <td>Terry</td>
 </tr>
 </tbody>
