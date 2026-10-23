@@ -1,0 +1,2750 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta http-equiv="Cache-Control" content="no-cache" />
+  <title>BiyaEVM 区块浏览器 · 产品需求文档 V1.0.0</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/github-markdown-css@5.6.1/github-markdown-light.min.css" />
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.min.js"></script>
+  <style>
+    * { box-sizing: border-box; }
+    html, body { margin: 0; height: 100%; background: #f6f8fa; }
+    body { display: flex; flex-direction: column; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
+    .topbar { flex: 0 0 auto; background: #fff; border-bottom: 1px solid #d8dee4; padding: 10px 16px 10px 296px; font-size: 14px; z-index: 20; }
+    .topbar a { margin-right: 16px; color: #0969da; text-decoration: none; }
+    .topbar a:hover { text-decoration: underline; }
+    .layout { flex: 1 1 auto; display: flex; min-height: 0; }
+    .sidebar { flex: 0 0 280px; width: 280px; background: #fafafa; border-right: 1px solid #e8e8e8; overflow-y: auto; }
+    .sidebar-header { position: sticky; top: 0; z-index: 2; padding: 18px 16px 10px; font-size: 15px; font-weight: 600; color: #111; background: #fafafa; border-bottom: 1px solid #eee; }
+    .sidebar-toc { list-style: none; margin: 0; padding: 8px 0 24px; }
+    .sidebar-toc li { margin: 0; }
+    .sidebar-toc a { display: block; padding: 6px 16px; font-size: 13px; color: #333; line-height: 1.45; text-decoration: none; border-left: 3px solid transparent; }
+    .sidebar-toc .l3 a { padding-left: 28px; font-size: 12px; color: #555; font-weight: 400; }
+    .sidebar-toc .l2 a { font-weight: 600; }
+    .sidebar-toc a:hover { background: #f0f0f0; }
+    .sidebar-toc a.active { border-left-color: #0969da; color: #0969da; background: #eef5ff; }
+    .content { flex: 1 1 auto; overflow-y: auto; padding: 28px 36px 80px; }
+    .markdown-body { box-sizing: border-box; min-width: 200px; max-width: 920px; margin: 0 auto; padding: 32px; background: #fff; border: 1px solid #e8e8e8; border-radius: 10px; }
+    .markdown-body table { display: block; overflow-x: auto; }
+    .mermaid { background: #fff; padding: 12px 0; }
+    @media (max-width: 900px) {
+      .sidebar { display: none; }
+      .topbar { padding-left: 16px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="topbar">
+    <a href="./index.html">文档入口</a>
+    <a href="./BiyaEVMscan.html">打开 EVM 原型</a>
+    <a href="./biya-evm-explorer-prd.md">Markdown 源文件</a>
+  </div>
+  <div class="layout">
+    <nav class="sidebar">
+      <div class="sidebar-header">目录</div>
+      <ul class="sidebar-toc">
+<li class="l2"><a href="#_1">文档说明</a></li>
+<li class="l2"><a href="#_2">目录</a></li>
+<li class="l2"><a href="#1">1. 本期交付摘要</a></li>
+<li class="l3"><a href="#11">1.1 交付结果</a></li>
+<li class="l3"><a href="#12-p0">1.2 P0 核心能力</a></li>
+<li class="l3"><a href="#13">1.3 明确不在本期范围</a></li>
+<li class="l2"><a href="#2">2. 产品概述</a></li>
+<li class="l3"><a href="#21">2.1 背景与当前问题</a></li>
+<li class="l3"><a href="#22">2.2 产品目标</a></li>
+<li class="l3"><a href="#23">2.3 非目标</a></li>
+<li class="l3"><a href="#24">2.4 目标用户与场景</a></li>
+<li class="l3"><a href="#25">2.5 术语与统一口径</a></li>
+<li class="l3"><a href="#26">2.6 页面地图</a></li>
+<li class="l2"><a href="#3">3. 功能列表与优先级</a></li>
+<li class="l2"><a href="#4">4. 功能详细说明</a></li>
+<li class="l2"><a href="#41">4.1 全局导航、模式与搜索</a></li>
+<li class="l3"><a href="#411">4.1.1 流程步骤</a></li>
+<li class="l3"><a href="#412">4.1.2 搜索识别规则</a></li>
+<li class="l3"><a href="#413">4.1.3 页面状态矩阵</a></li>
+<li class="l3"><a href="#414">4.1.4 字段说明</a></li>
+<li class="l3"><a href="#415">4.1.5 交互规则</a></li>
+<li class="l3"><a href="#416">4.1.6 验收标准</a></li>
+<li class="l2"><a href="#42-evm">4.2 EVM 首页</a></li>
+<li class="l3"><a href="#421">4.2.1 产品介绍</a></li>
+<li class="l3"><a href="#422">4.2.2 流程步骤</a></li>
+<li class="l3"><a href="#423">4.2.3 展示字段</a></li>
+<li class="l3"><a href="#424">4.2.4 页面状态矩阵</a></li>
+<li class="l3"><a href="#425">4.2.5 交互规则</a></li>
+<li class="l3"><a href="#426">4.2.6 验收标准</a></li>
+<li class="l2"><a href="#43">4.3 区块列表</a></li>
+<li class="l3"><a href="#431">4.3.1 流程步骤</a></li>
+<li class="l3"><a href="#432">4.3.2 展示字段</a></li>
+<li class="l3"><a href="#433">4.3.3 业务规则</a></li>
+<li class="l3"><a href="#434">4.3.4 页面状态矩阵</a></li>
+<li class="l3"><a href="#435">4.3.5 验收标准</a></li>
+<li class="l2"><a href="#44">4.4 区块详情</a></li>
+<li class="l3"><a href="#441">4.4.1 流程步骤</a></li>
+<li class="l3"><a href="#442">4.4.2 区块概览字段</a></li>
+<li class="l3"><a href="#443">4.4.3 块内交易</a></li>
+<li class="l3"><a href="#444">4.4.4 页面状态矩阵</a></li>
+<li class="l3"><a href="#445">4.4.5 验收标准</a></li>
+<li class="l2"><a href="#45">4.5 交易列表</a></li>
+<li class="l3"><a href="#451">4.5.1 流程步骤</a></li>
+<li class="l3"><a href="#452">4.5.2 展示字段</a></li>
+<li class="l3"><a href="#453">4.5.3 业务规则</a></li>
+<li class="l3"><a href="#454">4.5.4 页面状态矩阵</a></li>
+<li class="l3"><a href="#455">4.5.5 验收标准</a></li>
+<li class="l2"><a href="#46">4.6 交易详情</a></li>
+<li class="l3"><a href="#461">4.6.1 流程步骤</a></li>
+<li class="l3"><a href="#462">4.6.2 基础信息</a></li>
+<li class="l3"><a href="#463">4.6.3 参与方</a></li>
+<li class="l3"><a href="#464">4.6.4 资产与费用</a></li>
+<li class="l3"><a href="#465">4.6.5 其他</a></li>
+<li class="l3"><a href="#466">4.6.6 页面状态矩阵</a></li>
+<li class="l3"><a href="#467">4.6.7 验收标准</a></li>
+<li class="l2"><a href="#47">4.7 地址详情</a></li>
+<li class="l3"><a href="#471">4.7.1 流程步骤</a></li>
+<li class="l3"><a href="#472">4.7.2 头部与余额</a></li>
+<li class="l3"><a href="#473">4.7.3 相关交易</a></li>
+<li class="l3"><a href="#474">4.7.4 页面状态矩阵</a></li>
+<li class="l3"><a href="#475">4.7.5 验收标准</a></li>
+<li class="l2"><a href="#5">5. 横切业务规则与异常处理</a></li>
+<li class="l2"><a href="#51">5.1 数据真实性与一致性</a></li>
+<li class="l2"><a href="#52-gas">5.2 原生币、价格与 Gas 单位</a></li>
+<li class="l2"><a href="#53">5.3 时间口径</a></li>
+<li class="l2"><a href="#54">5.4 分页与可浏览范围</a></li>
+<li class="l2"><a href="#55">5.5 查询与深链状态</a></li>
+<li class="l2"><a href="#56">5.6 加载、错误、空态与重试</a></li>
+<li class="l2"><a href="#57">5.7 长文本与复制</a></li>
+<li class="l2"><a href="#58">5.8 权限与安全边界</a></li>
+<li class="l2"><a href="#59">5.9 无障碍与设备适配</a></li>
+<li class="l2"><a href="#6">6. 更新记录</a></li>
+      </ul>
+    </nav>
+    <div class="content">
+      <article class="markdown-body">
+<h1 id="biyaevm">BiyaEVM 区块浏览器产品需求文档</h1>
+<blockquote>
+<p>产品经理：Terry｜文档版本：V1.0.0｜文档状态：正式需求｜日期：2026-10-20</p>
+</blockquote>
+<h2 id="_1">文档说明</h2>
+<table>
+<thead>
+<tr>
+<th>项目</th>
+<th>内容</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>需求名称</td>
+<td>BiyaEVM 区块浏览器 P0</td>
+</tr>
+<tr>
+<td>需求等级</td>
+<td>L3 复杂需求</td>
+</tr>
+<tr>
+<td>核心目标</td>
+<td>为 Biya EVM 提供公开、只读、可检索的交易、区块和地址查询能力，使用户能打开并读懂一笔普通交易</td>
+</tr>
+<tr>
+<td>目标用户</td>
+<td>链上用户、合约交互方、运营与客服、安全研究人员、生态开发者</td>
+</tr>
+<tr>
+<td>交互基线</td>
+<td><a href="./BiyaEVMscan.html">BiyaEVMscan.html</a> 的 EVM 模式</td>
+</tr>
+<tr>
+<td>范围底稿</td>
+<td><a href="./迭代计划/EVM浏览器迭代版本表.md">EVM浏览器迭代版本表.md</a> 的 V1.0</td>
+</tr>
+<tr>
+<td>编写规范</td>
+<td><a href="../../PRD规范/产品需求文档编写规范.md">产品需求文档编写规范</a></td>
+</tr>
+<tr>
+<td>需求范围</td>
+<td>仅 BiyaEVM 区块浏览器；不包含 BiyaDEX 区块浏览器需求</td>
+</tr>
+<tr>
+<td>一句话概述</td>
+<td>用户无需登录即可搜索并打开 Biya EVM 的交易、区块和地址，核验状态、双方、金额、Gas、费用、Nonce 和输入数据</td>
+</tr>
+</tbody>
+</table>
+<p><strong>文档定位</strong></p>
+<p>本文把 EVM 原型转化为生产可交付的 P0 产品要求。原型中的模拟数据仅用于表达页面和交互，不构成数据值、刷新频率或链上事实；生产版本必须展示 Biya EVM 的真实索引数据。</p>
+<p>本文是产品、设计、研发、测试和 AI 交付参与者共同使用的业务真相源。本文说明用户可见行为、业务规则和验收边界，不规定数据库、接口路径、索引器内部结构或前端框架。</p>
+<p>字段口径、交易三态、接收方三种形态、待确认时空值，以行业 EVM 浏览器（BlockScout）的公开查询语义为准，再落到 Biya 中文界面。</p>
+<p><strong>撰写语言</strong></p>
+<p>正文和用户可见文案以中文为主。哈希、地址前缀、Gas 单位、交易类型等链上原始标识保留必要英文，并在有确定业务含义时补充中文，例如 <code>Gwei（Gas 价格单位）</code>、<code>EIP-1559（交易类型）</code>。</p>
+<hr />
+<h2 id="_2">目录</h2>
+<ul>
+<li><a href="#1-本期交付摘要">1. 本期交付摘要</a></li>
+<li><a href="#2-产品概述">2. 产品概述</a></li>
+<li><a href="#3-功能列表与优先级">3. 功能列表与优先级</a></li>
+<li><a href="#4-功能详细说明">4. 功能详细说明</a></li>
+<li><a href="#41-全局导航模式与搜索">4.1 全局导航、模式与搜索</a></li>
+<li><a href="#42-evm-首页">4.2 EVM 首页</a></li>
+<li><a href="#43-区块列表">4.3 区块列表</a></li>
+<li><a href="#44-区块详情">4.4 区块详情</a></li>
+<li><a href="#45-交易列表">4.5 交易列表</a></li>
+<li><a href="#46-交易详情">4.6 交易详情</a></li>
+<li><a href="#47-地址详情">4.7 地址详情</a></li>
+<li><a href="#5-横切业务规则与异常处理">5. 横切业务规则与异常处理</a></li>
+<li><a href="#6-更新记录">6. 更新记录</a></li>
+</ul>
+<hr />
+<h2 id="1">1. 本期交付摘要</h2>
+<h3 id="11">1.1 交付结果</h3>
+<p>本期交付一套 Biya EVM 公共数据查询产品，形成以下查询闭环：</p>
+<p><div class="mermaid">
+flowchart TD
+    EvmHome[EVM首页] --&gt; BlockList[区块列表]
+    EvmHome[EVM首页] --&gt; TxList[交易列表]
+    EvmHome --&gt; SearchEmpty[搜索无结果]
+    BlockList --&gt; BlockDetail[区块详情]
+    BlockDetail --&gt; TxDetail[交易详情]
+    BlockDetail --&gt; AddressDetail[地址详情]
+    TxList --&gt; TxDetail
+    TxList --&gt; AddressDetail
+    TxDetail --&gt; BlockDetail
+    TxDetail --&gt; AddressDetail
+    AddressDetail --&gt; TxDetail
+    AddressDetail --&gt; BlockDetail
+    SearchEmpty --&gt; EvmHome
+</div></p>
+<p>用户可以从首页了解网络概况和最新活动，从区块或交易列表进入详情，再通过区块、交易和地址之间的链接交叉核验。所有详情页均支持直接打开和分享，不依赖从首页逐级进入。</p>
+<h3 id="12-p0">1.2 P0 核心能力</h3>
+<table>
+<thead>
+<tr>
+<th>模块</th>
+<th>P0 交付能力</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>全局能力</td>
+<td>仅 BiyaChain 显示 EVM / DEX 切换；EVM 下导航为交易列表与区块列表；全局搜索；深链；复制</td>
+</tr>
+<tr>
+<td>首页</td>
+<td>产品介绍（可展开收起）、5 项网络统计、最新区块 10 条、最新交易 10 条</td>
+</tr>
+<tr>
+<td>区块</td>
+<td>区块列表、区块概览、块内交易、前后区块</td>
+</tr>
+<tr>
+<td>交易</td>
+<td>交易列表、交易详情（基础信息、参与方、资产与费用、其他）</td>
+</tr>
+<tr>
+<td>地址</td>
+<td>地址、是否合约、原生币余额、交易数、相关交易列表</td>
+</tr>
+<tr>
+<td>公共状态</td>
+<td>加载、空数据、无结果、无效参数、网络错误、重试</td>
+</tr>
+</tbody>
+</table>
+<h3 id="13">1.3 明确不在本期范围</h3>
+<table>
+<thead>
+<tr>
+<th>不在范围的能力</th>
+<th>本期用户可见行为</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>DEX 区块浏览器页面和业务规则</td>
+<td>本文不定义；切换至 DEX 后由独立需求负责</td>
+</tr>
+<tr>
+<td>版本表首页交易的方法、区块、交易费</td>
+<td>首页最新交易按原型排版，不作为本期首页验收</td>
+</tr>
+<tr>
+<td>版本表首页区块的 Gas 使用量</td>
+<td>首页最新区块按原型排版，不作为本期首页验收</td>
+</tr>
+<tr>
+<td>代币、NFT、代币转移、代币余额</td>
+<td>EVM 导航不展示相关入口；深链不得打开此类页面</td>
+</tr>
+<tr>
+<td>合约源码、验证、读取合约、创建者、部署交易</td>
+<td>合约地址与普通地址使用同一详情页，只区分是否合约</td>
+</tr>
+<tr>
+<td>内部交易、日志、状态变化</td>
+<td>交易、区块、地址详情不展示对应页签</td>
+</tr>
+<tr>
+<td>BiyaCore 与 EVM 划转、外部网络跨链</td>
+<td>交易详情不展示划转或跨链区域</td>
+</tr>
+<tr>
+<td>通过钱包写合约</td>
+<td>不提供签名或写操作入口</td>
+</tr>
+<tr>
+<td>API 文档、API 密钥、套餐与用量</td>
+<td>不进入文档页；首页页脚若保留入口，点击后停留在 EVM 首页</td>
+</tr>
+<tr>
+<td>登录、关注、私有标签、自定义 ABI</td>
+<td>公共查链不要求登录，P0 不展示账户入口</td>
+</tr>
+<tr>
+<td>多语言</td>
+<td>P0 仅提供中文用户界面</td>
+</tr>
+<tr>
+<td>外链网络的 EVM 页面</td>
+<td>本期只验收 Biya EVM；切到其他网络后的页面不在本文展开</td>
+</tr>
+<tr>
+<td>区块链写操作</td>
+<td>不签名、不广播交易、不修改链上状态</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="2">2. 产品概述</h2>
+<h3 id="21">2.1 背景与当前问题</h3>
+<p>Biya EVM 是面向流动性与做市场景的 EVM 兼容执行环境。用户在钱包或应用中提交普通转账、合约交互或创建合约后，需要一个独立于交易终端的公共查询入口，用于确认交易是否上链、状态是否成功、Gas 与费用是多少、对方地址是普通账户还是合约。</p>
+<p>当前 HTML 原型已经表达了 EVM 首页、搜索、交易、区块和地址的页面关系，但数据为前端模拟。若直接按原型实现，不同交付角色可能对真实数据、待确认/失败空值、搜索未命中行为产生不同理解。</p>
+<p>本需求将原型中的有效查询链路固化为生产 P0，并明确：</p>
+<ol>
+<li>页面展示 Biya EVM 的真实索引结果，不使用模拟值冒充链上事实。</li>
+<li>用户能核验一笔普通交易的哈希、区块、时间、双方、状态、金额、Gas、费用、Nonce 和输入数据。</li>
+<li>待确认、失败、创建合约、交互合约必须给出与成功转账不同的可见结果。</li>
+<li>无数据、查无结果、参数无效和网络错误必须给出不同反馈。</li>
+<li>EVM 与 DEX 的产品边界保持清晰，EVM 不复用 DEX 的交易类型筛选，也不展示代币与合约源码。</li>
+</ol>
+<h3 id="22">2.2 产品目标</h3>
+<table>
+<thead>
+<tr>
+<th>目标</th>
+<th>可观察结果</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>提供 EVM 网络概览</td>
+<td>用户进入首页可查看产品介绍、5 项指标及最新区块、最新交易</td>
+</tr>
+<tr>
+<td>提供链上事实查询</td>
+<td>用户可按交易哈希、地址、区块高度或区块哈希打开对应详情</td>
+</tr>
+<tr>
+<td>提供可读的普通交易</td>
+<td>交易详情展示状态、双方、金额、Gas、费用、Nonce 和输入数据</td>
+</tr>
+<tr>
+<td>支持交叉核验</td>
+<td>区块、交易和地址之间可双向跳转，关联字段保持一致</td>
+</tr>
+<tr>
+<td>支持分享和复现</td>
+<td>用户复制详情页链接后，在新会话中可打开相同 EVM 页面和相同查询对象</td>
+</tr>
+<tr>
+<td>明确失败原因</td>
+<td>查询失败时区分“无结果”“参数无效”和“网络错误”</td>
+</tr>
+</tbody>
+</table>
+<h3 id="23">2.3 非目标</h3>
+<ul>
+<li>不通过浏览器完成转账、授权、合约写入或资金操作。</li>
+<li>不在本需求中定义 DEX 页面、DEX 字段或 DEX 筛选。</li>
+<li>不把所有链上原始数据无差别展示；P0 只展示本文字段表规定的业务字段。</li>
+<li>不承诺浏览器查询接口对外开放。</li>
+<li>不以原型中的固定总量、固定时间和固定地址作为生产数据。</li>
+<li>不把索引系统内部设计写入本 PRD。</li>
+</ul>
+<h3 id="24">2.4 目标用户与场景</h3>
+<table>
+<thead>
+<tr>
+<th>用户角色</th>
+<th>典型场景</th>
+<th>需要完成的目标</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>链上用户</td>
+<td>钱包转账后核验是否上链</td>
+<td>通过交易哈希找到交易，查看状态、区块、金额和对方地址</td>
+</tr>
+<tr>
+<td>合约交互方</td>
+<td>与合约交互后核验执行结果</td>
+<td>确认状态为成功或失败；失败时看到回滚原因；接收方显示为交互合约</td>
+</tr>
+<tr>
+<td>运营与客服</td>
+<td>处理“交易未找到”“一直待确认”等反馈</td>
+<td>通过深链复现查询，识别查无结果、待确认或网络错误</td>
+</tr>
+<tr>
+<td>安全研究人员</td>
+<td>调查异常交易或地址行为</td>
+<td>在区块、交易和地址之间交叉核验公开数据</td>
+</tr>
+<tr>
+<td>生态开发者</td>
+<td>理解 Biya EVM 的公开链上活动</td>
+<td>使用浏览器查链；P0 不提供浏览器 API 文档</td>
+</tr>
+</tbody>
+</table>
+<p>所有 P0 页面均为公开只读页面，不因角色不同改变数据可见范围，也不要求登录。</p>
+<h3 id="25">2.5 术语与统一口径</h3>
+<table>
+<thead>
+<tr>
+<th>术语</th>
+<th>定义</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Biya EVM</td>
+<td>与 BiyaCore 协同的 EVM 兼容执行环境；本需求只索引该执行环境上的链上数据</td>
+</tr>
+<tr>
+<td>BiyaEVM 区块浏览器</td>
+<td>本需求定义的 Biya EVM 公共只读查询产品</td>
+</tr>
+<tr>
+<td>原生币</td>
+<td>Biya EVM 用于支付交易费和原生转账的币种，界面符号为 <code>BYB</code></td>
+</tr>
+<tr>
+<td>交易</td>
+<td>用户提交到 Biya EVM 的一笔顶层交易，不是内部调用，也不是代币事件</td>
+</tr>
+<tr>
+<td>交易哈希</td>
+<td>交易的唯一标识，格式为 <code>0x</code> 加 64 位十六进制</td>
+</tr>
+<tr>
+<td>地址</td>
+<td>账户或合约的链上标识，格式为 <code>0x</code> 加 40 位十六进制</td>
+</tr>
+<tr>
+<td>区块高度</td>
+<td>区块在 Biya EVM 上的唯一连续编号</td>
+</tr>
+<tr>
+<td>区块哈希</td>
+<td>区块的唯一标识，格式为 <code>0x</code> 加 64 位十六进制</td>
+</tr>
+<tr>
+<td>出块地址</td>
+<td>产出该区块的地址；首页最新区块展示为“出块者”</td>
+</tr>
+<tr>
+<td>发送方</td>
+<td>发起该笔交易的地址</td>
+</tr>
+<tr>
+<td>接收方</td>
+<td>普通转账的目标地址</td>
+</tr>
+<tr>
+<td>交互合约</td>
+<td>接收方是已有合约地址时的界面名称</td>
+</tr>
+<tr>
+<td>新建合约地址</td>
+<td>创建合约交易产生的新合约地址</td>
+</tr>
+<tr>
+<td>待确认</td>
+<td>交易已被广播、尚未被区块收录</td>
+</tr>
+<tr>
+<td>成功</td>
+<td>交易已被区块收录且执行成功</td>
+</tr>
+<tr>
+<td>失败</td>
+<td>交易已被区块收录且执行失败</td>
+</tr>
+<tr>
+<td>方法</td>
+<td>交易调用的函数名；无法解码时展示方法选择器</td>
+</tr>
+<tr>
+<td>交易费</td>
+<td>用户为该笔交易支付的原生币费用</td>
+</tr>
+<tr>
+<td>区块手续费</td>
+<td>首页最新区块使用的汇总费用，等于该块已用 Gas 乘以基础费用，以原生币展示</td>
+</tr>
+<tr>
+<td>最新</td>
+<td>在可公开查询的数据中，按区块高度或交易收录顺序倒序后的第一条</td>
+</tr>
+<tr>
+<td>深链</td>
+<td>包含 EVM 模式和查询对象、可直接打开目标页面的链接</td>
+</tr>
+<tr>
+<td>查无结果</td>
+<td>查询参数格式有效，但当前公开索引范围内不存在对应数据</td>
+</tr>
+<tr>
+<td>参数无效</td>
+<td>输入不符合交易哈希、地址、区块高度或区块哈希的格式规则</td>
+</tr>
+</tbody>
+</table>
+<p><strong>产品关系说明</strong>：在网络选择层，只有 BiyaChain（界面显示 <code>BIYA Mainnet</code>）同时提供 EVM 和 DEX 两套浏览模式，因此仅选择 BiyaChain 时显示 EVM / DEX 切换。其他网络的页面不在本文验收。本文只定义进入 EVM 后的可见行为。</p>
+<h3 id="26">2.6 页面地图</h3>
+<table>
+<thead>
+<tr>
+<th>页面</th>
+<th>标准入口</th>
+<th>主要任务</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>EVM 首页</td>
+<td>选择 EVM 模式后的首页</td>
+<td>查看介绍、统计和最新数据</td>
+</tr>
+<tr>
+<td>区块列表</td>
+<td>导航「区块链 — 区块列表」</td>
+<td>浏览最近区块</td>
+</tr>
+<tr>
+<td>区块详情</td>
+<td>按区块高度或区块哈希打开</td>
+<td>查看区块概览和块内交易</td>
+</tr>
+<tr>
+<td>交易列表</td>
+<td>导航「区块链 — 交易列表」</td>
+<td>浏览最近已上链交易</td>
+</tr>
+<tr>
+<td>交易详情</td>
+<td>按交易哈希打开</td>
+<td>核验单笔普通交易</td>
+</tr>
+<tr>
+<td>地址详情</td>
+<td>按地址打开</td>
+<td>查看是否合约、余额和相关交易</td>
+</tr>
+<tr>
+<td>搜索无结果</td>
+<td>搜索未命中且格式不能直达详情</td>
+<td>回显关键词，提示未找到</td>
+</tr>
+</tbody>
+</table>
+<p>分享链接必须能直接打开同一业务页面和同一查询对象。若研发调整路径实现，不得改变这一产品结果。</p>
+<hr />
+<h2 id="3">3. 功能列表与优先级</h2>
+<table>
+<thead>
+<tr>
+<th>功能模块</th>
+<th>功能点</th>
+<th>优先级</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>全局</td>
+<td>EVM / DEX 模式边界</td>
+<td>P0</td>
+<td>仅 BiyaChain 显示切换；EVM 页选中 EVM</td>
+</tr>
+<tr>
+<td>全局</td>
+<td>网络边界</td>
+<td>P0</td>
+<td>本期只验收 Biya EVM</td>
+</tr>
+<tr>
+<td>全局</td>
+<td>搜索与深链</td>
+<td>P0</td>
+<td>前缀建议；完整值直达详情；未命中进入搜索无结果页并保留关键词</td>
+</tr>
+<tr>
+<td>全局</td>
+<td>复制与长文本</td>
+<td>P0</td>
+<td>哈希和地址可查看全文并复制</td>
+</tr>
+<tr>
+<td>首页</td>
+<td>产品介绍</td>
+<td>P0</td>
+<td>默认可展开、收起</td>
+</tr>
+<tr>
+<td>首页</td>
+<td>网络统计</td>
+<td>P0</td>
+<td>5 项指标</td>
+</tr>
+<tr>
+<td>首页</td>
+<td>最新区块与最新交易</td>
+<td>P0</td>
+<td>各展示最近 10 条，字段跟原型</td>
+</tr>
+<tr>
+<td>区块</td>
+<td>区块列表</td>
+<td>P0</td>
+<td>高度、时间、交易数、已用 Gas、出块地址</td>
+</tr>
+<tr>
+<td>区块</td>
+<td>区块详情</td>
+<td>P0</td>
+<td>概览、前后区块、块内交易</td>
+</tr>
+<tr>
+<td>交易</td>
+<td>交易列表</td>
+<td>P0</td>
+<td>八列、分页、从新到旧</td>
+</tr>
+<tr>
+<td>交易</td>
+<td>交易详情</td>
+<td>P0</td>
+<td>基础信息、参与方、资产与费用、其他</td>
+</tr>
+<tr>
+<td>地址</td>
+<td>地址详情</td>
+<td>P0</td>
+<td>是否合约、余额、交易数、相关交易</td>
+</tr>
+<tr>
+<td>公共状态</td>
+<td>加载、空数据、无结果、无效参数、网络错误和重试</td>
+<td>P0</td>
+<td>所有数据页面适用</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="4">4. 功能详细说明</h2>
+<h2 id="41">4.1 全局导航、模式与搜索</h2>
+<p><strong>用户目标</strong></p>
+<p>用户从任意 EVM 页面都能识别当前为 Biya EVM，进入区块或交易主路径，搜索目标对象，并分享当前查询状态。</p>
+<h3 id="411">4.1.1 流程步骤</h3>
+<table>
+<thead>
+<tr>
+<th>步骤</th>
+<th>用户操作</th>
+<th>系统行为</th>
+<th>可见结果</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>在 BiyaChain 选择 EVM</td>
+<td>进入 EVM 模式</td>
+<td>进入 EVM 首页，EVM 处于选中</td>
+</tr>
+<tr>
+<td>2</td>
+<td>打开带 EVM 模式和对象标识的深链</td>
+<td>解析页面和对象</td>
+<td>直接进入对应列表或详情</td>
+</tr>
+<tr>
+<td>3</td>
+<td>展开“区块链”菜单</td>
+<td>展示“交易列表”“区块列表”</td>
+<td>用户可进入两类列表</td>
+</tr>
+<tr>
+<td>4</td>
+<td>在全局搜索框输入内容</td>
+<td>按前缀规则即时检索当前链可匹配对象</td>
+<td>下拉展示建议；无命中时下拉内显示空态</td>
+</tr>
+<tr>
+<td>5</td>
+<td>提交完整且存在的交易哈希、地址、高度或区块哈希</td>
+<td>打开对应详情</td>
+<td>进入交易、地址或区块详情</td>
+</tr>
+<tr>
+<td>6</td>
+<td>提交格式有效但不存在的对象，或无法识别的文本</td>
+<td>进入搜索无结果页</td>
+<td>回显用户关键词</td>
+</tr>
+<tr>
+<td>7</td>
+<td>点击地址、哈希或区块链接</td>
+<td>保留 EVM 上下文并打开关联页</td>
+<td>目标页仍处于 EVM 模式</td>
+</tr>
+<tr>
+<td>8</td>
+<td>点击 DEX</td>
+<td>退出 EVM，进入 DEX 浏览器</td>
+<td>其后行为由 DEX 需求负责</td>
+</tr>
+</tbody>
+</table>
+<p>EVM 导航不展示代币、合约详情、API 文档。开发者菜单仅 DEX 模式可见。</p>
+<h3 id="412">4.1.2 搜索识别规则</h3>
+<p>全局搜索以<strong>从左往右的前缀匹配</strong>提供建议。检索范围是当前 Biya EVM 可公开查询的交易哈希、地址、区块高度和区块哈希。占位文案为“搜索交易哈希 / 地址 / 区块高度 / 区块哈希”。</p>
+<p><strong>输入即检索</strong></p>
+<table>
+<thead>
+<tr>
+<th>输入</th>
+<th>匹配对象</th>
+<th>匹配规则</th>
+<th>展示</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>去除首尾空格后为空</td>
+<td>无</td>
+<td>不检索</td>
+<td>收起下拉，不显示错误</td>
+</tr>
+<tr>
+<td>仅十进制数字</td>
+<td>区块高度</td>
+<td>完整高度字符串以输入为前缀</td>
+<td>区块建议</td>
+</tr>
+<tr>
+<td><code>0x</code> 加十六进制</td>
+<td>交易哈希、区块哈希、地址</td>
+<td>完整值以输入为前缀，不区分大小写</td>
+<td>按命中分类展示</td>
+</tr>
+<tr>
+<td>任意非空文本</td>
+<td>以上对象均无前缀命中</td>
+<td>不适用</td>
+<td>下拉内显示空态，停留当前页</td>
+</tr>
+</tbody>
+</table>
+<p>建议规则：</p>
+<ol>
+<li>每一类最多展示 10 条，分类计数按实际展示条数，不超过 10。</li>
+<li>同时命中多类时，下拉用分类区分“交易”“区块”“地址”，只显示有结果的分类。</li>
+<li>默认选中第一类有结果的分类，优先顺序为交易、区块、地址。</li>
+<li>命中前缀在建议项中高亮。</li>
+<li>精确完整值排在同类建议最前；区块高度在同等条件下从高到低。</li>
+<li>无命中时下拉标题为“无搜索结果”，说明为“未在当前链找到相关结果，请确认搜索内容”。输入过程不离开当前页。</li>
+<li>P0 不支持代币、NFT、合约名、内部交易或自然语言搜索。</li>
+</ol>
+<p><strong>提交（回车或搜索按钮）</strong></p>
+<table>
+<thead>
+<tr>
+<th>提交内容</th>
+<th>系统行为</th>
+<th>可见结果</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>空</td>
+<td>不跳转</td>
+<td>收起下拉，保持当前页</td>
+</tr>
+<tr>
+<td>完整交易哈希且索引中存在该交易</td>
+<td>打开该交易详情</td>
+<td>进入交易详情</td>
+</tr>
+<tr>
+<td>完整 64 位十六进制，交易不存在但区块哈希存在</td>
+<td>打开该区块详情</td>
+<td>进入区块详情</td>
+</tr>
+<tr>
+<td>完整 64 位十六进制，交易与区块哈希均不存在</td>
+<td>进入搜索无结果页</td>
+<td>回显该哈希，不当成一笔交易打开</td>
+</tr>
+<tr>
+<td>完整地址（<code>0x</code> 加 40 位十六进制）</td>
+<td>打开该地址详情</td>
+<td>无交易地址仍打开并显示空状态</td>
+</tr>
+<tr>
+<td>纯数字区块高度</td>
+<td>打开该高度的区块详情</td>
+<td>高度不存在则由区块详情给出未找到</td>
+</tr>
+<tr>
+<td>前缀命中恰好 1 条，且不是上述完整格式</td>
+<td>打开该对象详情</td>
+<td>进入对应详情</td>
+</tr>
+<tr>
+<td>前缀命中多于 1 条，且不是完整哈希或完整地址</td>
+<td>不跳转</td>
+<td>保持建议下拉，由用户点选</td>
+</tr>
+<tr>
+<td>其他无命中</td>
+<td>进入搜索无结果页</td>
+<td>回显关键词</td>
+</tr>
+</tbody>
+</table>
+<p>点选建议项后打开对应 EVM 详情，并关闭下拉。</p>
+<p><strong>搜索无结果页</strong></p>
+<table>
+<thead>
+<tr>
+<th>界面字段</th>
+<th>数据来源</th>
+<th>展示规则</th>
+<th>空值/异常</th>
+<th>校验/交互</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>说明文案</td>
+<td>产品文案</td>
+<td>有关键词时：“未找到与当前关键词匹配的交易、地址或区块，请确认搜索内容”</td>
+<td>无关键词时用通用未找到说明</td>
+<td>只读</td>
+</tr>
+<tr>
+<td>关键词</td>
+<td>用户提交内容</td>
+<td>原样回显</td>
+<td>无关键词时不展示该行</td>
+<td>只读，不可当作新搜索自动重跑</td>
+</tr>
+</tbody>
+</table>
+<h3 id="413">4.1.3 页面状态矩阵</h3>
+<table>
+<thead>
+<tr>
+<th>场景</th>
+<th>触发条件</th>
+<th>页面展示</th>
+<th>用户可操作</th>
+<th>是否保留输入</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>BiyaChain EVM 默认态</td>
+<td>选择 BiyaChain 且进入 EVM</td>
+<td>显示 EVM / DEX 切换，EVM 选中；导航为交易列表、区块列表</td>
+<td>搜索、进入列表、切换 DEX</td>
+<td>是</td>
+</tr>
+<tr>
+<td>BiyaChain DEX 状态</td>
+<td>用户点击 DEX</td>
+<td>退出 EVM 页面</td>
+<td>使用 DEX 已有能力</td>
+<td>不适用</td>
+</tr>
+<tr>
+<td>其他网络</td>
+<td>用户切换到其他网络</td>
+<td>不在本文验收</td>
+<td>切换网络</td>
+<td>不适用</td>
+</tr>
+<tr>
+<td>搜索建议</td>
+<td>输入非空且有前缀命中</td>
+<td>搜索框下方展示分类建议</td>
+<td>点选、切换分类、继续输入、提交</td>
+<td>是</td>
+</tr>
+<tr>
+<td>搜索下拉无命中</td>
+<td>输入非空且无前缀命中</td>
+<td>下拉显示“无搜索结果”，当前页不变</td>
+<td>修改搜索内容或提交</td>
+<td>是</td>
+</tr>
+<tr>
+<td>搜索直达</td>
+<td>提交命中唯一完整对象</td>
+<td>关闭下拉并打开对应详情</td>
+<td>查看详情或返回</td>
+<td>是</td>
+</tr>
+<tr>
+<td>搜索无结果页</td>
+<td>提交后无法直达详情</td>
+<td>独立无结果页，回显关键词</td>
+<td>修改搜索、返回首页</td>
+<td>是</td>
+</tr>
+<tr>
+<td>查无结果</td>
+<td>打开的详情对象格式有效但不存在</td>
+<td>目标详情页显示对应无结果状态</td>
+<td>返回或重新搜索</td>
+<td>是</td>
+</tr>
+</tbody>
+</table>
+<h3 id="414">4.1.4 字段说明</h3>
+<table>
+<thead>
+<tr>
+<th>界面字段</th>
+<th>数据来源</th>
+<th>展示规则</th>
+<th>空值/异常</th>
+<th>校验/交互</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>品牌名</td>
+<td>产品配置</td>
+<td><code>BIYA Explorer</code></td>
+<td>不允许为空</td>
+<td>点击返回当前网络的 EVM 首页</td>
+</tr>
+<tr>
+<td>当前网络</td>
+<td>网络配置</td>
+<td>BiyaChain 显示 <code>BIYA Mainnet</code></td>
+<td>配置异常时不进入 EVM</td>
+<td>可展开网络列表；切走 BiyaChain 后不在本文验收</td>
+</tr>
+<tr>
+<td>EVM / DEX 切换</td>
+<td>当前网络与页面状态</td>
+<td>仅 BiyaChain 显示；EVM 页面中 <code>EVM</code> 选中</td>
+<td>其他网络完全隐藏，不保留空白占位</td>
+<td>点击 DEX 退出 EVM</td>
+</tr>
+<tr>
+<td>页面标题</td>
+<td>当前网络</td>
+<td>BiyaChain 显示 <code>BiyaChain</code></td>
+<td>不允许为空</td>
+<td>只读</td>
+</tr>
+<tr>
+<td>全局搜索内容</td>
+<td>用户输入</td>
+<td>原样保留；检索前去除首尾空格</td>
+<td>无命中时下拉提示无结果</td>
+<td>输入即出建议；回车或搜索按钮按提交规则处理</td>
+</tr>
+<tr>
+<td>区块链导航</td>
+<td>产品配置</td>
+<td>交易列表、区块列表</td>
+<td>不允许为空</td>
+<td>进入对应 EVM 列表</td>
+</tr>
+</tbody>
+</table>
+<h3 id="415">4.1.5 交互规则</h3>
+<table>
+<thead>
+<tr>
+<th>场景</th>
+<th>触发条件</th>
+<th>反馈形式</th>
+<th>返回后是否保留</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>列表进入详情</td>
+<td>点击区块、哈希或地址</td>
+<td>当前窗口打开详情</td>
+<td>浏览器返回后恢复原列表页和页码</td>
+</tr>
+<tr>
+<td>深链打开</td>
+<td>新会话打开有效 EVM 链接</td>
+<td>直接还原页面和对象</td>
+<td>不适用</td>
+</tr>
+<tr>
+<td>复制</td>
+<td>点击哈希或地址旁复制按钮</td>
+<td>复制完整值并显示 1.5 秒成功反馈</td>
+<td>不适用</td>
+</tr>
+<tr>
+<td>查看长文本</td>
+<td>哈希或地址在列表中被截断</td>
+<td>悬停或聚焦时展示完整值</td>
+<td>不适用</td>
+</tr>
+<tr>
+<td>切换至 DEX</td>
+<td>在 BiyaChain 点击 DEX</td>
+<td>进入 DEX 首页</td>
+<td>DEX 行为由 DEX 需求定义</td>
+</tr>
+</tbody>
+</table>
+<h3 id="416">4.1.6 验收标准</h3>
+<table>
+<thead>
+<tr>
+<th>序号</th>
+<th>验收条件</th>
+<th>预期结果</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>AC-G01</td>
+<td>用户在 BiyaChain 选择 EVM</td>
+<td>进入 EVM 首页，EVM 显示为当前模式，导航仅含交易列表和区块列表</td>
+</tr>
+<tr>
+<td>AC-G02</td>
+<td>用户在新会话打开任一有效 EVM 详情深链</td>
+<td>直接打开该对象详情，且页面保持 EVM 模式</td>
+</tr>
+<tr>
+<td>AC-G03</td>
+<td>用户分别提交完整且存在的交易哈希、地址、区块高度</td>
+<td>分别进入对应交易、地址、区块详情</td>
+</tr>
+<tr>
+<td>AC-G04</td>
+<td>用户提交完整且存在的区块哈希</td>
+<td>进入对应区块详情</td>
+</tr>
+<tr>
+<td>AC-G05</td>
+<td>用户提交格式正确、索引中不存在的 64 位十六进制</td>
+<td>进入搜索无结果页并回显该值，不打开交易详情</td>
+</tr>
+<tr>
+<td>AC-G06</td>
+<td>用户提交无法识别的文本</td>
+<td>进入搜索无结果页并回显关键词</td>
+</tr>
+<tr>
+<td>AC-G07</td>
+<td>用户从列表进入详情后执行浏览器返回</td>
+<td>恢复进入详情前的列表页和页码</td>
+</tr>
+<tr>
+<td>AC-G08</td>
+<td>用户复制列表中被截断的地址或哈希</td>
+<td>剪贴板内容为完整值，页面出现复制成功反馈</td>
+</tr>
+<tr>
+<td>AC-G09</td>
+<td>用户选择 BiyaChain 并处于 EVM</td>
+<td>页面显示 EVM / DEX 切换，EVM 处于选中</td>
+</tr>
+<tr>
+<td>AC-G10</td>
+<td>用户输入同时命中交易和地址的前缀</td>
+<td>下拉出现对应分类，每类最多 10 条，命中前缀高亮</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="42-evm">4.2 EVM 首页</h2>
+<p><strong>用户目标</strong></p>
+<p>用户进入 EVM 后了解产品定位和网络概况，并从最新区块、最新交易进入详情。</p>
+<h3 id="421">4.2.1 产品介绍</h3>
+<p>首页使用以下产品介绍：</p>
+<blockquote>
+<p>BiyaEVM 是面向流动性与做市场景构建的 EVM 兼容执行环境，与 BiyaCore 深度协同，融合智能合约的可编程能力与核心交易层的流动性和订单簿能力，支持链上资产交易、流动性管理及自动化做市，打造高效、可组合的链上金融基础设施。</p>
+</blockquote>
+<p>此段为产品宣介文案，不作为性能、流动性或资金路径的验收数据来源。</p>
+<p>默认单行省略，右侧按钮为“展开全部”；展开后全文换行展示，按钮变为“收起”。展开或收起不影响统计和列表加载。</p>
+<h3 id="422">4.2.2 流程步骤</h3>
+<table>
+<thead>
+<tr>
+<th>步骤</th>
+<th>用户操作</th>
+<th>系统行为</th>
+<th>可见结果</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>进入 EVM 首页</td>
+<td>加载介绍、统计、最新区块和最新交易</td>
+<td>统计和两组列表分别进入加载态</td>
+</tr>
+<tr>
+<td>2</td>
+<td>等待数据返回</td>
+<td>展示已完成索引的最新数据</td>
+<td>看到 5 项统计和两组各最多 10 条的列表</td>
+</tr>
+<tr>
+<td>3</td>
+<td>点击最新区块高度</td>
+<td>打开对应区块详情</td>
+<td>可查看概览和块内交易</td>
+</tr>
+<tr>
+<td>4</td>
+<td>点击最新交易哈希</td>
+<td>打开对应交易详情</td>
+<td>可查看完整交易字段</td>
+</tr>
+<tr>
+<td>5</td>
+<td>点击出块者、发送方或接收方</td>
+<td>打开对应地址详情</td>
+<td>可查看该地址活动</td>
+</tr>
+<tr>
+<td>6</td>
+<td>点击“查看全部区块”或“查看全部交易”</td>
+<td>打开对应列表</td>
+<td>进入区块列表或交易列表</td>
+</tr>
+</tbody>
+</table>
+<h3 id="423">4.2.3 展示字段</h3>
+<h4 id="_3">网络统计</h4>
+<table>
+<thead>
+<tr>
+<th>界面字段</th>
+<th>业务含义</th>
+<th>数据来源</th>
+<th>展示规则</th>
+<th>空值/异常</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>BYB 价格</td>
+<td>原生币对美元的公开报价</td>
+<td>公开行情或索引侧已接入的报价</td>
+<td>美元金额；有涨跌时附涨跌幅</td>
+<td>不可用显示 <code>--</code></td>
+</tr>
+<tr>
+<td>市值</td>
+<td>按公开口径计算的原生币市值</td>
+<td>公开行情与供应量</td>
+<td>美元金额</td>
+<td>不可用显示 <code>--</code></td>
+</tr>
+<tr>
+<td>总交易量</td>
+<td>从创世至当前最高已索引区块，已上链交易笔数</td>
+<td>Biya EVM 公开索引</td>
+<td>非负整数，可用千分位或缩写</td>
+<td>不可用显示 <code>--</code></td>
+</tr>
+<tr>
+<td>24H 交易量</td>
+<td>以当前时刻向前滚动 24 小时的已上链交易笔数</td>
+<td>Biya EVM 公开索引</td>
+<td>非负整数</td>
+<td>不可用显示 <code>--</code></td>
+</tr>
+<tr>
+<td>当前 Gas 价格</td>
+<td>当前建议的 Gas 价格</td>
+<td>公开 Gas 统计</td>
+<td>数值 + <code>Gwei</code></td>
+<td>不可用显示 <code>--</code></td>
+</tr>
+</tbody>
+</table>
+<p>单项不可用只降级该指标，不阻断两组列表。</p>
+<h4 id="_4">最新区块</h4>
+<p>首页最新区块按高度倒序，最多 10 条。字段以原型为准，不验收版本表中的 Gas 使用量。</p>
+<table>
+<thead>
+<tr>
+<th>界面字段</th>
+<th>数据来源</th>
+<th>展示规则</th>
+<th>空值/异常</th>
+<th>交互</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>区块高度</td>
+<td>区块数据</td>
+<td>完整十进制</td>
+<td>不允许为空</td>
+<td>点击进区块详情</td>
+</tr>
+<tr>
+<td>时间</td>
+<td>区块时间</td>
+<td>相对时间，见 §5.3</td>
+<td>无时间显示 <code>--</code></td>
+<td>只读</td>
+</tr>
+<tr>
+<td>出块者</td>
+<td>出块地址</td>
+<td>列表截断，前缀文案“出块者”</td>
+<td>无出块地址显示 <code>--</code></td>
+<td>点击进地址详情；可复制</td>
+</tr>
+<tr>
+<td>手续费</td>
+<td>该块已用 Gas × 基础费用，折算为原生币</td>
+<td>前缀文案“手续费”，单位 <code>BYB</code></td>
+<td>无法计算显示 <code>--</code></td>
+<td>只读</td>
+</tr>
+<tr>
+<td>交易数</td>
+<td>区块内交易数量</td>
+<td><code>N 笔交易</code></td>
+<td>0 显示“0 笔交易”</td>
+<td>只读</td>
+</tr>
+</tbody>
+</table>
+<h4 id="_5">最新交易</h4>
+<p>首页最新交易按收录顺序倒序，最多 10 条。字段以原型为准，不验收版本表中的方法、区块、交易费。</p>
+<table>
+<thead>
+<tr>
+<th>界面字段</th>
+<th>数据来源</th>
+<th>展示规则</th>
+<th>空值/异常</th>
+<th>交互</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>交易哈希</td>
+<td>交易数据</td>
+<td>列表截断</td>
+<td>不允许为空</td>
+<td>点击进交易详情；可复制</td>
+</tr>
+<tr>
+<td>时间</td>
+<td>交易时间</td>
+<td>相对时间，见 §5.3</td>
+<td>无时间显示 <code>--</code></td>
+<td>只读</td>
+</tr>
+<tr>
+<td>发送方</td>
+<td>交易发送方</td>
+<td>前缀“发送方”，列表截断</td>
+<td>不允许为空</td>
+<td>点击进地址详情；可复制</td>
+</tr>
+<tr>
+<td>接收方</td>
+<td>普通接收方或创建出的合约</td>
+<td>前缀“接收方”，列表截断</td>
+<td>创建合约展示新建合约地址；缺失显示 <code>--</code></td>
+<td>点击进地址详情；可复制</td>
+</tr>
+<tr>
+<td>金额</td>
+<td>原生币转账数量</td>
+<td>右侧展示，单位 <code>BYB</code></td>
+<td>0 显示 <code>0 BYB</code></td>
+<td>只读</td>
+</tr>
+</tbody>
+</table>
+<p>待确认交易可以出现在首页最新交易中。首页不单独展示“待确认”文案；区块字段不出现在本列。</p>
+<h3 id="424">4.2.4 页面状态矩阵</h3>
+<table>
+<thead>
+<tr>
+<th>场景</th>
+<th>触发条件</th>
+<th>页面展示</th>
+<th>用户可操作</th>
+<th>是否保留已有数据</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>首次加载</td>
+<td>进入首页</td>
+<td>统计区和两列表分别显示加载占位</td>
+<td>可使用全局导航和展开介绍</td>
+<td>不适用</td>
+</tr>
+<tr>
+<td>正常</td>
+<td>数据返回</td>
+<td>展示介绍、5 项统计和两组列表</td>
+<td>查看全部、进入详情</td>
+<td>是</td>
+</tr>
+<tr>
+<td>部分失败</td>
+<td>统计或某一列表失败</td>
+<td>成功区域正常展示；失败区域显示“加载失败，请重试”</td>
+<td>重试失败区域</td>
+<td>是</td>
+</tr>
+<tr>
+<td>暂无数据</td>
+<td>网络尚无可公开数据</td>
+<td>指标为 0 或 <code>--</code>；列表显示“暂无区块”或“暂无交易”</td>
+<td>稍后重试</td>
+<td>不适用</td>
+</tr>
+</tbody>
+</table>
+<h3 id="425">4.2.5 交互规则</h3>
+<ul>
+<li>介绍展开与收起不影响数据加载。</li>
+<li>新记录加入后，两组列表仍最多保留 10 条。</li>
+<li>单个统计值不可用时只降级该字段。</li>
+<li>“查看全部区块”“查看全部交易”必须保持 EVM 模式。</li>
+<li>首页不展示社交入口，不提供“全部数据”开关。</li>
+</ul>
+<h3 id="426">4.2.6 验收标准</h3>
+<table>
+<thead>
+<tr>
+<th>序号</th>
+<th>验收条件</th>
+<th>预期结果</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>AC-H01</td>
+<td>用户进入数据正常的 EVM 首页</td>
+<td>展示介绍、5 项统计、最多 10 条最新区块和最多 10 条最新交易</td>
+</tr>
+<tr>
+<td>AC-H02</td>
+<td>用户点击“展开全部”再点击“收起”</td>
+<td>介绍先全文后恢复单行，列表数据不被清空</td>
+</tr>
+<tr>
+<td>AC-H03</td>
+<td>最新区块每一行</td>
+<td>可见高度、时间、出块者、手续费、笔数；不见 Gas 使用量</td>
+</tr>
+<tr>
+<td>AC-H04</td>
+<td>最新交易每一行</td>
+<td>可见哈希、时间、发送方、接收方、金额；不见方法、区块、交易费</td>
+</tr>
+<tr>
+<td>AC-H05</td>
+<td>用户点击高度、哈希、出块者或双方地址</td>
+<td>分别进入对应 EVM 详情</td>
+</tr>
+<tr>
+<td>AC-H06</td>
+<td>用户点击两处“查看全部”</td>
+<td>分别进入 EVM 区块列表和 EVM 交易列表</td>
+</tr>
+<tr>
+<td>AC-H07</td>
+<td>某一统计值不可用</td>
+<td>该值显示 <code>--</code>，其他指标和列表仍可查看</td>
+</tr>
+<tr>
+<td>AC-H08</td>
+<td>创建合约出现在最新交易</td>
+<td>接收方可点进新建合约地址</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="43">4.3 区块列表</h2>
+<p><strong>用户目标</strong></p>
+<p>用户按从新到旧浏览 Biya EVM 区块，了解时间、交易数、已用 Gas 和出块地址，并进入详情。</p>
+<h3 id="431">4.3.1 流程步骤</h3>
+<table>
+<thead>
+<tr>
+<th>步骤</th>
+<th>用户操作</th>
+<th>系统行为</th>
+<th>可见结果</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>打开区块列表</td>
+<td>按高度倒序加载第 1 页</td>
+<td>每页 20 条</td>
+</tr>
+<tr>
+<td>2</td>
+<td>点击高度</td>
+<td>打开区块详情</td>
+<td>进入概览</td>
+</tr>
+<tr>
+<td>3</td>
+<td>点击出块地址</td>
+<td>打开地址详情</td>
+<td>进入该地址</td>
+</tr>
+<tr>
+<td>4</td>
+<td>翻页</td>
+<td>加载对应页</td>
+<td>页码和区间更新</td>
+</tr>
+</tbody>
+</table>
+<h3 id="432">4.3.2 展示字段</h3>
+<table>
+<thead>
+<tr>
+<th>界面字段</th>
+<th>业务含义</th>
+<th>展示规则</th>
+<th>空值/异常</th>
+<th>交互</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>区块高度</td>
+<td>区块编号</td>
+<td>完整十进制，可用千分位</td>
+<td>不允许为空</td>
+<td>点击进区块详情</td>
+</tr>
+<tr>
+<td>时间</td>
+<td>出块时间</td>
+<td>相对时间或绝对时间，见 §5.3</td>
+<td>无时间显示 <code>--</code></td>
+<td>只读</td>
+</tr>
+<tr>
+<td>交易数</td>
+<td>该块收录的顶层交易数</td>
+<td>非负整数</td>
+<td>0 显示 0</td>
+<td>只读</td>
+</tr>
+<tr>
+<td>已用 Gas</td>
+<td>该块实际消耗的 Gas</td>
+<td>整数，可用千分位</td>
+<td>不可用显示 <code>--</code></td>
+<td>只读</td>
+</tr>
+<tr>
+<td>出块地址</td>
+<td>产出该块的地址</td>
+<td>列表截断</td>
+<td>不可用显示 <code>--</code></td>
+<td>点击进地址详情；可复制</td>
+</tr>
+</tbody>
+</table>
+<p>同一高度在列表、首页和详情中的出块地址、交易数、已用 Gas 必须一致。</p>
+<h3 id="433">4.3.3 业务规则</h3>
+<ul>
+<li>默认按区块高度从高到低。</li>
+<li>每页 20 条，见 §5.4。</li>
+<li>P0 不做区块类型筛选，也不做列表页高度搜索框。</li>
+</ul>
+<h3 id="434">4.3.4 页面状态矩阵</h3>
+<table>
+<thead>
+<tr>
+<th>场景</th>
+<th>触发条件</th>
+<th>页面展示</th>
+<th>用户可操作</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>加载中</td>
+<td>首次打开或翻页</td>
+<td>表格区加载占位</td>
+<td>返回首页</td>
+</tr>
+<tr>
+<td>正常</td>
+<td>有区块</td>
+<td>20 条/页及分页</td>
+<td>进详情、翻页</td>
+</tr>
+<tr>
+<td>暂无数据</td>
+<td>链上尚无区块</td>
+<td>“暂无区块数据”</td>
+<td>返回、重试</td>
+</tr>
+<tr>
+<td>网络错误</td>
+<td>查询失败</td>
+<td>“区块列表加载失败，请重试”</td>
+<td>重试</td>
+</tr>
+</tbody>
+</table>
+<h3 id="435">4.3.5 验收标准</h3>
+<table>
+<thead>
+<tr>
+<th>序号</th>
+<th>验收条件</th>
+<th>预期结果</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>AC-BL01</td>
+<td>用户打开区块列表</td>
+<td>倒序展示高度、时间、交易数、已用 Gas、出块地址</td>
+</tr>
+<tr>
+<td>AC-BL02</td>
+<td>用户点击某一高度</td>
+<td>打开该高度的区块详情</td>
+</tr>
+<tr>
+<td>AC-BL03</td>
+<td>同一高度在列表与详情</td>
+<td>出块地址、交易数、已用 Gas 一致</td>
+</tr>
+<tr>
+<td>AC-BL04</td>
+<td>用户翻到第 2 页再返回</td>
+<td>恢复第 2 页</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="44">4.4 区块详情</h2>
+<p><strong>用户目标</strong></p>
+<p>用户核验某一区块的身份、出块信息和块内交易，并能跳到相邻区块。</p>
+<h3 id="441">4.4.1 流程步骤</h3>
+<table>
+<thead>
+<tr>
+<th>步骤</th>
+<th>用户操作</th>
+<th>系统行为</th>
+<th>可见结果</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>按高度或区块哈希打开</td>
+<td>查询该区块</td>
+<td>概览进入加载态</td>
+</tr>
+<tr>
+<td>2</td>
+<td>数据返回</td>
+<td>展示概览和块内交易</td>
+<td>用户可交叉核验</td>
+</tr>
+<tr>
+<td>3</td>
+<td>点击父区块哈希或上一区块</td>
+<td>打开父区块</td>
+<td>高度减 1</td>
+</tr>
+<tr>
+<td>4</td>
+<td>点击下一区块</td>
+<td>打开下一区块</td>
+<td>高度加 1；已是最高已索引块时不可点</td>
+</tr>
+<tr>
+<td>5</td>
+<td>点击块内某一交易</td>
+<td>打开交易详情</td>
+<td>交易所属区块等于当前高度</td>
+</tr>
+</tbody>
+</table>
+<h3 id="442">4.4.2 区块概览字段</h3>
+<table>
+<thead>
+<tr>
+<th>界面字段</th>
+<th>数据来源</th>
+<th>展示规则</th>
+<th>空值/异常</th>
+<th>交互</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>区块高度</td>
+<td>区块数据</td>
+<td>完整十进制</td>
+<td>不允许为空</td>
+<td>只读；标题同步展示</td>
+</tr>
+<tr>
+<td>区块哈希</td>
+<td>区块数据</td>
+<td>完整值</td>
+<td>不允许为空</td>
+<td>可复制</td>
+</tr>
+<tr>
+<td>父区块哈希</td>
+<td>父区块标识</td>
+<td>完整值</td>
+<td>创世块无父区块时显示 <code>--</code></td>
+<td>点击进父区块详情；可复制</td>
+</tr>
+<tr>
+<td>时间</td>
+<td>出块时间</td>
+<td>相对时间、本地时间、UTC，见 §5.3</td>
+<td>不可用显示 <code>--</code></td>
+<td>只读</td>
+</tr>
+<tr>
+<td>出块地址</td>
+<td>出块者</td>
+<td>完整地址</td>
+<td>不可用显示 <code>--</code></td>
+<td>点击进地址详情；可复制</td>
+</tr>
+<tr>
+<td>交易数</td>
+<td>块内顶层交易数</td>
+<td>非负整数；可锚点到下方交易表</td>
+<td>0 显示 0</td>
+<td>只读</td>
+</tr>
+<tr>
+<td>已用 Gas / Gas 上限</td>
+<td>区块执行结果</td>
+<td><code>已用 / 上限</code>，可附使用比例</td>
+<td>不可用显示 <code>--</code></td>
+<td>只读</td>
+</tr>
+<tr>
+<td>基础费用</td>
+<td>区块基础费用</td>
+<td>原生币金额，并附 <code>Gwei</code></td>
+<td>无基础费用显示 <code>--</code></td>
+<td>只读</td>
+</tr>
+</tbody>
+</table>
+<p>P0 概览不展示区块奖励、额外数据、大小等未在原型出现的字段。</p>
+<h3 id="443">4.4.3 块内交易</h3>
+<p>字段与交易列表相同，见 §4.5.2。查询该区块的全部顶层交易，不适用全链 10,000 条上限。条数应等于概览中的交易数。</p>
+<h3 id="444">4.4.4 页面状态矩阵</h3>
+<table>
+<thead>
+<tr>
+<th>场景</th>
+<th>触发条件</th>
+<th>页面展示</th>
+<th>用户可操作</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>加载中</td>
+<td>格式有效的高度或哈希首次打开</td>
+<td>概览加载占位</td>
+<td>返回列表</td>
+</tr>
+<tr>
+<td>正常</td>
+<td>找到区块</td>
+<td>概览 + 块内交易</td>
+<td>跳转交易、地址、相邻区块</td>
+</tr>
+<tr>
+<td>空块</td>
+<td>区块存在但无交易</td>
+<td>概览正常，“该区块暂无交易”</td>
+<td>返回、看相邻块</td>
+</tr>
+<tr>
+<td>查无结果</td>
+<td>格式有效但不存在</td>
+<td>“未找到该区块”</td>
+<td>返回列表、重新搜索</td>
+</tr>
+<tr>
+<td>参数无效</td>
+<td>高度或哈希格式不符合规则</td>
+<td>“区块高度格式无效”或“区块哈希格式无效”</td>
+<td>修改搜索、返回</td>
+</tr>
+<tr>
+<td>网络错误</td>
+<td>查询失败</td>
+<td>“区块详情加载失败，请重试”</td>
+<td>重试</td>
+</tr>
+</tbody>
+</table>
+<p>不得用另一个存在的区块顶替未找到的高度。</p>
+<h3 id="445">4.4.5 验收标准</h3>
+<table>
+<thead>
+<tr>
+<th>序号</th>
+<th>验收条件</th>
+<th>预期结果</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>AC-BD01</td>
+<td>用户打开存在的区块</td>
+<td>展示 §4.4.2 全部字段</td>
+</tr>
+<tr>
+<td>AC-BD02</td>
+<td>用户点击父区块哈希</td>
+<td>打开高度减 1 的区块</td>
+</tr>
+<tr>
+<td>AC-BD03</td>
+<td>用户点击出块地址</td>
+<td>打开该地址详情</td>
+</tr>
+<tr>
+<td>AC-BD04</td>
+<td>块内交易某一行的哈希</td>
+<td>打开后所属区块等于当前高度</td>
+</tr>
+<tr>
+<td>AC-BD05</td>
+<td>块内交易数为 0</td>
+<td>概览交易数为 0，表格提示暂无交易</td>
+</tr>
+<tr>
+<td>AC-BD06</td>
+<td>用户打开不存在的高度</td>
+<td>显示“未找到该区块”，不展示其他区块数据</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="45">4.5 交易列表</h2>
+<p><strong>用户目标</strong></p>
+<p>用户按从新到旧浏览已上链的普通交易，查看方法、区块、双方、金额和交易费，并进入详情。</p>
+<h3 id="451">4.5.1 流程步骤</h3>
+<table>
+<thead>
+<tr>
+<th>步骤</th>
+<th>用户操作</th>
+<th>系统行为</th>
+<th>可见结果</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>打开交易列表</td>
+<td>按收录顺序倒序加载第 1 页</td>
+<td>每页 10 条</td>
+</tr>
+<tr>
+<td>2</td>
+<td>点击哈希</td>
+<td>打开交易详情</td>
+<td>进入详情</td>
+</tr>
+<tr>
+<td>3</td>
+<td>点击区块</td>
+<td>打开区块详情</td>
+<td>进入该块</td>
+</tr>
+<tr>
+<td>4</td>
+<td>点击发送方或接收方</td>
+<td>打开地址详情</td>
+<td>进入该地址</td>
+</tr>
+<tr>
+<td>5</td>
+<td>翻页</td>
+<td>加载对应页</td>
+<td>页码更新</td>
+</tr>
+</tbody>
+</table>
+<h3 id="452">4.5.2 展示字段</h3>
+<table>
+<thead>
+<tr>
+<th>界面字段</th>
+<th>展示规则</th>
+<th>空值/异常</th>
+<th>交互</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>交易哈希</td>
+<td>列表截断</td>
+<td>不允许为空</td>
+<td>点击进交易详情；可复制</td>
+</tr>
+<tr>
+<td>方法</td>
+<td>函数名；无法解码时展示选择器</td>
+<td>无方法显示 <code>--</code></td>
+<td>只读</td>
+</tr>
+<tr>
+<td>区块</td>
+<td>所属高度</td>
+<td>待确认显示“待确认”，不可点击</td>
+<td>已上链时点击进区块详情</td>
+</tr>
+<tr>
+<td>时间</td>
+<td>相对时间，见 §5.3</td>
+<td>不可用显示 <code>--</code></td>
+<td>只读</td>
+</tr>
+<tr>
+<td>发送方</td>
+<td>列表截断</td>
+<td>不允许为空</td>
+<td>点击进地址详情；可复制</td>
+</tr>
+<tr>
+<td>接收方</td>
+<td>普通地址或新建合约地址</td>
+<td>创建合约展示“新建合约”及新地址</td>
+<td>点击进地址详情；可复制</td>
+</tr>
+<tr>
+<td>原生币数量</td>
+<td>单位 <code>BYB</code></td>
+<td>0 显示 <code>0 BYB</code></td>
+<td>只读</td>
+</tr>
+<tr>
+<td>交易费</td>
+<td>单位 <code>BYB</code></td>
+<td>待确认或不可用显示 <code>--</code></td>
+<td>只读</td>
+</tr>
+</tbody>
+</table>
+<h3 id="453">4.5.3 业务规则</h3>
+<ul>
+<li>默认从新到旧。</li>
+<li>每页 10 条，见 §5.4。</li>
+<li>P0 不做交易类型、方法、地址组合筛选。</li>
+<li>待确认交易可以出现在列表中，区块列显示“待确认”。</li>
+</ul>
+<h3 id="454">4.5.4 页面状态矩阵</h3>
+<table>
+<thead>
+<tr>
+<th>场景</th>
+<th>触发条件</th>
+<th>页面展示</th>
+<th>用户可操作</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>加载中</td>
+<td>首次打开或翻页</td>
+<td>表格区加载占位</td>
+<td>返回</td>
+</tr>
+<tr>
+<td>正常</td>
+<td>有交易</td>
+<td>10 条/页及分页</td>
+<td>进详情、翻页</td>
+</tr>
+<tr>
+<td>暂无数据</td>
+<td>尚无交易</td>
+<td>“暂无交易数据”</td>
+<td>返回、重试</td>
+</tr>
+<tr>
+<td>网络错误</td>
+<td>查询失败</td>
+<td>“交易列表加载失败，请重试”</td>
+<td>重试</td>
+</tr>
+</tbody>
+</table>
+<h3 id="455">4.5.5 验收标准</h3>
+<table>
+<thead>
+<tr>
+<th>序号</th>
+<th>验收条件</th>
+<th>预期结果</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>AC-TL01</td>
+<td>用户打开交易列表</td>
+<td>展示八列，每页 10 条</td>
+</tr>
+<tr>
+<td>AC-TL02</td>
+<td>用户点击哈希、区块、发送方或接收方</td>
+<td>分别进入对应详情</td>
+</tr>
+<tr>
+<td>AC-TL03</td>
+<td>列表中存在待确认交易</td>
+<td>区块列显示“待确认”，该格不可点</td>
+</tr>
+<tr>
+<td>AC-TL04</td>
+<td>创建合约行</td>
+<td>接收方为新建合约地址且可点</td>
+</tr>
+<tr>
+<td>AC-TL05</td>
+<td>同一交易在列表与详情</td>
+<td>哈希、方法、区块、双方、金额、交易费一致</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="46">4.6 交易详情</h2>
+<p><strong>用户目标</strong></p>
+<p>用户通过交易哈希核验一笔普通交易是否上链、执行是否成功，以及双方、金额、Gas、费用、Nonce 和输入数据。界面字段名与 EVM 原型交易详情保持一致。</p>
+<h3 id="461">4.6.1 流程步骤</h3>
+<table>
+<thead>
+<tr>
+<th>步骤</th>
+<th>用户操作</th>
+<th>系统行为</th>
+<th>可见结果</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>输入交易哈希或从列表进入</td>
+<td>校验并查询</td>
+<td>页面进入加载态</td>
+</tr>
+<tr>
+<td>2</td>
+<td>数据返回</td>
+<td>展示详情四段</td>
+<td>用户可读懂该笔交易</td>
+</tr>
+<tr>
+<td>3</td>
+<td>点击区块</td>
+<td>打开所属区块</td>
+<td>可在块内交易中核验</td>
+</tr>
+<tr>
+<td>4</td>
+<td>点击发送方或接收方</td>
+<td>打开地址详情</td>
+<td>可查看该地址其他交易</td>
+</tr>
+<tr>
+<td>5</td>
+<td>切换输入数据编码</td>
+<td>在十六进制与 UTF-8 间切换</td>
+<td>复制始终复制原始十六进制</td>
+</tr>
+<tr>
+<td>6</td>
+<td>点击复制</td>
+<td>复制完整哈希、地址或输入数据</td>
+<td>出现成功反馈</td>
+</tr>
+</tbody>
+</table>
+<h3 id="462">4.6.2 基础信息</h3>
+<table>
+<thead>
+<tr>
+<th>界面字段</th>
+<th>业务含义</th>
+<th>展示规则</th>
+<th>空值/异常</th>
+<th>交互</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>交易哈希</td>
+<td>交易唯一标识</td>
+<td>完整值</td>
+<td>不允许为空</td>
+<td>可复制</td>
+</tr>
+<tr>
+<td>状态</td>
+<td>执行结果</td>
+<td><code>成功</code> / <code>待确认</code> / <code>失败</code></td>
+<td>不允许为空</td>
+<td>只读</td>
+</tr>
+<tr>
+<td>回滚原因</td>
+<td>失败时的链上回滚信息</td>
+<td>仅失败时展示在状态下方</td>
+<td>成功、待确认不展示；失败但无原因时不编造</td>
+<td>只读</td>
+</tr>
+<tr>
+<td>方法</td>
+<td>调用的函数</td>
+<td>函数名或选择器</td>
+<td>无方法显示 <code>--</code></td>
+<td>只读</td>
+</tr>
+<tr>
+<td>区块</td>
+<td>所属区块及确认数</td>
+<td>高度可点；确认数文案为“N 个区块确认”</td>
+<td>待确认显示“待确认”，不展示确认数</td>
+<td>已上链时点击进区块详情</td>
+</tr>
+<tr>
+<td>时间</td>
+<td>被区块收录的时间</td>
+<td>相对时间、本地时间、UTC；已确认时可附确认耗时</td>
+<td>待确认无收录时间显示 <code>--</code></td>
+<td>只读</td>
+</tr>
+</tbody>
+</table>
+<p>状态口径与行业 EVM 浏览器一致：已收录且成功、已广播未收录、已收录且失败。不得把未知哈希渲染成一笔成功交易。</p>
+<h3 id="463">4.6.3 参与方</h3>
+<table>
+<thead>
+<tr>
+<th>界面字段</th>
+<th>业务含义</th>
+<th>展示规则</th>
+<th>空值/异常</th>
+<th>交互</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>发送方</td>
+<td>发起地址</td>
+<td>完整地址</td>
+<td>不允许为空</td>
+<td>可复制；点击进地址详情</td>
+</tr>
+<tr>
+<td>接收方</td>
+<td>普通转账目标</td>
+<td>标签为“接收方”，完整地址</td>
+<td>不允许为空</td>
+<td>可复制；点击进地址详情</td>
+</tr>
+<tr>
+<td>交互合约</td>
+<td>目标为已有合约</td>
+<td>标签改为“交互合约”，完整地址</td>
+<td>同接收方</td>
+<td>可复制；点击进地址详情</td>
+</tr>
+<tr>
+<td>新建合约地址</td>
+<td>创建合约产生的地址</td>
+<td>标签改为“新建合约地址”</td>
+<td>交易已创建但地址尚未返回时显示 <code>--</code></td>
+<td>可复制；有地址时可进地址详情</td>
+</tr>
+</tbody>
+</table>
+<p>三种形态互斥，同一笔交易只显示其中一种目标标签。</p>
+<h3 id="464">4.6.4 资产与费用</h3>
+<table>
+<thead>
+<tr>
+<th>界面字段</th>
+<th>业务含义</th>
+<th>展示规则</th>
+<th>空值/异常</th>
+<th>交互</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>原生币转账数量</td>
+<td>该笔交易转移的原生币</td>
+<td>金额 + <code>BYB</code>；有价格时附美元</td>
+<td>0 显示 <code>0 BYB</code></td>
+<td>只读</td>
+</tr>
+<tr>
+<td>交易费</td>
+<td>用户支付的费用</td>
+<td>金额 + <code>BYB</code>；有价格时附美元</td>
+<td>待确认或不可用显示 <code>--</code></td>
+<td>只读</td>
+</tr>
+<tr>
+<td>Gas 价格</td>
+<td>交易设定的 Gas 价格</td>
+<td>原生币金额，并附 <code>Gwei</code></td>
+<td>不可用显示 <code>--</code></td>
+<td>只读</td>
+</tr>
+<tr>
+<td>已用 Gas</td>
+<td>实际消耗的 Gas</td>
+<td>整数，可用千分位</td>
+<td>待确认显示 <code>--</code></td>
+<td>只读</td>
+</tr>
+<tr>
+<td>Gas 上限</td>
+<td>交易设定的上限</td>
+<td>整数</td>
+<td>不允许为空</td>
+<td>只读</td>
+</tr>
+<tr>
+<td>Gas 使用比例</td>
+<td>已用 / 上限</td>
+<td>百分比，保留一位小数</td>
+<td>已用不可用时显示 <code>--</code></td>
+<td>只读</td>
+</tr>
+</tbody>
+</table>
+<p>美元估值使用与首页 BYB 价格同一口径；价格不可用时只隐藏美元，不隐藏原生币金额。</p>
+<h3 id="465">4.6.5 其他</h3>
+<table>
+<thead>
+<tr>
+<th>界面字段</th>
+<th>业务含义</th>
+<th>展示规则</th>
+<th>空值/异常</th>
+<th>交互</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>交易类型</td>
+<td>交易信封类型</td>
+<td>数字类型；类型 2 附“EIP-1559”</td>
+<td>待确认或未知显示 <code>--</code></td>
+<td>只读</td>
+</tr>
+<tr>
+<td>Nonce</td>
+<td>发送方交易序号</td>
+<td>非负整数</td>
+<td>不可用显示 <code>--</code></td>
+<td>只读</td>
+</tr>
+<tr>
+<td>在区块中的序号</td>
+<td>该交易在块内的位置</td>
+<td>非负整数</td>
+<td>待确认显示 <code>--</code></td>
+<td>只读</td>
+</tr>
+<tr>
+<td>输入数据</td>
+<td>原始调用数据</td>
+<td>默认十六进制；可切换 UTF-8</td>
+<td>无数据展示空十六进制；UTF-8 无法解码时提示无法以 UTF-8 显示</td>
+<td>可复制原始十六进制；切换编码不改变复制内容</td>
+</tr>
+</tbody>
+</table>
+<p>P0 不展示原始交易 JSON、代币转移、内部交易、日志、状态变化。</p>
+<h3 id="466">4.6.6 页面状态矩阵</h3>
+<table>
+<thead>
+<tr>
+<th>场景</th>
+<th>触发条件</th>
+<th>页面展示</th>
+<th>用户可操作</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>加载中</td>
+<td>有效格式哈希首次打开</td>
+<td>详情区加载占位，不遮挡整页</td>
+<td>返回</td>
+</tr>
+<tr>
+<td>成功</td>
+<td>已上链且执行成功</td>
+<td>状态为成功，四段字段齐全</td>
+<td>跳转区块、地址、复制、切换编码</td>
+</tr>
+<tr>
+<td>待确认</td>
+<td>已广播未入块</td>
+<td>状态为待确认；区块为待确认；已用 Gas、序号、确认耗时为 <code>--</code></td>
+<td>复制、查看发送方、稍后刷新</td>
+</tr>
+<tr>
+<td>失败</td>
+<td>已上链且执行失败</td>
+<td>状态为失败；有回滚原因则展示</td>
+<td>跳转、复制</td>
+</tr>
+<tr>
+<td>交互合约</td>
+<td>接收方为合约</td>
+<td>目标标签为交互合约</td>
+<td>进入该合约地址页（仍是地址详情）</td>
+</tr>
+<tr>
+<td>创建合约</td>
+<td>创建新合约</td>
+<td>目标标签为新建合约地址</td>
+<td>进入新地址</td>
+</tr>
+<tr>
+<td>查无结果</td>
+<td>格式有效但无交易</td>
+<td>“未找到该交易”</td>
+<td>返回列表、重新搜索</td>
+</tr>
+<tr>
+<td>参数无效</td>
+<td>不是合法交易哈希</td>
+<td>“交易哈希格式无效”</td>
+<td>修改搜索、返回</td>
+</tr>
+<tr>
+<td>网络错误</td>
+<td>查询失败</td>
+<td>“交易详情加载失败，请重试”</td>
+<td>重试</td>
+</tr>
+</tbody>
+</table>
+<p>不得为未知哈希生成模拟详情。</p>
+<h3 id="467">4.6.7 验收标准</h3>
+<table>
+<thead>
+<tr>
+<th>序号</th>
+<th>验收条件</th>
+<th>预期结果</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>AC-TD01</td>
+<td>用户打开一笔成功的普通转账</td>
+<td>可见哈希、成功、方法、区块与确认数、三种时间、发送方、接收方、金额与美元、交易费、Gas 价格双单位、已用 Gas、上限、比例、类型、Nonce、序号、输入数据</td>
+</tr>
+<tr>
+<td>AC-TD02</td>
+<td>用户打开待确认交易</td>
+<td>状态和区块均为“待确认”；已用 Gas 为 <code>--</code></td>
+</tr>
+<tr>
+<td>AC-TD03</td>
+<td>用户打开失败交易</td>
+<td>状态为失败；有回滚原因时原文展示</td>
+</tr>
+<tr>
+<td>AC-TD04</td>
+<td>用户打开合约交互交易</td>
+<td>目标标签为“交互合约”，地址可点</td>
+</tr>
+<tr>
+<td>AC-TD05</td>
+<td>用户打开创建合约交易</td>
+<td>目标标签为“新建合约地址”，地址可点</td>
+</tr>
+<tr>
+<td>AC-TD06</td>
+<td>用户将输入数据切到 UTF-8 再复制</td>
+<td>页面显示 UTF-8；剪贴板仍为原始十六进制</td>
+</tr>
+<tr>
+<td>AC-TD07</td>
+<td>用户打开不存在的合法哈希</td>
+<td>“未找到该交易”，不出现另一笔交易的数据</td>
+</tr>
+<tr>
+<td>AC-TD08</td>
+<td>正常详情页</td>
+<td>不出现代币转移、内部交易、日志、状态、原始 JSON</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="47">4.7 地址详情</h2>
+<p><strong>用户目标</strong></p>
+<p>用户查看某一地址是普通账户还是合约、持有多少原生币、发生过哪些普通交易，并进入单笔交易。</p>
+<h3 id="471">4.7.1 流程步骤</h3>
+<table>
+<thead>
+<tr>
+<th>步骤</th>
+<th>用户操作</th>
+<th>系统行为</th>
+<th>可见结果</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>按地址打开</td>
+<td>查询地址与相关交易</td>
+<td>头部和列表进入加载态</td>
+</tr>
+<tr>
+<td>2</td>
+<td>数据返回</td>
+<td>展示是否合约、余额、交易数和交易表</td>
+<td>交易数等于可列出的相关交易总数</td>
+</tr>
+<tr>
+<td>3</td>
+<td>点击某一交易</td>
+<td>打开交易详情</td>
+<td>该交易的发送方或接收方包含当前地址</td>
+</tr>
+<tr>
+<td>4</td>
+<td>翻页</td>
+<td>加载对应页</td>
+<td>页码更新</td>
+</tr>
+</tbody>
+</table>
+<p>合约地址与普通地址使用同一页面。本期不展示合约名称、是否已验证、源码、读取合约。</p>
+<h3 id="472">4.7.2 头部与余额</h3>
+<table>
+<thead>
+<tr>
+<th>界面字段</th>
+<th>数据来源</th>
+<th>展示规则</th>
+<th>空值/异常</th>
+<th>交互</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>地址</td>
+<td>查询对象</td>
+<td>完整值；类型文案为“普通地址”或“合约”</td>
+<td>不允许为空</td>
+<td>可复制</td>
+</tr>
+<tr>
+<td>是否合约</td>
+<td>该地址是否有合约代码</td>
+<td><code>是</code> 或 <code>否</code></td>
+<td>不允许为空</td>
+<td>只读</td>
+</tr>
+<tr>
+<td>原生币余额</td>
+<td>当前索引到的余额</td>
+<td>金额 + <code>BYB</code>；有价格时附美元</td>
+<td>0 显示 <code>0 BYB</code></td>
+<td>只读</td>
+</tr>
+<tr>
+<td>交易数</td>
+<td>该地址作为发送方或接收方（含创建出的合约）的顶层交易数</td>
+<td>非负整数，等于下列表可查询总数</td>
+<td>0 显示 0</td>
+<td>只读</td>
+</tr>
+</tbody>
+</table>
+<h3 id="473">4.7.3 相关交易</h3>
+<p>字段与交易列表相同，见 §4.5.2。默认从新到旧，每页 20 条。创建合约时，该新地址作为接收方出现在本列表。</p>
+<p>P0 不展示代币转移、代币余额、内部交易、日志、划转、跨链页签。</p>
+<h3 id="474">4.7.4 页面状态矩阵</h3>
+<table>
+<thead>
+<tr>
+<th>场景</th>
+<th>触发条件</th>
+<th>页面展示</th>
+<th>用户可操作</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>加载中</td>
+<td>格式有效地址首次打开</td>
+<td>头部和列表加载占位</td>
+<td>返回</td>
+</tr>
+<tr>
+<td>正常有交易</td>
+<td>地址存在且有交易</td>
+<td>头部 + 交易表</td>
+<td>进交易、翻页、复制</td>
+</tr>
+<tr>
+<td>无交易</td>
+<td>格式有效但无交易</td>
+<td>头部正常，“该地址暂无交易”</td>
+<td>复制、返回</td>
+</tr>
+<tr>
+<td>参数无效</td>
+<td>不是合法地址</td>
+<td>“地址格式无效”</td>
+<td>修改搜索</td>
+</tr>
+<tr>
+<td>网络错误</td>
+<td>查询失败</td>
+<td>“地址详情加载失败，请重试”</td>
+<td>重试</td>
+</tr>
+</tbody>
+</table>
+<p>任意合法地址均可打开，不得因为索引中尚无记录而改写成另一个示例地址。</p>
+<h3 id="475">4.7.5 验收标准</h3>
+<table>
+<thead>
+<tr>
+<th>序号</th>
+<th>验收条件</th>
+<th>预期结果</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>AC-AD01</td>
+<td>用户打开有交易的普通地址</td>
+<td>是否合约为否；可见余额、交易数和交易列表</td>
+</tr>
+<tr>
+<td>AC-AD02</td>
+<td>用户打开合约地址</td>
+<td>是否合约为是；仍是同一套交易列表，无源码和读取合约</td>
+</tr>
+<tr>
+<td>AC-AD03</td>
+<td>交易数与列表</td>
+<td>交易数等于该地址可查询的相关交易总数</td>
+</tr>
+<tr>
+<td>AC-AD04</td>
+<td>用户打开无交易的合法地址</td>
+<td>显示“该地址暂无交易”，不展示模拟交易</td>
+</tr>
+<tr>
+<td>AC-AD05</td>
+<td>用户点击列表中的哈希</td>
+<td>打开交易详情，且当前地址出现在发送方或接收方</td>
+</tr>
+<tr>
+<td>AC-AD06</td>
+<td>用户打开格式无效的地址</td>
+<td>“地址格式无效”，不回退到默认地址</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="5">5. 横切业务规则与异常处理</h2>
+<h2 id="51">5.1 数据真实性与一致性</h2>
+<ol>
+<li>所有生产数值、区块、交易和地址活动均以 Biya EVM 已确认链上数据为事实来源，由公共浏览器展示对应索引结果。</li>
+<li>原型中的固定总量、时间、哈希、地址和演示场景不得作为生产默认数据。</li>
+<li>同一交易在交易列表、交易详情、区块内交易和地址交易中的哈希、方法、区块、时间、双方、金额和交易费必须一致。</li>
+<li>区块详情中的交易数应等于该区块可查询交易总数。</li>
+<li>地址详情中的交易数应等于该地址可查询相关交易总数。</li>
+<li>首页最新区块的高度不得高于区块列表和详情可查询的最高已索引区块。</li>
+<li>无法解码的方法应展示方法选择器，不得改写成其他已知方法名。</li>
+</ol>
+<h2 id="52-gas">5.2 原生币、价格与 Gas 单位</h2>
+<ul>
+<li>原生币符号统一为 <code>BYB</code>。</li>
+<li>金额展示不得改变链上最小单位换算结果；小数末尾零可按展示规则去掉，但复制金额类字段时复制展示用完整值。</li>
+<li>美元估值使用与首页「BYB 价格」同一报价；报价不可用时隐藏美元，保留原生币。</li>
+<li>Gas 价格同时展示原生币金额和 <code>Gwei</code>。</li>
+<li>首页「当前 Gas 价格」只展示 <code>Gwei</code>。</li>
+<li>首页「手续费」与交易详情「交易费」含义不同：前者是区块汇总，后者是单笔交易费用。</li>
+</ul>
+<h2 id="53">5.3 时间口径</h2>
+<table>
+<thead>
+<tr>
+<th>场景</th>
+<th>口径</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>相对时间</td>
+<td>首页最新列表、交易列表、区块列表使用。距当前不足 60 秒显示 <code>N 秒前</code>；不足 60 分钟显示 <code>N 分钟前</code>；不足 24 小时显示 <code>N 小时前</code>；其余显示 <code>N 天前</code></td>
+</tr>
+<tr>
+<td>详情绝对时间</td>
+<td>交易详情、区块详情同时给出相对时间、本地时间（UTC+8，<code>YYYY-MM-DD HH:mm:ss</code>）和 UTC</td>
+</tr>
+<tr>
+<td>确认耗时</td>
+<td>仅已确认交易展示，文案表达从广播到入块的耗时</td>
+</tr>
+<tr>
+<td>24 小时指标</td>
+<td>以当前时刻向前滚动 24 小时，不按自然日</td>
+</tr>
+<tr>
+<td>时间缺失</td>
+<td>展示 <code>--</code>，不得使用浏览器当前时间补值</td>
+</tr>
+</tbody>
+</table>
+<p>P0 默认时区固定为 UTC+8（北京时间）。同一交易在所有页面必须使用相同时间值。</p>
+<h2 id="54">5.4 分页与可浏览范围</h2>
+<table>
+<thead>
+<tr>
+<th>规则</th>
+<th>统一口径</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>首页最新区块 / 最新交易</td>
+<td>各最多 10 条</td>
+</tr>
+<tr>
+<td>区块列表每页</td>
+<td>20 条</td>
+</tr>
+<tr>
+<td>交易列表每页</td>
+<td>10 条</td>
+</tr>
+<tr>
+<td>地址相关交易每页</td>
+<td>20 条</td>
+</tr>
+<tr>
+<td>块内交易</td>
+<td>该区块全部顶层交易；超过一页时每页 20 条</td>
+</tr>
+<tr>
+<td>默认页</td>
+<td>第 1 页</td>
+</tr>
+<tr>
+<td>排序</td>
+<td>从新到旧</td>
+</tr>
+<tr>
+<td>区块列表可浏览上限</td>
+<td>按高度倒序的最近 10,000 个区块</td>
+</tr>
+<tr>
+<td>交易列表可浏览上限</td>
+<td>按收录顺序倒序的最近 10,000 条全链交易</td>
+</tr>
+<tr>
+<td>地址交易可浏览上限</td>
+<td>该地址最近 10,000 条相关交易</td>
+</tr>
+<tr>
+<td>链上总量</td>
+<td>可大于 10,000，与可浏览上限分开显示</td>
+</tr>
+<tr>
+<td>页码过小 / 过大</td>
+<td>分别按第 1 页 / 实际末页展示</td>
+</tr>
+</tbody>
+</table>
+<p>“最近 10,000 条”是前台可浏览边界，不代表事实来源只保留 10,000 条。用户正在查看的非首页不因新区块自动换页。</p>
+<h2 id="55">5.5 查询与深链状态</h2>
+<ul>
+<li>所有详情深链必须包含 EVM 模式和唯一查询对象（交易哈希、区块高度或区块哈希、地址）。</li>
+<li>区块列表、交易列表、地址交易深链保留页码。</li>
+<li>无效参数按各页面错误规则处理。</li>
+<li>地址和哈希匹配不区分英文字母大小写。</li>
+<li>搜索去除首尾空格，不改动中间字符。</li>
+<li>用户从列表进入详情再返回时，应恢复进入前页码。</li>
+<li>分享链接不得包含登录凭据或个人标识。</li>
+<li>EVM 与 DEX 不得共用同一页的筛选和列表数据。</li>
+</ul>
+<h2 id="56">5.6 加载、错误、空态与重试</h2>
+<table>
+<thead>
+<tr>
+<th>状态</th>
+<th>触发条件</th>
+<th>统一反馈</th>
+<th>后续动作</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>加载中</td>
+<td>首次查询、切页</td>
+<td>对应内容区显示加载状态</td>
+<td>等待；保留导航</td>
+</tr>
+<tr>
+<td>暂无数据</td>
+<td>网络或有效地址没有对应数据</td>
+<td>“暂无区块数据”“暂无交易数据”或“该地址暂无交易”</td>
+<td>返回、重新搜索、稍后重试</td>
+</tr>
+<tr>
+<td>参数无效</td>
+<td>输入格式不符合规则</td>
+<td>“交易哈希格式无效”“地址格式无效”“区块高度格式无效”或“区块哈希格式无效”</td>
+<td>修改输入、返回列表</td>
+</tr>
+<tr>
+<td>查无结果</td>
+<td>格式有效但对象不存在</td>
+<td>“未找到该区块”或“未找到该交易”</td>
+<td>返回列表、重新搜索</td>
+</tr>
+<tr>
+<td>搜索无结果页</td>
+<td>提交后无法直达详情</td>
+<td>独立页回显关键词</td>
+<td>修改搜索</td>
+</tr>
+<tr>
+<td>网络错误</td>
+<td>请求失败、断网或超时</td>
+<td>“{页面对象}加载失败，请重试”</td>
+<td>重试、返回</td>
+</tr>
+</tbody>
+</table>
+<p>错误态不得用另一条有效数据替代。详情页的加载、无结果、格式无效和网络错误展示在内容区，不使用遮挡整页的浮层。</p>
+<h2 id="57">5.7 长文本与复制</h2>
+<ul>
+<li>区块哈希、交易哈希和地址在空间不足的列表中允许截断。</li>
+<li>详情页优先展示完整值；换行不得改变实际字符。</li>
+<li>被截断内容必须支持鼠标悬停和键盘聚焦查看全文。</li>
+<li>复制始终复制完整原始值，不复制省略号。</li>
+<li>输入数据无论当前显示十六进制还是 UTF-8，复制的都是原始十六进制。</li>
+<li>复制成功反馈持续 1.5 秒；复制失败显示“复制失败，请手动复制”。</li>
+</ul>
+<h2 id="58">5.8 权限与安全边界</h2>
+<ul>
+<li>所有 P0 查询页面公开可访问，不要求登录。</li>
+<li>浏览器不提供任何链上写操作或签名请求。</li>
+<li>页面展示链上公开地址和交易，不附加非公开个人身份信息。</li>
+<li>链接和错误信息不得展示访问令牌、Cookie 或账户凭据。</li>
+<li>代币、合约源码、API 文档不在 P0 交付；对应入口在 EVM 下不可到达。</li>
+</ul>
+<h2 id="59">5.9 无障碍与设备适配</h2>
+<ul>
+<li>搜索框、分页、复制、重试、展开收起均可通过键盘操作。</li>
+<li>当前模式、不可用按钮和错误信息具有可被辅助技术识别的状态。</li>
+<li>桌面端和移动端均不得隐藏完成主查询所必需的字段或操作。</li>
+<li>窄屏可使用横向滚动承载表格，但不得改变字段含义和数据顺序。</li>
+</ul>
+<hr />
+<h2 id="6">6. 更新记录</h2>
+<table>
+<thead>
+<tr>
+<th>版本</th>
+<th>日期</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>V1.0.0</td>
+<td>2026-10-20</td>
+<td>首版。范围对齐版本表 V1.0；交互对齐 EVM 原型；字段空值与交易三态对齐 BlockScout 公开查询语义</td>
+</tr>
+</tbody>
+</table>
+      </article>
+    </div>
+  </div>
+  <script>
+    mermaid.initialize({ startOnLoad: true, theme: "default" });
+    const links = document.querySelectorAll(".sidebar-toc a");
+    const content = document.querySelector(".content");
+    function sync() {
+      let current = links[0];
+      links.forEach((a) => {
+        const el = document.getElementById(decodeURIComponent(a.hash.slice(1)));
+        if (el && el.getBoundingClientRect().top < 120) current = a;
+      });
+      links.forEach((a) => a.classList.toggle("active", a === current));
+    }
+    content.addEventListener("scroll", sync);
+    sync();
+  </script>
+</body>
+</html>
