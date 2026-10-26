@@ -12,7 +12,7 @@
 | 目标用户 | 链上用户、合约交互方、运营与客服、安全研究人员、生态开发者 |
 | 交互基线 | [BiyaEVMscan.html](https://terryxu923.github.io/biya-dex-docs/BiyaEVMscan.html#home?mode=evm) 的 EVM 模式 |
 | 公开原型 | https://terryxu923.github.io/biya-dex-docs/BiyaEVMscan.html#home?mode=evm |
-| 公开 PRD | https://terryxu923.github.io/biya-dex-docs/biya-evm-explorer-prd.html |
+| 公开 PRD | https://terryxu923.github.io/biya-dex-docs/biya-evm-explorer-prd.html?v=4bc8afb |
 | 范围底稿 | [EVM浏览器迭代版本表.md](./迭代计划/EVM浏览器迭代版本表.md) 的 V1.0；列表与详情字段以当前原型及 BlockScout L1 默认展示为准 |
 | 编写规范 | [产品需求文档编写规范](../../PRD规范/产品需求文档编写规范.md) |
 | 需求范围 | 仅 BiyaEVM 区块浏览器；不包含 BiyaDEX 区块浏览器需求 |
