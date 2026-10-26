@@ -1662,6 +1662,14 @@ nav.navbar { display: none !important; }
             vertical-align: middle;
         }
 
+        #page-blocks:not(.tz-mode) td {
+            display: table-cell;
+            vertical-align: top;
+        }
+        #page-blocks:not(.tz-mode) td:nth-child(3) {
+            white-space: nowrap;
+        }
+
         #page-blocks tbody tr:hover td {
             background: var(--bg-card-hover);
         }
@@ -2403,6 +2411,7 @@ nav.navbar { display: none !important; }
             padding: 16px 24px;
             border-bottom: 1px solid var(--border);
             font-size: 14px;
+            vertical-align: top;
         }
 
         #page-block tr:hover td {
@@ -3256,7 +3265,7 @@ nav.navbar { display: none !important; }
             padding: 14px 20px;
             border-bottom: 1px solid var(--border);
             font-size: 13px;
-            vertical-align: middle;
+            vertical-align: top;
         }
 
         #page-txs tr:hover td {
@@ -7670,6 +7679,39 @@ nav.navbar { display: none !important; }
             font-weight: 600;
         }
 
+        #page-address .info-list {
+            padding: 0;
+        }
+        #page-address .info-item {
+            display: flex;
+            padding: 16px 24px;
+            border-bottom: 1px solid var(--border);
+            align-items: flex-start;
+        }
+        #page-address .info-item:last-child {
+            border-bottom: none;
+        }
+        #page-address .info-label {
+            width: 200px;
+            flex-shrink: 0;
+            color: var(--text-secondary);
+            font-size: 14px;
+        }
+        #page-address .info-value {
+            flex: 1;
+            font-size: 14px;
+            word-break: break-all;
+        }
+        #page-address .value-primary {
+            font-weight: 600;
+        }
+        #page-address .value-secondary,
+        #page-block .value-secondary {
+            color: var(--text-secondary);
+            font-size: 13px;
+            margin-left: 8px;
+        }
+
         /* Tabs */
         #page-address .tabs {
             display: flex;
@@ -7733,7 +7775,7 @@ nav.navbar { display: none !important; }
             padding: 14px 20px;
             border-bottom: 1px solid var(--border);
             font-size: 13px;
-            vertical-align: middle;
+            vertical-align: top;
         }
 
         #page-address tr:hover td {
@@ -7910,6 +7952,87 @@ nav.navbar { display: none !important; }
         #page-address .current-address {
             color: var(--text-secondary);
             font-weight: 500;
+        }
+
+        .evm-stack {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 4px;
+            min-width: 0;
+        }
+        .evm-stack-meta {
+            color: var(--text-secondary, #777b82);
+            font-size: 12px;
+            line-height: 1.3;
+        }
+        .evm-fromto {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 2px;
+        }
+        .evm-fromto-arrow {
+            color: #92959a;
+            font-size: 12px;
+            line-height: 1.2;
+            padding: 1px 0 1px 4px;
+        }
+        .evm-type-cell {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 4px;
+        }
+        .evm-type-badge {
+            display: inline-block;
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: 500;
+            white-space: nowrap;
+            line-height: 1.3;
+        }
+        .evm-type-badge.call,
+        .evm-type-badge.create {
+            background: rgba(26, 115, 232, 0.12);
+            color: #1a73e8;
+        }
+        .evm-type-badge.coin {
+            background: rgba(232, 140, 48, 0.14);
+            color: #c46a12;
+        }
+        .evm-status-chip {
+            display: inline-block;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: 500;
+            white-space: nowrap;
+        }
+        .evm-status-chip.fail {
+            background: rgba(192, 53, 70, 0.15);
+            color: #c03546;
+        }
+        .evm-status-chip.pending {
+            background: rgba(210, 153, 34, 0.15);
+            color: var(--warning, #b8860b);
+        }
+        .evm-gas-fees {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 4px 0;
+        }
+        .evm-gas-fees .evm-gas-sep {
+            color: #c4c7cc;
+            margin: 0 8px;
+        }
+        #page-txs:not(.tz-mode) table,
+        #page-blocks:not(.tz-mode) table,
+        #page-block:not(.tz-mode) table,
+        #page-address:not(.tz-mode) table {
+            min-width: 1070px;
         }
 
         /* Token Badge */
@@ -11289,48 +11412,41 @@ nav.navbar { display: none !important; }
                 <table>
                     <thead>
                         <tr>
-                            <th>区块高度</th>
-                            <th>时间</th>
+                            <th>区块</th>
+                            <th>大小</th>
+                            <th>出块地址</th>
                             <th>交易数</th>
                             <th>已用 Gas</th>
-                            <th>出块地址</th>
+                            <th>区块奖励</th>
+                            <th>燃烧费用</th>
+                            <th>基础费用</th>
                         </tr>
                     </thead>
                     <tbody>
                         <tr>
-                            <td><a href="#block?number=12847293" class="link">#12,847,293</a></td>
-                            <td class="time">3 秒前</td>
+                            <td>
+                                <div class="evm-stack">
+                                    <div><a href="#block?number=12847293" class="link">#12,847,293</a></div>
+                                    <div class="evm-stack-meta">3 秒前</div>
+                                </div>
+                            </td>
+                            <td>45,120</td>
+                            <td><span class="copy-wrap"><a href="#address?address=0x1c4f7b2a9e8c5d3f2a1b4c7e8f9a0b1c7b2a4d5e" class="link mono">0x1c4f...4d5e</a><button class="copy-btn" onclick="copyText('0x1c4f7b2a9e8c5d3f2a1b4c7e8f9a0b1c7b2a4d5e', this)" title="复制">📋</button></span></td>
                             <td>156</td>
-                            <td>12,450,112</td>
-                            <td class="copy-wrap"><a href="#address?address=0x1c4f7b2a9e8c5d3f2a1b4c7e8f9a0b1c7b2a4d5e" class="link mono">0x1c4f...4d5e</a><button class="copy-btn" onclick="copyText('0x1c4f7b2a9e8c5d3f2a1b4c7e8f9a0b1c7b2a4d5e', this)" title="复制">📋</button></td>
-                        </tr>
-                        <tr>
-                            <td><a href="#block?number=12847292" class="link">#12,847,292</a></td>
-                            <td class="time">6 秒前</td>
-                            <td>142</td>
-                            <td>11,820,450</td>
-                            <td class="copy-wrap"><a href="#address" class="link mono">0x2d9e...8c1f</a><button class="copy-btn" onclick="copyText('0x2d9e8c1f5b7a3e9d4f2a1c8b7e6d5c4a8c1f', this)" title="复制">📋</button></td>
-                        </tr>
-                        <tr>
-                            <td><a href="#block?number=12847291" class="link">#12,847,291</a></td>
-                            <td class="time">9 秒前</td>
-                            <td>189</td>
-                            <td>14,102,330</td>
-                            <td class="copy-wrap"><a href="#address" class="link mono">0x5b7a...3e9d</a><button class="copy-btn" onclick="copyText('0x5b7a3e9d1c4f7b2a9e8c5d3f2a1b4c7e3e9d', this)" title="复制">📋</button></td>
-                        </tr>
-                        <tr>
-                            <td><a href="#block?number=12847290" class="link">#12,847,290</a></td>
-                            <td class="time">12 秒前</td>
-                            <td>131</td>
-                            <td>10,554,201</td>
-                            <td class="copy-wrap"><a href="#address" class="link mono">0x8f3c...0b1c</a><button class="copy-btn" onclick="copyText('0x8f3c2d9e5b7a1c4f9e8c5d3f2a1b4c7e8f9a0b1c', this)" title="复制">📋</button></td>
-                        </tr>
-                        <tr>
-                            <td><a href="#block?number=12847289" class="link">#12,847,289</a></td>
-                            <td class="time">15 秒前</td>
-                            <td>167</td>
-                            <td>13,001,888</td>
-                            <td class="copy-wrap"><a href="#address" class="link mono">0x1c4f...4d5e</a><button class="copy-btn" onclick="copyText('0x1c4f7b2a9e8c5d3f2a1b4c7e8f9a0b1c7b2a4d5e', this)" title="复制">📋</button></td>
+                            <td>
+                                <div class="evm-stack">
+                                    <div>12,450,112</div>
+                                    <div class="evm-stack-meta">41.5%</div>
+                                </div>
+                            </td>
+                            <td>0.0498 BYB</td>
+                            <td>
+                                <div class="evm-stack">
+                                    <div>0.087151 BYB</div>
+                                    <div class="evm-stack-meta">63.6%</div>
+                                </div>
+                            </td>
+                            <td>7 Gwei</td>
                         </tr>
                     </tbody>
                 </table>
@@ -11455,6 +11571,51 @@ nav.navbar { display: none !important; }
                     <div class="info-value">12,847,293</div>
                 </div>
                 <div class="info-item">
+                    <div class="info-label">大小</div>
+                    <div class="info-value">45,120 字节</div>
+                </div>
+                <div class="info-item">
+                    <div class="info-label">时间</div>
+                    <div class="info-value">3 秒前 · 2024-01-15 14:32:18 · 2024-01-15 06:32:18 UTC</div>
+                </div>
+                <div class="info-item">
+                    <div class="info-label">交易数</div>
+                    <div class="info-value">
+                        <a href="#block-transactions" data-ex-scroll="block-transactions" class="link">156</a>
+                    </div>
+                </div>
+                <div class="info-item">
+                    <div class="info-label">出块地址</div>
+                    <div class="info-value">
+                        <a href="#address?address=0x1c4f7b2a9e8c5d3f2a1b4c7e8f9a0b1c7b2a4d5e" class="link mono">0x1c4f7b2a9e8c5d3f2a1b4c7e8f9a0b1c7b2a4d5e</a>
+                        <button class="copy-btn" title="复制" onclick="copyText('0x1c4f7b2a9e8c5d3f2a1b4c7e8f9a0b1c7b2a4d5e', this)">📋</button>
+                    </div>
+                </div>
+                <div class="info-item">
+                    <div class="info-label">区块奖励</div>
+                    <div class="info-value">0.0498 BYB</div>
+                </div>
+                <div class="info-item">
+                    <div class="info-label">已用 Gas</div>
+                    <div class="info-value">12,450,112 <span class="value-secondary">(41.5%)</span></div>
+                </div>
+                <div class="info-item">
+                    <div class="info-label">Gas 上限</div>
+                    <div class="info-value">30,000,000</div>
+                </div>
+                <div class="info-item">
+                    <div class="info-label">基础费用</div>
+                    <div class="info-value">0.000000007 BYB <span class="value-secondary">(7 Gwei)</span></div>
+                </div>
+                <div class="info-item">
+                    <div class="info-label">燃烧费用</div>
+                    <div class="info-value">0.087150784 BYB <span class="value-secondary">(63.6%)</span></div>
+                </div>
+                <div class="info-item">
+                    <div class="info-label">小费 / Priority fee</div>
+                    <div class="info-value">0.049800448 BYB</div>
+                </div>
+                <div class="info-item">
                     <div class="info-label">区块哈希</div>
                     <div class="info-value">
                         <span class="mono">0x8f3c2d9e5b7a1c4f9e8c5d3f2a1b4c7e8f9a0b1c2d3e4f5a6b7c8d9e0f1a2b3c</span>
@@ -11468,31 +11629,6 @@ nav.navbar { display: none !important; }
                         <button class="copy-btn" title="复制" onclick="copyText('0x2d9e8c1f5b7a3e9d4f2a1c8b7e6d5c4a5e6f7a8b9c0d1e2f3a4b5c6d7e8f9a0b', this)">📋</button>
                     </div>
                 </div>
-                <div class="info-item">
-                    <div class="info-label">时间</div>
-                    <div class="info-value">3 秒前 · 2024-01-15 14:32:18 · 2024-01-15 06:32:18 UTC</div>
-                </div>
-                <div class="info-item">
-                    <div class="info-label">出块地址</div>
-                    <div class="info-value">
-                        <a href="#address?address=0x1c4f7b2a9e8c5d3f2a1b4c7e8f9a0b1c7b2a4d5e" class="link mono">0x1c4f7b2a9e8c5d3f2a1b4c7e8f9a0b1c7b2a4d5e</a>
-                        <button class="copy-btn" title="复制" onclick="copyText('0x1c4f7b2a9e8c5d3f2a1b4c7e8f9a0b1c7b2a4d5e', this)">📋</button>
-                    </div>
-                </div>
-                <div class="info-item">
-                    <div class="info-label">交易数</div>
-                    <div class="info-value">
-                        <a href="#block-transactions" data-ex-scroll="block-transactions" class="link">156</a>
-                    </div>
-                </div>
-                <div class="info-item">
-                    <div class="info-label">已用 Gas / Gas 上限</div>
-                    <div class="info-value">12,450,112 / 30,000,000 <span class="value-secondary">(41.5%)</span></div>
-                </div>
-                <div class="info-item">
-                    <div class="info-label">基础费用</div>
-                    <div class="info-value">0.000000007 BYB <span class="value-secondary">(7 Gwei)</span></div>
-                </div>
             </div>
         </div>
 
@@ -11505,13 +11641,12 @@ nav.navbar { display: none !important; }
                 <table>
                     <thead>
                         <tr>
-                            <th>交易哈希</th>
+                            <th>交易</th>
+                            <th>类型</th>
                             <th>方法</th>
                             <th>区块</th>
-                            <th>时间</th>
-                            <th>发送方</th>
-                            <th>接收方</th>
-                            <th>原生币数量</th>
+                            <th>从 / 到</th>
+                            <th>数量</th>
                             <th>交易费</th>
                         </tr>
                     </thead>
@@ -11665,13 +11800,12 @@ nav.navbar { display: none !important; }
                 <table>
                     <thead>
                         <tr>
-                            <th>交易哈希</th>
+                            <th>交易</th>
+                            <th>类型</th>
                             <th>方法</th>
                             <th>区块</th>
-                            <th>时间</th>
-                            <th>发送方</th>
-                            <th>接收方</th>
-                            <th>原生币数量</th>
+                            <th>从 / 到</th>
+                            <th>数量</th>
                             <th>交易费</th>
                         </tr>
                     </thead>
@@ -11966,16 +12100,22 @@ nav.navbar { display: none !important; }
                     <div class="info-value">0.000000011 BYB <span class="value-secondary">(11 Gwei)</span></div>
                 </div>
                 <div class="info-item">
-                    <div class="info-label">已用 Gas</div>
-                    <div class="info-value">21,000</div>
+                    <div class="info-label">已用 Gas / Gas 上限</div>
+                    <div class="info-value">21,000 / 21,000 <span class="value-secondary">(100%)</span></div>
                 </div>
                 <div class="info-item">
-                    <div class="info-label">Gas 上限</div>
-                    <div class="info-value">21,000</div>
+                    <div class="info-label">Gas 费用（Gwei）</div>
+                    <div class="info-value">
+                        <div class="evm-gas-fees">
+                            <span>Base: 7</span><span class="evm-gas-sep">|</span>
+                            <span>Max: 11</span><span class="evm-gas-sep">|</span>
+                            <span>Max priority: 4</span>
+                        </div>
+                    </div>
                 </div>
                 <div class="info-item">
-                    <div class="info-label">Gas 使用比例</div>
-                    <div class="info-value">100%</div>
+                    <div class="info-label">燃烧费用</div>
+                    <div class="info-value">0.000147 BYB <span class="value-secondary">($0.0004)</span></div>
                 </div>
                 <div class="info-item">
                     <div class="info-label">交易类型</div>
@@ -12890,24 +13030,29 @@ nav.navbar { display: none !important; }
 
     <!-- Main Content -->
     <main class="main-content">
-        <!-- Overview Cards (V1.0: 是否合约 / 原生币余额 / 交易数) -->
-        <div class="overview-grid">
-            <div class="overview-card">
-                <div class="overview-label">是否合约</div>
-                <div class="overview-value">否</div>
-            </div>
-            <div class="overview-card">
-                <div class="overview-label">原生币余额</div>
-                <div class="overview-value">
-                    <div class="token-value">
-                        125.8642 BYB
-                        <span class="token-usd">($198.52 USD)</span>
-                    </div>
+        <div class="card">
+            <div class="card-header"><span class="card-title">详情</span></div>
+            <div class="info-list">
+                <div class="info-item">
+                    <div class="info-label">原生币余额</div>
+                    <div class="info-value"><span class="value-primary">125.8642 BYB</span> <span class="value-secondary">($308.37 USD)</span></div>
                 </div>
-            </div>
-            <div class="overview-card">
-                <div class="overview-label">交易数</div>
-                <div class="overview-value">18</div>
+                <div class="info-item">
+                    <div class="info-label">交易数</div>
+                    <div class="info-value"><a href="#address-transactions" data-ex-scroll="address-transactions" class="link">18</a></div>
+                </div>
+                <div class="info-item">
+                    <div class="info-label">已用 Gas</div>
+                    <div class="info-value">1,842,900</div>
+                </div>
+                <div class="info-item">
+                    <div class="info-label">余额更新于区块</div>
+                    <div class="info-value"><a class="link" href="#block?mode=evm&number=12847293">12,847,293</a></div>
+                </div>
+                <div class="info-item">
+                    <div class="info-label">是否合约</div>
+                    <div class="info-value">否</div>
+                </div>
             </div>
         </div>
 
@@ -12922,13 +13067,12 @@ nav.navbar { display: none !important; }
                 <table>
                     <thead>
                         <tr>
-                            <th>交易哈希</th>
+                            <th>交易</th>
+                            <th>类型</th>
                             <th>方法</th>
                             <th>区块</th>
-                            <th>时间</th>
-                            <th>发送方</th>
-                            <th>接收方</th>
-                            <th>原生币数量</th>
+                            <th>从 / 到</th>
+                            <th>数量</th>
                             <th>交易费</th>
                         </tr>
                     </thead>
@@ -13225,13 +13369,11 @@ nav.navbar { display: none !important; }
                 <table>
                     <thead>
                         <tr>
-                            <th>交易哈希</th>
+                            <th>交易</th>
                             <th>方法</th>
                             <th>区块</th>
-                            <th>时间</th>
-                            <th>发送方</th>
-                            <th>接收方</th>
-                            <th>原生币数量</th>
+                            <th>从 / 到</th>
+                            <th>数量</th>
                             <th>交易费</th>
                         </tr>
                     </thead>
@@ -15254,6 +15396,12 @@ window.__exEvm = (function () {
     return s.replace(/0+$/, "").replace(/\.$/, "");
   }
   function gwei(wei) { return Number(wei) / 1e9; }
+  function fmtGwei(wei) {
+    var n = gwei(wei);
+    if (!isFinite(n)) return "—";
+    var r = Math.round(n * 1000) / 1000;
+    return String(r);
+  }
   function fmtNum(n) { return Number(n).toLocaleString("en-US"); }
   function fmtTime(ts) {
     var d = new Date(ts);
@@ -15293,12 +15441,12 @@ window.__exEvm = (function () {
 
   var addresses = {};
   function putAddr(hash, rec) { addresses[hash.toLowerCase()] = rec; rec.hash = hash; }
-  putAddr(ADDR.from, { isContract: false, balance: "125.8642", txCount: 18, label: "普通地址" });
-  putAddr(ADDR.to, { isContract: false, balance: "42.10", txCount: 9, label: "普通地址" });
-  putAddr(ADDR.miner, { isContract: false, balance: "1024.50", txCount: 156, label: "普通地址" });
-  putAddr(ADDR.contract, { isContract: true, balance: "880.02", txCount: 2410, label: "合约" });
-  putAddr(ADDR.created, { isContract: true, balance: "0", txCount: 1, label: "合约" });
-  putAddr(ADDR.extra, { isContract: false, balance: "3.21", txCount: 4, label: "普通地址" });
+  putAddr(ADDR.from, { isContract: false, balance: "125.8642", txCount: 18, label: "普通地址", gasUsedTotal: "1842900", balanceUpdatedAt: TIP });
+  putAddr(ADDR.to, { isContract: false, balance: "42.10", txCount: 9, label: "普通地址", gasUsedTotal: "428000", balanceUpdatedAt: TIP });
+  putAddr(ADDR.miner, { isContract: false, balance: "1024.50", txCount: 156, label: "普通地址", gasUsedTotal: "12560000", balanceUpdatedAt: TIP });
+  putAddr(ADDR.contract, { isContract: true, balance: "880.02", txCount: 2410, label: "合约", gasUsedTotal: "88210450", balanceUpdatedAt: TIP, creator: ADDR.from, creationTx: TX.create });
+  putAddr(ADDR.created, { isContract: true, balance: "0", txCount: 1, label: "合约", gasUsedTotal: "420000", balanceUpdatedAt: TIP, creator: ADDR.from, creationTx: TX.create });
+  putAddr(ADDR.extra, { isContract: false, balance: "3.21", txCount: 4, label: "普通地址", gasUsedTotal: "84000", balanceUpdatedAt: TIP - 1 });
 
   var txs = [
     { hash: TX.ok, status: "ok", method: "transfer", block: 12847293, position: 0, timestamp: NOW - 180000, confirmationMs: [0, 6000], confirmations: 128, from: ADDR.from, to: ADDR.to, toKind: "eoa", value: "1.5", fee: "0.000231", gasPrice: "11000000000", gasUsed: 21000, gasLimit: 21000, type: 2, nonce: 42, input: "0x" },
@@ -15337,6 +15485,19 @@ window.__exEvm = (function () {
   var txByHash = {};
   txs.forEach(function (t) { txByHash[t.hash.toLowerCase()] = t; });
 
+  function attachBlockFees(b) {
+    if (!b) return b;
+    var used = Number(b.gasUsed) || 0;
+    var base = Number(b.baseFee) || 7000000000;
+    var burntWei = base * used;
+    var priorityFeeWei = 4000000000 * used;
+    b.size = b.size != null ? b.size : (Number(b.height) === TIP ? 45120 : (38000 + (Number(b.height) % 23) * 820));
+    b.burntWei = burntWei;
+    b.priorityFeeWei = priorityFeeWei;
+    b.rewardWei = priorityFeeWei;
+    b.txFeesWei = burntWei + priorityFeeWei;
+    return b;
+  }
   var miners = [ADDR.miner, ADDR.from, ADDR.extra, ADDR.to];
   var blocks = [];
   for (var bi = 0; bi < 24; bi++) {
@@ -15344,7 +15505,7 @@ window.__exEvm = (function () {
     var hash = BLOCK_HASH[height] || padHash(0xa10000 + bi);
     var parent = BLOCK_HASH[height - 1] || padHash(0xa10000 + bi + 1);
     var namedCount = txs.filter(function (t) { return t.block === height; }).length;
-    blocks.push({
+    blocks.push(attachBlockFees({
       height: height,
       hash: hash,
       parentHash: parent,
@@ -15354,7 +15515,7 @@ window.__exEvm = (function () {
       gasLimit: 30000000,
       baseFee: height === TIP ? "7000000000" : "10000000000",
       miner: miners[height % miners.length]
-    });
+    }));
   }
   var blockByHeight = {};
   var blockByHash = {};
@@ -15388,7 +15549,7 @@ window.__exEvm = (function () {
     if (idx < 0) idx = 0;
     var hash = padHash(0xa10000 + idx);
     var parent = padHash(0xa10000 + idx + 1);
-    return {
+    return attachBlockFees({
       height: height,
       hash: hash,
       parentHash: parent,
@@ -15398,7 +15559,7 @@ window.__exEvm = (function () {
       gasLimit: 30000000,
       baseFee: "10000000000",
       miner: miners[height % miners.length]
-    };
+    });
   }
   function isTxHash(s) { return /^0x[a-fA-F0-9]{64}$/.test(String(s || "").trim()); }
   function isAddress(s) { return /^0x[a-fA-F0-9]{40}$/.test(String(s || "").trim()); }
@@ -15460,9 +15621,23 @@ window.__exEvm = (function () {
     };
   }
 
+  var TX_COLS = 7;
+  var BLOCK_COLS = 8;
+  var TX_THEAD = "<tr><th>交易</th><th>类型</th><th>方法</th><th>区块</th><th>从 / 到</th><th>数量</th><th>交易费</th></tr>";
+  var BLOCK_THEAD = "<tr><th>区块</th><th>大小</th><th>出块地址</th><th>交易数</th><th>已用 Gas</th><th>区块奖励</th><th>燃烧费用</th><th>基础费用</th></tr>";
   function addrLink(hash) {
     if (!hash) return "—";
     return '<a class="link mono" href="' + addrHref(hash) + '" ' + window.__exHexTipAttrs(hash, "addr") + ">" + esc(window.__exShortAddr(hash)) + "</a>" + copyBtn(hash);
+  }
+  function addrPlain(hash) {
+    if (!hash) return "—";
+    return '<span class="current-address mono">' + esc(window.__exShortAddr(hash)) + "</span>" + copyBtn(hash);
+  }
+  function addrCell(hash, current) {
+    if (!hash) return "—";
+    var key = String(current || "").toLowerCase();
+    if (key && String(hash).toLowerCase() === key) return addrPlain(hash);
+    return addrLink(hash);
   }
   function txLink(hash) {
     return '<a class="link mono" href="' + txHref(hash) + '" ' + window.__exHexTipAttrs(hash, "hash") + ">" + esc(window.__exShortHead(hash)) + "</a>";
@@ -15471,24 +15646,87 @@ window.__exEvm = (function () {
     if (n == null || n === "") return "—";
     return '<a class="link" href="' + blockHref(n) + '">' + fmtNum(n) + "</a>";
   }
-  function toCell(tx) {
-    if (tx.toKind === "create") {
-      return '<span class="muted">新建合约</span> ' + addrLink(tx.created);
-    }
-    return addrLink(tx.to);
+  function fromToCell(from, to, current, toKind) {
+    var toHtml = toKind === "create"
+      ? '<span class="muted">新建合约</span> ' + addrCell(to, current)
+      : addrCell(to, current);
+    return '<div class="evm-fromto">' +
+      '<div class="evm-fromto-row">' + addrCell(from, current) + "</div>" +
+      '<div class="evm-fromto-arrow">↓</div>' +
+      '<div class="evm-fromto-row">' + toHtml + "</div>" +
+      "</div>";
   }
-  function txRowHtml(tx) {
+  function stackAmt(primary, secondary) {
+    return '<div class="evm-stack"><div>' + primary + "</div>" +
+      (secondary ? '<div class="evm-stack-meta">' + secondary + "</div>" : "") +
+      "</div>";
+  }
+  function txTypeMeta(tx) {
+    if (tx.toKind === "create") return { text: "合约创建", cls: "create" };
+    if (tx.toKind === "contract") return { text: "合约调用", cls: "call" };
+    return { text: "原生币转账", cls: "coin" };
+  }
+  function txTypeCell(tx) {
+    var t = txTypeMeta(tx);
+    var html = '<div class="evm-type-cell"><span class="evm-type-badge ' + t.cls + '">' + esc(t.text) + "</span>";
+    if (tx.status === "error") html += '<span class="evm-status-chip fail">失败</span>';
+    else if (tx.status === "pending") html += '<span class="evm-status-chip pending">待确认</span>';
+    html += "</div>";
+    return html;
+  }
+  function txFeeParts(tx) {
+    var base = 7000000000;
+    if (tx.block != null) {
+      var b = getBlock(tx.block);
+      if (b && b.baseFee) base = Number(b.baseFee);
+    }
+    var max = Number(tx.gasPrice) || 0;
+    return { base: base, max: max, priority: Math.max(0, max - base) };
+  }
+  function txBurntWei(tx) {
+    if (tx.status === "pending" || tx.gasUsed == null) return 0;
+    return txFeeParts(tx).base * Number(tx.gasUsed);
+  }
+  function txRowHtml(tx, current) {
     var time = fmtTime(tx.timestamp);
     var blockCell = tx.block == null ? "待确认" : blockLink(tx.block);
+    var toHash = tx.toKind === "create" ? tx.created : tx.to;
     return "<tr>" +
-      "<td><span class=\"copy-wrap\">" + txLink(tx.hash) + copyBtn(tx.hash) + "</span></td>" +
+      "<td>" + stackAmt('<span class="copy-wrap">' + txLink(tx.hash) + copyBtn(tx.hash) + "</span>", esc(time.rel)) + "</td>" +
+      "<td>" + txTypeCell(tx) + "</td>" +
       "<td><span class=\"method-badge\">" + esc(tx.method) + "</span></td>" +
       "<td>" + blockCell + "</td>" +
-      "<td class=\"time\">" + esc(time.rel) + "</td>" +
-      "<td><span class=\"copy-wrap\">" + addrLink(tx.from) + "</span></td>" +
-      "<td><span class=\"copy-wrap\">" + toCell(tx) + "</span></td>" +
-      "<td class=\"value\">" + esc(tx.value) + " BYB</td>" +
-      "<td class=\"fee\">" + esc(tx.fee) + " BYB</td>" +
+      "<td>" + fromToCell(tx.from, toHash, current, tx.toKind) + "</td>" +
+      "<td class=\"value\">" + stackAmt(esc(tx.value) + " BYB", usd(tx.value)) + "</td>" +
+      "<td class=\"fee\">" + stackAmt(esc(tx.fee) + " BYB", usd(tx.fee)) + "</td>" +
+      "</tr>";
+  }
+  function blockRowHtml(row) {
+    var height = row.height;
+    var block = getBlock(height) || row;
+    var time = row.time || (block.timestamp != null ? fmtTime(block.timestamp).rel : "");
+    var miner = row.actor || block.miner || row.miner;
+    var gasUsed = block.gasUsed != null ? block.gasUsed : row.gasUsed;
+    var gasLimit = block.gasLimit != null ? block.gasLimit : row.gasLimit;
+    var gasPct = (gasUsed == null || !gasLimit)
+      ? ""
+      : (Math.round(Number(gasUsed) / Number(gasLimit) * 1000) / 10) + "%";
+    var count = Number(block.txCount != null ? block.txCount : row.txCount) || 0;
+    var countHtml = count > 0
+      ? '<a class="link" href="' + blockHref(height) + '">' + fmtNum(count) + "</a>"
+      : String(count);
+    var burntWei = Number(block.burntWei) || 0;
+    var txFeesWei = Number(block.txFeesWei) || 0;
+    var burntPct = txFeesWei ? (Math.round(burntWei / txFeesWei * 1000) / 10) + "%" : "";
+    return "<tr>" +
+      "<td>" + stackAmt('<a class="link" href="' + blockHref(height) + '">#' + fmtNum(height) + "</a>", esc(time)) + "</td>" +
+      "<td>" + (block.size != null ? fmtNum(block.size) : "—") + "</td>" +
+      "<td><span class=\"copy-wrap\">" + addrLink(miner) + "</span></td>" +
+      "<td>" + countHtml + "</td>" +
+      "<td>" + stackAmt(gasUsed != null ? fmtNum(gasUsed) : "—", gasPct) + "</td>" +
+      "<td>" + stackAmt(nativeFromWei(block.rewardWei || 0) + " BYB") + "</td>" +
+      "<td>" + stackAmt(nativeFromWei(burntWei) + " BYB", burntPct) + "</td>" +
+      "<td>" + (block.baseFee ? fmtGwei(block.baseFee) + " Gwei" : "—") + "</td>" +
       "</tr>";
   }
 
@@ -15555,9 +15793,24 @@ window.__exEvm = (function () {
         '<div class="info-item"><div class="info-label">原生币转账数量</div><div class="info-value"><span class="value-primary">' + esc(tx.value) + " BYB</span>" + (usdVal ? ' <span class="value-secondary">(' + usdVal + ")</span>" : "") + "</div></div>" +
         '<div class="info-item"><div class="info-label">交易费</div><div class="info-value">' + esc(tx.fee) + " BYB" + (usdFee ? ' <span class="value-secondary">(' + usdFee + ")</span>" : "") + "</div></div>" +
         '<div class="info-item"><div class="info-label">Gas 价格</div><div class="info-value">' + esc(nativeFromWei(tx.gasPrice)) + ' BYB <span class="value-secondary">(' + gwei(tx.gasPrice) + " Gwei)</span></div></div>" +
-        '<div class="info-item"><div class="info-label">已用 Gas</div><div class="info-value">' + gasUsedText + "</div></div>" +
-        '<div class="info-item"><div class="info-label">Gas 上限</div><div class="info-value">' + fmtNum(tx.gasLimit) + "</div></div>" +
-        '<div class="info-item"><div class="info-label">Gas 使用比例</div><div class="info-value">' + gasPct + "</div></div>" +
+        '<div class="info-item"><div class="info-label">已用 Gas / Gas 上限</div><div class="info-value">' + gasUsedText + " / " + fmtNum(tx.gasLimit) + ' <span class="value-secondary">(' + gasPct + ")</span></div></div>" +
+        (function () {
+          var fees = txFeeParts(tx);
+          return '<div class="info-item"><div class="info-label">Gas 费用（Gwei）</div><div class="info-value"><div class="evm-gas-fees">' +
+            "<span>Base: " + fmtGwei(fees.base) + "</span><span class=\"evm-gas-sep\">|</span>" +
+            "<span>Max: " + fmtGwei(fees.max) + "</span><span class=\"evm-gas-sep\">|</span>" +
+            "<span>Max priority: " + fmtGwei(fees.priority) + "</span>" +
+            "</div></div></div>";
+        })() +
+        (function () {
+          var burnt = txBurntWei(tx);
+          if (!burnt) return "";
+          var burntNative = nativeFromWei(burnt);
+          var burntUsd = usd(burntNative);
+          return '<div class="info-item"><div class="info-label">燃烧费用</div><div class="info-value">' + esc(burntNative) + " BYB" +
+            (burntUsd ? ' <span class="value-secondary">(' + burntUsd + ")</span>" : "") +
+            "</div></div>";
+        })() +
         '<div class="info-item"><div class="info-label">交易类型</div><div class="info-value">' + esc(String(tx.type)) + ' <span class="value-secondary">(EIP-1559)</span></div></div>' +
         '<div class="info-item"><div class="info-label">Nonce</div><div class="info-value">' + esc(String(tx.nonce)) + "</div></div>" +
         '<div class="info-item"><div class="info-label">在区块中的序号</div><div class="info-value">' + (tx.position == null ? "—" : esc(String(tx.position))) + "</div></div>" +
@@ -15588,8 +15841,8 @@ window.__exEvm = (function () {
       if (header) header.innerHTML = crumb;
       if (main) {
         main.innerHTML = infoLoadingHtml(8) +
-          '<div class="card"><div class="table-container"><table><thead><tr><th>交易哈希</th><th>方法</th><th>区块</th><th>时间</th><th>发送方</th><th>接收方</th><th>原生币数量</th><th>交易费</th></tr></thead><tbody>' +
-          tableStateRows(8, "loading", "", "", 6) + "</tbody></table></div></div>";
+          '<div class="card"><div class="table-container"><table><thead>' + TX_THEAD + "</thead><tbody>" +
+          tableStateRows(TX_COLS, "loading", "", "", 6) + "</tbody></table></div></div>";
       }
       return;
     }
@@ -15627,21 +15880,32 @@ window.__exEvm = (function () {
           (next ? '<a class="block-nav-btn" href="' + blockHref(next) + '" title="下一个区块">→</a>' : '<button class="block-nav-btn" disabled>→</button>') +
         '</div></div><p class="page-desc">区块详细信息</p>';
     }
-    var tbody = rows.length ? rows.map(txRowHtml).join("") : '<tr><td colspan="8">该区块暂无交易</td></tr>';
+    var tbody = rows.length ? rows.map(function (tx) { return txRowHtml(tx); }).join("") : '<tr><td colspan="' + TX_COLS + '">该区块暂无交易</td></tr>';
+    var rewardNative = nativeFromWei(block.rewardWei || 0);
+    var burntNative = nativeFromWei(block.burntWei || 0);
+    var burntUsd = usd(burntNative);
+    var rewardUsd = usd(rewardNative);
+    var burntPct = block.txFeesWei ? (Math.round(Number(block.burntWei) / Number(block.txFeesWei) * 1000) / 10) + "%" : "";
+    var tipNative = nativeFromWei(block.priorityFeeWei || 0);
     if (main) {
       main.innerHTML =
         '<div class="card"><div class="card-header"><span class="card-title">概览</span></div><div class="info-list">' +
         '<div class="info-item"><div class="info-label">区块高度</div><div class="info-value">' + fmtNum(block.height) + "</div></div>" +
+        '<div class="info-item"><div class="info-label">大小</div><div class="info-value">' + fmtNum(block.size || 0) + " 字节</div></div>" +
+        '<div class="info-item"><div class="info-label">时间</div><div class="info-value">' + esc(time.rel + " · " + time.local + " · " + time.utc) + "</div></div>" +
+        '<div class="info-item"><div class="info-label">交易数</div><div class="info-value"><a href="#block-transactions" data-ex-scroll="block-transactions" class="link">' + fmtNum(rows.length || block.txCount) + "</a></div></div>" +
+        '<div class="info-item"><div class="info-label">出块地址</div><div class="info-value"><a href="' + addrHref(block.miner) + '" class="link mono">' + esc(block.miner) + "</a>" + copyBtn(block.miner) + "</div></div>" +
+        '<div class="info-item"><div class="info-label">区块奖励</div><div class="info-value">' + esc(rewardNative) + " BYB" + (rewardUsd ? ' <span class="value-secondary">(' + rewardUsd + ")</span>" : "") + "</div></div>" +
+        '<div class="info-item"><div class="info-label">已用 Gas</div><div class="info-value">' + fmtNum(block.gasUsed) + ' <span class="value-secondary">(' + gasPct + ")</span></div></div>" +
+        '<div class="info-item"><div class="info-label">Gas 上限</div><div class="info-value">' + fmtNum(block.gasLimit) + "</div></div>" +
+        '<div class="info-item"><div class="info-label">基础费用</div><div class="info-value">' + esc(nativeFromWei(block.baseFee)) + ' BYB <span class="value-secondary">(' + gwei(block.baseFee) + " Gwei)</span></div></div>" +
+        (Number(block.burntWei) ? ('<div class="info-item"><div class="info-label">燃烧费用</div><div class="info-value">' + esc(burntNative) + " BYB" + (burntUsd ? ' <span class="value-secondary">(' + burntUsd + ")</span>" : "") + (burntPct ? ' <span class="value-secondary">(' + burntPct + ")</span>" : "") + "</div></div>") : "") +
+        (Number(block.priorityFeeWei) ? ('<div class="info-item"><div class="info-label">小费 / Priority fee</div><div class="info-value">' + esc(tipNative) + " BYB</div></div>") : "") +
         '<div class="info-item"><div class="info-label">区块哈希</div><div class="info-value"><span class="mono">' + esc(block.hash) + "</span>" + copyBtn(block.hash) + "</div></div>" +
         '<div class="info-item"><div class="info-label">父区块哈希</div><div class="info-value"><a class="link mono" href="' + blockHref(block.height - 1) + '">' + esc(block.parentHash) + "</a>" + copyBtn(block.parentHash) + "</div></div>" +
-        '<div class="info-item"><div class="info-label">时间</div><div class="info-value">' + esc(time.rel + " · " + time.local + " · " + time.utc) + "</div></div>" +
-        '<div class="info-item"><div class="info-label">出块地址</div><div class="info-value"><a href="' + addrHref(block.miner) + '" class="link mono">' + esc(block.miner) + "</a>" + copyBtn(block.miner) + "</div></div>" +
-        '<div class="info-item"><div class="info-label">交易数</div><div class="info-value"><a href="#block-transactions" data-ex-scroll="block-transactions" class="link">' + fmtNum(rows.length || block.txCount) + "</a></div></div>" +
-        '<div class="info-item"><div class="info-label">已用 Gas / Gas 上限</div><div class="info-value">' + fmtNum(block.gasUsed) + " / " + fmtNum(block.gasLimit) + ' <span class="value-secondary">(' + gasPct + ")</span></div></div>" +
-        '<div class="info-item"><div class="info-label">基础费用</div><div class="info-value">' + esc(nativeFromWei(block.baseFee)) + ' BYB <span class="value-secondary">(' + gwei(block.baseFee) + " Gwei)</span></div></div>" +
         "</div></div>" +
         '<div class="card" id="block-transactions"><div class="tabs"><a href="#block-transactions" class="tab active">交易 <span class="tab-count">' + (rows.length || block.txCount) + "</span></a></div>" +
-        '<div class="table-container"><table><thead><tr><th>交易哈希</th><th>方法</th><th>区块</th><th>时间</th><th>发送方</th><th>接收方</th><th>原生币数量</th><th>交易费</th></tr></thead><tbody>' +
+        '<div class="table-container"><table><thead>' + TX_THEAD + "</thead><tbody>" +
         tbody + "</tbody></table></div></div>";
     }
   }
@@ -15654,12 +15918,9 @@ window.__exEvm = (function () {
     if (state === "loading") {
       if (header) header.innerHTML = crumb;
       if (main) {
-        main.innerHTML = '<div class="overview-grid">' +
-          '<div class="overview-card"><div class="overview-label">是否合约</div><div class="overview-value"><span class="tz-row-skel"></span></div></div>' +
-          '<div class="overview-card"><div class="overview-label">原生币余额</div><div class="overview-value"><span class="tz-row-skel"></span></div></div>' +
-          '<div class="overview-card"><div class="overview-label">交易数</div><div class="overview-value"><span class="tz-row-skel"></span></div></div></div>' +
-          '<div class="card"><div class="table-container"><table><thead><tr><th>交易哈希</th><th>方法</th><th>区块</th><th>时间</th><th>发送方</th><th>接收方</th><th>原生币数量</th><th>交易费</th></tr></thead><tbody>' +
-          tableStateRows(8, "loading", "", "", 8) + "</tbody></table></div></div>";
+        main.innerHTML = infoLoadingHtml(6) +
+          '<div class="card"><div class="table-container"><table><thead>' + TX_THEAD + "</thead><tbody>" +
+          tableStateRows(TX_COLS, "loading", "", "", 8) + "</tbody></table></div></div>";
       }
       return;
     }
@@ -15683,17 +15944,35 @@ window.__exEvm = (function () {
         '<div class="address-info"><span class="address-type' + (isC ? " contract" : "") + '">' + (isC ? "合约" : "普通地址") + "</span>" +
         '<div class="address-full"><span class="mono">' + esc(addr.hash) + "</span>" + copyBtn(addr.hash) + "</div></div></div>";
     }
-    var tbody = rows.length ? rows.map(txRowHtml).join("") : '<tr><td colspan="8">该地址暂无交易</td></tr>';
+    var tbody = rows.length ? rows.map(function (tx) { return txRowHtml(tx, addr.hash); }).join("") : '<tr><td colspan="' + TX_COLS + '">该地址暂无交易</td></tr>';
+    var creatorHtml = "";
+    if (isC && addr.creator && addr.creationTx) {
+      creatorHtml =
+        '<div class="info-item"><div class="info-label">创建者</div><div class="info-value">' +
+        '<a href="' + addrHref(addr.creator) + '" class="link mono">' + esc(addr.creator) + "</a>" + copyBtn(addr.creator) +
+        ' <span class="value-secondary">于交易</span> ' +
+        '<a href="' + txHref(addr.creationTx) + '" class="link mono">' + esc(window.__exShortHead(addr.creationTx)) + "</a>" + copyBtn(addr.creationTx) +
+        "</div></div>";
+    }
+    var gasUsedHtml = addr.gasUsedTotal
+      ? '<div class="info-item"><div class="info-label">已用 Gas</div><div class="info-value">' + fmtNum(addr.gasUsedTotal) + "</div></div>"
+      : "";
+    var updatedHtml = addr.balanceUpdatedAt
+      ? '<div class="info-item"><div class="info-label">余额更新于区块</div><div class="info-value">' + blockLink(addr.balanceUpdatedAt) + "</div></div>"
+      : "";
     if (main) {
       main.innerHTML =
-        '<div class="overview-grid">' +
-        '<div class="overview-card"><div class="overview-label">是否合约</div><div class="overview-value">' + (isC ? "是" : "否") + "</div></div>" +
-        '<div class="overview-card"><div class="overview-label">原生币余额</div><div class="overview-value"><div class="token-value">' + esc(addr.balance) + " BYB" +
-        (usdBal ? ' <span class="token-usd">(' + usdBal + " USD)</span>" : "") + "</div></div></div>" +
-        '<div class="overview-card"><div class="overview-label">交易数</div><div class="overview-value">' + fmtNum(rows.length) + "</div></div>" +
-        "</div>" +
+        '<div class="card"><div class="card-header"><span class="card-title">详情</span></div><div class="info-list">' +
+        '<div class="info-item"><div class="info-label">原生币余额</div><div class="info-value"><span class="value-primary">' + esc(addr.balance) + " BYB</span>" +
+        (usdBal ? ' <span class="value-secondary">(' + usdBal + " USD)</span>" : "") + "</div></div>" +
+        '<div class="info-item"><div class="info-label">交易数</div><div class="info-value"><a href="#address-transactions" data-ex-scroll="address-transactions" class="link">' + fmtNum(rows.length) + "</a></div></div>" +
+        gasUsedHtml +
+        updatedHtml +
+        '<div class="info-item"><div class="info-label">是否合约</div><div class="info-value">' + (isC ? "是" : "否") + "</div></div>" +
+        creatorHtml +
+        "</div></div>" +
         '<div class="card"><div class="tabs"><a class="tab active">交易</a></div><div class="tab-content active" id="address-transactions">' +
-        '<div class="table-container"><table><thead><tr><th>交易哈希</th><th>方法</th><th>区块</th><th>时间</th><th>发送方</th><th>接收方</th><th>原生币数量</th><th>交易费</th></tr></thead><tbody>' +
+        '<div class="table-container"><table><thead>' + TX_THEAD + "</thead><tbody>" +
         tbody + "</tbody></table></div></div></div>";
     }
   }
@@ -15717,7 +15996,10 @@ window.__exEvm = (function () {
     isBlockHeight: isBlockHeight,
     isBlockHash: isBlockHash,
     tableStateRows: tableStateRows,
+    txTheadHtml: TX_THEAD,
+    blockTheadHtml: BLOCK_THEAD,
     txRowHtml: txRowHtml,
+    blockRowHtml: blockRowHtml,
     renderTxDetail: renderTxDetail,
     renderBlockDetail: renderBlockDetail,
     renderAddressDetail: renderAddressDetail,
@@ -17012,7 +17294,8 @@ const evmBlocks = [
                     time: timeText,
                     actor: (block && block.miner) || evmValidators[height % evmValidators.length],
                     txCount: (block && block.txCount != null) ? block.txCount : (120 + (height % 80)),
-                    gasUsed: (block && block.gasUsed != null) ? block.gasUsed : (10000000 + (height % 5000000))
+                    gasUsed: (block && block.gasUsed != null) ? block.gasUsed : (10000000 + (height % 5000000)),
+                    gasLimit: (block && block.gasLimit != null) ? block.gasLimit : 30000000
                 });
             }
             return rows;
@@ -17190,13 +17473,13 @@ const evmBlocks = [
                     }).join("")
                     : '<tr><td colspan="5" class="tz-empty">' + blocksEmptyMessage() + "</td></tr>";
             } else {
-                thead.innerHTML = "<tr><th>区块高度</th><th>时间</th><th>交易数</th><th>已用 Gas</th><th>出块地址</th></tr>";
+                thead.innerHTML = (window.__exEvm && window.__exEvm.blockTheadHtml) ? window.__exEvm.blockTheadHtml : "<tr><th>区块</th><th>大小</th><th>出块地址</th><th>交易数</th><th>已用 Gas</th><th>区块奖励</th><th>燃烧费用</th><th>基础费用</th></tr>";
                 var blockScene = "";
                 try { blockScene = (window.__exParams().get("scene") || "").toLowerCase(); } catch (err) {}
                 if (blockScene === "loading" || blockScene === "empty" || blockScene === "error") {
                     var evm = window.__exEvm;
                     tbody.innerHTML = evm && evm.tableStateRows
-                        ? evm.tableStateRows(5, blockScene === "empty" ? "empty" : blockScene,
+                        ? evm.tableStateRows(8, blockScene === "empty" ? "empty" : blockScene,
                             blockScene === "empty" ? "暂无区块数据" : "区块列表加载失败，请重试",
                             blockScene === "error" ? "#blocks?mode=evm" : "", 20)
                         : "";
@@ -17206,14 +17489,7 @@ const evmBlocks = [
                     return;
                 }
                 tbody.innerHTML = rows.map(function (row) {
-                    return '<tr>' +
-                        '<td><a href="#block?mode=evm&number=' + row.height + '" class="link">#' + row.height.toLocaleString("en-US") + '</a></td>' +
-                        '<td class="time">' + row.time + '</td>' +
-                        '<td>' + row.txCount + '</td>' +
-                        '<td>' + (row.gasUsed != null ? Number(row.gasUsed).toLocaleString("en-US") : "—") + '</td>' +
-                        '<td class="copy-wrap"><a href="' + window.__exAddrHref(row.actor, "evm") + '" class="link mono" ' + window.__exHexTipAttrs(row.actor, "addr") + '>' + window.__exShortAddr(row.actor) + '</a>' +
-                        '<button class="copy-btn" type="button" title="复制" data-copy="' + row.actor + '" onclick="copyText(\'' + row.actor + '\', this)">' + (window.__exCopyIconHtml || "📋") + '</button></td>' +
-                        '</tr>';
+                    return window.__exEvm.blockRowHtml(row);
                 }).join("");
             }
 
@@ -18172,11 +18448,11 @@ const evmBlocks = [
                 if (cardHeader) {
                     cardHeader.innerHTML = '<span class="card-title">共 ' + matchTotal.toLocaleString("en-US") + " 笔交易</span>";
                 }
-                thead.innerHTML = "<tr><th>交易哈希</th><th>方法</th><th>区块</th><th>时间</th><th>发送方</th><th>接收方</th><th>原生币数量</th><th>交易费</th></tr>";
+                thead.innerHTML = (window.__exEvm && window.__exEvm.txTheadHtml) ? window.__exEvm.txTheadHtml : "<tr><th>交易</th><th>类型</th><th>方法</th><th>区块</th><th>从 / 到</th><th>数量</th><th>交易费</th></tr>";
                 var txScene = "";
                 try { txScene = (window.__exParams().get("scene") || "").toLowerCase(); } catch (err) {}
                 if (txScene === "loading" || txScene === "empty" || txScene === "error") {
-                    tbody.innerHTML = window.__exEvm.tableStateRows(8, txScene === "empty" ? "empty" : txScene,
+                    tbody.innerHTML = window.__exEvm.tableStateRows(7, txScene === "empty" ? "empty" : txScene,
                         txScene === "empty" ? "暂无交易数据" : "交易列表加载失败，请重试",
                         txScene === "error" ? "#txs?mode=evm" : "", 10);
                     if (cardHeader) cardHeader.innerHTML = '<span class="card-title">' + (txScene === "empty" ? "共 0 笔交易" : "交易列表") + "</span>";

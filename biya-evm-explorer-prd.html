@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta http-equiv="Cache-Control" content="no-cache" />
-  <title>BiyaEVM 区块浏览器 · 产品需求文档 V1.0.0</title>
+  <title>BiyaEVM 区块浏览器 · 产品需求文档 V1.0.1</title>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/github-markdown-css@5.6.1/github-markdown-light.min.css" />
   <script src="https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.min.js"></script>
   <style>
@@ -37,7 +37,7 @@
 <body>
   <div class="topbar">
     <a href="./index.html">文档入口</a>
-    <a href="./BiyaEVMscan.html">打开 EVM 原型</a>
+    <a href="./BiyaEVMscan.html#home?mode=evm">打开 EVM 原型</a>
     <a href="./biya-evm-explorer-prd.md">Markdown 源文件</a>
   </div>
   <div class="layout">
@@ -101,7 +101,7 @@
 <li class="l3"><a href="#467">4.6.7 验收标准</a></li>
 <li class="l2"><a href="#47">4.7 地址详情</a></li>
 <li class="l3"><a href="#471">4.7.1 流程步骤</a></li>
-<li class="l3"><a href="#472">4.7.2 头部与余额</a></li>
+<li class="l3"><a href="#472">4.7.2 头部与信息表</a></li>
 <li class="l3"><a href="#473">4.7.3 相关交易</a></li>
 <li class="l3"><a href="#474">4.7.4 页面状态矩阵</a></li>
 <li class="l3"><a href="#475">4.7.5 验收标准</a></li>
@@ -122,7 +122,7 @@
       <article class="markdown-body">
 <h1 id="biyaevm">BiyaEVM 区块浏览器产品需求文档</h1>
 <blockquote>
-<p>产品经理：Terry｜文档版本：V1.0.0｜文档状态：正式需求｜日期：2026-10-20</p>
+<p>产品经理：Terry｜文档版本：V1.0.1｜文档状态：正式需求｜日期：2026-10-26</p>
 </blockquote>
 <h2 id="_1">文档说明</h2>
 <table>
@@ -151,11 +151,19 @@
 </tr>
 <tr>
 <td>交互基线</td>
-<td><a href="./BiyaEVMscan.html">BiyaEVMscan.html</a> 的 EVM 模式</td>
+<td><a href="https://terryxu923.github.io/biya-dex-docs/BiyaEVMscan.html#home?mode=evm">BiyaEVMscan.html</a> 的 EVM 模式</td>
+</tr>
+<tr>
+<td>公开原型</td>
+<td>https://terryxu923.github.io/biya-dex-docs/BiyaEVMscan.html#home?mode=evm</td>
+</tr>
+<tr>
+<td>公开 PRD</td>
+<td>https://terryxu923.github.io/biya-dex-docs/biya-evm-explorer-prd.html</td>
 </tr>
 <tr>
 <td>范围底稿</td>
-<td><a href="./迭代计划/EVM浏览器迭代版本表.md">EVM浏览器迭代版本表.md</a> 的 V1.0</td>
+<td><a href="./迭代计划/EVM浏览器迭代版本表.md">EVM浏览器迭代版本表.md</a> 的 V1.0；列表与详情字段以当前原型及 BlockScout L1 默认展示为准</td>
 </tr>
 <tr>
 <td>编写规范</td>
@@ -167,7 +175,7 @@
 </tr>
 <tr>
 <td>一句话概述</td>
-<td>用户无需登录即可搜索并打开 Biya EVM 的交易、区块和地址，核验状态、双方、金额、Gas、费用、Nonce 和输入数据</td>
+<td>用户无需登录即可搜索并打开 Biya EVM 的交易、区块和地址，核验状态、类型、双方、金额、Gas、费用、燃烧、Nonce 和输入数据</td>
 </tr>
 </tbody>
 </table>
@@ -198,22 +206,23 @@
 <h2 id="1">1. 本期交付摘要</h2>
 <h3 id="11">1.1 交付结果</h3>
 <p>本期交付一套 Biya EVM 公共数据查询产品，形成以下查询闭环：</p>
-<p><div class="mermaid">
+<div class="mermaid">
 flowchart TD
-    EvmHome[EVM首页] --&gt; BlockList[区块列表]
-    EvmHome[EVM首页] --&gt; TxList[交易列表]
-    EvmHome --&gt; SearchEmpty[搜索无结果]
-    BlockList --&gt; BlockDetail[区块详情]
-    BlockDetail --&gt; TxDetail[交易详情]
-    BlockDetail --&gt; AddressDetail[地址详情]
-    TxList --&gt; TxDetail
-    TxList --&gt; AddressDetail
-    TxDetail --&gt; BlockDetail
-    TxDetail --&gt; AddressDetail
-    AddressDetail --&gt; TxDetail
-    AddressDetail --&gt; BlockDetail
-    SearchEmpty --&gt; EvmHome
-</div></p>
+    EvmHome[EVM首页] --> BlockList[区块列表]
+    EvmHome[EVM首页] --> TxList[交易列表]
+    EvmHome --> SearchEmpty[搜索无结果]
+    BlockList --> BlockDetail[区块详情]
+    BlockDetail --> TxDetail[交易详情]
+    BlockDetail --> AddressDetail[地址详情]
+    TxList --> TxDetail
+    TxList --> AddressDetail
+    TxDetail --> BlockDetail
+    TxDetail --> AddressDetail
+    AddressDetail --> TxDetail
+    AddressDetail --> BlockDetail
+    SearchEmpty --> EvmHome
+</div>
+
 <p>用户可以从首页了解网络概况和最新活动，从区块或交易列表进入详情，再通过区块、交易和地址之间的链接交叉核验。所有详情页均支持直接打开和分享，不依赖从首页逐级进入。</p>
 <h3 id="12-p0">1.2 P0 核心能力</h3>
 <table>
@@ -234,15 +243,15 @@ flowchart TD
 </tr>
 <tr>
 <td>区块</td>
-<td>区块列表、区块概览、块内交易、前后区块</td>
+<td>区块列表（8 列叠格）、区块概览（含大小、奖励、燃烧、小费）、块内交易、前后区块</td>
 </tr>
 <tr>
 <td>交易</td>
-<td>交易列表、交易详情（基础信息、参与方、资产与费用、其他）</td>
+<td>交易列表（7 列叠格，含类型）、交易详情（基础信息、参与方、资产与费用含 Gas 费用三档与燃烧、其他）</td>
 </tr>
 <tr>
 <td>地址</td>
-<td>地址、是否合约、原生币余额、交易数、相关交易列表</td>
+<td>地址、是否合约、原生币余额、交易数、累计已用 Gas、余额更新于区块、合约创建者与创建交易、相关交易列表</td>
 </tr>
 <tr>
 <td>公共状态</td>
@@ -276,8 +285,8 @@ flowchart TD
 <td>EVM 导航不展示相关入口；深链不得打开此类页面</td>
 </tr>
 <tr>
-<td>合约源码、验证、读取合约、创建者、部署交易</td>
-<td>合约地址与普通地址使用同一详情页，只区分是否合约</td>
+<td>合约源码、验证、读取合约</td>
+<td>合约地址与普通地址使用同一详情页；合约额外展示创建者与创建交易，不提供源码、验证或读取</td>
 </tr>
 <tr>
 <td>内部交易、日志、状态变化</td>
@@ -321,7 +330,7 @@ flowchart TD
 <p>本需求将原型中的有效查询链路固化为生产 P0，并明确：</p>
 <ol>
 <li>页面展示 Biya EVM 的真实索引结果，不使用模拟值冒充链上事实。</li>
-<li>用户能核验一笔普通交易的哈希、区块、时间、双方、状态、金额、Gas、费用、Nonce 和输入数据。</li>
+<li>用户能核验一笔普通交易的哈希、区块、时间、双方、状态、类型、金额、Gas、费用、燃烧、Nonce 和输入数据。</li>
 <li>待确认、失败、创建合约、交互合约必须给出与成功转账不同的可见结果。</li>
 <li>无数据、查无结果、参数无效和网络错误必须给出不同反馈。</li>
 <li>EVM 与 DEX 的产品边界保持清晰，EVM 不复用 DEX 的交易类型筛选，也不展示代币与合约源码。</li>
@@ -345,7 +354,7 @@ flowchart TD
 </tr>
 <tr>
 <td>提供可读的普通交易</td>
-<td>交易详情展示状态、双方、金额、Gas、费用、Nonce 和输入数据</td>
+<td>交易详情展示状态、类型、双方、金额、Gas、费用、燃烧、Nonce 和输入数据</td>
 </tr>
 <tr>
 <td>支持交叉核验</td>
@@ -486,8 +495,48 @@ flowchart TD
 <td>交易调用的函数名；无法解码时展示方法选择器</td>
 </tr>
 <tr>
+<td>类型</td>
+<td>交易主类型，P0 仅三种：合约创建、合约调用、原生币转账</td>
+</tr>
+<tr>
 <td>交易费</td>
 <td>用户为该笔交易支付的原生币费用</td>
+</tr>
+<tr>
+<td>Gas 费用</td>
+<td>交易详情中的三档单价，单位 Gwei：Base（基础费用）、Max（用户最高费用）、Max priority（用户小费上限）</td>
+</tr>
+<tr>
+<td>燃烧费用</td>
+<td>因基础费用被销毁的原生币；单笔等于该块基础费用乘以该笔已用 Gas；区块级为该块合计</td>
+</tr>
+<tr>
+<td>区块奖励</td>
+<td>出块者因产出该块获得的原生币奖励</td>
+</tr>
+<tr>
+<td>大小</td>
+<td>区块体的字节数</td>
+</tr>
+<tr>
+<td>基础费用</td>
+<td>该块每单位 Gas 的网络基础费用</td>
+</tr>
+<tr>
+<td>小费 / Priority fee</td>
+<td>该块内用户付给出块者的优先打包小费合计；为 0 时区块详情不展示</td>
+</tr>
+<tr>
+<td>累计已用 Gas</td>
+<td>该地址作为发送方历史上消耗的 Gas 合计</td>
+</tr>
+<tr>
+<td>余额更新于区块</td>
+<td>该地址原生币余额最近一次发生变化时所在的区块高度</td>
+</tr>
+<tr>
+<td>创建者</td>
+<td>部署该合约的地址；仅合约地址展示，并同时给出创建交易</td>
 </tr>
 <tr>
 <td>区块手续费</td>
@@ -550,7 +599,7 @@ flowchart TD
 <tr>
 <td>地址详情</td>
 <td>按地址打开</td>
-<td>查看是否合约、余额和相关交易</td>
+<td>查看是否合约、余额、累计 Gas、合约创建者（如有）和相关交易</td>
 </tr>
 <tr>
 <td>搜索无结果</td>
@@ -618,31 +667,31 @@ flowchart TD
 <td>区块</td>
 <td>区块列表</td>
 <td>P0</td>
-<td>高度、时间、交易数、已用 Gas、出块地址</td>
+<td>8 列叠格：区块（高度+时间）、大小、出块地址、交易数、已用 Gas、区块奖励、燃烧费用、基础费用</td>
 </tr>
 <tr>
 <td>区块</td>
 <td>区块详情</td>
 <td>P0</td>
-<td>概览、前后区块、块内交易</td>
+<td>概览（含大小、奖励、燃烧、小费）、前后区块、块内交易</td>
 </tr>
 <tr>
 <td>交易</td>
 <td>交易列表</td>
 <td>P0</td>
-<td>八列、分页、从新到旧</td>
+<td>7 列叠格：交易、类型、方法、区块、从/到、数量、交易费；分页、从新到旧</td>
 </tr>
 <tr>
 <td>交易</td>
 <td>交易详情</td>
 <td>P0</td>
-<td>基础信息、参与方、资产与费用、其他</td>
+<td>基础信息、参与方、资产与费用（含 Gas 费用三档与燃烧）、其他</td>
 </tr>
 <tr>
 <td>地址</td>
 <td>地址详情</td>
 <td>P0</td>
-<td>是否合约、余额、交易数、相关交易</td>
+<td>是否合约、余额、交易数、累计已用 Gas、余额更新于区块、合约创建者与创建交易、相关交易</td>
 </tr>
 <tr>
 <td>公共状态</td>
@@ -1402,7 +1451,7 @@ flowchart TD
 <hr />
 <h2 id="43">4.3 区块列表</h2>
 <p><strong>用户目标</strong></p>
-<p>用户按从新到旧浏览 Biya EVM 区块，了解时间、交易数、已用 Gas 和出块地址，并进入详情。</p>
+<p>用户按从新到旧浏览 Biya EVM 区块，了解时间、大小、出块地址、交易数、已用 Gas、奖励、燃烧和基础费用，并进入详情。</p>
 <h3 id="431">4.3.1 流程步骤</h3>
 <table>
 <thead>
@@ -1418,7 +1467,7 @@ flowchart TD
 <td>1</td>
 <td>打开区块列表</td>
 <td>按高度倒序加载第 1 页</td>
-<td>每页 20 条</td>
+<td>每页 20 条，8 列叠格</td>
 </tr>
 <tr>
 <td>2</td>
@@ -1434,6 +1483,12 @@ flowchart TD
 </tr>
 <tr>
 <td>4</td>
+<td>点击大于 0 的交易数</td>
+<td>打开该区块详情并定位到块内交易</td>
+<td>进入该块</td>
+</tr>
+<tr>
+<td>5</td>
 <td>翻页</td>
 <td>加载对应页</td>
 <td>页码和区间更新</td>
@@ -1441,60 +1496,92 @@ flowchart TD
 </tbody>
 </table>
 <h3 id="432">4.3.2 展示字段</h3>
+<p>列表为 8 列叠格，列顺序固定如下。</p>
 <table>
 <thead>
 <tr>
 <th>界面字段</th>
 <th>业务含义</th>
+<th>数据来源</th>
 <th>展示规则</th>
 <th>空值/异常</th>
-<th>交互</th>
+<th>校验/交互</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td>区块高度</td>
-<td>区块编号</td>
-<td>完整十进制，可用千分位</td>
-<td>不允许为空</td>
-<td>点击进区块详情</td>
+<td>区块</td>
+<td>高度与出块时间</td>
+<td>区块数据</td>
+<td>同一格上行完整高度（可千分位），下行相对时间，见 §5.3</td>
+<td>高度不允许为空；无时间显示 <code>--</code></td>
+<td>高度点击进区块详情</td>
 </tr>
 <tr>
-<td>时间</td>
-<td>出块时间</td>
-<td>相对时间或绝对时间，见 §5.3</td>
-<td>无时间显示 <code>--</code></td>
-<td>只读</td>
-</tr>
-<tr>
-<td>交易数</td>
-<td>该块收录的顶层交易数</td>
-<td>非负整数</td>
-<td>0 显示 0</td>
-<td>只读</td>
-</tr>
-<tr>
-<td>已用 Gas</td>
-<td>该块实际消耗的 Gas</td>
-<td>整数，可用千分位</td>
+<td>大小</td>
+<td>区块体字节数</td>
+<td>区块数据</td>
+<td>非负整数，列表不写单位</td>
 <td>不可用显示 <code>--</code></td>
 <td>只读</td>
 </tr>
 <tr>
 <td>出块地址</td>
 <td>产出该块的地址</td>
+<td>区块数据</td>
 <td>列表截断</td>
 <td>不可用显示 <code>--</code></td>
 <td>点击进地址详情；可复制</td>
 </tr>
+<tr>
+<td>交易数</td>
+<td>该块收录的顶层交易数</td>
+<td>区块数据</td>
+<td>非负整数</td>
+<td>0 显示 0</td>
+<td>大于 0 时点击进该区块详情；为 0 时不可点</td>
+</tr>
+<tr>
+<td>已用 Gas</td>
+<td>该块实际消耗及占上限比例</td>
+<td>区块数据</td>
+<td>同一格上行整数（可千分位），下行使用比例，一位小数加 <code>%</code></td>
+<td>不可用显示 <code>--</code>；无法计算比例时不展示下行</td>
+<td>只读</td>
+</tr>
+<tr>
+<td>区块奖励</td>
+<td>出块者获得的原生币奖励</td>
+<td>区块数据</td>
+<td>金额 + <code>BYB</code></td>
+<td>0 显示 <code>0 BYB</code></td>
+<td>只读</td>
+</tr>
+<tr>
+<td>燃烧费用</td>
+<td>该块因基础费用被销毁的原生币</td>
+<td>区块数据</td>
+<td>同一格上行金额 + <code>BYB</code>，下行燃烧占该块交易费的比例</td>
+<td>0 显示 <code>0 BYB</code>；无法计算比例时不展示下行</td>
+<td>只读</td>
+</tr>
+<tr>
+<td>基础费用</td>
+<td>该块每单位 Gas 的网络基础费用</td>
+<td>区块数据</td>
+<td>数值 + <code>Gwei</code></td>
+<td>无基础费用显示 <code>--</code></td>
+<td>只读</td>
+</tr>
 </tbody>
 </table>
-<p>同一高度在列表、首页和详情中的出块地址、交易数、已用 Gas 必须一致。</p>
+<p>同一高度在列表与详情中的出块地址、交易数、已用 Gas、大小、区块奖励、燃烧费用和基础费用必须一致。首页最新区块仍按 §4.2.3 排版，不验收本表新增列。</p>
 <h3 id="433">4.3.3 业务规则</h3>
 <ul>
 <li>默认按区块高度从高到低。</li>
 <li>每页 20 条，见 §5.4。</li>
 <li>P0 不做区块类型筛选，也不做列表页高度搜索框。</li>
+<li>列表 8 列始终占格；燃烧为 0 时本列仍显示 <code>0 BYB</code>。</li>
 </ul>
 <h3 id="434">4.3.4 页面状态矩阵</h3>
 <table>
@@ -1546,7 +1633,7 @@ flowchart TD
 <tr>
 <td>AC-BL01</td>
 <td>用户打开区块列表</td>
-<td>倒序展示高度、时间、交易数、已用 Gas、出块地址</td>
+<td>倒序展示 8 列：区块（高度+时间）、大小、出块地址、交易数、已用 Gas、区块奖励、燃烧费用、基础费用</td>
 </tr>
 <tr>
 <td>AC-BL02</td>
@@ -1556,19 +1643,24 @@ flowchart TD
 <tr>
 <td>AC-BL03</td>
 <td>同一高度在列表与详情</td>
-<td>出块地址、交易数、已用 Gas 一致</td>
+<td>出块地址、交易数、已用 Gas、大小、区块奖励、燃烧费用、基础费用一致</td>
 </tr>
 <tr>
 <td>AC-BL04</td>
 <td>用户翻到第 2 页再返回</td>
 <td>恢复第 2 页</td>
 </tr>
+<tr>
+<td>AC-BL05</td>
+<td>某一行交易数为 0</td>
+<td>交易数显示 0 且该格不可点</td>
+</tr>
 </tbody>
 </table>
 <hr />
 <h2 id="44">4.4 区块详情</h2>
 <p><strong>用户目标</strong></p>
-<p>用户核验某一区块的身份、出块信息和块内交易，并能跳到相邻区块。</p>
+<p>用户核验某一区块的身份、大小、出块信息、奖励、燃烧和块内交易，并能跳到相邻区块。</p>
 <h3 id="441">4.4.1 流程步骤</h3>
 <table>
 <thead>
@@ -1613,26 +1705,110 @@ flowchart TD
 </tbody>
 </table>
 <h3 id="442">4.4.2 区块概览字段</h3>
+<p>字段顺序与原型一致。不展示额外数据。</p>
 <table>
 <thead>
 <tr>
 <th>界面字段</th>
+<th>业务含义</th>
 <th>数据来源</th>
 <th>展示规则</th>
 <th>空值/异常</th>
-<th>交互</th>
+<th>校验/交互</th>
 </tr>
 </thead>
 <tbody>
 <tr>
 <td>区块高度</td>
+<td>区块编号</td>
 <td>区块数据</td>
 <td>完整十进制</td>
 <td>不允许为空</td>
 <td>只读；标题同步展示</td>
 </tr>
 <tr>
+<td>大小</td>
+<td>区块体字节数</td>
+<td>区块数据</td>
+<td>整数 + <code>字节</code></td>
+<td>不可用显示 <code>--</code></td>
+<td>只读</td>
+</tr>
+<tr>
+<td>时间</td>
+<td>出块时间</td>
+<td>区块数据</td>
+<td>相对时间、本地时间、UTC，见 §5.3</td>
+<td>不可用显示 <code>--</code></td>
+<td>只读</td>
+</tr>
+<tr>
+<td>交易数</td>
+<td>块内顶层交易数</td>
+<td>区块数据</td>
+<td>非负整数</td>
+<td>0 显示 0</td>
+<td>可锚点到下方交易表</td>
+</tr>
+<tr>
+<td>出块地址</td>
+<td>产出该块的地址</td>
+<td>区块数据</td>
+<td>完整地址</td>
+<td>不可用显示 <code>--</code></td>
+<td>点击进地址详情；可复制</td>
+</tr>
+<tr>
+<td>区块奖励</td>
+<td>出块者获得的原生币奖励</td>
+<td>区块数据</td>
+<td>金额 + <code>BYB</code>；有报价附美元</td>
+<td>0 显示 <code>0 BYB</code></td>
+<td>只读</td>
+</tr>
+<tr>
+<td>已用 Gas</td>
+<td>该块实际消耗</td>
+<td>区块数据</td>
+<td>整数（可千分位），括号附使用比例，一位小数</td>
+<td>不可用显示 <code>--</code>；无法计算比例时不附比例</td>
+<td>只读</td>
+</tr>
+<tr>
+<td>Gas 上限</td>
+<td>该块 Gas 上限</td>
+<td>区块数据</td>
+<td>整数（可千分位）</td>
+<td>不允许为空</td>
+<td>只读</td>
+</tr>
+<tr>
+<td>基础费用</td>
+<td>该块每单位 Gas 的网络基础费用</td>
+<td>区块数据</td>
+<td>原生币金额，并附 <code>Gwei</code></td>
+<td>无基础费用显示 <code>--</code></td>
+<td>只读</td>
+</tr>
+<tr>
+<td>燃烧费用</td>
+<td>该块因基础费用被销毁的原生币</td>
+<td>区块数据</td>
+<td>金额 + <code>BYB</code>；有报价附美元；可再附占该块交易费的比例</td>
+<td>结果为 0 或不存在时不展示该行</td>
+<td>只读</td>
+</tr>
+<tr>
+<td>小费 / Priority fee</td>
+<td>该块内用户付给出块者的优先打包小费合计</td>
+<td>区块数据</td>
+<td>金额 + <code>BYB</code></td>
+<td>为 0 或不存在时不展示该行</td>
+<td>只读</td>
+</tr>
+<tr>
 <td>区块哈希</td>
+<td>区块唯一标识</td>
 <td>区块数据</td>
 <td>完整值</td>
 <td>不允许为空</td>
@@ -1641,48 +1817,14 @@ flowchart TD
 <tr>
 <td>父区块哈希</td>
 <td>父区块标识</td>
+<td>区块数据</td>
 <td>完整值</td>
 <td>创世块无父区块时显示 <code>--</code></td>
 <td>点击进父区块详情；可复制</td>
 </tr>
-<tr>
-<td>时间</td>
-<td>出块时间</td>
-<td>相对时间、本地时间、UTC，见 §5.3</td>
-<td>不可用显示 <code>--</code></td>
-<td>只读</td>
-</tr>
-<tr>
-<td>出块地址</td>
-<td>出块者</td>
-<td>完整地址</td>
-<td>不可用显示 <code>--</code></td>
-<td>点击进地址详情；可复制</td>
-</tr>
-<tr>
-<td>交易数</td>
-<td>块内顶层交易数</td>
-<td>非负整数；可锚点到下方交易表</td>
-<td>0 显示 0</td>
-<td>只读</td>
-</tr>
-<tr>
-<td>已用 Gas / Gas 上限</td>
-<td>区块执行结果</td>
-<td><code>已用 / 上限</code>，可附使用比例</td>
-<td>不可用显示 <code>--</code></td>
-<td>只读</td>
-</tr>
-<tr>
-<td>基础费用</td>
-<td>区块基础费用</td>
-<td>原生币金额，并附 <code>Gwei</code></td>
-<td>无基础费用显示 <code>--</code></td>
-<td>只读</td>
-</tr>
 </tbody>
 </table>
-<p>P0 概览不展示区块奖励、额外数据、大小等未在原型出现的字段。</p>
+<p>燃烧费用 = 该块基础费用 × 该块已用 Gas。列表在燃烧为 0 时仍占格显示 <code>0 BYB</code>；详情为 0 则不画该行。</p>
 <h3 id="443">4.4.3 块内交易</h3>
 <p>字段与交易列表相同，见 §4.5.2。查询该区块的全部顶层交易，不适用全链 10,000 条上限。条数应等于概览中的交易数。</p>
 <h3 id="444">4.4.4 页面状态矩阵</h3>
@@ -1747,8 +1889,8 @@ flowchart TD
 <tbody>
 <tr>
 <td>AC-BD01</td>
-<td>用户打开存在的区块</td>
-<td>展示 §4.4.2 全部字段</td>
+<td>用户打开存在且燃烧、小费均非 0 的区块</td>
+<td>展示 §4.4.2 全部字段，已用 Gas 与 Gas 上限分行</td>
 </tr>
 <tr>
 <td>AC-BD02</td>
@@ -1775,12 +1917,23 @@ flowchart TD
 <td>用户打开不存在的高度</td>
 <td>显示“未找到该区块”，不展示其他区块数据</td>
 </tr>
+<tr>
+<td>AC-BD07</td>
+<td>燃烧费用为 0</td>
+<td>概览不出现「燃烧费用」行</td>
+</tr>
+<tr>
+<td>AC-BD08</td>
+<td>小费为 0</td>
+<td>概览不出现「小费 / Priority fee」行</td>
+</tr>
 </tbody>
 </table>
 <hr />
 <h2 id="45">4.5 交易列表</h2>
 <p><strong>用户目标</strong></p>
-<p>用户按从新到旧浏览已上链的普通交易，查看方法、区块、双方、金额和交易费，并进入详情。</p>
+<p>用户按从新到旧浏览普通交易，查看类型、方法、区块、双方、金额和交易费，并进入详情。</p>
+<p>块内交易、地址相关交易与本表使用同一套列结构。</p>
 <h3 id="451">4.5.1 流程步骤</h3>
 <table>
 <thead>
@@ -1796,7 +1949,7 @@ flowchart TD
 <td>1</td>
 <td>打开交易列表</td>
 <td>按收录顺序倒序加载第 1 页</td>
-<td>每页 10 条</td>
+<td>每页 10 条，7 列叠格</td>
 </tr>
 <tr>
 <td>2</td>
@@ -1825,24 +1978,39 @@ flowchart TD
 </tbody>
 </table>
 <h3 id="452">4.5.2 展示字段</h3>
+<p>列表为 7 列叠格，列顺序固定如下。首页最新交易仍按 §4.2.3 排版，不验收本表新增列。</p>
 <table>
 <thead>
 <tr>
 <th>界面字段</th>
+<th>业务含义</th>
+<th>数据来源</th>
 <th>展示规则</th>
 <th>空值/异常</th>
-<th>交互</th>
+<th>校验/交互</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td>交易哈希</td>
-<td>列表截断</td>
+<td>交易</td>
+<td>交易哈希与收录时间</td>
+<td>交易数据</td>
+<td>同一格上行截断哈希，下行相对时间，见 §5.3</td>
+<td>哈希不允许为空；无时间显示 <code>--</code></td>
+<td>哈希点击进交易详情；可复制</td>
+</tr>
+<tr>
+<td>类型</td>
+<td>交易主类型</td>
+<td>交易数据</td>
+<td>徽章文案三选一：<code>合约创建</code> / <code>合约调用</code> / <code>原生币转账</code>。创建合约为「合约创建」；目标为已有合约为「合约调用」；其余为「原生币转账」</td>
 <td>不允许为空</td>
-<td>点击进交易详情；可复制</td>
+<td>只读。成功不出状态点；失败在类型格内出「失败」；待确认出「待确认」</td>
 </tr>
 <tr>
 <td>方法</td>
+<td>调用的函数</td>
+<td>交易数据</td>
 <td>函数名；无法解码时展示选择器</td>
 <td>无方法显示 <code>--</code></td>
 <td>只读</td>
@@ -1850,47 +2018,44 @@ flowchart TD
 <tr>
 <td>区块</td>
 <td>所属高度</td>
+<td>交易数据</td>
+<td>完整高度</td>
 <td>待确认显示“待确认”，不可点击</td>
 <td>已上链时点击进区块详情</td>
 </tr>
 <tr>
-<td>时间</td>
-<td>相对时间，见 §5.3</td>
-<td>不可用显示 <code>--</code></td>
-<td>只读</td>
+<td>从 / 到</td>
+<td>发送方在上、接收方在下</td>
+<td>交易数据</td>
+<td>两侧列表截断；创建合约时到侧前缀「新建合约」并展示新地址</td>
+<td>发送方不允许为空；到侧缺失显示 <code>--</code></td>
+<td>可复制。点击进对应地址详情。出现在地址详情时，与当前页地址相同的一侧展示为纯文本，不可跳转</td>
 </tr>
 <tr>
-<td>发送方</td>
-<td>列表截断</td>
-<td>不允许为空</td>
-<td>点击进地址详情；可复制</td>
-</tr>
-<tr>
-<td>接收方</td>
-<td>普通地址或新建合约地址</td>
-<td>创建合约展示“新建合约”及新地址</td>
-<td>点击进地址详情；可复制</td>
-</tr>
-<tr>
-<td>原生币数量</td>
-<td>单位 <code>BYB</code></td>
-<td>0 显示 <code>0 BYB</code></td>
+<td>数量</td>
+<td>该笔原生币转账数量</td>
+<td>交易数据</td>
+<td>同一格上行金额 + <code>BYB</code>，下行有报价时附美元</td>
+<td>0 显示 <code>0 BYB</code>；报价不可用时不展示下行</td>
 <td>只读</td>
 </tr>
 <tr>
 <td>交易费</td>
-<td>单位 <code>BYB</code></td>
-<td>待确认或不可用显示 <code>--</code></td>
+<td>用户支付的费用</td>
+<td>交易数据</td>
+<td>同一格上行金额 + <code>BYB</code>，下行有报价时附美元</td>
+<td>不可用显示 <code>--</code>；报价不可用时不展示下行</td>
 <td>只读</td>
 </tr>
 </tbody>
 </table>
+<p>P0 不验收代币转移、Blob 等其他类型徽章。</p>
 <h3 id="453">4.5.3 业务规则</h3>
 <ul>
 <li>默认从新到旧。</li>
 <li>每页 10 条，见 §5.4。</li>
-<li>P0 不做交易类型、方法、地址组合筛选。</li>
-<li>待确认交易可以出现在列表中，区块列显示“待确认”。</li>
+<li>P0 不做交易类型、方法、地址组合筛选，也不做 Validated / Pending 分页签。</li>
+<li>待确认交易可以出现在列表中，区块列显示“待确认”，类型格出「待确认」。</li>
 </ul>
 <h3 id="454">4.5.4 页面状态矩阵</h3>
 <table>
@@ -1942,7 +2107,7 @@ flowchart TD
 <tr>
 <td>AC-TL01</td>
 <td>用户打开交易列表</td>
-<td>展示八列，每页 10 条</td>
+<td>展示 7 列叠格（交易、类型、方法、区块、从/到、数量、交易费），每页 10 条</td>
 </tr>
 <tr>
 <td>AC-TL02</td>
@@ -1952,24 +2117,35 @@ flowchart TD
 <tr>
 <td>AC-TL03</td>
 <td>列表中存在待确认交易</td>
-<td>区块列显示“待确认”，该格不可点</td>
+<td>区块列显示“待确认”且该格不可点；类型格出「待确认」</td>
 </tr>
 <tr>
 <td>AC-TL04</td>
 <td>创建合约行</td>
-<td>接收方为新建合约地址且可点</td>
+<td>类型为「合约创建」；到侧为新建合约地址且可点</td>
 </tr>
 <tr>
 <td>AC-TL05</td>
 <td>同一交易在列表与详情</td>
-<td>哈希、方法、区块、双方、金额、交易费一致</td>
+<td>哈希、类型、方法、区块、双方、金额、交易费一致</td>
+</tr>
+<tr>
+<td>AC-TL06</td>
+<td>成功交易</td>
+<td>类型格只有类型徽章，不出状态点</td>
+</tr>
+<tr>
+<td>AC-TL07</td>
+<td>失败交易</td>
+<td>类型格同时出「失败」</td>
 </tr>
 </tbody>
 </table>
 <hr />
 <h2 id="46">4.6 交易详情</h2>
 <p><strong>用户目标</strong></p>
-<p>用户通过交易哈希核验一笔普通交易是否上链、执行是否成功，以及双方、金额、Gas、费用、Nonce 和输入数据。界面字段名与 EVM 原型交易详情保持一致。</p>
+<p>用户通过交易哈希核验一笔普通交易是否上链、执行是否成功，以及双方、金额、Gas、费用、燃烧、Nonce 和输入数据。界面字段名与 EVM 原型交易详情保持一致。</p>
+<p>标题只有「交易详情」，不在标题旁放置状态或方法。状态、方法在详情表中各占一行。这是相对行业浏览器「状态与方法同一行」的产品决定，验收以本表为准。</p>
 <h3 id="461">4.6.1 流程步骤</h3>
 <table>
 <thead>
@@ -2025,15 +2201,17 @@ flowchart TD
 <tr>
 <th>界面字段</th>
 <th>业务含义</th>
+<th>数据来源</th>
 <th>展示规则</th>
 <th>空值/异常</th>
-<th>交互</th>
+<th>校验/交互</th>
 </tr>
 </thead>
 <tbody>
 <tr>
 <td>交易哈希</td>
 <td>交易唯一标识</td>
+<td>交易数据</td>
 <td>完整值</td>
 <td>不允许为空</td>
 <td>可复制</td>
@@ -2041,13 +2219,15 @@ flowchart TD
 <tr>
 <td>状态</td>
 <td>执行结果</td>
-<td><code>成功</code> / <code>待确认</code> / <code>失败</code></td>
+<td>交易数据</td>
+<td><code>成功</code> / <code>待确认</code> / <code>失败</code>，独立一行</td>
 <td>不允许为空</td>
 <td>只读</td>
 </tr>
 <tr>
 <td>回滚原因</td>
 <td>失败时的链上回滚信息</td>
+<td>交易数据</td>
 <td>仅失败时展示在状态下方</td>
 <td>成功、待确认不展示；失败但无原因时不编造</td>
 <td>只读</td>
@@ -2055,13 +2235,15 @@ flowchart TD
 <tr>
 <td>方法</td>
 <td>调用的函数</td>
-<td>函数名或选择器</td>
+<td>交易数据</td>
+<td>函数名或选择器，独立一行，不与状态同行</td>
 <td>无方法显示 <code>--</code></td>
 <td>只读</td>
 </tr>
 <tr>
 <td>区块</td>
 <td>所属区块及确认数</td>
+<td>交易数据、区块数据</td>
 <td>高度可点；确认数文案为“N 个区块确认”</td>
 <td>待确认显示“待确认”，不展示确认数</td>
 <td>已上链时点击进区块详情</td>
@@ -2069,6 +2251,7 @@ flowchart TD
 <tr>
 <td>时间</td>
 <td>被区块收录的时间</td>
+<td>交易数据</td>
 <td>相对时间、本地时间、UTC；已确认时可附确认耗时</td>
 <td>待确认无收录时间显示 <code>--</code></td>
 <td>只读</td>
@@ -2082,15 +2265,17 @@ flowchart TD
 <tr>
 <th>界面字段</th>
 <th>业务含义</th>
+<th>数据来源</th>
 <th>展示规则</th>
 <th>空值/异常</th>
-<th>交互</th>
+<th>校验/交互</th>
 </tr>
 </thead>
 <tbody>
 <tr>
 <td>发送方</td>
 <td>发起地址</td>
+<td>交易数据</td>
 <td>完整地址</td>
 <td>不允许为空</td>
 <td>可复制；点击进地址详情</td>
@@ -2098,6 +2283,7 @@ flowchart TD
 <tr>
 <td>接收方</td>
 <td>普通转账目标</td>
+<td>交易数据</td>
 <td>标签为“接收方”，完整地址</td>
 <td>不允许为空</td>
 <td>可复制；点击进地址详情</td>
@@ -2105,6 +2291,7 @@ flowchart TD
 <tr>
 <td>交互合约</td>
 <td>目标为已有合约</td>
+<td>交易数据</td>
 <td>标签改为“交互合约”，完整地址</td>
 <td>同接收方</td>
 <td>可复制；点击进地址详情</td>
@@ -2112,6 +2299,7 @@ flowchart TD
 <tr>
 <td>新建合约地址</td>
 <td>创建合约产生的地址</td>
+<td>交易数据</td>
 <td>标签改为“新建合约地址”</td>
 <td>交易已创建但地址尚未返回时显示 <code>--</code></td>
 <td>可复制；有地址时可进地址详情</td>
@@ -2125,15 +2313,17 @@ flowchart TD
 <tr>
 <th>界面字段</th>
 <th>业务含义</th>
+<th>数据来源</th>
 <th>展示规则</th>
 <th>空值/异常</th>
-<th>交互</th>
+<th>校验/交互</th>
 </tr>
 </thead>
 <tbody>
 <tr>
 <td>原生币转账数量</td>
 <td>该笔交易转移的原生币</td>
+<td>交易数据</td>
 <td>金额 + <code>BYB</code>；有价格时附美元</td>
 <td>0 显示 <code>0 BYB</code></td>
 <td>只读</td>
@@ -2141,6 +2331,7 @@ flowchart TD
 <tr>
 <td>交易费</td>
 <td>用户支付的费用</td>
+<td>交易数据</td>
 <td>金额 + <code>BYB</code>；有价格时附美元</td>
 <td>待确认或不可用显示 <code>--</code></td>
 <td>只读</td>
@@ -2148,70 +2339,79 @@ flowchart TD
 <tr>
 <td>Gas 价格</td>
 <td>交易设定的 Gas 价格</td>
+<td>交易数据</td>
 <td>原生币金额，并附 <code>Gwei</code></td>
 <td>不可用显示 <code>--</code></td>
 <td>只读</td>
 </tr>
 <tr>
-<td>已用 Gas</td>
-<td>实际消耗的 Gas</td>
-<td>整数，可用千分位</td>
-<td>待确认显示 <code>--</code></td>
+<td>已用 Gas / Gas 上限</td>
+<td>实际消耗与用户设定上限</td>
+<td>交易数据</td>
+<td>合成一行：<code>已用 / 上限</code>，括号附使用比例，一位小数</td>
+<td>待确认时已用与比例为 <code>--</code>，上限仍展示</td>
 <td>只读</td>
 </tr>
 <tr>
-<td>Gas 上限</td>
-<td>交易设定的上限</td>
-<td>整数</td>
-<td>不允许为空</td>
+<td>Gas 费用（Gwei）</td>
+<td>基础费用与用户设定的最高费用、小费上限</td>
+<td>区块数据、交易数据</td>
+<td>同一行三档：<code>Base</code>、<code>Max</code>、<code>Max priority</code>，单位 Gwei。已上链时 Base 取该块基础费用；待确认取当时网络基础费用。Max 为用户设定最高费用，Max priority 为用户设定小费上限</td>
+<td>三档皆不可用时不展示该行</td>
 <td>只读</td>
 </tr>
 <tr>
-<td>Gas 使用比例</td>
-<td>已用 / 上限</td>
-<td>百分比，保留一位小数</td>
-<td>已用不可用时显示 <code>--</code></td>
+<td>燃烧费用</td>
+<td>该笔因基础费用被销毁的原生币</td>
+<td>区块数据、交易数据</td>
+<td>金额 + <code>BYB</code>；有价格时附美元。等于该块基础费用 × 本笔已用 Gas</td>
+<td>待确认或结果为 0 时不展示该行</td>
 <td>只读</td>
 </tr>
 </tbody>
 </table>
-<p>美元估值使用与首页 BYB 价格同一口径；价格不可用时只隐藏美元，不隐藏原生币金额。</p>
+<p>美元估值使用与首页 BYB 价格同一口径；价格不可用时只隐藏美元，不隐藏原生币金额。P0 不含 Blob 燃烧。</p>
 <h3 id="465">4.6.5 其他</h3>
 <table>
 <thead>
 <tr>
 <th>界面字段</th>
 <th>业务含义</th>
+<th>数据来源</th>
 <th>展示规则</th>
 <th>空值/异常</th>
-<th>交互</th>
+<th>校验/交互</th>
 </tr>
 </thead>
 <tbody>
 <tr>
 <td>交易类型</td>
 <td>交易信封类型</td>
-<td>数字类型；类型 2 附“EIP-1559”</td>
+<td>交易数据</td>
+<td>数字类型；类型 2 附“EIP-1559”。默认展开，不折叠</td>
 <td>待确认或未知显示 <code>--</code></td>
 <td>只读</td>
 </tr>
 <tr>
 <td>Nonce</td>
 <td>发送方交易序号</td>
-<td>非负整数</td>
+<td>交易数据</td>
+<td>非负整数。默认展开</td>
 <td>不可用显示 <code>--</code></td>
 <td>只读</td>
 </tr>
 <tr>
 <td>在区块中的序号</td>
 <td>该交易在块内的位置</td>
-<td>非负整数</td>
+<td>交易数据</td>
+<td>非负整数。默认展开</td>
 <td>待确认显示 <code>--</code></td>
 <td>只读</td>
 </tr>
 <tr>
 <td>输入数据</td>
 <td>原始调用数据</td>
+<td>交易数据</td>
 <td>默认十六进制；可切换 UTF-8</td>
 <td>无数据展示空十六进制；UTF-8 无法解码时提示无法以 UTF-8 显示</td>
 <td>可复制原始十六进制；切换编码不改变复制内容</td>
@@ -2239,13 +2439,13 @@ flowchart TD
 <tr>
 <td>成功</td>
 <td>已上链且执行成功</td>
-<td>状态为成功，四段字段齐全</td>
+<td>状态为成功，四段字段齐全；燃烧非 0 时可见燃烧费用</td>
 <td>跳转区块、地址、复制、切换编码</td>
 </tr>
 <tr>
 <td>待确认</td>
 <td>已广播未入块</td>
-<td>状态为待确认；区块为待确认；已用 Gas、序号、确认耗时为 <code>--</code></td>
+<td>状态为待确认；区块为待确认；已用 Gas、序号、确认耗时为 <code>--</code>；不展示燃烧费用</td>
 <td>复制、查看发送方、稍后刷新</td>
 </tr>
 <tr>
@@ -2299,13 +2499,13 @@ flowchart TD
 <tbody>
 <tr>
 <td>AC-TD01</td>
-<td>用户打开一笔成功的普通转账</td>
-<td>可见哈希、成功、方法、区块与确认数、三种时间、发送方、接收方、金额与美元、交易费、Gas 价格双单位、已用 Gas、上限、比例、类型、Nonce、序号、输入数据</td>
+<td>用户打开一笔成功且燃烧非 0 的普通转账</td>
+<td>可见哈希、成功、方法、区块与确认数、三种时间、发送方、接收方、金额与美元、交易费、Gas 价格双单位、已用 Gas / Gas 上限一行及比例、Gas 费用三档、燃烧费用、类型、Nonce、序号、输入数据。标题旁无状态、方法</td>
 </tr>
 <tr>
 <td>AC-TD02</td>
 <td>用户打开待确认交易</td>
-<td>状态和区块均为“待确认”；已用 Gas 为 <code>--</code></td>
+<td>状态和区块均为“待确认”；已用 Gas 为 <code>--</code>；不出现燃烧费用行</td>
 </tr>
 <tr>
 <td>AC-TD03</td>
@@ -2337,12 +2537,17 @@ flowchart TD
 <td>正常详情页</td>
 <td>不出现代币转移、内部交易、日志、状态、原始 JSON</td>
 </tr>
+<tr>
+<td>AC-TD09</td>
+<td>燃烧费用为 0 的已上链交易</td>
+<td>不出现「燃烧费用」行</td>
+</tr>
 </tbody>
 </table>
 <hr />
 <h2 id="47">4.7 地址详情</h2>
 <p><strong>用户目标</strong></p>
-<p>用户查看某一地址是普通账户还是合约、持有多少原生币、发生过哪些普通交易，并进入单笔交易。</p>
+<p>用户查看某一地址是普通账户还是合约、持有多少原生币、累计消耗了多少 Gas、发生过哪些普通交易；合约还可核验创建者与创建交易。</p>
 <h3 id="471">4.7.1 流程步骤</h3>
 <table>
 <thead>
@@ -2363,7 +2568,7 @@ flowchart TD
 <tr>
 <td>2</td>
 <td>数据返回</td>
-<td>展示是否合约、余额、交易数和交易表</td>
+<td>展示信息表和交易表</td>
 <td>交易数等于可列出的相关交易总数</td>
 </tr>
 <tr>
@@ -2374,42 +2579,45 @@ flowchart TD
 </tr>
 <tr>
 <td>4</td>
+<td>点击创建者或创建交易</td>
+<td>打开对应地址或交易</td>
+<td>仅合约且两项齐全时可见</td>
+</tr>
+<tr>
+<td>5</td>
 <td>翻页</td>
 <td>加载对应页</td>
 <td>页码更新</td>
 </tr>
 </tbody>
 </table>
-<p>合约地址与普通地址使用同一页面。本期不展示合约名称、是否已验证、源码、读取合约。</p>
-<h3 id="472">4.7.2 头部与余额</h3>
+<p>合约地址与普通地址使用同一页面。不展示合约名称、是否已验证、源码、读取合约。</p>
+<h3 id="472">4.7.2 头部与信息表</h3>
+<p>头部展示完整地址，类型文案为「普通地址」或「合约」。主体为信息表，字段顺序如下。</p>
 <table>
 <thead>
 <tr>
 <th>界面字段</th>
+<th>业务含义</th>
 <th>数据来源</th>
 <th>展示规则</th>
 <th>空值/异常</th>
-<th>交互</th>
+<th>校验/交互</th>
 </tr>
 </thead>
 <tbody>
 <tr>
 <td>地址</td>
-<td>查询对象</td>
+<td>当前查询对象</td>
+<td>地址数据</td>
 <td>完整值；类型文案为“普通地址”或“合约”</td>
 <td>不允许为空</td>
 <td>可复制</td>
 </tr>
 <tr>
-<td>是否合约</td>
-<td>该地址是否有合约代码</td>
-<td><code>是</code> 或 <code>否</code></td>
-<td>不允许为空</td>
-<td>只读</td>
-</tr>
-<tr>
 <td>原生币余额</td>
 <td>当前索引到的余额</td>
+<td>地址数据</td>
 <td>金额 + <code>BYB</code>；有价格时附美元</td>
 <td>0 显示 <code>0 BYB</code></td>
 <td>只读</td>
@@ -2417,14 +2625,47 @@ flowchart TD
 <tr>
 <td>交易数</td>
 <td>该地址作为发送方或接收方（含创建出的合约）的顶层交易数</td>
+<td>地址计数</td>
 <td>非负整数，等于下列表可查询总数</td>
 <td>0 显示 0</td>
+<td>可锚点到下方交易表</td>
+</tr>
+<tr>
+<td>已用 Gas</td>
+<td>该地址作为发送方累计消耗的 Gas</td>
+<td>地址计数</td>
+<td>整数，可用千分位</td>
+<td>为 0 或不存在时不展示该行</td>
 <td>只读</td>
+</tr>
+<tr>
+<td>余额更新于区块</td>
+<td>余额最近一次变化所在高度</td>
+<td>地址数据</td>
+<td>完整高度</td>
+<td>无更新高度时不展示该行</td>
+<td>点击进该区块详情</td>
+</tr>
+<tr>
+<td>是否合约</td>
+<td>该地址是否有合约代码</td>
+<td>地址数据</td>
+<td><code>是</code> 或 <code>否</code></td>
+<td>不允许为空</td>
+<td>只读</td>
+</tr>
+<tr>
+<td>创建者</td>
+<td>部署该合约的地址</td>
+<td>地址数据</td>
+<td>完整创建者地址，后接文案「于交易」和创建交易哈希（列表截断）</td>
+<td>普通地址不展示。合约缺少创建者或创建交易时不展示该行</td>
+<td>创建者点击进地址详情；创建交易点击进交易详情；均可复制</td>
 </tr>
 </tbody>
 </table>
 <h3 id="473">4.7.3 相关交易</h3>
-<p>字段与交易列表相同，见 §4.5.2。默认从新到旧，每页 20 条。创建合约时，该新地址作为接收方出现在本列表。</p>
+<p>字段与交易列表相同，见 §4.5.2。默认从新到旧，每页 20 条。创建合约时，该新地址作为接收方出现在本列表。与当前页地址相同的一侧展示为纯文本，可复制、不可跳转。</p>
 <p>P0 不展示代币转移、代币余额、内部交易、日志、划转、跨链页签。</p>
 <h3 id="474">4.7.4 页面状态矩阵</h3>
 <table>
@@ -2446,13 +2687,13 @@ flowchart TD
 <tr>
 <td>正常有交易</td>
 <td>地址存在且有交易</td>
-<td>头部 + 交易表</td>
+<td>信息表 + 交易表</td>
 <td>进交易、翻页、复制</td>
 </tr>
 <tr>
 <td>无交易</td>
 <td>格式有效但无交易</td>
-<td>头部正常，“该地址暂无交易”</td>
+<td>信息表正常，“该地址暂无交易”</td>
 <td>复制、返回</td>
 </tr>
 <tr>
@@ -2482,13 +2723,13 @@ flowchart TD
 <tbody>
 <tr>
 <td>AC-AD01</td>
-<td>用户打开有交易的普通地址</td>
-<td>是否合约为否；可见余额、交易数和交易列表</td>
+<td>用户打开有交易、累计 Gas 非 0 的普通地址</td>
+<td>是否合约为否；可见余额、交易数、已用 Gas、余额更新于区块和交易列表；不见创建者</td>
 </tr>
 <tr>
 <td>AC-AD02</td>
-<td>用户打开合约地址</td>
-<td>是否合约为是；仍是同一套交易列表，无源码和读取合约</td>
+<td>用户打开有创建者与创建交易的合约地址</td>
+<td>是否合约为是；可见创建者与创建交易；仍是同一套交易列表，无源码和读取合约</td>
 </tr>
 <tr>
 <td>AC-AD03</td>
@@ -2510,6 +2751,16 @@ flowchart TD
 <td>用户打开格式无效的地址</td>
 <td>“地址格式无效”，不回退到默认地址</td>
 </tr>
+<tr>
+<td>AC-AD07</td>
+<td>相关交易表中当前地址一侧</td>
+<td>可复制、不可跳转</td>
+</tr>
+<tr>
+<td>AC-AD08</td>
+<td>累计已用 Gas 为 0</td>
+<td>信息不出现「已用 Gas」行</td>
+</tr>
 </tbody>
 </table>
 <hr />
@@ -2518,8 +2769,8 @@ flowchart TD
 <ol>
 <li>所有生产数值、区块、交易和地址活动均以 Biya EVM 已确认链上数据为事实来源，由公共浏览器展示对应索引结果。</li>
 <li>原型中的固定总量、时间、哈希、地址和演示场景不得作为生产默认数据。</li>
-<li>同一交易在交易列表、交易详情、区块内交易和地址交易中的哈希、方法、区块、时间、双方、金额和交易费必须一致。</li>
-<li>区块详情中的交易数应等于该区块可查询交易总数。</li>
+<li>同一交易在交易列表、交易详情、区块内交易和地址交易中的哈希、类型、方法、区块、时间、双方、金额和交易费必须一致。</li>
+<li>区块详情中的交易数应等于该区块可查询交易总数。同一高度的大小、区块奖励、燃烧费用、基础费用、已用 Gas 在列表与详情中必须一致。</li>
 <li>地址详情中的交易数应等于该地址可查询相关交易总数。</li>
 <li>首页最新区块的高度不得高于区块列表和详情可查询的最高已索引区块。</li>
 <li>无法解码的方法应展示方法选择器，不得改写成其他已知方法名。</li>
@@ -2532,6 +2783,8 @@ flowchart TD
 <li>Gas 价格同时展示原生币金额和 <code>Gwei</code>。</li>
 <li>首页「当前 Gas 价格」只展示 <code>Gwei</code>。</li>
 <li>首页「手续费」与交易详情「交易费」含义不同：前者是区块汇总，后者是单笔交易费用。</li>
+<li>「Gas 费用（Gwei）」三档只出现在交易详情，不出现在列表和首页。</li>
+<li>单笔燃烧费用 = 该块基础费用 × 该笔已用 Gas；区块燃烧费用 = 该块基础费用 × 该块已用 Gas。待确认或结果为 0 时，详情不展示燃烧行；区块列表燃烧为 0 时仍占格显示 <code>0 BYB</code>。</li>
 </ul>
 <h2 id="53">5.3 时间口径</h2>
 <table>
@@ -2721,6 +2974,11 @@ flowchart TD
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>V1.0.1</td>
+<td>2026-10-26</td>
+<td>交互基线改为 <code>BiyaEVMscan V1.0.html</code>。按当前原型与 BlockScout L1 默认展示补字段：交易三张表改为 7 列叠格并增加类型；区块列表改为 8 列；区块详情补大小、奖励、燃烧、小费，已用 Gas 与上限分行；交易详情补 Gas 费用三档与燃烧，已用/上限合成一行，状态与方法继续分行；地址改为信息表并补累计已用 Gas、余额更新于区块、合约创建者与创建交易。改掉 §1.3、§4.4.2 中与现原型相反的范围句。首页字段保持不变。版本表是否同步改，另议</td>
+</tr>
 <tr>
 <td>V1.0.0</td>
 <td>2026-10-20</td>
