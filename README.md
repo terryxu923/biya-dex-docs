@@ -15,6 +15,6 @@
 | 区块浏览器管理端原型（Explorer Admin） | https://terryxu923.github.io/biya-dex-docs/biya-dex-explorer-admin.html |
 | 区块浏览器管理端 PRD（Explorer Admin V1.1.10） | https://terryxu923.github.io/biya-dex-docs/biya-dex-explorer-admin-prd.html |
 | BiyaEVM 区块浏览器原型 | https://terryxu923.github.io/biya-dex-docs/BiyaEVMscan.html#home?mode=evm |
-| BiyaEVM 区块浏览器 PRD（V1.0.2） | https://terryxu923.github.io/biya-dex-docs/biya-evm-explorer-prd.html |
+| BiyaEVM 区块浏览器 PRD（V1.0.2） | https://terryxu923.github.io/biya-dex-docs/biya-evm-explorer-prd.html?v=2370c96 |
 
 静态 HTML，由 GitHub Pages 托管。
