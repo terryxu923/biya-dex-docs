@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta http-equiv="Cache-Control" content="no-cache" />
-  <title>BIYA DEX Explorer Admin · 产品需求文档 V1.1.8</title>
+  <title>BIYA DEX Explorer Admin · 产品需求文档 V1.1.10</title>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/github-markdown-css@5.6.1/github-markdown-light.min.css" />
   <style>
     * { box-sizing: border-box; }
@@ -34,7 +34,7 @@
   </style>
 </head>
 <body>
-  <!-- generated from BIYA_DEX_Explorer_Admin_PRD_V1.0.md · V1.1.8 -->
+  <!-- generated from BIYA_DEX_Explorer_Admin_PRD_V1.0.md · V1.1.10 -->
   <div class="topbar">
     <a href="./index.html">文档入口</a>
     <a href="./biya-dex-explorer-admin.html">打开管理端原型</a>
@@ -42,9 +42,10 @@
   </div>
   <div class="layout">
     <nav class="sidebar">
-      <div class="sidebar-header">Explorer Admin PRD V1.1.8</div>
+      <div class="sidebar-header">Explorer Admin PRD V1.1.10</div>
       <ul class="sidebar-toc">
       <li class="l2"><a href="#文档说明">文档说明</a></li>
+      <li class="l2"><a href="#目录">目录</a></li>
       <li class="l2"><a href="#1-本版交付摘要">1. 本版交付摘要</a></li>
       <li class="l3"><a href="#11-产品目标">1.1 产品目标</a></li>
       <li class="l3"><a href="#12-v10-功能清单">1.2 V1.0 功能清单</a></li>
@@ -106,7 +107,7 @@
 <tbody>
 <tr>
 <td>文档版本</td>
-<td><strong>V1.1.8</strong></td>
+<td><strong>V1.1.10</strong></td>
 </tr>
 <tr>
 <td>创建日期</td>
@@ -198,17 +199,17 @@
 <tr>
 <td>2</td>
 <td>告警中心</td>
-<td>值班查看与结案台：目录仅节点不可达、节点不前进、区块缺口三类；列表按类别 / 状态筛选，默认最近发生降序、每页 10 条；详情只读告警当时快照，可备注（≥3 字）、将告警中处理为已处理且不可改回。巡检不自动结案、无「已恢复」、无分派 / 补齐 / 重处理、无查看关联数据、不打开交易或地址</td>
+<td>值班查看与结案台：目录仅节点不可达、节点不前进、区块缺口三类；列表按类别 / 状态筛选，默认最近发生降序、每页 10 条；详情只读告警当时快照，每条最多 1 条备注（≥3 字）、将告警中处理为已处理且不可改回。巡检不自动结案、无「已恢复」、无分派 / 补齐 / 重处理、无查看关联数据、不打开交易或地址</td>
 </tr>
 <tr>
 <td>3</td>
 <td>Lark 通知</td>
-<td>仅新开「告警中」按三类模板向 <code>BIYA-DEX Explorer 告警</code> 发一条「产生」；列表与详情记录已通知 / 通知失败。去重更新快照、备注、处理、巡检条件消失都不发、不写恢复消息；失败不改告警状态，后台不重发</td>
+<td>仅新开「告警中」按三类模板向 <code>BIYA-DEX Explorer 告警</code> 发一条「产生」；列表与详情记录已通知 / 通知失败。去重只更新最近发生、备注、处理、巡检条件消失都不发、不写恢复消息；失败不改告警状态，后台不重发</td>
 </tr>
 <tr>
 <td>4</td>
 <td>区块核对</td>
-<td>顶栏按区块高度 / 区块哈希打开只读抽屉（区块概览 / 数据来源），供核对某一高度是否可查询或为缺口；无侧栏查询菜单，无块内交易、无交易 / 地址抽屉、无前后翻页，不匹配父哈希，不作为告警结案路径</td>
+<td>顶栏按区块高度 / 区块哈希打开只读抽屉（区块概览 / 数据来源），供核对某一高度是否可查询或为缺口。概览仅高度、查询状态、哈希、区块时间；数据来源仅来源与查询状态。无侧栏查询菜单，无父哈希 / 提议者 / 链上交易数，无块内交易、无交易 / 地址抽屉、无前后翻页，不作为告警结案路径</td>
 </tr>
 </tbody>
 </table>
@@ -236,7 +237,7 @@
 <td>告警</td>
 <td>告警编号</td>
 <td>2 告警中心</td>
-<td>追加备注；将告警中处理为已处理</td>
+<td>每条最多写 1 条备注；将告警中处理为已处理</td>
 </tr>
 <tr>
 <td>L2</td>
@@ -486,8 +487,8 @@
 <td>该条 <code>notes</code></td>
 <td>写入时间升序</td>
 <td>否</td>
-<td>全部展示，不分页</td>
-<td>—</td>
+<td>最多 <strong>1</strong> 条，不分页</td>
+<td>已有 1 条则不可再添加</td>
 </tr>
 </tbody>
 </table>
@@ -724,20 +725,8 @@
 <td>等宽缩略，悬停全文，可复制</td>
 </tr>
 <tr>
-<td>父区块哈希</td>
-<td>同上，不打开其他抽屉</td>
-</tr>
-<tr>
 <td>区块时间 · UTC+8</td>
 <td><code>YYYY-MM-DD HH:mm:ss</code></td>
-</tr>
-<tr>
-<td>链上交易数</td>
-<td>笔数</td>
-</tr>
-<tr>
-<td>提议者</td>
-<td>等宽缩略，悬停全文，可复制，不打开提议者抽屉</td>
 </tr>
 </tbody>
 </table>
@@ -756,20 +745,8 @@
 <td>自有节点 · 直连查询</td>
 </tr>
 <tr>
-<td>查询方式</td>
-<td>按区块高度向节点取整块</td>
-</tr>
-<tr>
-<td>原始数据引用</td>
-<td><code>node/blocks/{高度}</code></td>
-</tr>
-<tr>
 <td>查询状态</td>
 <td>可查询 / 区块缺口</td>
-</tr>
-<tr>
-<td>数据保护</td>
-<td>节点原始数据不可在本后台编辑</td>
 </tr>
 </tbody>
 </table>
@@ -802,7 +779,7 @@
 </tr>
 <tr>
 <td>搜索精确命中的高度</td>
-<td>抽屉标题 <code>区块 #{高度}</code>；区块概览 / 数据来源；无块内交易 Tab、无前后翻页</td>
+<td>抽屉标题 <code>区块 #{高度}</code>；概览无父哈希、提议者、链上交易数；数据来源无接口路径；无块内交易 Tab、无前后翻页</td>
 </tr>
 <tr>
 <td>搜索纯数字多条前缀</td>
@@ -1050,8 +1027,8 @@
 <tr>
 <td>3</td>
 <td>连续性检查</td>
-<td>可核对范围内高度连续且内容完整</td>
-<td>缺高度或内容不完整</td>
+<td>可核对范围内按高度能取到完整块、高度连续</td>
+<td>缺高度，或该高度取不到完整块</td>
 </tr>
 </tbody>
 </table>
@@ -1083,7 +1060,7 @@
 </tr>
 <tr>
 <td>连续性检查</td>
-<td>按高度能查到的区块是否连续、内容是否完整。</td>
+<td>按高度能查到的区块是否连续、能否取到完整块。</td>
 <td>主值 <code>连续</code>；状态 <code>无缺口</code></td>
 <td>主值 <code>有缺口</code>；状态 <code>高度 {缺失高度} 缺失</code></td>
 <td>连通或进度未通过时主值 <code>—</code>，状态 <code>本轮未检查</code></td>
@@ -1232,13 +1209,13 @@
   B --&gt;|&quot;是&quot;| C[&quot;只生成节点不可达&quot;]
   B --&gt;|&quot;否&quot;| D{&quot;进度停滞?&quot;}
   D --&gt;|&quot;是&quot;| E[&quot;只生成节点不前进&quot;]
-  D --&gt;|&quot;否&quot;| F{&quot;高度缺口或内容不完整?&quot;}
+  D --&gt;|&quot;否&quot;| F{&quot;高度缺口或取不到完整块?&quot;}
   F --&gt;|&quot;是&quot;| G[&quot;生成区块缺口&quot;]
   F --&gt;|&quot;否&quot;| H[&quot;本轮无新告警&quot;]
-  C --&gt; I[&quot;去重并写快照&quot;]
+  C --&gt; I[&quot;去重&quot;]
   E --&gt; I
   G --&gt; I
-  I --&gt; J[&quot;新开则发 Lark 产生&quot;]
+  I --&gt; J[&quot;命中则只更新最近发生；新开则写快照并发 Lark&quot;]
   J --&gt; K[&quot;值班打开详情&quot;]
   K --&gt; L[&quot;核对证据快照&quot;]
   L --&gt; M[&quot;备注或处理&quot;]
@@ -1276,7 +1253,7 @@
 <tr>
 <td>4</td>
 <td>添加备注</td>
-<td>校验后追加</td>
+<td>该条尚无备注时校验后写入，每条最多 1 条</td>
 <td>Toast 成功；不同步 Lark</td>
 </tr>
 <tr>
@@ -1327,7 +1304,7 @@
 <td>3</td>
 <td>区块缺口</td>
 <td>某一高度</td>
-<td>可向节点查询的窗口内高度不连续；或该高度动作与结果条数不一致</td>
+<td>可向节点查询的窗口内高度不连续，或该高度取不到完整块</td>
 <td>查看、备注、处理</td>
 <td>Lark 产生</td>
 </tr>
@@ -1365,34 +1342,39 @@
 </tbody>
 </table>
 <p><strong>生成缺口前：</strong> 须绑定高度或起止区间，且该高度当前仍可向节点查询。按高度已不可查：不新开；已有告警在详情标注「超出可核对范围」，<strong>状态仍为告警中</strong>（除非值班已处理为已处理）。</p>
-<p><strong>去重</strong></p>
+<p><strong>去重（本轮巡检仍命中时）</strong></p>
+<p>对象：节点不可达、节点不前进均为 <code>自有节点</code>。缺口对象为影响对象上的高度或起止区间（同一连续空洞视为同一缺口）。</p>
 <table>
 <thead>
 <tr>
-<th>情况</th>
-<th>系统行为</th>
+<th>类别</th>
+<th>判断</th>
+<th>是</th>
+<th>否</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td>同类同对象且当前为告警中</td>
-<td>更新最近发生与快照，不新开，不重复发 Lark</td>
+<td>节点不可达、节点不前进</td>
+<td>取该类别 + 同对象下<strong>最近一次</strong>告警（按最近发生，其次首次发生、告警编号）</td>
+<td>该条为「告警中」→ <strong>不新开</strong>，只把该条「最近发生」更新为本轮巡检时刻；不改快照、首次发生、详情、状态；不发 Lark</td>
+<td>无记录，或最近一次已是「已处理」→ <strong>新开</strong>一条告警中，写入快照，发送 Lark 产生</td>
 </tr>
 <tr>
-<td>同类同对象且当前为已处理，本轮条件仍成立</td>
-<td>新开一条告警中，并发送 Lark 产生</td>
-</tr>
-<tr>
-<td>巡检条件消失</td>
-<td>不改状态，不发 Lark</td>
+<td>区块缺口</td>
+<td>是否已存在<strong>同一缺口</strong>（同一高度或同一连续空洞起止）的告警记录，不论状态</td>
+<td><strong>不新开</strong>，只把已有该缺口记录的「最近发生」更新为本轮巡检时刻；不改快照、首次发生、详情、状态；不发 Lark</td>
+<td><strong>新开</strong>一条告警中，写入快照，发送 Lark 产生</td>
 </tr>
 </tbody>
 </table>
-<p><strong>不进目录：</strong> 查询服务不可用、数据同步延迟、未知类型、首页统计不一致、协议拒绝、某提议者不出块、两块间隔几秒、每秒交易数（TPS）偏低。动作与结果不成对并入缺口「内容不完整」。</p>
+<p>巡检条件消失：不改状态、不更新最近发生、不发 Lark。</p>
+<p>快照只在<strong>新开</strong>时写入。去重命中后打开详情，仍看首次创建时的快照。</p>
+<p><strong>不进目录：</strong> 查询服务不可用、数据同步延迟、未知类型、首页统计不一致、协议拒绝、某提议者不出块、两块间隔几秒、每秒交易数（TPS）偏低。块内动作与执行结果条数不作为独立告警，也不在详情展示。</p>
 <h3 id="45-列表与筛选">4.5 列表与筛选</h3>
 <p>无 Tab。不提供「全部告警 / 告警中」页签，也不提供告警关键字。从运行总览「全部告警 →」进入时打开本页，筛选为默认（类别、状态均为全部）。</p>
 <p><strong>筛选：</strong> 仅告警类别（3 类）、告警状态（告警中 / 已处理）。两项均为下拉，空值为「全部」。</p>
-<p><strong>列：</strong> 告警编号 / 内容、类别、首次发生、Lark、状态、操作（详情；告警中另有处理；备注）</p>
+<p><strong>列：</strong> 告警编号 / 内容、类别、首次发生、Lark、状态、操作（详情；告警中另有处理；尚无备注时才有备注）</p>
 <p>Lark 列展示最近一条：已通知 / 通知失败。无记录时 <code>未发送</code>。</p>
 <p>已处理行不展示「处理」。</p>
 <p><strong>排序</strong></p>
@@ -1422,7 +1404,7 @@
 </tr>
 </tbody>
 </table>
-<p>列表不展示「最近发生」列，默认仍按该字段排，保证刚更新快照的告警中排在前面。</p>
+<p>列表不展示「最近发生」列，默认仍按该字段排，保证刚被去重更新最近发生的告警排在前面。</p>
 <p><strong>分页</strong></p>
 <table>
 <thead>
@@ -1474,13 +1456,13 @@
 <td>告警中</td>
 <td>巡检创建</td>
 <td>未结案，计入待处理与角标</td>
-<td>查看、备注、处理</td>
+<td>查看、处理；尚无备注时可写 1 条备注</td>
 </tr>
 <tr>
 <td>已处理</td>
 <td>仅值班</td>
 <td>人工结案，不计入待处理</td>
-<td>查看、备注</td>
+<td>查看；尚无备注时可写 1 条备注</td>
 </tr>
 </tbody>
 </table>
@@ -1521,7 +1503,7 @@
 <td>底部「添加备注」</td>
 <td>打开备注弹窗</td>
 <td>—</td>
-<td>告警中、已处理都出现</td>
+<td>该条 <strong>尚无备注</strong> 时出现；已有 1 条则隐藏</td>
 </tr>
 <tr>
 <td>底部「关闭」</td>
@@ -1575,19 +1557,10 @@
 <td>否</td>
 </tr>
 <tr>
-<td>Lark 群</td>
-<td>配置常量</td>
-<td>配置</td>
-<td>固定 <code>BIYA-DEX Explorer 告警</code>。与是否已发出无关</td>
-<td>不允许空</td>
-<td>否</td>
-<td>否</td>
-</tr>
-<tr>
 <td>首次发生 · UTC+8</td>
 <td>该条 <code>first</code></td>
 <td>系统，本条记录创建时刻</td>
-<td>创建后不再改。去重更新快照时也不改</td>
+<td>创建后不再改。去重只改最近发生，不改本字段</td>
 <td>不允许空</td>
 <td>否</td>
 <td>否</td>
@@ -1596,7 +1569,7 @@
 <td>最近发生 · UTC+8</td>
 <td>该条 <code>last</code></td>
 <td>系统</td>
-<td>新开时等于首次发生。同类同对象仍为告警中、本轮条件仍成立时，更新为本轮巡检时刻</td>
+<td>新开时等于首次发生。去重命中时更新为本轮巡检时刻，见 <a href="#44-告警目录与判定">4.4</a></td>
 <td>不允许空</td>
 <td>否</td>
 <td>否</td>
@@ -1605,7 +1578,7 @@
 <td>影响对象</td>
 <td>该条 <code>ref</code></td>
 <td>系统</td>
-<td>不可达、不前进：<code>自有节点</code>。缺口：缺失或不完整的高度，等宽；连续空洞为 <code>起-止</code>。整行</td>
+<td>不可达、不前进：<code>自有节点</code>。缺口：取不到完整块的高度，等宽；连续空洞为 <code>起-止</code>。整行</td>
 <td>不允许空</td>
 <td>是，复制全文</td>
 <td>否</td>
@@ -1614,7 +1587,7 @@
 <td>详情</td>
 <td>该条 <code>detail</code></td>
 <td>系统，按类别套句</td>
-<td>一句话说明判定结果，可含错误码原文。整行。不是值班备注</td>
+<td>一句话说明判定结果，<strong>不含</strong>错误码。整行。不是值班备注</td>
 <td>不允许空</td>
 <td>否</td>
 <td>否</td>
@@ -1632,7 +1605,7 @@
 <tbody>
 <tr>
 <td>节点不可达</td>
-<td><code>连续 3 次向自有节点请求最新高度均超时（{错误码}）。</code></td>
+<td><code>连续 3 次向自有节点请求最新高度均超时。</code></td>
 </tr>
 <tr>
 <td>节点不前进</td>
@@ -1640,13 +1613,13 @@
 </tr>
 <tr>
 <td>区块缺口</td>
-<td><code>高度不连续：{H-1} 与 {H+1} 可查，{H} 按高度查询不到完整块。</code>；内容不完整则写动作/结果不一致</td>
+<td><code>高度不连续：{H-1} 与 {H+1} 可查，{H} 按高度查询不到完整块。</code></td>
 </tr>
 </tbody>
 </table>
 <h4 id="证据快照-告警当时">证据快照 · 告警当时</h4>
 <p>分组标题：<code>证据快照 · 告警当时</code>。分组说明（固定）：<code>以下为产生告警时的节点观测，不是运行总览的当前值。</code></p>
-<p>快照在<strong>本条告警首次创建或去重更新</strong>时写入，打开详情只读这一份。运行总览刷新、节点后来恢复、值班处理，都<strong>不</strong>改已写入的快照。空字段显示 <code>—</code>，不省略列（类型专有行除外）。</p>
+<p>快照仅在<strong>本条告警新开</strong>时写入，打开详情只读这一份。去重命中、运行总览刷新、节点后来恢复、值班处理，都<strong>不</strong>改已写入的快照。空字段显示 <code>—</code>，不省略列（类型专有行除外）。</p>
 <p><strong>三类都展示的快照字段</strong></p>
 <table>
 <thead>
@@ -1660,14 +1633,6 @@
 </tr>
 </thead>
 <tbody>
-<tr>
-<td>错误码 / 探测结果</td>
-<td>快照 <code>error</code>，否则 <code>summary</code></td>
-<td>要</td>
-<td>要</td>
-<td>要</td>
-<td>优先展示错误码原文（等宽），如 <code>NODE_TIMEOUT</code>、<code>PROGRESS_STALL</code>、<code>HEIGHT_GAP</code>。无错误码则展示探测摘要。两者都无则 <code>—</code></td>
-</tr>
 <tr>
 <td>节点高度</td>
 <td>快照 <code>nodeHeight</code></td>
@@ -1712,14 +1677,8 @@
 <td>固定文案 <code>3 次失败或超时</code>。其它类别不出现此行</td>
 </tr>
 <tr>
-<td>动作数 / 结果数</td>
-<td>类别 = 区块缺口</td>
-<td>快照 <code>actionCount</code> / <code>resultCount</code></td>
-<td><code>{动作数} / {结果数}</code>。缺块未读到体时两侧都是 <code>—</code>，显示 <code>— / —</code>。动作与结果不一致时展示两个具体整数</td>
-</tr>
-<tr>
 <td>核对说明</td>
-<td>类别 = 区块缺口，且<strong>打开详情当下</strong>按影响对象高度向节点取整块仍失败或不完整</td>
+<td>类别 = 区块缺口，且<strong>打开详情当下</strong>按影响对象高度向节点取整块仍失败</td>
 <td><strong>打开时现查</strong>，不是快照</td>
 <td>固定 <code>该高度当前按节点查询不到完整块。</code> 整行。现查已能取到完整块则<strong>不出现此行</strong>（快照仍保留告警当时的缺口证据）</td>
 </tr>
@@ -1731,37 +1690,10 @@
 </tr>
 </tbody>
 </table>
-<p>错误码取值（写入快照，详情原文展示）：</p>
-<table>
-<thead>
-<tr>
-<th>错误码</th>
-<th>对应类别</th>
-<th>含义</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>NODE_TIMEOUT</code></td>
-<td>节点不可达</td>
-<td>连续 3 次最新高度或健康检查失败或超时</td>
-</tr>
-<tr>
-<td><code>PROGRESS_STALL</code></td>
-<td>节点不前进</td>
-<td>已连通，窗口内轮次与最新块时间均未推进</td>
-</tr>
-<tr>
-<td><code>HEIGHT_GAP</code></td>
-<td>区块缺口</td>
-<td>可核对窗口内缺高度，或该高度动作与结果条数不一致</td>
-</tr>
-</tbody>
-</table>
 <p><strong>不进入告警详情（三类都不展示）</strong></p>
-<p>区块哈希、父区块哈希、提议者、交易列表、交易哈希、地址、首页统计、TPS。缺口只核「该高度在不在、块内容全不全」。</p>
+<p>错误码、动作数 / 结果数、Lark 群、区块哈希、父区块哈希、提议者、链上交易数、交易列表、交易哈希、地址、首页统计、TPS、接口路径。缺口只核「该高度能不能取到完整块」。</p>
 <h4 id="lark-通知记录">Lark 通知记录</h4>
-<p>分组标题：<code>Lark 通知记录</code>。记录来自该条告警的 <code>lark</code> 数组，只追加。发送规则见 <a href="#49-lark-消息模板">4.9</a>：仅新开「告警中」发一条事件「产生」；去重更新快照、备注、处理、巡检条件消失都不追加。</p>
+<p>分组标题：<code>Lark 通知记录</code>。记录来自该条告警的 <code>lark</code> 数组，只追加。发送规则见 <a href="#49-lark-消息模板">4.9</a>：仅新开「告警中」发一条事件「产生」；去重只更新最近发生、备注、处理、巡检条件消失都不追加。</p>
 <p>无记录时展示：<code>尚未发送</code>。有记录时表格，按发送时间正序，最早在上。</p>
 <table>
 <thead>
@@ -1783,19 +1715,9 @@
 <td>本期只有 <code>产生</code></td>
 </tr>
 <tr>
-<td>群</td>
-<td>发送时的群名</td>
-<td>与基本信息「Lark 群」相同，<code>BIYA-DEX Explorer 告警</code></td>
-</tr>
-<tr>
 <td>状态</td>
 <td>通道回执</td>
 <td>成功 → 徽章 <code>已通知</code>；失败 → 徽章 <code>通知失败</code>。失败<strong>不</strong>改告警状态，后台<strong>无</strong>重发按钮</td>
-</tr>
-<tr>
-<td>摘要</td>
-<td>快照 <code>summary</code>，否则详情前 80 字</td>
-<td>一行摘要。空则 <code>—</code></td>
 </tr>
 </tbody>
 </table>
@@ -1836,9 +1758,9 @@
 </tbody>
 </table>
 <h4 id="备注">备注</h4>
-<p>分组标题：<code>备注</code>。来自该条 <code>notes</code>，只追加。默认<strong>不同步</strong> Lark。告警中、已处理都可继续追加。</p>
+<p>分组标题：<code>备注</code>。来自该条 <code>notes</code>。每条告警 <strong>最多 1 条</strong>，写后不可再追加、不可改。默认<strong>不同步</strong> Lark。告警中、已处理在尚无备注时均可写这一条。</p>
 <p>无记录时：<code>暂无备注</code>。</p>
-<p>有记录时时间线，正序（最早在上），每条：</p>
+<p>有记录时展示这一条：</p>
 <table>
 <thead>
 <tr>
@@ -1910,8 +1832,17 @@
 <tr>
 <td>打开备注</td>
 <td>添加备注</td>
-<td>会话有效</td>
+<td>会话有效且该条尚无备注</td>
 <td>弹窗</td>
+<td>—</td>
+<td>无</td>
+<td>—</td>
+</tr>
+<tr>
+<td>已有备注再点</td>
+<td>添加备注或列表备注</td>
+<td>该条已有 1 条</td>
+<td>Toast：<code>该告警已有备注。</code> 不打开弹窗</td>
 <td>—</td>
 <td>无</td>
 <td>—</td>
@@ -1926,10 +1857,19 @@
 <td>输入保留</td>
 </tr>
 <tr>
+<td>保存时已有备注</td>
+<td>保存</td>
+<td>该条已有 1 条</td>
+<td>弹窗：<code>该告警已有备注。</code> 不写入</td>
+<td>—</td>
+<td>无</td>
+<td>—</td>
+</tr>
+<tr>
 <td>保存成功</td>
 <td>保存</td>
-<td>通过校验</td>
-<td>Toast：<code>备注已保存。</code> 关闭弹窗，详情时间线多一条</td>
+<td>通过校验且尚无备注</td>
+<td>Toast：<code>备注已保存。</code> 关闭弹窗，详情可见这一条；「添加备注」隐藏</td>
 <td>提交中不可再点</td>
 <td>无</td>
 <td>已保存保留</td>
@@ -1945,7 +1885,7 @@
 </tr>
 </tbody>
 </table>
-<p>写入：当前成员姓名、当前时间 UTC+8。只追加。</p>
+<p>写入：当前成员姓名、当前时间 UTC+8。每条告警最多写入 1 条。</p>
 <p><strong>处理</strong></p>
 <p>无状态下拉。固定将当前「告警中」改为「已处理」。</p>
 <table>
@@ -2047,7 +1987,7 @@
 </table>
 <p>写入：当前成员姓名、当前时间 UTC+8、原状态「告警中」、新状态「已处理」、原因。只追加状态变更记录。不发送 Lark。</p>
 <h3 id="49-lark-消息模板">4.9 Lark 消息模板</h3>
-<p>群：<code>BIYA-DEX Explorer 告警</code>。仅在 <strong>新开告警中</strong> 时发送，事件类型为「产生」。同类同对象仍为告警中时只更新快照，不重发。人工处理、备注、巡检条件消失均不发。</p>
+<p>群：<code>BIYA-DEX Explorer 告警</code>。仅在 <strong>新开告警中</strong> 时发送，事件类型为「产生」。去重命中时只更新最近发生，不重发。人工处理、备注、巡检条件消失均不发。</p>
 <p><strong>公共字段</strong></p>
 <table>
 <thead>
@@ -2121,7 +2061,7 @@
 请到 Explorer Admin 告警中心查看证据并备注。
 </code></pre>
 <p><strong>区块缺口</strong></p>
-<pre><code class="language-text">【区块缺口】高度不连续或内容不完整
+<pre><code class="language-text">【区块缺口】高度不连续或取不到完整块
 告警编号：{告警编号}
 影响对象：区块 {高度或起止区间}
 缺失/不完整高度：{高度或起止区间}
@@ -2129,7 +2069,7 @@
 请到 Explorer Admin 告警中心查看证据并备注。
 </code></pre>
 <p>示例：</p>
-<pre><code class="language-text">【区块缺口】高度不连续或内容不完整
+<pre><code class="language-text">【区块缺口】高度不连续或取不到完整块
 告警编号：ALT-1003
 影响对象：区块 10293840
 缺失/不完整高度：10293840
@@ -2138,7 +2078,7 @@
 </code></pre>
 <p>连续空洞合并为一条时，影响对象与缺失高度写起止，例如 <code>10293840–10293842</code>。</p>
 <h3 id="410-数据管理">4.10 数据管理</h3>
-<p>告警编号、标题、类别、详情、对象、首次/最近发生、快照由系统写。状态由系统创建为告警中，此后仅值班可处理为已处理，不可改回。备注、状态变更、Lark 只追加。</p>
+<p>告警编号、标题、类别、详情、对象、首次发生、快照由系统在新开时写入。最近发生在新开时等于首次发生，去重命中时由系统更新。状态由系统创建为告警中，此后仅值班可处理为已处理，不可改回。备注每条最多 1 条；状态变更、Lark 只追加。</p>
 <h3 id="411-产品验收条件">4.11 产品验收条件</h3>
 <table>
 <thead>
@@ -2170,15 +2110,19 @@
 </tr>
 <tr>
 <td>详情快照</td>
-<td>按类型展示告警当时字段；无区块哈希、提议者、交易列表</td>
+<td>按类型展示告警当时字段；无错误码、动作数/结果数、Lark 群、区块哈希、提议者、交易列表</td>
 </tr>
 <tr>
 <td>备注 2 个字符保存</td>
 <td>提示 <code>请填写至少 3 个字符的备注。</code> 不写入</td>
 </tr>
 <tr>
-<td>备注 ≥3 字符保存</td>
-<td><code>备注已保存。</code> 时间线可见；Lark 列表不因此多一条</td>
+<td>备注 ≥3 字符且该条尚无备注</td>
+<td><code>备注已保存。</code> 详情可见这一条；Lark 列表不因此多一条；不可再添加</td>
+</tr>
+<tr>
+<td>已有备注再点添加备注</td>
+<td><code>该告警已有备注。</code> 不打开弹窗、不写入</td>
 </tr>
 <tr>
 <td>告警中处理为已处理并填原因</td>
@@ -2201,7 +2145,19 @@
 <td>对应告警 <strong>仍为告警中</strong>（若未被人工已处理）；无恢复 Lark</td>
 </tr>
 <tr>
-<td>已处理后再满足同类同对象条件</td>
+<td>节点不可达/不前进：最近一次同对象为告警中且本轮仍命中</td>
+<td>不新开；只更新该条最近发生；不改快照；不发 Lark</td>
+</tr>
+<tr>
+<td>节点不可达/不前进：最近一次同对象为已处理且本轮仍命中</td>
+<td>新开一条告警中，并发送 Lark 产生</td>
+</tr>
+<tr>
+<td>区块缺口：已存在同一缺口记录且本轮仍命中</td>
+<td>不新开；只更新该条最近发生；不改状态、不改快照；不发 Lark</td>
+</tr>
+<tr>
+<td>区块缺口：不存在同一缺口记录</td>
 <td>新开一条告警中，并发送 Lark 产生</td>
 </tr>
 <tr>
@@ -2243,11 +2199,19 @@
 <td>缺口告警；连续空洞合并</td>
 </tr>
 <tr>
-<td>同类同对象已是告警中</td>
-<td>更新最近发生，不新开，不重发 Lark</td>
+<td>不可达/不前进：最近一次同对象为告警中</td>
+<td>只更新最近发生，不新开，不重发 Lark</td>
 </tr>
 <tr>
-<td>同类同对象已是已处理且条件仍成立</td>
+<td>不可达/不前进：最近一次同对象为已处理且本轮仍命中</td>
+<td>新开告警中 + Lark 产生</td>
+</tr>
+<tr>
+<td>缺口：已存在同一缺口</td>
+<td>只更新最近发生，不新开，不改状态，不重发 Lark</td>
+</tr>
+<tr>
+<td>缺口：不存在同一缺口</td>
 <td>新开告警中 + Lark 产生</td>
 </tr>
 <tr>
@@ -2390,7 +2354,7 @@
 </tr>
 <tr>
 <td>Lark 产生</td>
-<td>时间、群、成功/失败、摘要</td>
+<td>时间、成功/失败</td>
 </tr>
 </tbody>
 </table>
@@ -2415,6 +2379,11 @@
 <td>备注 &lt; 3 字符</td>
 <td><code>请填写至少 3 个字符的备注。</code></td>
 <td>补全后保存</td>
+</tr>
+<tr>
+<td>已有备注再添加</td>
+<td><code>该告警已有备注。</code></td>
+<td>—</td>
 </tr>
 <tr>
 <td>原因 &lt; 3 字符</td>
@@ -2586,8 +2555,23 @@
 </tr>
 <tr>
 <td>告警</td>
-<td>备注 ≥3 字</td>
-<td><code>备注已保存。</code> 且不新写 Lark</td>
+<td>备注 ≥3 字且尚无备注</td>
+<td><code>备注已保存。</code> 且不新写 Lark；不可再添加</td>
+</tr>
+<tr>
+<td>告警</td>
+<td>已有备注再添加</td>
+<td><code>该告警已有备注。</code></td>
+</tr>
+<tr>
+<td>告警</td>
+<td>不可达/不前进最近一次同对象为告警中</td>
+<td>只更新最近发生，不新开、不发 Lark</td>
+</tr>
+<tr>
+<td>告警</td>
+<td>同一缺口已存在</td>
+<td>只更新最近发生，不新开、不改状态、不发 Lark</td>
 </tr>
 <tr>
 <td>告警</td>
@@ -2616,8 +2600,13 @@
 </tr>
 <tr>
 <td>告警</td>
-<td>已处理后再命中</td>
+<td>不可达/不前进已处理后再命中</td>
 <td>新开告警中 + Lark 产生</td>
+</tr>
+<tr>
+<td>告警</td>
+<td>缺口已处理后再命中同一缺口</td>
+<td>不新开；只更新最近发生；状态仍为已处理</td>
 </tr>
 <tr>
 <td>告警</td>
@@ -2632,7 +2621,7 @@
 <tr>
 <td>搜索</td>
 <td>精确命中高度</td>
-<td>抽屉标题 <code>区块 #{高度}</code>；无块内交易、无前后翻页</td>
+<td>抽屉标题 <code>区块 #{高度}</code>；无父哈希、提议者、链上交易数、接口路径；无块内交易、无前后翻页</td>
 </tr>
 <tr>
 <td>搜索</td>
@@ -2754,6 +2743,18 @@
 <td>V1.1.8</td>
 <td>2026-10-22</td>
 <td>1.2 改为 V1.0 功能清单；数据模型与页面模块按四项对齐</td>
+<td>Terry</td>
+</tr>
+<tr>
+<td>V1.1.9</td>
+<td>2026-10-22</td>
+<td>去掉值班不需要的字段：动作数/结果数、错误码、Lark 群、父哈希、提议者、链上交易数、接口路径</td>
+<td>Terry</td>
+</tr>
+<tr>
+<td>V1.1.10</td>
+<td>2026-10-22</td>
+<td>Lark 记录去掉摘要；去重按最近一次告警中 / 同缺口只更新最近发生；每条告警最多 1 条备注</td>
 <td>Terry</td>
 </tr>
 </tbody>

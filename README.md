@@ -13,7 +13,7 @@
 | 管理后台原型（V1.1.0） | https://terryxu923.github.io/biya-dex-docs/biya-dex-admin-v1.1.0.html |
 | 管理后台 PRD（V1.1.0） | https://terryxu923.github.io/biya-dex-docs/biya-dex-admin-prd-v1.1.0.html |
 | 区块浏览器管理端原型（Explorer Admin） | https://terryxu923.github.io/biya-dex-docs/biya-dex-explorer-admin.html |
-| 区块浏览器管理端 PRD（Explorer Admin V1.1.8） | https://terryxu923.github.io/biya-dex-docs/biya-dex-explorer-admin-prd.html |
+| 区块浏览器管理端 PRD（Explorer Admin V1.1.10） | https://terryxu923.github.io/biya-dex-docs/biya-dex-explorer-admin-prd.html |
 | BiyaEVM 区块浏览器原型 | https://terryxu923.github.io/biya-dex-docs/BiyaEVMscan.html |
 | BiyaEVM 区块浏览器 PRD（V1.0.0） | https://terryxu923.github.io/biya-dex-docs/biya-evm-explorer-prd.html |
 
