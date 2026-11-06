@@ -15950,7 +15950,7 @@ window.__exEvm = (function () {
       creatorHtml =
         '<div class="info-item"><div class="info-label">创建者</div><div class="info-value">' +
         '<a href="' + addrHref(addr.creator) + '" class="link mono">' + esc(addr.creator) + "</a>" + copyBtn(addr.creator) +
-        ' <span class="value-secondary">于交易</span> ' +
+        ' <span class="value-secondary">创建于</span>' +
         '<a href="' + txHref(addr.creationTx) + '" class="link mono">' + esc(window.__exShortHead(addr.creationTx)) + "</a>" + copyBtn(addr.creationTx) +
         "</div></div>";
     }
@@ -17188,7 +17188,7 @@ const evmBlocks = [
         }
 
         function browsableTotal() {
-            return blocksListState.isTz ? blocksListState.tzBrowsable : blocksListState.evmBrowsable;
+            return blocksListState.isTz ? blocksListState.tzBrowsable : latestHeight(false);
         }
 
         function tzHeightQuery() {
