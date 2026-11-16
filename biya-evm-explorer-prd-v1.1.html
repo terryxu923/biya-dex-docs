@@ -1,0 +1,2143 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta http-equiv="Cache-Control" content="no-cache" />
+  <title>BiyaEVM 区块浏览器 · 产品需求文档 V1.1.0</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/github-markdown-css@5.6.1/github-markdown-light.min.css" />
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.min.js"></script>
+  <style>
+    * { box-sizing: border-box; }
+    html, body { margin: 0; height: 100%; background: #f6f8fa; }
+    body { display: flex; flex-direction: column; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
+    .topbar { flex: 0 0 auto; background: #fff; border-bottom: 1px solid #d8dee4; padding: 10px 16px 10px 296px; font-size: 14px; z-index: 20; }
+    .topbar a { margin-right: 16px; color: #0969da; text-decoration: none; }
+    .topbar a:hover { text-decoration: underline; }
+    .layout { flex: 1 1 auto; display: flex; min-height: 0; }
+    .sidebar { flex: 0 0 280px; width: 280px; background: #fafafa; border-right: 1px solid #e8e8e8; overflow-y: auto; }
+    .sidebar-header { position: sticky; top: 0; z-index: 2; padding: 18px 16px 10px; font-size: 15px; font-weight: 600; color: #111; background: #fafafa; border-bottom: 1px solid #eee; }
+    .sidebar-toc { list-style: none; margin: 0; padding: 8px 0 24px; }
+    .sidebar-toc li { margin: 0; }
+    .sidebar-toc a { display: block; padding: 6px 16px; font-size: 13px; color: #333; line-height: 1.45; text-decoration: none; border-left: 3px solid transparent; }
+    .sidebar-toc .l3 a { padding-left: 28px; font-size: 12px; color: #555; font-weight: 400; }
+    .sidebar-toc .l2 a { font-weight: 600; }
+    .sidebar-toc a:hover { background: #f0f0f0; }
+    .sidebar-toc a.active { border-left-color: #0969da; color: #0969da; background: #eef5ff; }
+    .content { flex: 1 1 auto; overflow-y: auto; padding: 28px 36px 80px; }
+    .markdown-body { box-sizing: border-box; min-width: 200px; max-width: 920px; margin: 0 auto; padding: 32px; background: #fff; border: 1px solid #e8e8e8; border-radius: 10px; }
+    .markdown-body table { display: block; overflow-x: auto; }
+    .mermaid { background: #fff; padding: 12px 0; }
+    @media (max-width: 900px) {
+      .sidebar { display: none; }
+      .topbar { padding-left: 16px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="topbar">
+    <a href="./index.html">文档入口</a>
+    <a href="./BiyaEVMscan-v1.1.html">打开对应原型</a>
+  </div>
+  <div class="layout">
+    <nav class="sidebar">
+      <div class="sidebar-header">目录</div>
+      <ul class="sidebar-toc">
+<li class="l2"><a href="#文档说明">文档说明</a></li>
+<li class="l2"><a href="#1-本期交付摘要">1. 本期交付摘要</a></li>
+<li class="l3"><a href="#11-交付结果">1.1 交付结果</a></li>
+<li class="l3"><a href="#12-v110-核心能力">1.2 V1.1.0 核心能力</a></li>
+<li class="l3"><a href="#13-明确不在本期范围">1.3 明确不在本期范围</a></li>
+<li class="l3"><a href="#14-存量与在途">1.4 存量与在途</a></li>
+<li class="l2"><a href="#2-产品概述">2. 产品概述</a></li>
+<li class="l3"><a href="#21-背景与当前问题">2.1 背景与当前问题</a></li>
+<li class="l3"><a href="#22-产品目标">2.2 产品目标</a></li>
+<li class="l3"><a href="#23-非目标">2.3 非目标</a></li>
+<li class="l3"><a href="#24-目标用户与场景">2.4 目标用户与场景</a></li>
+<li class="l3"><a href="#25-术语与统一口径">2.5 术语与统一口径</a></li>
+<li class="l3"><a href="#26-页面地图">2.6 页面地图</a></li>
+<li class="l2"><a href="#3-功能列表与优先级">3. 功能列表与优先级</a></li>
+<li class="l2"><a href="#4-功能详细说明">4. 功能详细说明</a></li>
+<li class="l2"><a href="#41-导航与搜索边界">4.1 导航与搜索边界</a></li>
+<li class="l3"><a href="#411-流程步骤">4.1.1 流程步骤</a></li>
+<li class="l3"><a href="#412-字段说明">4.1.2 字段说明</a></li>
+<li class="l3"><a href="#413-验收标准">4.1.3 验收标准</a></li>
+<li class="l2"><a href="#42-交易详情代币转移摘要与页签">4.2 交易详情：代币转移摘要与页签</a></li>
+<li class="l3"><a href="#421-流程步骤">4.2.1 流程步骤</a></li>
+<li class="l3"><a href="#422-代币转移摘要">4.2.2 代币转移摘要</a></li>
+<li class="l3"><a href="#423-代币转移页签">4.2.3 代币转移页签</a></li>
+<li class="l3"><a href="#424-页面状态矩阵">4.2.4 页面状态矩阵</a></li>
+<li class="l3"><a href="#425-验收标准">4.2.5 验收标准</a></li>
+<li class="l2"><a href="#43-地址详情代币转移与代币余额">4.3 地址详情：代币转移与代币余额</a></li>
+<li class="l3"><a href="#431-流程步骤">4.3.1 流程步骤</a></li>
+<li class="l3"><a href="#432-代币转移">4.3.2 代币转移</a></li>
+<li class="l3"><a href="#433-代币余额">4.3.3 代币余额</a></li>
+<li class="l3"><a href="#434-页面状态矩阵">4.3.4 页面状态矩阵</a></li>
+<li class="l3"><a href="#435-验收标准">4.3.5 验收标准</a></li>
+<li class="l2"><a href="#44-代币列表">4.4 代币列表</a></li>
+<li class="l3"><a href="#441-流程步骤">4.4.1 流程步骤</a></li>
+<li class="l3"><a href="#442-展示字段">4.4.2 展示字段</a></li>
+<li class="l3"><a href="#443-页面状态矩阵">4.4.3 页面状态矩阵</a></li>
+<li class="l3"><a href="#444-验收标准">4.4.4 验收标准</a></li>
+<li class="l2"><a href="#45-代币详情">4.5 代币详情</a></li>
+<li class="l3"><a href="#451-流程步骤">4.5.1 流程步骤</a></li>
+<li class="l3"><a href="#452-概览字段">4.5.2 概览字段</a></li>
+<li class="l3"><a href="#453-代币转移">4.5.3 代币转移</a></li>
+<li class="l3"><a href="#454-持有人">4.5.4 持有人</a></li>
+<li class="l3"><a href="#455-页面状态矩阵">4.5.5 页面状态矩阵</a></li>
+<li class="l3"><a href="#456-验收标准">4.5.6 验收标准</a></li>
+<li class="l2"><a href="#5-横切业务规则与异常处理">5. 横切业务规则与异常处理</a></li>
+<li class="l2"><a href="#51-数据真实性与一致性">5.1 数据真实性与一致性</a></li>
+<li class="l2"><a href="#52-代币数量无限授权与美元">5.2 代币数量、无限授权与美元</a></li>
+<li class="l2"><a href="#53-时间口径">5.3 时间口径</a></li>
+<li class="l2"><a href="#54-分页与可浏览范围">5.4 分页与可浏览范围</a></li>
+<li class="l2"><a href="#55-查询与深链状态">5.5 查询与深链状态</a></li>
+<li class="l2"><a href="#56-加载错误空态与重试">5.6 加载、错误、空态与重试</a></li>
+<li class="l2"><a href="#57-长文本与复制">5.7 长文本与复制</a></li>
+<li class="l2"><a href="#58-权限与安全边界">5.8 权限与安全边界</a></li>
+<li class="l2"><a href="#59-无障碍与设备适配">5.9 无障碍与设备适配</a></li>
+<li class="l2"><a href="#510-erc-20-业务规则br-t11">5.10 ERC-20 业务规则（BR-T11）</a></li>
+<li class="l2"><a href="#6-更新记录">6. 更新记录</a></li>
+<li class="l2"><a href="#7-待定事项">7. 待定事项</a></li>
+      </ul>
+    </nav>
+    <div class="content">
+      <article class="markdown-body">
+<h1>BiyaEVM 区块浏览器产品需求文档</h1>
+<blockquote>
+<p>产品经理：Terry｜文档版本：V1.1.0｜文档状态：正式需求｜日期：2026-10-27</p>
+</blockquote>
+<h2 id="文档说明">文档说明</h2>
+<markdown-accessiblity-table><table role="table">
+<thead>
+<tr>
+<th>项目</th>
+<th>内容</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>需求名称</td>
+<td>BiyaEVM 区块浏览器 V1.1.0</td>
+</tr>
+<tr>
+<td>需求等级</td>
+<td>L3 复杂需求</td>
+</tr>
+<tr>
+<td>核心目标</td>
+<td>使用户能看懂一笔交易里的 ERC-20 代币转移与授权，并浏览代币列表、代币详情、地址代币转移与余额</td>
+</tr>
+<tr>
+<td>目标用户</td>
+<td>链上用户、合约交互方、运营与客服、安全研究人员、生态开发者</td>
+</tr>
+<tr>
+<td>交互基线</td>
+<td><a href="./V1.1-EVM%E6%B5%8F%E8%A7%88%E5%99%A8%E5%8E%9F%E5%9E%8B.html">V1.1-EVM浏览器原型.html</a></td>
+</tr>
+<tr>
+<td>公开原型</td>
+<td><a href="https://terryxu923.github.io/biya-dex-docs/BiyaEVMscan-v1.1.html" rel="nofollow">https://terryxu923.github.io/biya-dex-docs/BiyaEVMscan-v1.1.html</a></td>
+</tr>
+<tr>
+<td>公开 PRD</td>
+<td><a href="https://terryxu923.github.io/biya-dex-docs/biya-evm-explorer-prd-v1.1.html" rel="nofollow">https://terryxu923.github.io/biya-dex-docs/biya-evm-explorer-prd-v1.1.html</a></td>
+</tr>
+<tr>
+<td>依赖需求</td>
+<td><a href="../V1.0-%E5%8E%9F%E5%9E%8B/BiyaEVM%E5%8C%BA%E5%9D%97%E6%B5%8F%E8%A7%88%E5%99%A8_PRD_V1.0.md">BiyaEVM区块浏览器_PRD_V1.0.md</a> V1.0.0 正式需求。宿主页面（首页、区块、交易列表、交易详情四段、地址信息表与相关交易、全局搜索）以 V1.0.0 为准，本文不重写、不验收</td>
+</tr>
+<tr>
+<td>范围底稿</td>
+<td><a href="../%E8%BF%AD%E4%BB%A3%E8%AE%A1%E5%88%92/EVM%E6%B5%8F%E8%A7%88%E5%99%A8%E8%BF%AD%E4%BB%A3%E7%89%88%E6%9C%AC%E8%A1%A8.md">EVM浏览器迭代版本表.md</a> 的 V1.1 行。版本表原文不改。开发与测试以本文字段表为准</td>
+</tr>
+<tr>
+<td>编写规范</td>
+<td><a href="../../../PRD%E8%A7%84%E8%8C%83/%E4%BA%A7%E5%93%81%E9%9C%80%E6%B1%82%E6%96%87%E6%A1%A3%E7%BC%96%E5%86%99%E8%A7%84%E8%8C%83.md">产品需求文档编写规范</a></td>
+</tr>
+<tr>
+<td>需求范围</td>
+<td>仅 V1.1.0 增量。不含 V1.0.0 已交付字段与验收，不含 BiyaDEX 区块浏览器</td>
+</tr>
+<tr>
+<td>一句话概述</td>
+<td>用户在已有普通交易查询之上，无需登录即可核验 ERC-20 Transfer、授权、余额与持有人</td>
+</tr>
+</tbody>
+</table></markdown-accessiblity-table>
+<p><strong>文档定位</strong></p>
+<p>本文只定义 V1.1.0 相对 V1.0.0 的增量。V1.0.0 正式需求仍然有效，读者验收普通交易、区块、首页和搜索时使用那份文档。</p>
+<p>本文是产品、设计、研发、测试和 AI 交付参与者共同使用的 V1.1.0 业务真相源。本文说明用户可见行为、业务规则和验收边界，不规定数据库、接口路径、索引器内部结构或前端框架。</p>
+<p>原型中的模拟数据仅用于表达页面和交互，不构成数据值、刷新频率、行情或链上事实。生产版本必须展示 Biya EVM 的真实索引数据。</p>
+<p>字段口径、待确认与空组、数量换算以行业 EVM 浏览器（BlockScout）的公开查询语义为准，再落到 Biya 中文界面。交易级授权（Approval）是相对 BlockScout 代币转移资源的产品增量，依据版本表 V1.1 与已确认原型。</p>
+<p>已确认界面与版本表措辞冲突时，以已确认原型为准，版本表原文不改，见 Q-V11-01。</p>
+<p><strong>撰写语言</strong></p>
+<p>正文和用户可见文案以中文为主。哈希、地址前缀、代币标准等链上原始标识保留必要英文，并在有确定业务含义时补充中文。</p>
+<p><strong>原型已知未覆盖（验收以本文）</strong></p>
+<ul>
+<li>原型样例仍展示代币美元；生产无行情时按 BR-T11-04 处理。</li>
+<li>HTML 内遗留的 DEX 代币页、登录、页内筛选不进入本期范围。</li>
+</ul>
+<hr>
+<h2 id="目录">目录</h2>
+<ul>
+<li><a href="#1-%E6%9C%AC%E6%9C%9F%E4%BA%A4%E4%BB%98%E6%91%98%E8%A6%81">1. 本期交付摘要</a></li>
+<li><a href="#2-%E4%BA%A7%E5%93%81%E6%A6%82%E8%BF%B0">2. 产品概述</a></li>
+<li><a href="#3-%E5%8A%9F%E8%83%BD%E5%88%97%E8%A1%A8%E4%B8%8E%E4%BC%98%E5%85%88%E7%BA%A7">3. 功能列表与优先级</a></li>
+<li><a href="#4-%E5%8A%9F%E8%83%BD%E8%AF%A6%E7%BB%86%E8%AF%B4%E6%98%8E">4. 功能详细说明</a>
+<ul>
+<li><a href="#41-%E5%AF%BC%E8%88%AA%E4%B8%8E%E6%90%9C%E7%B4%A2%E8%BE%B9%E7%95%8C">4.1 导航与搜索边界</a></li>
+<li><a href="#42-%E4%BA%A4%E6%98%93%E8%AF%A6%E6%83%85%E4%BB%A3%E5%B8%81%E8%BD%AC%E7%A7%BB%E6%91%98%E8%A6%81%E4%B8%8E%E9%A1%B5%E7%AD%BE">4.2 交易详情：代币转移摘要与页签</a></li>
+<li><a href="#43-%E5%9C%B0%E5%9D%80%E8%AF%A6%E6%83%85%E4%BB%A3%E5%B8%81%E8%BD%AC%E7%A7%BB%E4%B8%8E%E4%BB%A3%E5%B8%81%E4%BD%99%E9%A2%9D">4.3 地址详情：代币转移与代币余额</a></li>
+<li><a href="#44-%E4%BB%A3%E5%B8%81%E5%88%97%E8%A1%A8">4.4 代币列表</a></li>
+<li><a href="#45-%E4%BB%A3%E5%B8%81%E8%AF%A6%E6%83%85">4.5 代币详情</a></li>
+</ul>
+</li>
+<li><a href="#5-%E6%A8%AA%E5%88%87%E4%B8%9A%E5%8A%A1%E8%A7%84%E5%88%99%E4%B8%8E%E5%BC%82%E5%B8%B8%E5%A4%84%E7%90%86">5. 横切业务规则与异常处理</a></li>
+<li><a href="#6-%E6%9B%B4%E6%96%B0%E8%AE%B0%E5%BD%95">6. 更新记录</a></li>
+<li><a href="#7-%E5%BE%85%E5%AE%9A%E4%BA%8B%E9%A1%B9">7. 待定事项</a></li>
+</ul>
+<hr>
+<h2 id="1-本期交付摘要">1. 本期交付摘要</h2>
+<h3 id="11-交付结果">1.1 交付结果</h3>
+<p>本期在 V1.0.0 已交付的普通交易查询上，增加 ERC-20 查询闭环：</p>
+<div class="mermaid">
+flowchart TD
+    Nav[区块链导航] --> TokenList[代币列表]
+    TxDetail[交易详情] --> Snippet[代币转移与授权摘要]
+    TxDetail --> TxTokenTab[代币转移页签]
+    TxTokenTab --> TokenDetail[代币详情]
+    TxTokenTab --> AddressDetail[地址详情]
+    AddressDetail --> AddrTT[地址代币转移]
+    AddressDetail --> AddrTok[地址代币余额]
+    AddrTT --> TokenDetail
+    AddrTok --> TokenDetail
+    TokenList --> TokenDetail
+    TokenDetail --> TokTT[代币转移]
+    TokenDetail --> Holders[持有人]
+    TokenDetail --> AddressDetail
+    Snippet --> TokenDetail
+    Snippet --> AddressDetail
+</div>
+<p>用户可以从交易详情核验 Transfer 与授权，从地址查看相关转移与余额，从代币列表进入代币详情查看概览、转移和持有人。代币详情支持直接打开和分享。</p>
+<h3 id="12-v110-核心能力">1.2 V1.1.0 核心能力</h3>
+<markdown-accessiblity-table><table role="table">
+<thead>
+<tr>
+<th>模块</th>
+<th>交付能力</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>全局</td>
+<td>区块链导航增加「代币列表」。搜索范围不扩展到代币名称或符号</td>
+</tr>
+<tr>
+<td>交易详情</td>
+<td>参与方之后、原生币转账数量之前展示 Transfer / 授权摘要；新增「代币转移」页签，Transfer 与授权同一张表</td>
+</tr>
+<tr>
+<td>地址详情</td>
+<td>新增「代币转移」页签（仅 Transfer，从/到双方）和「代币」页签（余额）</td>
+</tr>
+<tr>
+<td>代币</td>
+<td>代币列表；代币详情（概览、代币转移、持有人）</td>
+</tr>
+<tr>
+<td>公共状态</td>
+<td>交易详情补齐 ERC-20 相关状态；代币页补齐加载、空数据、未找到、格式无效、网络错误</td>
+</tr>
+</tbody>
+</table></markdown-accessiblity-table>
+<h3 id="13-明确不在本期范围">1.3 明确不在本期范围</h3>
+<markdown-accessiblity-table><table role="table">
+<thead>
+<tr>
+<th>不在范围的能力</th>
+<th>本期用户可见行为</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>V1.0.0 已交付的首页、区块列表、区块详情、交易列表、交易详情四段、地址信息表与相关交易、全局搜索规则</td>
+<td>本文不重写、不列入本期验收；继续以 V1.0.0 正式需求为准</td>
+</tr>
+<tr>
+<td>DEX 区块浏览器页面和业务规则</td>
+<td>本文不定义</td>
+</tr>
+<tr>
+<td>NFT 及 ERC-721 / ERC-1155</td>
+<td>不展示 NFT 转移、持有或详情</td>
+</tr>
+<tr>
+<td>代币铸造、销毁、新建代币独立分组</td>
+<td>详情摘要只展示 Transfer 与授权；铸造/销毁若以 Transfer 形态出现则按 Transfer 展示</td>
+</tr>
+<tr>
+<td>按代币名称或符号搜索</td>
+<td>搜索范围仍为交易哈希、地址、区块高度、区块哈希</td>
+</tr>
+<tr>
+<td>完整代币合约地址直达代币详情</td>
+<td>提交完整 40 位地址仍打开地址详情；从代币列表或名称进入代币详情</td>
+</tr>
+<tr>
+<td>合约源码、验证、读取合约</td>
+<td>代币合约打开地址详情时沿用 V1.0.0 地址页，不提供源码、验证或读取</td>
+</tr>
+<tr>
+<td>内部交易、日志、状态变化</td>
+<td>交易、地址、代币详情不展示对应页签</td>
+</tr>
+<tr>
+<td>地址代币转移中的授权</td>
+<td>授权只出现在交易详情摘要与交易「代币转移」页签</td>
+</tr>
+<tr>
+<td>地址 identicon</td>
+<td>从/到只展示地址文本</td>
+</tr>
+<tr>
+<td>通过钱包写合约、授权或转账</td>
+<td>不提供签名或写操作入口</td>
+</tr>
+<tr>
+<td>登录、关注、私有标签、自定义 ABI</td>
+<td>公共查链不要求登录</td>
+</tr>
+<tr>
+<td>多语言</td>
+<td>仅提供中文用户界面</td>
+</tr>
+<tr>
+<td>外链网络的 EVM 页面</td>
+<td>本期只验收 Biya EVM</td>
+</tr>
+</tbody>
+</table></markdown-accessiblity-table>
+<h3 id="14-存量与在途">1.4 存量与在途</h3>
+<p>本期为公共只读查询增量，无登录用户、无在途订单。链上已发生的历史 ERC-20 事件，在索引完成后按本文规则展示。待确认交易按待确认规则展示，入块后改为已确认口径。不迁移、不改写链上事实。V1.0.0 已上线页面继续有效，本期只在既有交易详情、地址详情上增加页签与摘要，并新增代币列表、代币详情。</p>
+<hr>
+<h2 id="2-产品概述">2. 产品概述</h2>
+<h3 id="21-背景与当前问题">2.1 背景与当前问题</h3>
+<p>V1.0.0 已固化普通交易、区块和地址查询。用户在钱包里完成 ERC-20 转账或授权后，仍无法在浏览器里核验代币双方、数量和额度。V1.1 原型已经表达代币列表、代币详情、交易摘要与页签、地址代币页签，数据仍为前端模拟。</p>
+<p>本需求将上述增量固化为生产要求，并明确：</p>
+<ol>
+<li>页面展示 Biya EVM 的真实索引结果，不使用模拟值冒充链上事实。</li>
+<li>用户能核验一笔交易中的 ERC-20 Transfer 与授权。</li>
+<li>待确认交易在详情不出现代币摘要；代币转移页签提示待确认，与「暂无转移」区分。</li>
+<li>无 Transfer 时详情不出现「代币转移」行；无授权时不出现「授权」行。</li>
+<li>无数据、查无结果、参数无效和网络错误必须给出不同反馈。</li>
+<li>ERC-20 页面只在 EVM 下可达。</li>
+</ol>
+<h3 id="22-产品目标">2.2 产品目标</h3>
+<markdown-accessiblity-table><table role="table">
+<thead>
+<tr>
+<th>目标</th>
+<th>可观察结果</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>提供可读的 ERC-20 活动</td>
+<td>用户能在交易、地址和代币页核验 Transfer、授权、余额和持有人</td>
+</tr>
+<tr>
+<td>支持交叉核验</td>
+<td>同一笔 Transfer 在交易摘要、交易页签、地址代币转移、代币详情转移中口径一致</td>
+</tr>
+<tr>
+<td>支持分享和复现</td>
+<td>用户复制代币详情或带页签的交易/地址深链后，在新会话中打开相同对象</td>
+</tr>
+<tr>
+<td>明确失败原因</td>
+<td>代币相关查询失败时区分“无结果”“参数无效”和“网络错误”</td>
+</tr>
+</tbody>
+</table></markdown-accessiblity-table>
+<h3 id="23-非目标">2.3 非目标</h3>
+<ul>
+<li>不通过浏览器完成转账、授权、合约写入或资金操作。</li>
+<li>不在本需求中定义或重验收 V1.0.0 页面字段。</li>
+<li>不在本需求中定义 DEX 页面、DEX 字段或 DEX 筛选。</li>
+<li>不把所有链上原始数据无差别展示；只展示本文字段表规定的业务字段。</li>
+<li>不承诺浏览器查询接口对外开放。</li>
+<li>不以原型中的固定总量、固定时间和固定地址作为生产数据。</li>
+<li>不把索引系统内部设计写入本 PRD。</li>
+</ul>
+<h3 id="24-目标用户与场景">2.4 目标用户与场景</h3>
+<markdown-accessiblity-table><table role="table">
+<thead>
+<tr>
+<th>用户角色</th>
+<th>典型场景</th>
+<th>需要完成的目标</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>链上用户</td>
+<td>钱包完成 ERC-20 转账后核验</td>
+<td>打开交易，看到代币双方和数量</td>
+</tr>
+<tr>
+<td>合约交互方</td>
+<td>授权后核验额度</td>
+<td>区分有限额授权与无限授权</td>
+</tr>
+<tr>
+<td>运营与客服</td>
+<td>处理“转了代币但详情看不到”</td>
+<td>区分待确认、无事件、失败交易仍可查事件</td>
+</tr>
+<tr>
+<td>安全研究人员</td>
+<td>调查地址代币流向</td>
+<td>在地址转移、代币持有人和交易页之间交叉核验</td>
+</tr>
+<tr>
+<td>生态开发者</td>
+<td>浏览已索引 ERC-20</td>
+<td>从代币列表进入详情查看供应、转移和持有人</td>
+</tr>
+</tbody>
+</table></markdown-accessiblity-table>
+<p>所有页面均为公开只读页面，不因角色不同改变数据可见范围，也不要求登录。</p>
+<h3 id="25-术语与统一口径">2.5 术语与统一口径</h3>
+<p>下列术语只定义本期新增对象。交易三态、接收方三种形态、原生币、Gas 等沿用 V1.0.0，本文不重定义。</p>
+<markdown-accessiblity-table><table role="table">
+<thead>
+<tr>
+<th>术语</th>
+<th>定义</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>ERC-20</td>
+<td>符合 ERC-20 接口的同质代币合约</td>
+</tr>
+<tr>
+<td>代币转移 / Transfer</td>
+<td>由 ERC-20 <code class="notranslate">Transfer</code> 事件解析出的代币转出与转入记录，不是顶层交易本身</td>
+</tr>
+<tr>
+<td>授权 / Approval</td>
+<td>由 ERC-20 <code class="notranslate">Approval</code> 事件解析出的授权记录：授权方、被授权方、代币、额度。相对 BlockScout 代币转移资源的产品增量</td>
+</tr>
+<tr>
+<td>无限授权</td>
+<td>授权额度等于或视为 ERC-20 最大无符号整数时，界面展示「无限」，不附美元</td>
+</tr>
+<tr>
+<td>代币合约</td>
+<td>发行该 ERC-20 的合约地址</td>
+</tr>
+<tr>
+<td>精度</td>
+<td>代币合约声明的小数位数；人类可读数量 = 链上整数 ÷ 10^精度</td>
+</tr>
+<tr>
+<td>代币转移摘要</td>
+<td>交易详情中插在参与方之后、原生币转账数量之前的 Transfer / 授权短句</td>
+</tr>
+<tr>
+<td>流通市值</td>
+<td>代币价格 × 流通供应量；无价格时不可用</td>
+</tr>
+<tr>
+<td>持有人数</td>
+<td>该代币余额大于 0 的地址数</td>
+</tr>
+<tr>
+<td>转移次数</td>
+<td>该代币已索引的 Transfer 次数，不含授权</td>
+</tr>
+</tbody>
+</table></markdown-accessiblity-table>
+<p><strong>产品关系说明</strong>：ERC-20 页面只在 BiyaChain 的 EVM 模式下可达。进入 DEX 后的行为由独立需求负责。本文只定义进入 EVM 后的 V1.1.0 可见行为。</p>
+<h3 id="26-页面地图">2.6 页面地图</h3>
+<markdown-accessiblity-table><table role="table">
+<thead>
+<tr>
+<th>页面或区域</th>
+<th>标准入口</th>
+<th>主要任务</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>交易详情 · 代币转移摘要</td>
+<td>打开已确认交易详情</td>
+<td>在参与方与原生币之间核验 Transfer / 授权短句</td>
+</tr>
+<tr>
+<td>交易详情 · 代币转移页签</td>
+<td>交易详情内切换页签</td>
+<td>查看该笔 Transfer 与授权全表</td>
+</tr>
+<tr>
+<td>地址详情 · 代币转移</td>
+<td>地址详情内切换页签</td>
+<td>查看该地址相关 ERC-20 Transfer</td>
+</tr>
+<tr>
+<td>地址详情 · 代币</td>
+<td>地址详情内切换页签</td>
+<td>查看该地址 ERC-20 余额</td>
+</tr>
+<tr>
+<td>代币列表</td>
+<td>导航「区块链 — 代币列表」</td>
+<td>浏览 ERC-20 代币</td>
+</tr>
+<tr>
+<td>代币详情</td>
+<td>按代币合约打开，或从名称进入</td>
+<td>查看代币概览、转移和持有人</td>
+</tr>
+</tbody>
+</table></markdown-accessiblity-table>
+<p>分享链接必须能直接打开同一业务页面、同一查询对象和同一页签。若研发调整路径实现，不得改变这一产品结果。</p>
+<hr>
+<h2 id="3-功能列表与优先级">3. 功能列表与优先级</h2>
+<markdown-accessiblity-table><table role="table">
+<thead>
+<tr>
+<th>功能模块</th>
+<th>功能点</th>
+<th>优先级</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>全局</td>
+<td>导航增加代币列表</td>
+<td>P1</td>
+<td>「区块链」菜单在交易列表、区块列表之外增加代币列表</td>
+</tr>
+<tr>
+<td>全局</td>
+<td>搜索不按代币名称</td>
+<td>P1</td>
+<td>范围不扩展；完整代币合约地址仍打开地址详情</td>
+</tr>
+<tr>
+<td>交易</td>
+<td>交易详情 · 代币转移摘要</td>
+<td>P1</td>
+<td>参与方之后、原生币之前；Transfer 与授权分组；空组不占行</td>
+</tr>
+<tr>
+<td>交易</td>
+<td>交易详情 · 代币转移页签</td>
+<td>P1</td>
+<td>Transfer 与授权同一张表</td>
+</tr>
+<tr>
+<td>地址</td>
+<td>代币转移</td>
+<td>P1</td>
+<td>该地址作为转出或接收方的 ERC-20 Transfer；从/到双方；当前侧不跳转</td>
+</tr>
+<tr>
+<td>地址</td>
+<td>代币余额</td>
+<td>P1</td>
+<td>ERC-20 名称、符号、合约、持有数量</td>
+</tr>
+<tr>
+<td>代币</td>
+<td>代币列表</td>
+<td>P1</td>
+<td>ERC-20 列表</td>
+</tr>
+<tr>
+<td>代币</td>
+<td>代币详情</td>
+<td>P1</td>
+<td>概览、转移、持有人</td>
+</tr>
+<tr>
+<td>公共状态</td>
+<td>ERC-20 相关加载、空数据、待确认、未找到、无效参数、网络错误</td>
+<td>P1</td>
+<td>本期新增表面适用</td>
+</tr>
+</tbody>
+</table></markdown-accessiblity-table>
+<hr>
+<h2 id="4-功能详细说明">4. 功能详细说明</h2>
+<h2 id="41-导航与搜索边界">4.1 导航与搜索边界</h2>
+<p><strong>相对 V1.0.0 的变化</strong></p>
+<p>区块链导航增加「代币列表」。搜索识别规则、建议条数、无结果页沿用 V1.0.0，本期不重写。本期明确：不按代币名称或符号出建议，也不因命中代币合约而改为打开代币详情。</p>
+<h3 id="411-流程步骤">4.1.1 流程步骤</h3>
+<markdown-accessiblity-table><table role="table">
+<thead>
+<tr>
+<th>步骤</th>
+<th>用户操作</th>
+<th>系统行为</th>
+<th>可见结果</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>展开“区块链”菜单</td>
+<td>展示“交易列表”“区块列表”“代币列表”</td>
+<td>用户可进入代币列表</td>
+</tr>
+<tr>
+<td>2</td>
+<td>点击「代币列表」</td>
+<td>打开代币列表并保持 EVM</td>
+<td>见 §4.4</td>
+</tr>
+<tr>
+<td>3</td>
+<td>在全局搜索框输入代币名称或符号</td>
+<td>不按名称或符号检索代币</td>
+<td>无对应建议；提交后按 V1.0.0 无结果规则处理</td>
+</tr>
+<tr>
+<td>4</td>
+<td>提交完整 40 位地址，且该地址是代币合约</td>
+<td>打开地址详情</td>
+<td>不直达代币详情</td>
+</tr>
+</tbody>
+</table></markdown-accessiblity-table>
+<h3 id="412-字段说明">4.1.2 字段说明</h3>
+<markdown-accessiblity-table><table role="table">
+<thead>
+<tr>
+<th>界面字段</th>
+<th>业务含义</th>
+<th>数据来源</th>
+<th>展示规则</th>
+<th>空值/异常</th>
+<th>校验/交互</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>区块链导航 · 代币列表</td>
+<td>进入 ERC-20 列表的入口</td>
+<td>产品配置</td>
+<td>与交易列表、区块列表并列</td>
+<td>不允许缺失</td>
+<td>点击进入 EVM 代币列表</td>
+</tr>
+</tbody>
+</table></markdown-accessiblity-table>
+<h3 id="413-验收标准">4.1.3 验收标准</h3>
+<markdown-accessiblity-table><table role="table">
+<thead>
+<tr>
+<th>序号</th>
+<th>验收条件</th>
+<th>预期结果</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>AC-NV01</td>
+<td>用户在 BiyaChain 的 EVM 下展开区块链菜单</td>
+<td>可见交易列表、区块列表、代币列表；点击代币列表进入 §4.4</td>
+</tr>
+<tr>
+<td>AC-NV02</td>
+<td>用户输入某已索引代币的名称或符号并提交</td>
+<td>不打开代币详情；不出现按名称命中的建议</td>
+</tr>
+<tr>
+<td>AC-NV03</td>
+<td>用户提交某已索引 ERC-20 的完整合约地址</td>
+<td>打开地址详情，是否合约为是；用户可通过代币页签或代币列表再进代币详情</td>
+</tr>
+</tbody>
+</table></markdown-accessiblity-table>
+<hr>
+<h2 id="42-交易详情代币转移摘要与页签">4.2 交易详情：代币转移摘要与页签</h2>
+<p><strong>用户目标</strong></p>
+<p>用户在已能读懂普通交易的基础上，核验该笔交易里的 ERC-20 Transfer 与授权。</p>
+<p><strong>相对 V1.0.0 的变化</strong></p>
+<ul>
+<li>页签由仅「详情」变为「详情」和「代币转移」。默认打开详情。</li>
+<li>页签计数 = 该笔可查询的 Transfer 条数 + 授权条数。待确认交易计数为 0。</li>
+<li>详情表在参与方之后、原生币转账数量之前插入摘要。</li>
+<li>交易主体加载中或网络错误时，页签仍可见。格式无效或未找到时无页签。</li>
+<li>基础信息、参与方、资产与费用、其他字段沿用 V1.0.0，本文不重写。</li>
+</ul>
+<p>标题仍只有「交易详情」。状态、方法继续在详情表中各占一行，沿用 V1.0.0。</p>
+<h3 id="421-流程步骤">4.2.1 流程步骤</h3>
+<markdown-accessiblity-table><table role="table">
+<thead>
+<tr>
+<th>步骤</th>
+<th>用户操作</th>
+<th>系统行为</th>
+<th>可见结果</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>打开交易详情</td>
+<td>查询交易；已上链时查询 Transfer 与授权</td>
+<td>加载中页签可见</td>
+</tr>
+<tr>
+<td>2</td>
+<td>数据返回</td>
+<td>按规则插入摘要</td>
+<td>有事件则在参与方与原生币之间看到摘要</td>
+</tr>
+<tr>
+<td>3</td>
+<td>点击摘要中的地址</td>
+<td>打开地址详情</td>
+<td>可查看该地址代币页签</td>
+</tr>
+<tr>
+<td>4</td>
+<td>点击摘要中的代币符号或页签中的代币名称</td>
+<td>打开代币详情</td>
+<td>进入该 ERC-20</td>
+</tr>
+<tr>
+<td>5</td>
+<td>打开「代币转移」页签</td>
+<td>列出该笔 Transfer 与授权</td>
+<td>与摘要口径一致</td>
+</tr>
+<tr>
+<td>6</td>
+<td>摘要超出 10 条时点击「查看全部」</td>
+<td>进入代币转移页签</td>
+<td>可分页查看全部</td>
+</tr>
+</tbody>
+</table></markdown-accessiblity-table>
+<h3 id="422-代币转移摘要">4.2.2 代币转移摘要</h3>
+<p>位置：插在参与方之后、原生币转账数量之前。Transfer 组标签为「代币转移」，授权组标签为「授权」。有 Transfer 才出现「代币转移」行；有授权才出现「授权」行；授权紧跟代币转移。待确认交易两组都不出现。见 BR-T11-01、BR-T11-02。</p>
+<p>单条摘要文案：<code class="notranslate">转出地址 → 转入地址 for 数量 [代币图标] 符号</code>。有代币报价时附美元；无行情时隐藏美元。无限授权为 <code class="notranslate">for 无限 [图标] 符号</code>，不附美元。BR-T11-03、BR-T11-04。</p>
+<markdown-accessiblity-table><table role="table">
+<thead>
+<tr>
+<th>界面字段</th>
+<th>业务含义</th>
+<th>数据来源</th>
+<th>展示规则</th>
+<th>空值/异常</th>
+<th>校验/交互</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>代币转移</td>
+<td>该笔已解析的 ERC-20 Transfer</td>
+<td>交易收据中的 <code class="notranslate">Transfer</code> 事件</td>
+<td>每条一行摘要。详情内嵌最多 10 条；超出时在组内给出「查看全部」，进入代币转移页签</td>
+<td>无 Transfer 时整行不出现，不占空行</td>
+<td>地址可进地址详情；代币图标与符号可进代币详情。发送方/接收方不加 identicon</td>
+</tr>
+<tr>
+<td>授权</td>
+<td>该笔已解析的 ERC-20 Approval</td>
+<td>交易收据中的 <code class="notranslate">Approval</code> 事件</td>
+<td>每条一行摘要；转出侧为授权方，转入侧为被授权方。有限额展示人类可读额度；无限展示「无限」。内嵌最多 10 条，超出同样「查看全部」</td>
+<td>无授权时整行不出现</td>
+<td>同代币转移</td>
+</tr>
+</tbody>
+</table></markdown-accessiblity-table>
+<p>代币图标：有公开图标则展示圆形图标；无图标时用符号首字母色标。BR-T11-05。</p>
+<p>铸造或销毁若以 <code class="notranslate">Transfer</code> 事件出现，按 Transfer 展示，不另开分组。</p>
+<h3 id="423-代币转移页签">4.2.3 代币转移页签</h3>
+<p>Transfer 与授权共用一张表，不拆第二张授权表。列顺序固定如下。待确认交易不查询、不列出转移，页签内容为待确认提示「该交易待确认」。已上链且无事件时表格提示「该交易暂无 ERC-20 转移」。见 BR-T11-02、BR-T11-06、BR-T11-10。</p>
+<markdown-accessiblity-table><table role="table">
+<thead>
+<tr>
+<th>界面字段</th>
+<th>业务含义</th>
+<th>数据来源</th>
+<th>展示规则</th>
+<th>空值/异常</th>
+<th>校验/交互</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>代币</td>
+<td>名称、符号、合约、类型、事件种类</td>
+<td>代币元数据与事件</td>
+<td>圆形图标 + 名称(符号)；下列合约地址；徽章 <code class="notranslate">ERC-20</code> 与 <code class="notranslate">Transfer</code> 或 <code class="notranslate">授权</code></td>
+<td>元数据缺失时符号用 <code class="notranslate">--</code>，合约地址仍展示</td>
+<td>名称进代币详情；合约地址进地址详情（是否合约=是）；可复制合约地址</td>
+</tr>
+<tr>
+<td>从 / 到</td>
+<td>Transfer 为转出/转入；授权为授权方/被授权方</td>
+<td>事件</td>
+<td>上从下到</td>
+<td>不允许为空</td>
+<td>点击进地址详情；可复制</td>
+</tr>
+<tr>
+<td>数量</td>
+<td>Transfer 数量或授权额度</td>
+<td>事件整数 ÷ 10^精度</td>
+<td>人类可读数量 + 符号；有报价时下行附美元</td>
+<td>0 显示 <code class="notranslate">0</code> + 符号；无限授权本格为「无限」，不附美元；无行情时不附美元</td>
+<td>只读</td>
+</tr>
+<tr>
+<td>方法</td>
+<td>触发该事件的交易方法</td>
+<td>交易数据</td>
+<td>函数名或选择器</td>
+<td>无方法显示 <code class="notranslate">--</code></td>
+<td>只读</td>
+</tr>
+<tr>
+<td>区块</td>
+<td>事件所在高度</td>
+<td>交易数据</td>
+<td>完整高度</td>
+<td>待确认本页签不出表</td>
+<td>点击进区块详情</td>
+</tr>
+</tbody>
+</table></markdown-accessiblity-table>
+<p>页签自身加载中：保留页签，表格区骨架。页签自身失败：「代币转移加载失败，请重试」。交易主体失败见 §4.2.4。</p>
+<h3 id="424-页面状态矩阵">4.2.4 页面状态矩阵</h3>
+<markdown-accessiblity-table><table role="table">
+<thead>
+<tr>
+<th>场景</th>
+<th>触发条件</th>
+<th>页面展示</th>
+<th>用户可操作</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>加载中</td>
+<td>有效格式哈希首次打开</td>
+<td>页签可见，「详情」选中；详情区字段骨架</td>
+<td>返回、切换页签</td>
+</tr>
+<tr>
+<td>成功无转移</td>
+<td>已上链成功且无 Transfer、无授权</td>
+<td>参与方之后直接原生币转账数量；页签表空</td>
+<td>跳转、复制、切换页签</td>
+</tr>
+<tr>
+<td>单笔 Transfer</td>
+<td>恰好 1 条 Transfer</td>
+<td>参与方后出现「代币转移」一条摘要</td>
+<td>进地址、进代币</td>
+</tr>
+<tr>
+<td>多笔 Transfer</td>
+<td>多于 1 条 Transfer</td>
+<td>「代币转移」多条摘要；超过 10 条给出查看全部</td>
+<td>进页签查看全部</td>
+</tr>
+<tr>
+<td>有限额授权</td>
+<td>仅有限额 Approval</td>
+<td>「授权」摘要为 <code class="notranslate">for 数量 符号</code></td>
+<td>进地址、进代币</td>
+</tr>
+<tr>
+<td>无限授权</td>
+<td>额度视为最大整数</td>
+<td>「授权」摘要为 <code class="notranslate">for 无限 符号</code>，无美元</td>
+<td>只读额度</td>
+</tr>
+<tr>
+<td>转移 + 授权</td>
+<td>同时有 Transfer 与 Approval</td>
+<td>先「代币转移」后「授权」，再原生币</td>
+<td>两组均可点</td>
+</tr>
+<tr>
+<td>待确认无转移</td>
+<td>已广播未入块</td>
+<td>详情无摘要、无待确认条；页签提示「该交易待确认」</td>
+<td>复制、稍后刷新</td>
+</tr>
+<tr>
+<td>失败无事件</td>
+<td>已上链失败且无 Transfer、无授权</td>
+<td>详情无摘要；页签「该交易暂无 ERC-20 转移」</td>
+<td>跳转、复制</td>
+</tr>
+<tr>
+<td>失败有事件</td>
+<td>已上链失败但仍解析到 Transfer 或授权</td>
+<td>按有事件规则展示摘要与页签</td>
+<td>核验事件</td>
+</tr>
+<tr>
+<td>查无结果</td>
+<td>格式有效但无交易</td>
+<td>“未找到该交易”，无页签</td>
+<td>返回列表、重新搜索</td>
+</tr>
+<tr>
+<td>参数无效</td>
+<td>不是合法交易哈希</td>
+<td>“交易哈希格式无效”，无页签</td>
+<td>修改搜索、返回</td>
+</tr>
+<tr>
+<td>网络错误</td>
+<td>交易主体查询失败</td>
+<td>页签可见；详情区“交易详情加载失败，请重试”</td>
+<td>重试</td>
+</tr>
+<tr>
+<td>代币转移页签加载中</td>
+<td>交易已返回、页签数据未返回</td>
+<td>「代币转移」选中，表格骨架</td>
+<td>切回详情</td>
+</tr>
+<tr>
+<td>代币转移页签网络错误</td>
+<td>页签查询失败</td>
+<td>「代币转移加载失败，请重试」</td>
+<td>重试</td>
+</tr>
+</tbody>
+</table></markdown-accessiblity-table>
+<p>不得为未知哈希生成模拟详情。不得把待确认写成「暂无 ERC-20 转移」。</p>
+<h3 id="425-验收标准">4.2.5 验收标准</h3>
+<markdown-accessiblity-table><table role="table">
+<thead>
+<tr>
+<th>序号</th>
+<th>验收条件</th>
+<th>预期结果</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>AC-TT01</td>
+<td>用户打开含 1 笔 USDT Transfer 的成功交易</td>
+<td>参与方之后、原生币之前出现「代币转移」；文案含 <code class="notranslate">for</code>、数量、USDT 图标与符号</td>
+</tr>
+<tr>
+<td>AC-TT02</td>
+<td>用户打开含多笔 Transfer 的交易</td>
+<td>「代币转移」多条摘要，条数与页签 Transfer 行数一致</td>
+</tr>
+<tr>
+<td>AC-TT03</td>
+<td>用户打开有限额授权交易</td>
+<td>无「代币转移」行；「授权」为有限额数量；页签该行徽章为「授权」</td>
+</tr>
+<tr>
+<td>AC-TT04</td>
+<td>用户打开无限授权交易</td>
+<td>摘要与页签数量均为「无限」，无美元</td>
+</tr>
+<tr>
+<td>AC-TT05</td>
+<td>用户打开同时含 Transfer 与授权的交易</td>
+<td>先转移后授权，再原生币；页签同一张表两行</td>
+</tr>
+<tr>
+<td>AC-TT06</td>
+<td>用户打开待确认交易的代币转移页签</td>
+<td>提示「该交易待确认」，不出空表「暂无 ERC-20 转移」</td>
+</tr>
+<tr>
+<td>AC-TT07</td>
+<td>用户打开失败且无事件的交易页签</td>
+<td>「该交易暂无 ERC-20 转移」</td>
+</tr>
+<tr>
+<td>AC-TT08</td>
+<td>交易主体加载中</td>
+<td>页签可见，详情为骨架</td>
+</tr>
+<tr>
+<td>AC-TT09</td>
+<td>交易主体网络错误</td>
+<td>页签可见，文案为「交易详情加载失败，请重试」</td>
+</tr>
+<tr>
+<td>AC-TT10</td>
+<td>用户打开 Transfer 超过 10 条的已确认交易</td>
+<td>详情摘要最多 10 条，组内出现「查看全部」；代币转移页签可分页查看全部</td>
+</tr>
+<tr>
+<td>AC-TT11</td>
+<td>无 ERC-20 事件的正常详情</td>
+<td>不出现「代币转移」「授权」行；不出现内部交易、日志、状态、原始 JSON</td>
+</tr>
+</tbody>
+</table></markdown-accessiblity-table>
+<hr>
+<h2 id="43-地址详情代币转移与代币余额">4.3 地址详情：代币转移与代币余额</h2>
+<p><strong>用户目标</strong></p>
+<p>用户查看某一地址作为转出或接收方的 ERC-20 Transfer，以及当前持有的 ERC-20 余额。</p>
+<p><strong>相对 V1.0.0 的变化</strong></p>
+<ul>
+<li>页签由仅「交易」变为「交易」「代币转移」「代币」。默认仍打开交易。</li>
+<li>代币转移计数 = 该地址作为转出或接收方的 ERC-20 Transfer 条数，不含授权。</li>
+<li>代币计数 = 持有余额大于 0 的 ERC-20 种数。</li>
+<li>头部信息表与相关交易沿用 V1.0.0，本文不重写。</li>
+</ul>
+<p>授权不出现在地址代币转移页签。BR-T11-07。</p>
+<h3 id="431-流程步骤">4.3.1 流程步骤</h3>
+<markdown-accessiblity-table><table role="table">
+<thead>
+<tr>
+<th>步骤</th>
+<th>用户操作</th>
+<th>系统行为</th>
+<th>可见结果</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>打开地址详情</td>
+<td>查询地址；可切到代币页签</td>
+<td>默认交易页签，计数可见</td>
+</tr>
+<tr>
+<td>2</td>
+<td>打开代币转移</td>
+<td>列出该地址相关 ERC-20 Transfer</td>
+<td>从/到含当前地址；当前侧不可跳转</td>
+</tr>
+<tr>
+<td>3</td>
+<td>打开代币</td>
+<td>列出 ERC-20 余额</td>
+<td>可进代币详情</td>
+</tr>
+<tr>
+<td>4</td>
+<td>点击转移行中的交易哈希</td>
+<td>打开交易详情</td>
+<td>可在该笔交易中核验同一 Transfer</td>
+</tr>
+<tr>
+<td>5</td>
+<td>翻页</td>
+<td>加载对应页</td>
+<td>页码更新</td>
+</tr>
+</tbody>
+</table></markdown-accessiblity-table>
+<h3 id="432-代币转移">4.3.2 代币转移</h3>
+<p>列出该地址作为转出或接收方的 ERC-20 Transfer。不含授权。默认从新到旧，每页 20 条。版本表写「对方地址」；界面按已确认原型展示从/到双方，当前页地址一侧为纯文本。见 Q-V11-01。</p>
+<markdown-accessiblity-table><table role="table">
+<thead>
+<tr>
+<th>界面字段</th>
+<th>业务含义</th>
+<th>数据来源</th>
+<th>展示规则</th>
+<th>空值/异常</th>
+<th>校验/交互</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>代币</td>
+<td>名称、符号、类型</td>
+<td>代币元数据</td>
+<td>图标 + 名称(符号)；本表隐藏合约地址行</td>
+<td>元数据缺失时名称 <code class="notranslate">--</code></td>
+<td>名称进代币详情</td>
+</tr>
+<tr>
+<td>交易</td>
+<td>所属交易与时间</td>
+<td>事件、交易数据</td>
+<td>上行截断哈希，下行相对时间与区块高度</td>
+<td>不允许为空</td>
+<td>哈希进交易详情；区块进区块详情；可复制哈希</td>
+</tr>
+<tr>
+<td>方法</td>
+<td>触发方法</td>
+<td>交易数据</td>
+<td>函数名或选择器</td>
+<td><code class="notranslate">--</code></td>
+<td>只读</td>
+</tr>
+<tr>
+<td>从 / 到</td>
+<td>转出在上、转入在下</td>
+<td>事件</td>
+<td>两侧截断</td>
+<td>不允许为空</td>
+<td>当前页地址一侧纯文本可复制、不可跳转；另一侧进地址详情</td>
+</tr>
+<tr>
+<td>数量</td>
+<td>Transfer 数量</td>
+<td>事件整数 ÷ 10^精度</td>
+<td>数量 + 符号</td>
+<td>0 显示 <code class="notranslate">0</code> + 符号；本表不附美元</td>
+<td>只读</td>
+</tr>
+</tbody>
+</table></markdown-accessiblity-table>
+<p>无记录时：「该地址暂无 ERC-20 转移」。</p>
+<h3 id="433-代币余额">4.3.3 代币余额</h3>
+<p>列出该地址持有数量大于 0 的 ERC-20。无记录时：「该地址暂无 ERC-20 余额」。</p>
+<markdown-accessiblity-table><table role="table">
+<thead>
+<tr>
+<th>界面字段</th>
+<th>业务含义</th>
+<th>数据来源</th>
+<th>展示规则</th>
+<th>空值/异常</th>
+<th>校验/交互</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>代币</td>
+<td>名称、符号、类型</td>
+<td>代币元数据</td>
+<td>图标 + 名称(符号)</td>
+<td>不允许为空</td>
+<td>名称进代币详情</td>
+</tr>
+<tr>
+<td>合约地址</td>
+<td>代币合约</td>
+<td>代币元数据</td>
+<td>列表截断</td>
+<td>不允许为空</td>
+<td>进该地址详情（是否合约=是）；可复制</td>
+</tr>
+<tr>
+<td>持有数量</td>
+<td>当前余额</td>
+<td>地址代币余额</td>
+<td>数量 + 符号</td>
+<td>0 的代币不出现在本表</td>
+<td>只读</td>
+</tr>
+<tr>
+<td>美元估值</td>
+<td>持有数量 × 代币价格</td>
+<td>代币行情</td>
+<td>有行情时展示美元</td>
+<td>无行情显示 <code class="notranslate">--</code>，不阻断持有数量</td>
+<td>只读</td>
+</tr>
+</tbody>
+</table></markdown-accessiblity-table>
+<h3 id="434-页面状态矩阵">4.3.4 页面状态矩阵</h3>
+<markdown-accessiblity-table><table role="table">
+<thead>
+<tr>
+<th>场景</th>
+<th>触发条件</th>
+<th>页面展示</th>
+<th>用户可操作</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>有 ERC-20 转移</td>
+<td>该地址出现在 Transfer 的从或到</td>
+<td>代币转移表有行</td>
+<td>进交易、进代币</td>
+</tr>
+<tr>
+<td>无 ERC-20 转移</td>
+<td>无相关 Transfer</td>
+<td>“该地址暂无 ERC-20 转移”</td>
+<td>返回</td>
+</tr>
+<tr>
+<td>有余额</td>
+<td>至少一种 ERC-20 余额大于 0</td>
+<td>代币表有行</td>
+<td>进代币详情</td>
+</tr>
+<tr>
+<td>无余额</td>
+<td>无大于 0 的 ERC-20</td>
+<td>“该地址暂无 ERC-20 余额”</td>
+<td>返回</td>
+</tr>
+<tr>
+<td>代币转移加载中</td>
+<td>打开代币转移且数据未返回</td>
+<td>表格骨架</td>
+<td>切回交易</td>
+</tr>
+<tr>
+<td>代币转移网络错误</td>
+<td>页签查询失败</td>
+<td>“代币转移加载失败，请重试”</td>
+<td>重试</td>
+</tr>
+<tr>
+<td>代币余额加载中</td>
+<td>打开代币且数据未返回</td>
+<td>表格骨架</td>
+<td>切回交易</td>
+</tr>
+<tr>
+<td>代币余额网络错误</td>
+<td>页签查询失败</td>
+<td>“代币余额加载失败，请重试”</td>
+<td>重试</td>
+</tr>
+</tbody>
+</table></markdown-accessiblity-table>
+<p>地址主体的加载、格式无效、网络错误沿用 V1.0.0。任意合法地址均可打开代币页签，不得因为尚无 ERC-20 记录而改写成另一个示例地址。</p>
+<h3 id="435-验收标准">4.3.5 验收标准</h3>
+<markdown-accessiblity-table><table role="table">
+<thead>
+<tr>
+<th>序号</th>
+<th>验收条件</th>
+<th>预期结果</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>AC-AT01</td>
+<td>用户打开有 ERC-20 转移的地址的代币转移页签</td>
+<td>表含代币、交易、方法、从/到、数量；当前地址一侧不可跳转</td>
+</tr>
+<tr>
+<td>AC-AT02</td>
+<td>用户打开无 ERC-20 转移的合法地址</td>
+<td>“该地址暂无 ERC-20 转移”</td>
+</tr>
+<tr>
+<td>AC-AT03</td>
+<td>用户打开有余额的地址的代币页签</td>
+<td>可见代币、合约、持有数量；无行情时美元为 <code class="notranslate">--</code></td>
+</tr>
+<tr>
+<td>AC-AT04</td>
+<td>地址代币转移页签出现授权行</td>
+<td>失败：本页签不含授权</td>
+</tr>
+</tbody>
+</table></markdown-accessiblity-table>
+<hr>
+<h2 id="44-代币列表">4.4 代币列表</h2>
+<p><strong>用户目标</strong></p>
+<p>用户浏览 Biya EVM 上已索引的 ERC-20，比较精度、价格、市值、持有人和转移次数，并进入代币详情。</p>
+<h3 id="441-流程步骤">4.4.1 流程步骤</h3>
+<markdown-accessiblity-table><table role="table">
+<thead>
+<tr>
+<th>步骤</th>
+<th>用户操作</th>
+<th>系统行为</th>
+<th>可见结果</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>从导航打开代币列表</td>
+<td>加载 ERC-20 列表</td>
+<td>第 1 页</td>
+</tr>
+<tr>
+<td>2</td>
+<td>点击代币名称</td>
+<td>打开代币详情</td>
+<td>进入概览</td>
+</tr>
+<tr>
+<td>3</td>
+<td>点击持有人数</td>
+<td>打开该代币持有人页签</td>
+<td>进入持有人</td>
+</tr>
+<tr>
+<td>4</td>
+<td>点击转移次数</td>
+<td>打开该代币转移页签</td>
+<td>进入转移</td>
+</tr>
+<tr>
+<td>5</td>
+<td>翻页</td>
+<td>加载对应页</td>
+<td>页码更新</td>
+</tr>
+</tbody>
+</table></markdown-accessiblity-table>
+<p>本期不做列头排序、页面内名称筛选。默认顺序：有流通市值的在前且市值从高到低；无市值的排后，同类按转移次数从高到低。该顺序为对齐行业 EVM 浏览器列表默认的推断，见 Q-V11-02。</p>
+<h3 id="442-展示字段">4.4.2 展示字段</h3>
+<markdown-accessiblity-table><table role="table">
+<thead>
+<tr>
+<th>界面字段</th>
+<th>业务含义</th>
+<th>数据来源</th>
+<th>展示规则</th>
+<th>空值/异常</th>
+<th>校验/交互</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>#</td>
+<td>当前页行号</td>
+<td>列表位置</td>
+<td>当前页从 1 计到本页条数，不跨页累计</td>
+<td>不允许为空</td>
+<td>只读</td>
+</tr>
+<tr>
+<td>代币</td>
+<td>名称、符号、合约、类型</td>
+<td>代币元数据</td>
+<td>图标 + 名称(符号)；下列合约；徽章 <code class="notranslate">ERC-20</code></td>
+<td>不允许为空</td>
+<td>名称进代币详情；合约进地址详情；可复制合约</td>
+</tr>
+<tr>
+<td>精度</td>
+<td>小数位数</td>
+<td>代币合约</td>
+<td>非负整数</td>
+<td>不可用显示 <code class="notranslate">--</code></td>
+<td>只读</td>
+</tr>
+<tr>
+<td>价格</td>
+<td>对美元报价</td>
+<td>代币行情</td>
+<td>美元金额</td>
+<td>无行情显示 <code class="notranslate">--</code></td>
+<td>只读</td>
+</tr>
+<tr>
+<td>流通市值</td>
+<td>价格 × 流通供应量</td>
+<td>行情与供应量</td>
+<td>美元金额</td>
+<td>无价格或无流通供应显示 <code class="notranslate">--</code></td>
+<td>只读</td>
+</tr>
+<tr>
+<td>持有人数</td>
+<td>余额大于 0 的地址数</td>
+<td>代币计数</td>
+<td>非负整数</td>
+<td>0 显示 0</td>
+<td>点击进该代币持有人页签</td>
+</tr>
+<tr>
+<td>转移次数</td>
+<td>已索引 Transfer 次数</td>
+<td>代币计数</td>
+<td>非负整数</td>
+<td>0 显示 0</td>
+<td>点击进该代币转移页签</td>
+</tr>
+</tbody>
+</table></markdown-accessiblity-table>
+<h3 id="443-页面状态矩阵">4.4.3 页面状态矩阵</h3>
+<markdown-accessiblity-table><table role="table">
+<thead>
+<tr>
+<th>场景</th>
+<th>触发条件</th>
+<th>页面展示</th>
+<th>用户可操作</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>加载中</td>
+<td>首次打开或翻页</td>
+<td>表格骨架</td>
+<td>返回</td>
+</tr>
+<tr>
+<td>正常</td>
+<td>有 ERC-20</td>
+<td>每页 20 条</td>
+<td>进详情、翻页</td>
+</tr>
+<tr>
+<td>暂无数据</td>
+<td>尚无 ERC-20</td>
+<td>“暂无 ERC-20 代币”</td>
+<td>返回、重试</td>
+</tr>
+<tr>
+<td>网络错误</td>
+<td>查询失败</td>
+<td>“代币列表加载失败，请重试”</td>
+<td>重试</td>
+</tr>
+</tbody>
+</table></markdown-accessiblity-table>
+<h3 id="444-验收标准">4.4.4 验收标准</h3>
+<markdown-accessiblity-table><table role="table">
+<thead>
+<tr>
+<th>序号</th>
+<th>验收条件</th>
+<th>预期结果</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>AC-TK01</td>
+<td>用户打开有数据的代币列表</td>
+<td>7 列：#、代币、精度、价格、流通市值、持有人数、转移次数</td>
+</tr>
+<tr>
+<td>AC-TK02</td>
+<td>用户点击名称</td>
+<td>打开对应代币详情</td>
+</tr>
+<tr>
+<td>AC-TK03</td>
+<td>无行情</td>
+<td>价格与流通市值为 <code class="notranslate">--</code>，列表其余列正常</td>
+</tr>
+<tr>
+<td>AC-TK04</td>
+<td>尚无代币</td>
+<td>“暂无 ERC-20 代币”</td>
+</tr>
+</tbody>
+</table></markdown-accessiblity-table>
+<hr>
+<h2 id="45-代币详情">4.5 代币详情</h2>
+<p><strong>用户目标</strong></p>
+<p>用户核验某一 ERC-20 的合约、精度、供应、持有人和转移记录。</p>
+<p>页签为「详情」「代币转移」「持有人」。默认打开详情。转移计数、持有人计数分别等于对应列表可查询总数。本期不提供代币页内的源码、字节码或读取合约。</p>
+<h3 id="451-流程步骤">4.5.1 流程步骤</h3>
+<markdown-accessiblity-table><table role="table">
+<thead>
+<tr>
+<th>步骤</th>
+<th>用户操作</th>
+<th>系统行为</th>
+<th>可见结果</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>从列表或名称打开</td>
+<td>查询代币</td>
+<td>标题为名称 (符号)，类型徽章 ERC-20</td>
+</tr>
+<tr>
+<td>2</td>
+<td>点击合约地址</td>
+<td>打开地址详情</td>
+<td>是否合约为是</td>
+</tr>
+<tr>
+<td>3</td>
+<td>点击持有人数或持有人页签</td>
+<td>列出持有地址</td>
+<td>可进地址</td>
+</tr>
+<tr>
+<td>4</td>
+<td>点击转移次数或代币转移页签</td>
+<td>列出 Transfer</td>
+<td>可进交易</td>
+</tr>
+<tr>
+<td>5</td>
+<td>翻页</td>
+<td>加载对应页</td>
+<td>页码更新</td>
+</tr>
+</tbody>
+</table></markdown-accessiblity-table>
+<h3 id="452-概览字段">4.5.2 概览字段</h3>
+<markdown-accessiblity-table><table role="table">
+<thead>
+<tr>
+<th>界面字段</th>
+<th>业务含义</th>
+<th>数据来源</th>
+<th>展示规则</th>
+<th>空值/异常</th>
+<th>校验/交互</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>名称</td>
+<td>代币全称</td>
+<td>代币元数据</td>
+<td>原文</td>
+<td>不允许为空</td>
+<td>只读；标题同步</td>
+</tr>
+<tr>
+<td>符号</td>
+<td>代币符号</td>
+<td>代币元数据</td>
+<td>原文</td>
+<td>不允许为空</td>
+<td>只读；标题同步</td>
+</tr>
+<tr>
+<td>合约地址</td>
+<td>代币合约</td>
+<td>代币元数据</td>
+<td>完整地址</td>
+<td>不允许为空</td>
+<td>进地址详情；可复制</td>
+</tr>
+<tr>
+<td>类型</td>
+<td>代币标准</td>
+<td>代币元数据</td>
+<td><code class="notranslate">ERC-20</code></td>
+<td>不允许为空</td>
+<td>只读</td>
+</tr>
+<tr>
+<td>精度</td>
+<td>小数位数</td>
+<td>代币合约</td>
+<td>非负整数</td>
+<td><code class="notranslate">--</code></td>
+<td>只读</td>
+</tr>
+<tr>
+<td>价格</td>
+<td>对美元报价</td>
+<td>代币行情</td>
+<td>美元金额</td>
+<td>无行情显示 <code class="notranslate">--</code></td>
+<td>只读</td>
+</tr>
+<tr>
+<td>流通供应量</td>
+<td>流通中的代币数量</td>
+<td>代币数据</td>
+<td>数量 + 符号</td>
+<td>不可用显示 <code class="notranslate">--</code></td>
+<td>只读</td>
+</tr>
+<tr>
+<td>总供应量</td>
+<td>已发行总量</td>
+<td>代币数据</td>
+<td>数量 + 符号</td>
+<td>不可用显示 <code class="notranslate">--</code></td>
+<td>只读</td>
+</tr>
+<tr>
+<td>持有人数</td>
+<td>余额大于 0 的地址数</td>
+<td>代币计数</td>
+<td>非负整数</td>
+<td>0 显示 0</td>
+<td>进入持有人页签</td>
+</tr>
+<tr>
+<td>转移次数</td>
+<td>已索引 Transfer 次数</td>
+<td>代币计数</td>
+<td>非负整数</td>
+<td>0 显示 0</td>
+<td>进入代币转移页签</td>
+</tr>
+</tbody>
+</table></markdown-accessiblity-table>
+<h3 id="453-代币转移">4.5.3 代币转移</h3>
+<p>仅 Transfer，不含授权。每页 20 条，从新到旧。</p>
+<markdown-accessiblity-table><table role="table">
+<thead>
+<tr>
+<th>界面字段</th>
+<th>业务含义</th>
+<th>数据来源</th>
+<th>展示规则</th>
+<th>空值/异常</th>
+<th>校验/交互</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>交易</td>
+<td>所属交易与时间</td>
+<td>事件、交易数据</td>
+<td>上行截断哈希，下行相对时间与区块</td>
+<td>不允许为空</td>
+<td>哈希进交易详情；区块进区块详情</td>
+</tr>
+<tr>
+<td>方法</td>
+<td>触发方法</td>
+<td>交易数据</td>
+<td>函数名或选择器</td>
+<td><code class="notranslate">--</code></td>
+<td>只读</td>
+</tr>
+<tr>
+<td>从 / 到</td>
+<td>转出、转入</td>
+<td>事件</td>
+<td>上从下到</td>
+<td>不允许为空</td>
+<td>进地址详情；可复制</td>
+</tr>
+<tr>
+<td>数量</td>
+<td>Transfer 数量</td>
+<td>事件整数 ÷ 10^精度</td>
+<td>数量 + 符号；有行情时附美元</td>
+<td>无行情不附美元</td>
+<td>只读</td>
+</tr>
+</tbody>
+</table></markdown-accessiblity-table>
+<p>无记录：「该代币暂无转移」。</p>
+<h3 id="454-持有人">4.5.4 持有人</h3>
+<p>按持有数量从高到低。每页 20 条。占比分母为总供应量。BR-T11-08。</p>
+<markdown-accessiblity-table><table role="table">
+<thead>
+<tr>
+<th>界面字段</th>
+<th>业务含义</th>
+<th>数据来源</th>
+<th>展示规则</th>
+<th>空值/异常</th>
+<th>校验/交互</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>持有地址</td>
+<td>持有该代币的地址</td>
+<td>代币余额</td>
+<td>列表截断</td>
+<td>不允许为空</td>
+<td>进地址详情；可复制</td>
+</tr>
+<tr>
+<td>持有数量</td>
+<td>该地址余额</td>
+<td>代币余额</td>
+<td>数量 + 符号</td>
+<td>0 不出现</td>
+<td>只读</td>
+</tr>
+<tr>
+<td>占供应量比例</td>
+<td>持有数量 / 总供应量</td>
+<td>计算</td>
+<td>百分数，两位小数；小于 0.01% 显示 <code class="notranslate">&lt;0.01%</code></td>
+<td>总供应量为 0 或不可用时显示 <code class="notranslate">--</code></td>
+<td>只读</td>
+</tr>
+</tbody>
+</table></markdown-accessiblity-table>
+<p>无记录：「该代币暂无持有人」。</p>
+<h3 id="455-页面状态矩阵">4.5.5 页面状态矩阵</h3>
+<markdown-accessiblity-table><table role="table">
+<thead>
+<tr>
+<th>场景</th>
+<th>触发条件</th>
+<th>页面展示</th>
+<th>用户可操作</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>加载中</td>
+<td>格式有效的代币合约首次打开</td>
+<td>详情骨架</td>
+<td>返回列表</td>
+</tr>
+<tr>
+<td>正常</td>
+<td>找到 ERC-20</td>
+<td>概览 + 页签</td>
+<td>切页签、跳转</td>
+</tr>
+<tr>
+<td>无价格</td>
+<td>无代币行情</td>
+<td>价格 <code class="notranslate">--</code>；流通市值在列表为 <code class="notranslate">--</code></td>
+<td>仍可看供应与转移</td>
+</tr>
+<tr>
+<td>无转移</td>
+<td>尚无 Transfer</td>
+<td>“该代币暂无转移”</td>
+<td>看概览、持有人</td>
+</tr>
+<tr>
+<td>无持有人</td>
+<td>无余额大于 0 的地址</td>
+<td>“该代币暂无持有人”</td>
+<td>看概览</td>
+</tr>
+<tr>
+<td>未找到</td>
+<td>格式有效但不是已索引 ERC-20</td>
+<td>“未找到该代币”</td>
+<td>返回列表</td>
+</tr>
+<tr>
+<td>地址格式无效</td>
+<td>不是合法地址</td>
+<td>“代币地址格式无效”</td>
+<td>修改搜索</td>
+</tr>
+<tr>
+<td>网络错误</td>
+<td>查询失败</td>
+<td>“代币详情加载失败，请重试”</td>
+<td>重试或返回列表</td>
+</tr>
+</tbody>
+</table></markdown-accessiblity-table>
+<h3 id="456-验收标准">4.5.6 验收标准</h3>
+<markdown-accessiblity-table><table role="table">
+<thead>
+<tr>
+<th>序号</th>
+<th>验收条件</th>
+<th>预期结果</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>AC-TDK01</td>
+<td>用户打开有价格的 ERC-20</td>
+<td>可见名称、符号、合约、类型、精度、价格、流通供应、总供应、持有人数、转移次数</td>
+</tr>
+<tr>
+<td>AC-TDK02</td>
+<td>用户打开无价格代币</td>
+<td>价格为 <code class="notranslate">--</code>，数量类字段仍在</td>
+</tr>
+<tr>
+<td>AC-TDK03</td>
+<td>用户点击合约地址</td>
+<td>打开地址详情，是否合约为是</td>
+</tr>
+<tr>
+<td>AC-TDK04</td>
+<td>用户打开未索引的合法地址作为代币</td>
+<td>“未找到该代币”</td>
+</tr>
+<tr>
+<td>AC-TDK05</td>
+<td>用户打开格式无效的代币地址</td>
+<td>“代币地址格式无效”</td>
+</tr>
+<tr>
+<td>AC-TDK06</td>
+<td>持有人占比</td>
+<td>等于持有数量 / 总供应量；总供应不可用时为 <code class="notranslate">--</code></td>
+</tr>
+</tbody>
+</table></markdown-accessiblity-table>
+<hr>
+<h2 id="5-横切业务规则与异常处理">5. 横切业务规则与异常处理</h2>
+<p>原生币费用、交易三态、接收方三种形态、时区 UTC+8、复制成功反馈 1.5 秒、列表截断与复制完整值，沿用 V1.0.0。本节只定义本期 ERC-20 增量。</p>
+<h2 id="51-数据真实性与一致性">5.1 数据真实性与一致性</h2>
+<ol>
+<li>所有生产 ERC-20 数值均以 Biya EVM 已确认链上数据为事实来源，由公共浏览器展示对应索引结果。</li>
+<li>原型中的固定总量、哈希、地址、代币报价和演示场景不得作为生产默认数据。</li>
+<li>同一笔 Transfer 在交易详情摘要、交易代币转移页签、地址代币转移、代币详情转移中的代币、从/到、人类可读数量、所属交易和区块必须一致。</li>
+<li>授权只出现在交易详情摘要与交易代币转移页签，不出现在地址代币转移和代币详情转移。</li>
+<li>代币详情「转移次数」等于该代币可查询 Transfer 总数；「持有人数」等于余额大于 0 的地址数。地址「代币转移」计数不含授权。交易「代币转移」页签计数 = 该笔 Transfer 条数 + 该笔授权条数。</li>
+</ol>
+<h2 id="52-代币数量无限授权与美元">5.2 代币数量、无限授权与美元</h2>
+<ul>
+<li>人类可读数量 = 事件中的整数 ÷ 10^精度。精度不可用时数量显示 <code class="notranslate">--</code>，不得按 18 位或其他默认精度换算。BR-T11-03。</li>
+<li>金额展示不得改变链上最小单位换算结果；小数末尾零可按展示规则去掉。</li>
+<li>本期暂无代币行情来源：摘要与转移数量上的附注美元整段不展示，保留代币数量；独立字段「价格」「流通市值」「美元估值」显示 <code class="notranslate">--</code>。无限授权永不附美元。不得把美元写成 <code class="notranslate">0</code>。BR-T11-04。</li>
+<li>原生币附注美元沿用 V1.0.0，本文不重定义。</li>
+</ul>
+<p><strong>数量与占比算例</strong></p>
+<markdown-accessiblity-table><table role="table">
+<thead>
+<tr>
+<th>场景</th>
+<th>输入</th>
+<th>界面结果</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>有限额 Transfer</td>
+<td>链上整数 <code class="notranslate">1500000000</code>，精度 6</td>
+<td><code class="notranslate">1,500 USDT</code></td>
+</tr>
+<tr>
+<td>数量为 0</td>
+<td>链上整数 <code class="notranslate">0</code>，精度 6</td>
+<td><code class="notranslate">0 USDT</code></td>
+</tr>
+<tr>
+<td>精度缺失</td>
+<td>链上整数已知、精度不可用</td>
+<td>数量 <code class="notranslate">--</code></td>
+</tr>
+<tr>
+<td>有限额授权</td>
+<td>额度整数 <code class="notranslate">5000000000</code>，精度 6</td>
+<td><code class="notranslate">5,000 USDT</code></td>
+</tr>
+<tr>
+<td>无限授权</td>
+<td>额度等于或视为 ERC-20 最大无符号整数</td>
+<td><code class="notranslate">无限</code>，无美元</td>
+</tr>
+<tr>
+<td>持有人占比</td>
+<td>持有 <code class="notranslate">100</code>，总供应 <code class="notranslate">10000</code></td>
+<td><code class="notranslate">1.00%</code></td>
+</tr>
+<tr>
+<td>占比过小</td>
+<td>持有 <code class="notranslate">0.5</code>，总供应 <code class="notranslate">10000</code></td>
+<td><code class="notranslate">&lt;0.01%</code></td>
+</tr>
+<tr>
+<td>总供应不可用</td>
+<td>持有 <code class="notranslate">100</code>，总供应为 0 或缺失</td>
+<td><code class="notranslate">--</code></td>
+</tr>
+</tbody>
+</table></markdown-accessiblity-table>
+<h2 id="53-时间口径">5.3 时间口径</h2>
+<p>代币转移列表（交易页签、地址代币转移、代币详情转移）使用相对时间，口径沿用 V1.0.0：不足 60 秒显示 <code class="notranslate">N 秒前</code>；不足 60 分钟显示 <code class="notranslate">N 分钟前</code>；不足 24 小时显示 <code class="notranslate">N 小时前</code>；其余显示 <code class="notranslate">N 天前</code>。同一笔 Transfer 在所有页面必须使用相同时间值。时间缺失展示 <code class="notranslate">--</code>，不得使用浏览器当前时间补值。</p>
+<h2 id="54-分页与可浏览范围">5.4 分页与可浏览范围</h2>
+<markdown-accessiblity-table><table role="table">
+<thead>
+<tr>
+<th>规则</th>
+<th>统一口径</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>交易详情摘要</td>
+<td>Transfer、授权各最多内嵌 10 条；超出「查看全部」进页签</td>
+</tr>
+<tr>
+<td>交易代币转移页签每页</td>
+<td>20 条</td>
+</tr>
+<tr>
+<td>地址代币转移每页</td>
+<td>20 条</td>
+</tr>
+<tr>
+<td>地址代币余额每页</td>
+<td>20 条</td>
+</tr>
+<tr>
+<td>代币列表每页</td>
+<td>20 条</td>
+</tr>
+<tr>
+<td>代币详情转移 / 持有人每页</td>
+<td>各 20 条</td>
+</tr>
+<tr>
+<td>默认页</td>
+<td>第 1 页</td>
+</tr>
+<tr>
+<td>排序</td>
+<td>转移从新到旧；持有人按持有数量从高到低；代币列表见 Q-V11-02</td>
+</tr>
+<tr>
+<td>地址代币转移 / 代币列表 / 代币转移 / 持有人可浏览上限</td>
+<td>各最近 10,000 条</td>
+</tr>
+<tr>
+<td>链上总量</td>
+<td>可大于 10,000，与可浏览上限分开显示</td>
+</tr>
+<tr>
+<td>页码过小 / 过大</td>
+<td>分别按第 1 页 / 实际末页展示</td>
+</tr>
+</tbody>
+</table></markdown-accessiblity-table>
+<p>“最近 10,000 条”是前台可浏览边界。用户正在查看的列表页不因新区块自动换页。</p>
+<h2 id="55-查询与深链状态">5.5 查询与深链状态</h2>
+<ul>
+<li>代币详情深链必须包含 EVM 模式和唯一代币合约地址。</li>
+<li>交易详情、地址详情深链保留当前页签（含本期新增页签）。</li>
+<li>地址代币转移、代币列表、代币转移、持有人深链保留页码。</li>
+<li>完整 40 位地址打开地址详情，即使该地址是代币合约。</li>
+<li>用户从列表进入详情再返回时，应恢复进入前页码和页签。</li>
+<li>分享链接不得包含登录凭据或个人标识。</li>
+<li>ERC-20 页面只在 EVM 下可达。</li>
+</ul>
+<h2 id="56-加载错误空态与重试">5.6 加载、错误、空态与重试</h2>
+<markdown-accessiblity-table><table role="table">
+<thead>
+<tr>
+<th>状态</th>
+<th>触发条件</th>
+<th>统一反馈</th>
+<th>后续动作</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>加载中</td>
+<td>首次查询、切页、切页签</td>
+<td>对应内容区显示加载状态</td>
+<td>等待；保留导航</td>
+</tr>
+<tr>
+<td>暂无数据</td>
+<td>有效对象没有对应 ERC-20 数据</td>
+<td>“该地址暂无 ERC-20 转移”“该地址暂无 ERC-20 余额”“暂无 ERC-20 代币”“该代币暂无转移”“该代币暂无持有人”</td>
+<td>返回、重新搜索、稍后重试</td>
+</tr>
+<tr>
+<td>参数无效</td>
+<td>代币地址格式不符合规则</td>
+<td>“代币地址格式无效”</td>
+<td>修改输入、返回列表</td>
+</tr>
+<tr>
+<td>查无结果</td>
+<td>格式有效但不是已索引 ERC-20</td>
+<td>“未找到该代币”</td>
+<td>返回列表、重新搜索</td>
+</tr>
+<tr>
+<td>待确认无转移</td>
+<td>交易待确认且打开代币转移页签</td>
+<td>“该交易待确认”</td>
+<td>稍后刷新；不得写成“暂无 ERC-20 转移”</td>
+</tr>
+<tr>
+<td>已上链无事件</td>
+<td>交易已确认且无 Transfer、无授权</td>
+<td>“该交易暂无 ERC-20 转移”</td>
+<td>返回详情</td>
+</tr>
+<tr>
+<td>网络错误</td>
+<td>请求失败、断网或超时</td>
+<td>“{页面对象}加载失败，请重试”</td>
+<td>重试、返回</td>
+</tr>
+</tbody>
+</table></markdown-accessiblity-table>
+<p>错误态不得用另一条有效数据替代。交易主体与代币转移页签的加载、失败相互独立，见 §4.2.4。详情页的加载、无结果、格式无效和网络错误展示在内容区，不使用遮挡整页的浮层。</p>
+<h2 id="57-长文本与复制">5.7 长文本与复制</h2>
+<ul>
+<li>代币合约地址在空间不足的列表中允许截断。</li>
+<li>详情页优先展示完整值。</li>
+<li>被截断内容必须支持鼠标悬停和键盘聚焦查看全文。</li>
+<li>复制始终复制完整原始值，不复制省略号。</li>
+<li>复制成功反馈持续 1.5 秒；复制失败显示“复制失败，请手动复制”。</li>
+</ul>
+<h2 id="58-权限与安全边界">5.8 权限与安全边界</h2>
+<ul>
+<li>所有本期查询页面公开可访问，不要求登录。</li>
+<li>浏览器不提供任何链上写操作或签名请求，包括转账和授权。</li>
+<li>页面展示链上公开地址、交易和 ERC-20 事件，不附加非公开个人身份信息。</li>
+<li>链接和错误信息不得展示访问令牌、Cookie 或账户凭据。</li>
+<li>NFT、合约源码、读取合约不在本期交付；对应入口在 EVM 下不可到达。</li>
+<li>本期无管理后台、无运营配置项、无导出。</li>
+<li>只读查询不产生互斥写操作；同一对象同时打开多个页签不改变链上事实。</li>
+</ul>
+<h2 id="59-无障碍与设备适配">5.9 无障碍与设备适配</h2>
+<ul>
+<li>页签切换、分页、复制、重试均可通过键盘操作。</li>
+<li>当前页签、不可用按钮和错误信息具有可被辅助技术识别的状态。</li>
+<li>桌面端和移动端均不得隐藏完成 ERC-20 核验所必需的字段或操作。</li>
+<li>窄屏可使用横向滚动承载表格，但不得改变字段含义和数据顺序。</li>
+</ul>
+<h2 id="510-erc-20-业务规则br-t11">5.10 ERC-20 业务规则（BR-T11）</h2>
+<p>下列规则只定义一次，页面字段表与验收引用编号。</p>
+<markdown-accessiblity-table><table role="table">
+<thead>
+<tr>
+<th>编号</th>
+<th>规则</th>
+<th>正常结果</th>
+<th>反例 / 边界</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>BR-T11-01</td>
+<td>空组不占行</td>
+<td>无 Transfer 时不出现「代币转移」行；无授权时不出现「授权」行</td>
+<td>不得为空组渲染空白行或「暂无」占位</td>
+</tr>
+<tr>
+<td>BR-T11-02</td>
+<td>待确认与已上链空表分开</td>
+<td>待确认：详情无摘要；代币转移页签文案「该交易待确认」。已上链无事件：页签「该交易暂无 ERC-20 转移」</td>
+<td>不得把待确认写成空表</td>
+</tr>
+<tr>
+<td>BR-T11-03</td>
+<td>数量换算与无限授权</td>
+<td>人类可读数量 = 链上整数 ÷ 10^精度；无限授权展示「无限」</td>
+<td>精度缺失不得按 18 位猜测；无限授权不附美元、不展示科学计数法</td>
+</tr>
+<tr>
+<td>BR-T11-04</td>
+<td>无代币行情时的美元</td>
+<td>附注美元整段隐藏；独立价格 / 流通市值 / 美元估值为 <code class="notranslate">--</code></td>
+<td>不得把美元写成 <code class="notranslate">0</code>；不得因无行情隐藏代币数量</td>
+</tr>
+<tr>
+<td>BR-T11-05</td>
+<td>代币图标</td>
+<td>有公开图标用圆形图标；无图标用符号首字母色标</td>
+<td>地址两侧不加 identicon</td>
+</tr>
+<tr>
+<td>BR-T11-06</td>
+<td>交易页签一张表</td>
+<td>Transfer 与授权同一张表，徽章区分 <code class="notranslate">Transfer</code> / <code class="notranslate">授权</code></td>
+<td>不得拆第二张授权表</td>
+</tr>
+<tr>
+<td>BR-T11-07</td>
+<td>地址代币转移范围</td>
+<td>只含该地址作为转出或接收方的 Transfer；从/到双方；当前页地址一侧纯文本</td>
+<td>不得出现授权行；不得只展示「对方地址」一列</td>
+</tr>
+<tr>
+<td>BR-T11-08</td>
+<td>持有人占比</td>
+<td>占比 = 持有数量 / 总供应量；两位小数；小于 0.01% 为 <code class="notranslate">&lt;0.01%</code></td>
+<td>总供应为 0 或缺失时 <code class="notranslate">--</code>，不得当 0%</td>
+</tr>
+<tr>
+<td>BR-T11-09</td>
+<td>详情摘要条数上限</td>
+<td>Transfer、授权各最多内嵌 10 条；超出组内「查看全部」进页签</td>
+<td>页签分页查看全部，不受 10 条限制</td>
+</tr>
+<tr>
+<td>BR-T11-10</td>
+<td>失败交易仍查询事件</td>
+<td>已上链失败交易仍查询 Transfer 与授权</td>
+<td>无事件按空表，不按待确认处理</td>
+</tr>
+</tbody>
+</table></markdown-accessiblity-table>
+<p>铸造或销毁若以 <code class="notranslate">Transfer</code> 事件出现，按 Transfer 展示，不另开「铸造」「销毁」分组。</p>
+<hr>
+<h2 id="6-更新记录">6. 更新记录</h2>
+<markdown-accessiblity-table><table role="table">
+<thead>
+<tr>
+<th>版本</th>
+<th>日期</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>V1.1.0</td>
+<td>2026-10-27</td>
+<td>正式需求。正文只收录 V1.1.0 增量：交易摘要与代币转移页签、地址代币转移与余额、代币列表与代币详情。授权为相对行业浏览器代币转移资源的产品增量。V1.0.0 字段与验收不写入本文。版本表原文不改，Q-V11-01 / Q-V11-02 按确认前默认继续</td>
+</tr>
+<tr>
+<td>V1.1.0</td>
+<td>2026-10-27</td>
+<td>文档说明：摘要 10 条上限与代币列表分页已由交互基线覆盖，从「已知未覆盖」删除。样例美元与遗留 DEX 页仍验收以本文</td>
+</tr>
+</tbody>
+</table></markdown-accessiblity-table>
+<p>V1.0.0 变更历史见 <a href="../V1.0-%E5%8E%9F%E5%9E%8B/BiyaEVM%E5%8C%BA%E5%9D%97%E6%B5%8F%E8%A7%88%E5%99%A8_PRD_V1.0.md">BiyaEVM区块浏览器_PRD_V1.0.md</a>。</p>
+<hr>
+<h2 id="7-待定事项">7. 待定事项</h2>
+<markdown-accessiblity-table><table role="table">
+<thead>
+<tr>
+<th>编号</th>
+<th>问题</th>
+<th>影响规则/页面/验收</th>
+<th>业务决定人</th>
+<th>确认前默认做法</th>
+<th>受影响范围及上线影响</th>
+<th>状态与答复依据</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Q-V11-01</td>
+<td>版本表地址代币转移写「对方地址」；已确认原型为从/到双方，当前页地址一侧不跳转</td>
+<td>BR-T11-07、§4.3.2、AC-AT01</td>
+<td>产品</td>
+<td>按已确认原型：从/到双方，当前侧纯文本</td>
+<td>仅地址代币转移列结构；不改版本表原文</td>
+<td>待产品书面确认。会话已确认原型优先，正文按该默认冻结</td>
+</tr>
+<tr>
+<td>Q-V11-02</td>
+<td>代币列表默认排序：行业浏览器多为有市值在前且市值降序，无市值按转移次数；原型为静态样例顺序且无排序控件</td>
+<td>§4.4.1、§5.4 排序</td>
+<td>产品</td>
+<td>生产按有流通市值在前、市值从高到低，无市值按转移次数从高到低；本期不做列头排序</td>
+<td>仅代币列表默认顺序；不阻断列表字段验收</td>
+<td>待产品确认。推断自行业浏览器列表默认，非产品书面答复</td>
+</tr>
+</tbody>
+</table></markdown-accessiblity-table>
+      </article>
+    </div>
+  </div>
+  <script>
+    mermaid.initialize({ startOnLoad: true, theme: "default" });
+    const links = document.querySelectorAll(".sidebar-toc a");
+    const content = document.querySelector(".content");
+    function sync() {
+      let current = links[0];
+      links.forEach((a) => {
+        const el = document.getElementById(decodeURIComponent(a.hash.slice(1)));
+        if (el && el.getBoundingClientRect().top < 120) current = a;
+      });
+      links.forEach((a) => a.classList.toggle("active", a === current));
+    }
+    if (content) content.addEventListener("scroll", sync);
+    sync();
+  </script>
+</body>
+</html>
