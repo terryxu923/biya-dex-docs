@@ -22,4 +22,8 @@
 | BiyaEVM 区块浏览器 PRD（V1.2.0） | https://terryxu923.github.io/biya-dex-docs/biya-evm-explorer-prd-v1.2.html |
 | BiyaEVM 区块浏览器原型（V1.3） | https://terryxu923.github.io/biya-dex-docs/BiyaEVMscan-v1.3.html |
 
+| Biya 公链管理端原型（V1.0.0） | https://terryxu923.github.io/biya-dex-docs/biya-chain-admin-v1.0.0.html |
+| Biya 公链管理端 PRD（V1.0.0） | https://terryxu923.github.io/biya-dex-docs/biya-chain-admin-prd-v1.0.0.html |
+| Biya 公链管理端 PRD Markdown | https://terryxu923.github.io/biya-dex-docs/biya-chain-admin-prd-v1.0.0.md |
+
 静态 HTML，由 GitHub Pages 托管。
