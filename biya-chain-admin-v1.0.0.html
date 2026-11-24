@@ -39,8 +39,20 @@
 .demo-page-notice{margin:0 0 16px}.demo-page-notice button{margin-left:10px}.demo-loading-value{font-size:14px;color:#718196}
 @media(max-width:600px){.admin-demo{right:10px;bottom:calc(10px + env(safe-area-inset-bottom,0px))}.demo-session{bottom:56px;max-width:calc(100vw - 20px);width:max-content;font-size:11px}.demo-panel{width:350px}.demo-grid button{min-height:38px}}
 @media print{.admin-demo,.demo-session{display:none!important}}
+.metric-with-action{border:1px solid #e2e8f0;border-radius:12px;background:#fff;padding-bottom:6px;min-width:0}
+.metric-with-action .metric-card{border:0;background:transparent;box-shadow:none}
+.metric-with-action>button{margin:0 12px}.log-package-filters label{display:inline-flex;align-items:center;flex-wrap:wrap;gap:5px}
+.log-package-filters input,.log-package-filters select{max-width:100%}.notification-item{padding:12px 0;border-top:1px solid #e2e8f0}.notification-item summary{cursor:pointer}
+.failure-chart{list-style:none;margin:0;padding:0;display:grid;gap:14px}.failure-bar{display:grid;grid-template-columns:minmax(90px,140px) minmax(0,1fr) 52px;gap:10px;align-items:center}
+.failure-track{position:relative;border-radius:5px;height:23px;background:#e8eef4}.failure-fill{height:100%;border-radius:5px;background:#1a6eb4}
+.failure-tip{display:none;position:absolute;right:0;top:27px;z-index:4;min-width:150px;max-width:min(400px,75vw);width:max-content;overflow-wrap:anywhere;background:#152638;color:#fff;border-radius:6px;padding:8px 11px;box-shadow:0 4px 14px #0003;line-height:1.6}
+.failure-track:hover .failure-tip,.failure-track:focus .failure-tip{display:block}.failure-track:focus-visible{outline:2px solid #185e93;outline-offset:2px}
+@media(max-width:560px){.failure-bar{grid-template-columns:90px minmax(0,1fr) 42px;gap:6px}.failure-tip{right:auto;left:0;max-width:48vw}.log-package-filters{display:grid;justify-content:start}}
+.failure-filters,.alert-filters,.log-package-filters{padding:0 18px}
+
+.overview-metrics-title{font-size:17px;margin:0 0 12px}.ingress-trend .timeseries svg{max-height:300px}.ingress-trend-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,320px),1fr));gap:20px;margin-top:12px}
 </style></head><body><div class="app"><aside class="sidebar" id="sidebar"><div class="brand"><strong>BIYA<span> CHAIN</span></strong><small>NETWORK OPERATIONS</small></div><nav id="navigation" aria-label="后台功能导航"></nav></aside><div class="main"><header class="topbar"><div style="display:flex;align-items:center;gap:12px"><button class="menu-toggle" data-action="menu" type="button" aria-label="展开导航">☰</button><div><span class="trail">BIYA / 管理后台</span><strong id="current-title">运行概览</strong></div></div><div class="header-actions"><button type="button" data-action="audit">操作记录</button><span class="avatar">B</span></div></header><main class="workspace" id="workspace"></main></div></div><div id="modal-root"></div><script>'use strict';
-const ROUTES=[['overview','运行概览','◈','运行管理'],['nodes','节点管理','▦',''],['chain','链端监控','◇','监控中心'],['ingress','交易入口监控','⇄',''],['evm','EVM 监控','⬡',''],['alerts','告警中心','⚑',''],['logs','节点日志','≡',''],['byb','BYB 数据监控','◎','资产数据'],['labels','地址标签管理','⌑','浏览器管理'],['contracts','智能合约管理','▤',''],['api-accounts','API 账户管理','♙','API 管理'],['api-plans','套餐管理','▣',''],['api-usage','使用量统计','▧',''],['api-ip','IP 管理','⊞',''],['email-bl','邮箱黑名单','⊘','']].filter(([key])=>['overview','nodes','chain','ingress','evm','alerts','logs'].includes(key));
+const ROUTES=[['overview','运行概览','◈','运行管理'],['nodes','节点管理','▦',''],['chain','链端监控','◇','监控中心'],['ingress','Ex_API 交易池','⇄',''],['evm','EVM 监控','⬡',''],['alerts','告警中心','⚑',''],['logs','节点日志','≡',''],['byb','BYB 数据监控','◎','资产数据'],['labels','地址标签管理','⌑','浏览器管理'],['contracts','智能合约管理','▤',''],['api-accounts','API 账户管理','♙','API 管理'],['api-plans','套餐管理','▣',''],['api-usage','使用量统计','▧',''],['api-ip','IP 管理','⊞',''],['email-bl','邮箱黑名单','⊘','']].filter(([key])=>['overview','nodes','chain','ingress','evm','alerts','logs'].includes(key));
 const TITLES=Object.fromEntries(ROUTES.map(r=>[r[0],r[1]]));
 const ADDRESS=/^0x[0-9a-fA-F]{40}$/;
 const ADDR=n=>'0x'+String(n).padStart(40,'0');
@@ -58,7 +70,7 @@ const shortTime=t=>new Date(t).toLocaleTimeString('zh-CN',{timeZone:'Asia/Shangh
 const clock=()=>timeText(Date.now());
 const badge=(text,tone='')=>`<span class="badge ${tone}">${esc(text)}</span>`;
 const button=(text,action,data='',cls='',disabled=false)=>`<button type="button" class="${cls}" data-action="${action}" ${data} ${disabled?'disabled':''}>${text}</button>`;
-const roleLabel=r=>({validator:'验证者',follow:'follow',gateway:'exchange-apiserver'}[r]||r);
+const roleLabel=r=>({validator:'验证节点',follow:'同步节点',gateway:'交易入口服务'}[r]||'未知');
 let db;
 try{const v=JSON.parse(prototypeStorage.getItem(STORE)||'null');db=v?.schema===3?v.data:seedAdmin();}catch{db=seedAdmin();}
 const state={route:'overview',node:'all',window:'1h',scenario:'normal',tab:'',query:'',selected:new Set(),last:clock(),pagers:{},storageType:'Replica',hiddenSeries:new Set(),gasNode:'val-01',gasType:'all',failureType:'all',failureQuery:'',alertState:'all',alertType:'all',alertQuery:'',notificationState:'all',notificationQuery:'',logLevel:'all',logQuery:''};
@@ -86,14 +98,15 @@ function listId(key){let h=2166136261;for(const c of key)h=Math.imul(h^c.charCod
 function paged(rows,key=state.route+':main'){return {rows,info:{key}};}
 function table(headers,rows,empty='暂无数据',config=false){
  const key=config?.key||state.route+':'+headers.map(h=>String(h).replace(/<[^>]+>/g,'')).join('/');
- const p=state.pagers[key]||{page:1,size:10},pages=Math.max(1,Math.ceil(rows.length/p.size));p.page=Math.min(Math.max(1,p.page),pages);state.pagers[key]=p;
+ const p=config?.paginate===false?{page:1,size:Math.max(10,rows.length)}:state.pagers[key]||{page:1,size:10},pages=Math.max(1,Math.ceil(rows.length/p.size));p.page=Math.min(Math.max(1,p.page),pages);state.pagers[key]=p;
  tableCache.set(key,{headers,rows,empty,config:{key}});
  const slice=rows.slice((p.page-1)*p.size,p.page*p.size),total=rows.length;
  const controls=pages>1?`<div class="pager-controls"><label>每页 <select aria-label="每页条数" data-page-size="${esc(key)}">${[10,20,50].map(n=>`<option value="${n}" ${n===p.size?'selected':''}>${n}</option>`).join('')}</select> 条</label>${button('上一页','page',`data-table="${esc(key)}" data-page="${p.page-1}"`,'small',p.page===1)}${Array.from({length:pages},(_,i)=>i+1).filter(n=>n===1||n===pages||Math.abs(n-p.page)<=1).map((n,i,a)=>(i&&n-a[i-1]>1?'<span>…</span>':'')+button(n,'page',`data-table="${esc(key)}" data-page="${n}" ${p.page===n?'aria-current="page"':''}`,p.page===n?'small primary':'small')).join('')}${button('下一页','page',`data-table="${esc(key)}" data-page="${p.page+1}"`,'small',p.page===pages)}<label>跳至 <input type="number" min="1" max="${pages}" value="${p.page}" aria-label="跳转页码" data-page-jump="${esc(key)}"> 页</label></div>`:'';
- return `<div class="data-list" id="${listId(key)}" data-list-key="${esc(key)}"><div class="table-wrap"><table><thead><tr>${headers.map(h=>`<th>${h}</th>`).join('')}</tr></thead><tbody>${slice.length?slice.map(r=>'<tr>'+r.map(c=>`<td>${c}</td>`).join('')+'</tr>').join(''):`<tr><td colspan="${headers.length}"><div class="empty"><b>${esc(empty)}</b></div></td></tr>`}</tbody></table></div><div class="pagination"><span>共 ${fmt(total)} 条${pages>1?` · 第 ${p.page} / ${pages} 页`:''}</span>${controls}</div></div>`;
+ return `<div class="data-list" id="${listId(key)}" data-list-key="${esc(key)}"><div class="table-wrap"><table><thead><tr>${headers.map(h=>`<th>${h}</th>`).join('')}</tr></thead><tbody>${slice.length?slice.map(r=>'<tr>'+r.map(c=>`<td>${c}</td>`).join('')+'</tr>').join(''):`<tr><td colspan="${headers.length}"><div class="empty"><b>${esc(empty)}</b></div></td></tr>`}</tbody></table></div><div class="pagination"><span>共 ${fmt(total)} 条${pages>1?` · 第 ${p.page} / ${pages} 页`:''}</span>${controls}</div></div>`.replace(config?.paginate===false?/<div class="pagination">[\s\S]*<\/div>(?=<\/div>$)/:/$^/,'');
 }
 function updatePage(key,page,size){const c=tableCache.get(key);if(!c)return;const p=state.pagers[key]||{page:1,size:10};if(size){p.size=size;p.page=1;}else p.page=page;state.pagers[key]=p;state.selected.clear();const el=document.getElementById(listId(key));if(el){el.outerHTML=table(c.headers,c.rows,c.empty,c.config);document.querySelectorAll('[data-select],#select-all').forEach(x=>x.checked=false);document.querySelectorAll('.batchbar').forEach(x=>x.remove());}}
 function card(label,value,unit='',foot='',tone=''){return `<div class="metric-card ${tone}"><div class="metric-label">${esc(label)}</div><div class="metric-value">${esc(value)}<small>${esc(unit)}</small></div>${foot?`<div class="metric-foot">${esc(foot)}</div>`:''}</div>`;}
+const hourMs=3600000;
 const windowMs=()=>({'1h':3600000,'6h':21600000,'24h':86400000}[state.window]);
 const bucketMs=()=>({'1h':60000,'6h':300000,'24h':900000}[state.window]);
 function inWindow(t){return t>OBS.anchor-windowMs()&&t<=Math.max(Date.now(),OBS.anchor);}
@@ -106,15 +119,44 @@ function syncRoute(){let [route,query]=location.hash.slice(1).split('?');const p
 const COLORS=['#087f8c','#7469bd','#d18b24','#329466','#cf596b','#567b9a'];
 const chartHoverData=new Map();
 let activeHoverSvg=null;
+function chartNumber(value,digits){
+ if(value!==0&&Math.abs(value)<10**(-digits))return value.toExponential(2);
+ return value.toLocaleString('en-US',{maximumFractionDigits:digits});
+}
+function integerAxis(min,max){
+ const roughStep=Math.max(1,(max-min)/4);
+ const magnitude=10**Math.floor(Math.log10(roughStep));
+ const step=[1,2,5,10].map(n=>n*magnitude).find(n=>n>=roughStep);
+ const first=Math.floor(min/step)*step;
+ const segments=Math.max(1,Math.ceil((max-first)/step));
+ return Array.from({length:segments+1},(_,i)=>first+i*step);
+}
 function lineChart(key,series,unit,opts={}){
- const start=OBS.anchor-windowMs(),end=OBS.anchor;const visible=series.filter(s=>!state.hiddenSeries.has(key+'/'+s.id));const values=validNumbers(visible.flatMap(s=>s.points.map(p=>p.y)));const W=opts.width||(innerWidth<=760?380:560),H=210,L=76,R=20,T=18,B=37;
+ const end=opts.end??OBS.anchor,start=end-windowMs();
+ const visible=series.filter(s=>!state.hiddenSeries.has(key+'/'+s.id)).map(s=>opts.integer?{...s,points:s.points.map(p=>p.y==null||Number.isSafeInteger(p.y)&&p.y>=0?p:{...p,y:null,emptyText:'计数或高度无效'})}:s);
+ const values=validNumbers(visible.flatMap(s=>s.points.map(p=>p.y)));
+ const W=opts.width||(innerWidth<=760?380:560),H=210,R=20,T=28,B=37;
  let min=opts.min??(unit==='%'?0:Math.min(...values)),max=opts.max??(unit==='%'?100:Math.max(...values));if(!values.length||noSample()){const legend=series.length>0?`<div class="chart-legend">${series.map(s=>`<button type="button" data-action="series" data-chart="${esc(key)}" data-series="${esc(s.id)}" aria-pressed="${!state.hiddenSeries.has(key+'/'+s.id)}"><i style="background:${s.color}"></i>${esc(s.name)}</button>`).join('')}</div>`:'';return `<div class="timeseries" data-chart="${esc(key)}"><div class="chart-empty">${visible.length?'暂无数据':'请选择曲线'}</div>${legend}</div>`;}
- if(!Number.isFinite(min)||!Number.isFinite(max)){min=0;max=1;}if(max===min){min=Math.max(0,min-1);max+=1;}const padding=unit==='%'?0:(max-min)*.12;min=Math.max(0,min-padding);max+=padding;
- const x=t=>L+(t-start)/(end-start)*(W-L-R),y=v=>T+(max-v)/(max-min)*(H-T-B),f=v=>Math.abs(v)>=10000?fmt(Math.round(v)):scalar(v,2);
- let body=[0,.25,.5,.75,1].map(r=>{const v=min+(max-min)*r,py=y(v);return `<line x1="${L}" y1="${py}" x2="${W-R}" y2="${py}" stroke="#e6edf2" stroke-dasharray="3 4"/><text x="${L-9}" y="${py+4}" text-anchor="end">${f(v)}</text>`;}).join('');
+ let ticks;
+ if(opts.integer){
+  if(min===max&&min>0&&opts.min==null)min-=1;
+  ticks=integerAxis(min,max);
+  min=ticks[0];max=ticks.at(-1);
+ }else{
+  if(max===min){if(min>0&&opts.min==null)min=Math.max(0,min*.9);max=max?max*1.1:1;}
+  const padding=unit==='%'?0:(max-min)*.12;
+  min=Math.max(0,min-padding);max+=padding;
+  ticks=[0,.25,.5,.75,1].map(r=>min+(max-min)*r);
+ }
+ const tickStep=ticks[1]-ticks[0];
+ const digits=opts.integer?0:Math.max(0,Math.min(8,Math.ceil(-Math.log10(tickStep))+1));
+ const labels=ticks.map(value=>opts.integer?fmt(value):chartNumber(value,digits));
+ const L=Math.max(76,Math.max(...labels.map(label=>label.length))*6.5+18);
+ const x=t=>L+(t-start)/(end-start)*(W-L-R),y=v=>T+(max-v)/(max-min)*(H-T-B);
+ let body=ticks.map((v,i)=>{const py=y(v);return `<line x1="${L}" y1="${py}" x2="${W-R}" y2="${py}" stroke="#e6edf2" stroke-dasharray="3 4"/><text class="chart-y-tick" x="${L-9}" y="${py+4}" text-anchor="end">${labels[i]}</text>`;}).join('');
  visible.forEach(s=>{let active=false,d='';s.points.forEach(p=>{if(!Number.isFinite(p.y)){active=false;return;}d+=(active?' L':' M')+x(p.t).toFixed(2)+','+y(p.y).toFixed(2);active=true;});body+=`<path d="${d}" fill="none" stroke="${s.color}" stroke-width="2" vector-effect="non-scaling-stroke"/>` +s.points.filter(p=>Number.isFinite(p.y)).map(p=>`<circle cx="${x(p.t)}" cy="${y(p.y)}" r="${opts.dots?3:1.7}" fill="${s.color}"/>`).join('');});
  body+=`<text x="10" y="13">${esc(unit)}</text>`+[0,.5,1].map(r=>`<text x="${x(start+(end-start)*r)}" y="${H-9}" text-anchor="${r===0?'start':r===1?'end':'middle'}">${shortTime(start+(end-start)*r)}</text>`).join('');
- chartHoverData.set(key,{series:visible,unit,title:opts.title||key,start,end,L,R,T,B,W,H,x,context:key.startsWith('gas-')?nodeBy(state.gasNode)?.name:key.startsWith('evm-')?(state.node==='all'?'全部适用节点':nodeBy(state.node)?.name):''});
+ chartHoverData.set(key,{series:visible,unit,title:opts.title||key,start,end,L,R,T,B,W,H,x,step:opts.step,integer:opts.integer,context:opts.context??(key.startsWith('gas-')?nodeBy(state.gasNode)?.name:key.startsWith('evm-')?(state.node==='all'?'全部适用节点':nodeBy(state.node)?.name):'')});
  body+=`<line class="chart-hover-guide" x1="0" x2="0" y1="${T}" y2="${H-B}" stroke="#8395a7" stroke-dasharray="4 3" visibility="hidden" pointer-events="none"/><rect class="chart-hover-area" x="${L}" y="${T}" width="${W-L-R}" height="${H-T-B}" fill="transparent" pointer-events="all"/>`;
  return `<div class="timeseries" data-chart="${esc(key)}"><svg data-hover-chart="${esc(key)}" viewBox="0 0 ${W} ${H}" role="img" aria-label="${esc(opts.title||key)} · ${esc(unit)}">${body}</svg>${series.length>0?`<div class="chart-legend">${series.map(s=>`<button type="button" data-action="series" data-chart="${esc(key)}" data-series="${esc(s.id)}" aria-pressed="${!state.hiddenSeries.has(key+'/'+s.id)}"><i style="background:${s.color}"></i>${esc(s.name)}</button>`).join('')}</div>`:''}</div>`;
 }
@@ -135,18 +177,17 @@ function showChartTooltip(event){
  if(activeHoverSvg!==svg)hideChartTooltip();activeHoverSvg=svg;
  const guide=svg.querySelector('.chart-hover-guide');guide.setAttribute('x1',data.x(t));guide.setAttribute('x2',data.x(t));guide.setAttribute('visibility','visible');
  let tip=document.getElementById('chart-tooltip');if(!tip){tip=document.createElement('div');tip.id='chart-tooltip';tip.className='chart-tooltip';tip.setAttribute('role','tooltip');document.body.append(tip);}
- const rows=data.series.map(s=>{const p=s.points.find(p=>p.t===t);const value=Number.isFinite(p?.y)?p.y.toLocaleString('en-US',{maximumFractionDigits:6})+' '+data.unit:(p?.emptyText||'暂无数据');const extra=p?.note?`<small>${esc(p.note)}</small>`:'';return `<div class="chart-tooltip-row"><span><i style="background:${s.color}"></i>${esc(s.name)}</span><strong>${esc(value)}${extra}</strong></div>`;}).join('');
- tip.innerHTML=`<strong class="chart-tooltip-title">${esc(data.title)}</strong><div class="chart-tooltip-time">${esc(timeText(t))} · UTC+8${state.scenario==='stale'?' · 数据过期':''}</div>${data.context?`<div class="chart-tooltip-context">${esc(data.context)}</div>`:''}${rows}`;
+ const rows=data.series.map(s=>{const p=s.points.find(p=>p.t===t);const value=Number.isFinite(p?.y)?(data.integer?fmt(p.y):chartNumber(p.y,6))+' '+data.unit:(p?.emptyText||'暂无数据');const extra=p?.note?`<small>${esc(p.note)}</small>`:'';return `<div class="chart-tooltip-row"><span><i style="background:${s.color}"></i>${esc(s.name)}</span><strong>${esc(value)}${extra}</strong></div>`;}).join('');
+ tip.innerHTML=`<strong class="chart-tooltip-title">${esc(data.title)}</strong><div class="chart-tooltip-time">${data.step?esc(timeText(t-data.step))+' 至 ':''}${esc(timeText(t))} · UTC+8${state.scenario==='stale'?' · 数据过期':''}</div>${data.context?`<div class="chart-tooltip-context">${esc(data.context)}</div>`:''}${rows}`;
  tip.hidden=false;const rect=tip.getBoundingClientRect();tip.style.left=Math.max(8,Math.min(event.clientX+16,innerWidth-rect.width-8))+'px';tip.style.top=Math.max(8,event.clientY+16+rect.height>innerHeight?event.clientY-rect.height-12:event.clientY+16)+'px';
 }
-function chart(){const points=Array.from({length:24},(_,i)=>({t:OBS.anchor-windowMs()+windowMs()*(i+1)/24,y:650+i*8+(i%4)*40}));return lineChart('api-requests',[{id:'requests',name:'请求数',color:COLORS[0],points}],'次',{title:'API 请求趋势'});}
+function chart(){const points=Array.from({length:24},(_,i)=>({t:OBS.anchor-windowMs()+windowMs()*(i+1)/24,y:650+i*8+(i%4)*40}));return lineChart('api-requests',[{id:'requests',name:'请求数',color:COLORS[0],points}],'次',{title:'API 请求趋势',integer:true,min:0});}
 const lastServiceStates=new Map();
 function serviceStatus(n,name){if(noSample())return 'untested';if(state.scenario==='stale')return 'stale';const value=state.scenario==='alert'&&((n.id==='val-03'&&name==='P2P')||(n.id==='api-01'&&name==='Exchange API'))?'down':'ok';lastServiceStates.set(n.id+'/'+name,value);return value;}
 function services(n){const a=n.role==='gateway'?[['Core','Exchange API','http'],['Core','metrics','http']]:[['链端','P2P','p2p'],['链端','认证 UDP','udp'],['Core','Info API','http'],['Core','node_server','internal'],['Core','metrics','http'],['Core','pprof','http'],['EVM','JSON-RPC','json-rpc'],['EVM','快照 / 状态服务','internal']];return a.map(([group,name,protocol])=>({group,name,protocol,status:serviceStatus(n,name),endpoint:'未配置'}));}
 function statusBadge(s){return ({ok:badge('可用','green'),down:badge('不可用','red'),untested:badge('未知'),stale:badge('数据过期','amber')})[s]||badge(s);}
 const lastHeightSamples=new Map();
 function currentHeight(n){if(n.height===null)return null;if(state.scenario==='stale')return lastHeightSamples.get(n.id)??n.height;const v=state.scenario==='alert'&&n.id==='val-03'?842064:state.scenario==='alert'&&n.id==='follow-02'?842058:n.height;lastHeightSamples.set(n.id,v);return v;}
-function comparisonHeight(){const ns=db.nodes.filter(n=>n.role!=='gateway');return ns.length?Math.min(...ns.map(currentHeight))-2:null;}
 const rowSelect=n=>`<input type="checkbox" aria-label="选择 ${esc(n)}" data-select="${esc(n)}" ${state.selected.has(n)?'checked':''}>`;
 const allSelect=()=>`<input type="checkbox" id="select-all" aria-label="选择本页全部" ${state.selected.size?'checked':''}>`;
 
@@ -175,7 +216,7 @@ function formModal(title,fields,submitText,fn,extra='',wide=false){modal(title,`
 function field(name,label,value='',opts={}){let input;if(opts.select)input=`<select name="${name}" ${opts.disabled?'disabled':''}>${opts.select.map(([v,l])=>`<option value="${esc(v)}" ${String(value)===String(v)?'selected':''}>${esc(l)}</option>`).join('')}</select>`;else if(opts.textarea)input=`<textarea name="${name}" ${opts.required?'required':''} maxlength="${opts.max||20000}" rows="${opts.rows||3}">${esc(value)}</textarea>`;else input=`<input name="${name}" value="${esc(value)}" type="${opts.type||'text'}" ${opts.required?'required':''} ${opts.disabled?'disabled':''} ${opts.min!==undefined?`min="${opts.min}"`:''} ${opts.max!==undefined?`max="${opts.max}"`:''} ${opts.step?`step="${opts.step}"`:''} ${opts.pattern?`pattern="${opts.pattern}"`:''} ${opts.readonly?'readonly':''} maxlength="${opts.maxLength||160}" ${opts.accept?`accept="${opts.accept}"`:''}>`;return `<div class="field ${opts.full?'full':''}"><label>${esc(label)}${opts.required?' *':''}${input}</label></div>`;}
 function formError(text){document.getElementById('form-error').textContent=text;}
 function id(prefix){return prefix+'-'+Date.now().toString(36)+'-'+Math.random().toString(36).slice(2,7);}
-function download(name,data,type='application/json'){const blob=new Blob([typeof data==='string'?data:JSON.stringify(data,null,2)],{type});const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);toast('已导出。');}
+function download(name,data,type='application/json',message='已导出。'){const blob=new Blob([typeof data==='string'?data:JSON.stringify(data,null,2)],{type});const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);toast(message);}
 function csvText(rows){return '\uFEFF'+rows.map(r=>r.map(c=>'"'+String(c??'').replaceAll('"','""')+'"').join(',')).join('\r\n');}
 function csvRows(text){let rows=[],row=[],cell='',quoted=false;for(let i=0;i<text.length;i++){const c=text[i];if(c==='"'){if(quoted&&text[i+1]==='"'){cell+='"';i++;}else quoted=!quoted;}else if(c===','&&!quoted){row.push(cell);cell='';}else if((c==='\n'||c==='\r')&&!quoted){if(c==='\r'&&text[i+1]==='\n')i++;row.push(cell);if(row.some(x=>x.trim()))rows.push(row);row=[];cell='';}else cell+=c;}if(quoted)throw Error('CSV 引号未闭合');row.push(cell);if(row.some(x=>x.trim()))rows.push(row);return rows;}
 function labelsPage(){const pg=paged(filtered(db.labels));return dataPage('地址标签管理','公开标签展示给浏览器用户；内部标签仅用于后台识别。',button('导入','import','data-kind="labels"')+button('导出','export','data-kind="labels"')+button('新增地址标签','label-add','','primary',readonly()),searchFilter('搜索地址、标签或备注')+panel('地址标签',`${state.selected.size?`<div class="batchbar">已选择 ${state.selected.size} 项 ${button('批量加标签','label-batch','','small',readonly())}${button('批量删除','batch-delete','data-kind="labels"','small danger',readonly())}</div>`:''}`+table([allSelect(),'地址','公开标签','内部标签','备注','更新时间','操作'],pg.rows.map(l=>[rowSelect(l.id),`<span class="mono">${esc(l.address)}</span>`,l.tags.filter(t=>t.visible).map(t=>badge(t.name,'teal')).join(' ')||'—',l.tags.filter(t=>!t.visible).map(t=>badge(t.name)).join(' ')||'—',esc(l.remark||'—'),esc(l.updated),button('预览','label-preview',`data-id="${l.id}"`,'link')+button('编辑','label-edit',`data-id="${l.id}"`,'link',readonly())+button('删除','delete',`data-kind="labels" data-id="${l.id}"`,'link',readonly())]),'暂无地址标签',pg.info)));}
@@ -275,81 +316,28 @@ function blockRows(){if(noSample())return [];return OBS.blocks.filter(b=>b.obser
 function dedupBlocks(rows){return [...new Map(rows.map(b=>[b.number+':'+b.hash,b])).values()];}
 function gasStats(rows){const bs=dedupBlocks(rows),valid=bs.filter(b=>b.gasLimit>0&&b.gasUsed>=0);return {count:bs.length,ratio:valid.length?valid.reduce((s,b)=>s+b.gasUsed,0)/valid.reduce((s,b)=>s+b.gasLimit,0)*100:null,gas:valid.reduce((s,b)=>s+b.gasUsed,0),max:valid.length?Math.max(...valid.map(b=>b.gasUsed/b.gasLimit*100)):null,last:bs.length?Math.max(...bs.map(b=>b.t)):null,invalid:bs.length-valid.length};}
 function evmReceipts(){if(noSample())return [];let rows=OBS.receipts.filter(r=>inWindow(r.t));if(state.node!=='all'){const h=currentEvmHeight(nodeBy(state.node));if(h!=null){const maxHeight=h;rows=rows.filter(r=>r.blockNumber<=maxHeight);}}return rows;}
-function failedReceipts(){return evmReceipts().filter(r=>r.status===0);}
 function ingressRows(){return noSample()?[]:OBS.ingress.filter(r=>inWindow(r.receivedAt)&&(state.node==='all'||r.nodeId===state.node));}
-const lastClockSamples=new Map();
-function clockSample(n){if(state.scenario==='stale')return lastClockSamples.get(n.id)||{nodeId:n.id,offset:null,source:'未配置',synced:null,threshold:null,sampledAt:OBS.anchor};const i=db.nodes.findIndex(x=>x.id===n.id);const value={nodeId:n.id,offset:state.scenario==='alert'&&n.id==='val-03'?128:Number((.8+i*.4).toFixed(1)),source:'NTP-01',synced:!(state.scenario==='alert'&&n.id==='val-03'),threshold:10,sampledAt:OBS.anchor};lastClockSamples.set(n.id,value);return value;}
 function serviceSummary(nodes){if(noSample())return {ok:null,total:null};const states=nodes.flatMap(n=>services(n).map(s=>({...s,nodeId:n.id})));return {ok:state.scenario==='stale'?(states.every(s=>lastServiceStates.has(s.nodeId+'/'+s.name))?states.filter(s=>lastServiceStates.get(s.nodeId+'/'+s.name)==='ok').length:null):states.filter(s=>s.status==='ok').length,total:states.length};}
-const lastEvmHeights=new Map();
-function currentEvmHeight(n){if(!n||n.evmHeight===null)return null;if(state.scenario==='stale')return lastEvmHeights.get(n.id)??n.evmHeight;const h=state.scenario==='alert'&&n.id==='val-03'?42084:state.scenario==='alert'&&n.id==='follow-02'?42083:n.evmHeight;lastEvmHeights.set(n.id,h);return h;}
-function mappingSample(n){const participants=db.nodes.filter(x=>x.role!=='gateway'),height=Math.min(...participants.map(currentHeight))-2,evmHeight=Math.min(...participants.map(currentEvmHeight))-1;const block=OBS.blocks.find(b=>b.number===evmHeight&&b.observerNodeId===n.id);let hash=block?.hash||'';if(hash&&state.scenario==='alert'&&n.id==='val-03')hash=hash.slice(0,-1)+(hash.endsWith('f')?'e':'f');return {nodeId:n.id,coreHeight:height,evmHeight,evmHash:hash,valid:!noSample()&&state.scenario!=='stale'&&currentHeight(n)>=height&&currentEvmHeight(n)>=evmHeight&&!!block};}
+const notifications=[],alarmRecords=[];
+let alarmSequence=0;
 
-function mappingResult(n){const m=mappingSample(n);return !m.valid?'无法比较':state.scenario==='alert'&&n.id==='val-03'?'不一致':'一致';}
-const ALARM_RULES={hash:{type:'链状态不一致',node:'val-03',group:'chain',level:'严重',value:'app_hash 不一致',condition:'共同已完成高度的状态摘要不一致'},backlog:{type:'执行追赶落后',node:'follow-02',group:'chain',level:'警告',value:'执行积压 48 块',condition:'执行积压超出配置容差'},ingress:{type:'入口广播积压',node:'api-01',group:'ingress',level:'警告',value:'待广播 bundle 86 个',condition:'广播队列超出配置容差'},clock:{type:'节点时钟偏差超限',node:'val-03',group:'overview',level:'严重',value:'128 ms',condition:'绝对偏差 > 10 ms'}};
-const notifications=[];const alarmRecords=[];
-let alarmSequence=0,lastScenario='normal';
-function alarmBody(a){return `【BIYA Chain 告警】${a.title}\n告警编号：${a.id}\n告警级别：${a.level}\n影响对象：${nodeBy(a.node)?.name||a.node}\n首次发生：${timeText(a.firstAt)} · UTC+8\n当前观测：${a.value}\n触发条件：${a.condition}\n详情：${location.href.split('#')[0]}#alerts?alert=${encodeURIComponent(a.id)}`;}
-function sendNotification(a,options={}){const target=options.target===undefined?'BIYA Chain 运维告警':options.target;const attempt=notifications.filter(n=>n.alertId===a.id).length+1;const n={id:'NTF-'+String(notifications.length+1).padStart(5,'0'),alertId:a.id,t:options.at||Date.now(),event:'产生',target:target||'未配置',status:!target?'未配置':options.fail?'发送失败':'发送成功',attempt,error:!target?'目标群未配置':options.fail?'通知服务请求超时':'—',body:alarmBody(a)};notifications.unshift(n);return n;}
-function ingestAlert(event){const active=alarmRecords.find(a=>a.fingerprint===event.fingerprint&&['告警中','状态未知'].includes(a.status));if(event.state==='resolved'){if(active){active.status='已恢复';active.lastAt=event.t;active.recoveredAt=event.t;}return active||null;}if(event.state==='unknown'){if(active){active.lastKnownState=active.status;active.status='状态未知';active.lastAt=event.t;}return active||null;}
- const existing=active||alarmRecords.find(a=>a.fingerprint===event.fingerprint&&a.status==='状态未知');if(existing){existing.status='告警中';existing.lastAt=event.t;existing.value=event.value||existing.value;return existing;}
- const a={id:'ALT-'+String(++alarmSequence).padStart(5,'0'),fingerprint:event.fingerprint,occurrenceId:'OCC-'+alarmSequence,node:event.node,title:event.title,group:event.group||'overview',level:event.level||'警告',value:event.value||'—',condition:event.condition||'未配置',firstAt:event.t,lastAt:event.t,status:'告警中',evidence:{nodeHeight:nodeBy(event.node)?currentHeight(nodeBy(event.node)):null,observedAt:timeText(event.t),value:event.value}};alarmRecords.unshift(a);sendNotification(a,event.notification||{});return a;
-}
-function seedAlarmHistory(){for(let i=18;i>0;i--){const k=Object.keys(ALARM_RULES)[i%4],r=ALARM_RULES[k],t=OBS.anchor-i*240000;const a=ingestAlert({fingerprint:'history-'+i,node:r.node,title:r.type,group:r.group,level:r.level,value:r.value,condition:r.condition,t,notification:{fail:i%6===0,at:t}});ingestAlert({fingerprint:a.fingerprint,state:'resolved',t:t+120000});}}
-seedAlarmHistory();
-function syncAlarmScenario(){if(lastScenario===state.scenario)return;const previous=lastScenario;lastScenario=state.scenario;if(state.scenario==='alert'){Object.entries(ALARM_RULES).forEach(([k,r])=>ingestAlert({fingerprint:'current-'+k,node:r.node,title:r.type,group:r.group,level:r.level,value:r.value,condition:r.condition,t:Date.now()}));}else if(state.scenario==='normal'&&previous!=='normal'){Object.keys(ALARM_RULES).forEach(k=>ingestAlert({fingerprint:'current-'+k,state:'resolved',t:Date.now()}));}else if(['stale','empty','error'].includes(state.scenario)&&previous==='alert'){Object.keys(ALARM_RULES).forEach(k=>ingestAlert({fingerprint:'current-'+k,state:'unknown',t:Date.now()}));}}
+function nodeTable() {}
+function nodesPage() {}
+function showNode() {}
 
-function chainSample(n){const i=Math.max(0,db.nodes.findIndex(x=>x.id===n.id));return {lag:state.scenario==='alert'&&n.id==='follow-02'?48:state.scenario==='alert'&&n.id==='val-03'?42:[3,2,1,2,3][i%5],mempool:state.scenario==='alert'&&n.id==='val-03'?2418:[218,184,164,80,60][i%5]};}
-
-function nodeTable(nodes,key='nodes'){return table(['节点名称 / ID','节点类型','参与共识','执行高度','服务状态','操作'],noSample()?[]:nodes.map(n=>[`${esc(n.name)}<div class="mono muted">${esc(n.id)}</div>`,badge(roleLabel(n.role),n.role==='validator'?'teal':''),n.role==='validator'?'是':'否',n.height===null?'不适用':fmt(currentHeight(n)),state.scenario==='stale'?statusBadge('stale'):statusBadge(services(n).some(s=>s.status==='down')?'down':'ok'),button('详情','node-detail',`data-id="${n.id}"`,'link')+button('监控','node-monitor',`data-id="${n.id}"`,'link')+button('日志','node-log',`data-id="${n.id}"`,'link')]),'暂无节点',{key});}
-function overview(){
- const ns=scopedNodes(),chain=ns.filter(n=>n.role!=='gateway'),gw=ns.filter(n=>n.role==='gateway');const sum=serviceSummary(ns);const active=alarmRecords.filter(a=>a.status==='告警中'&&ns.some(n=>n.id===a.node));
- const summary=[['节点探活',noSample()?'—':ns.length+' / '+ns.length],['服务探活',sum.total===null||sum.ok===null?'—':sum.ok+' / '+sum.total],['链状态一致性',!chain.length?'不适用':isQualityBad()?'无法判断':chain.some(n=>n.id==='val-03')&&state.scenario==='alert'?badge('1 个节点不一致','red'):badge('一致','green')],['finalize 执行积压',!chain.length?'不适用':noSample()?'—':Math.max(...chain.map(n=>chainSample(n).lag))+' 块'],['待广播 bundle',!gw.length?'不适用':noSample()?'—':(state.scenario==='alert'?86:12)+' 个'],['Core / EVM 映射',!chain.length?'不适用':isQualityBad()?'无法判断':chain.some(n=>mappingResult(n)==='不一致')?badge('不一致','red'):badge('一致','green')]];
- return heading('运行概览','',button('刷新','refresh','','primary'))+scopebar()+`<div class="cards">${card('参与共识的验证者',noSample()?'—':ns.filter(n=>n.role==='validator').length,'个')}${card('follow 节点',noSample()?'—':ns.filter(n=>n.role==='follow').length,'个')}${card('交易入口',noSample()?'—':gw.length,'个')}${card('活跃告警',isQualityBad()?'—':active.length,'个')}</div>`+panel('运行摘要',`<div class="summary-grid">${summary.map(([k,v])=>`<div class="summary-line"><span>${k}</span><strong>${v}</strong></div>`).join('')}</div>`)+panel('节点运行状态',nodeTable(ns,'overview-nodes'),button('全部节点','go','data-route="nodes"','link'))+clockPanel(ns)+panel('当前告警',alarmTable(active,'overview-alerts'),button('告警中心','go','data-route="alerts"','link'));
-}
-function clockPanel(ns){const samples=noSample()?[]:ns.map(clockSample);const valid=validNumbers(samples.map(s=>s.offset));const max=valid.length?Math.max(...valid.map(Math.abs)):null;const worst=samples.find(s=>Math.abs(s.offset)===max);const stale=state.scenario==='stale';return `<div id="clock">`+panel('时钟同步',`<div class="panel-body"><div class="cards clock-cards">${card('最大绝对偏差',scalar(max),'ms',worst?nodeBy(worst.nodeId).name:'',stale?'':max>10?'warning':'')}${card('偏差超限节点',stale||noSample()?'—':samples.filter(s=>Math.abs(s.offset)>s.threshold).length,'个')}${card('同步异常节点',stale||noSample()?'—':samples.filter(s=>!s.synced).length,'个')}${card('最近采样',samples.length?shortTime(OBS.anchor):'—','',stale?'数据过期':'UTC+8')}</div></div>`+table(['节点','节点类型','时间源','同步状态','时钟偏差','采样时间','数据状态'],samples.map(s=>[esc(nodeBy(s.nodeId).name),roleLabel(nodeBy(s.nodeId).role),s.source,stale?badge('未知'):badge(s.synced?'已同步':'未同步',s.synced?'green':'red'),`<strong class="${Math.abs(s.offset)>s.threshold?'text-red':''}">${s.offset===null?'—':(s.offset>0?'+':'')+s.offset+' ms'}</strong>`,timeText(s.sampledAt),stale?badge('数据过期','amber'):Math.abs(s.offset)>s.threshold?badge('超限','red'):badge('有效','green')]),'暂无时钟数据',{key:'clock-nodes'}))+`</div>`;}
-function nodesPage(){const tab=state.tab||'all';const rows=filtered(db.nodes).filter(n=>(tab==='all'||n.role===tab)&&(state.node==='all'||n.id===state.node));return heading('节点管理','',button('刷新','refresh','','primary'))+`<div class="tabs">${[['all','全部节点'],['validator','验证者'],['follow','follow'],['gateway','exchange-apiserver']].map(([k,v])=>button(v,'tab',`data-tab="${k}"`,k===tab?'active':'')).join('')}</div>`+searchFilter('搜索节点名称或 ID')+qualityNotice()+panel('节点列表',nodeTable(rows,'node-management'));}
-function showNode(nid){const n=nodeBy(nid);if(!n)return;modal(n.name+' · 节点详情',`<div class="modal-section"><h3>基础信息</h3><dl class="kv">${[['节点 ID',n.id],['部署环境',n.environment||'未配置'],['验证者地址',n.role==='validator'?ADDR(10+db.nodes.indexOf(n)):'不适用'],['节点类型',roleLabel(n.role)],['参与共识',n.role==='validator'?'是':'否'],['执行高度',n.height===null?'不适用':noSample()?'—':fmt(currentHeight(n))],['共识权重',n.role==='validator'?'未配置':'不适用'],['备注',n.note||'—']].map(([k,v])=>`<dt>${k}</dt><dd>${esc(v)}</dd>`).join('')}</dl></div><div class="modal-section"><h3>服务状态</h3>${table(['分组','服务','端点','探测类型','状态'],services(n).map(s=>[s.group,s.name,s.endpoint,s.protocol,statusBadge(s.status)]),'暂无服务',{key:'node-services-'+nid})}</div>`,button('关闭','close')+button('编辑备注','node-edit',`data-id="${nid}"`)+button('查看时钟','go',`data-route="overview" data-node="${nid}" data-focus="clock"`)+button('专用监控','node-monitor',`data-id="${nid}"`,'primary')+button('查看日志','node-log',`data-id="${nid}"`),true);}
-function chainPage(){const ns=scopedNodes(),vals=ns.filter(n=>n.role==='validator'),height=comparisonHeight();const unavailable=noSample();const maxLag=unavailable?'—':Math.max(...ns.map(n=>chainSample(n).lag));
- const cards=card('app_hash 不一致节点',isQualityBad()?'—':state.scenario==='alert'&&ns.some(n=>n.id==='val-03')?1:0,'个')+card('finalize 执行积压',maxLag,'块')+card('mempool 待处理交易',unavailable?'—':Math.max(...ns.map(n=>chainSample(n).mempool)),'笔','当前节点最大值')+card('待广播 bundle',unavailable?'—':state.scenario==='alert'?86:12,'个','全网交易入口')+card('验证者执行高度差',unavailable?'—':vals.length<2?'不适用':Math.max(...vals.map(currentHeight))-Math.min(...vals.map(currentHeight)),vals.length<2?'':'块');
- const comparison=table(['节点','执行高度','比较高度','app_hash','比较结果'],unavailable?[]:ns.map(n=>[esc(n.name),fmt(currentHeight(n)),height===null?'—':fmt(height),state.scenario==='stale'?'—':state.scenario==='alert'&&n.id==='val-03'?'0xb9d5…20a1':'0xa8c4…16f0',isQualityBad()?badge('无法比较','amber'):state.scenario==='alert'&&n.id==='val-03'?badge('状态不一致','red'):badge('一致','green')]),'暂无状态数据',{key:'chain-comparison'});
- return heading('链端监控','',button('刷新','refresh','','primary'))+nodeContext()+scopebar()+`<div class="cards cards-five">${cards}</div>`+panel('状态比较',comparison)+storagePanel();}
-function storagePanel(){const rows=storageRows(),ns=scopedNodes().filter(n=>n.role!=='gateway'),latest=ns.map(n=>rows.filter(r=>r.nodeId===n.id&&r.quality==='ok').at(-1)).filter(Boolean);const totalBytes=latest.reduce((s,r)=>s+r.sizeBytes,0),totalCount=latest.reduce((s,r)=>s+r.count,0),maxHeight=latest.length?Math.max(...latest.map(r=>r.latestHeight)):null;
- const charts=[['sizeBytes','存储大小趋势','GiB',r=>r.sizeBytes/2**30],['count','对象数量趋势','个',r=>r.count],['latestHeight','最新高度趋势','高度',r=>r.latestHeight]].map(([key,title,unit,value])=>{const series=ns.map((n,i)=>({id:n.id,name:n.name,color:COLORS[i%COLORS.length],points:buckets(rows.filter(r=>r.nodeId===n.id),r=>r.quality==='ok'?value(r):null,true)}));if(key==='latestHeight'&&ns.length===1)series.push({id:'finalized',name:'已完成高度',color:COLORS[2],points:series[0].points.map(p=>({t:p.t,y:currentHeight(ns[0])-Math.round((OBS.anchor-p.t)/60000)*4}))});return `<div class="chart-card"><h3>${title}</h3>${lineChart('storage-'+key,series,unit,{title:state.storageType+' '+title,width:380})}</div>`;}).join('');
- return panel('存储与恢复对象',`<div class="object-tabs">${['Replica','checkpoint','sidecar','snapshot'].map(t=>button(t,'storage-type',`data-type="${t}"`,state.storageType===t?'active':'')).join('')}</div><div class="panel-body"><div class="cards cards-three">${card('存储大小合计',latest.length?scalar(totalBytes/2**30,2):'—','GiB')}${card('对象数量合计',latest.length?fmt(totalCount):'—','个')}${card('最新高度',maxHeight===null?'—':fmt(maxHeight),'',ns.length>1?'节点最大值':'')}</div><div class="charts-three">${charts}</div></div>`+table(['节点','对象类型','大小','数量','最新高度','采样时间','数据状态'],latest.map(r=>[esc(nodeBy(r.nodeId).name),r.type,scalar(r.sizeBytes/2**30,2)+' GiB',r.count,fmt(r.latestHeight),timeText(r.t),state.scenario==='stale'?badge('数据过期','amber'):badge('有效','green')]),'暂无存储数据',{key:'storage-current'}));}
-function ingressMetrics(){const rs=ingressRows();if(!rs.length)return {broadcast:null,finality:null,mean:null,rate:null};const badClock=state.scenario==='alert';const durations=rs.map(r=>r.broadcastAt===null?null:badClock&&r.validatorId==='val-03'?null:r.broadcastAt-r.receivedAt);const confirmed=rs.map(r=>r.confirmedAt===null?null:badClock&&r.validatorId==='val-03'?null:r.confirmedAt-r.receivedAt);const allBundles=new Map();OBS.ingress.filter(r=>r.bundle).forEach(r=>{if(!allBundles.has(r.bundle))allBundles.set(r.bundle,[]);allBundles.get(r.bundle).push(r);});const bundles=[...allBundles.values()].filter(a=>inWindow(Math.min(...a.map(r=>r.broadcastAt))));return {broadcast:p95(durations),finality:p95(confirmed),mean:bundles.length?bundles.reduce((s,a)=>s+a.length,0)/bundles.length:null,rate:rs.filter(r=>r.broadcastAt!==null).length/rs.length*100};}
-function durationText(r,field){if(r[field]===null)return '—';if(state.scenario==='alert'&&r.validatorId==='val-03')return badge('时间偏差，无法比较','amber');return (r[field]-r.receivedAt)+' ms';}
-function ingressPage(){const m=ingressMetrics(),rs=ingressRows().sort((a,b)=>b.receivedAt-a.receivedAt);
- return heading('交易入口监控','',button('刷新','refresh','','primary'))+nodeContext()+scopebar()+`<div class="cards">${card('接收到广播 P95',scalar(m.broadcast),'ms')}${card('平均 bundle 交易数',scalar(m.mean),'笔 / 个')}${card('接收到最终确认 P95',scalar(m.finality),'ms')}${card('广播完成率',scalar(m.rate),'%')}</div>`+panel('交易处理记录',table(['接收时间','交易标识','bundle','入口节点','接收至广播','接收至最终确认','当前阶段','操作'],rs.map(r=>[timeText(r.receivedAt),r.id,r.bundle||'—',esc(nodeBy(r.nodeId).name),durationText(r,'broadcastAt'),durationText(r,'confirmedAt'),r.confirmedAt!==null?badge('最终确认','green'):r.broadcastAt!==null?badge('待确认','amber'):badge('待广播','amber'),button('详情','ingress-detail',`data-id="${r.id}"`,'link')]),'暂无交易记录',{key:'ingress-transactions'}))+gasPanel();}
-function gasPanel(){const rows=blockRows();const small=rows.filter(b=>b.blockType==='small'),big=rows.filter(b=>b.blockType==='big');const a=gasStats(small),b=gasStats(big);const unknown=rows.filter(b=>b.blockType==='unknown').length;
- const charts=[['small','小块',small,a,COLORS[0]],['big','大块',big,b,COLORS[1]]].map(([k,name,bs,s,color])=>`<div class="chart-card"><h3>${name} Gas 使用率</h3><div class="gas-value">${s.ratio===null?'暂无区块':scalar(s.ratio)+'%'}<small>${s.count} 个区块 · ${fmt(s.gas)} Gas</small></div>${lineChart('gas-'+k,[{id:k,name,color,points:buckets(bs,rs=>gasStats(rs).ratio)}],'%',{title:name+' Gas 使用率',dots:true})}<div class="metric-foot">最大使用率 ${s.max===null?'—':scalar(s.max)+'%'} · 最近区块 ${s.last===null?'—':shortTime(s.last)}${s.invalid?' · 无效分母 '+s.invalid+' 个':''}</div></div>`).join('');
- const filtered=rows.filter(r=>state.gasType==='all'||r.blockType===state.gasType).sort((a,b)=>b.t-a.t||b.number-a.number);
- return `<div id="gas">`+panel('EVM 区块 Gas 使用情况',`<div class="panel-body"><div class="scopebar"><div><label>EVM 观测节点 <select id="gas-node" aria-label="EVM 观测节点">${db.nodes.filter(n=>n.role!=='gateway').map(n=>`<option value="${n.id}" ${n.id===state.gasNode?'selected':''}>${esc(n.name)}</option>`).join('')}</select></label><label>区块类型 <select id="gas-type" aria-label="区块类型">${[['all','全部'],['small','小块'],['big','大块'],['unknown','未知']].map(([k,v])=>`<option value="${k}" ${k===state.gasType?'selected':''}>${v}</option>`).join('')}</select></label></div><span class="stamp">类型未知 ${unknown} 个</span></div><div class="charts-two">${charts}</div></div>`+table(['时间','区块号','区块 hash','类型','gasUsed','gasLimit','使用率','交易数','操作'],filtered.map(r=>[timeText(r.t),fmt(r.number),`<span class="mono">${esc(r.hash.slice(0,10)+'…'+r.hash.slice(-6))}</span>`,badge(({small:'小块',big:'大块',unknown:'未知'})[r.blockType]),fmt(r.gasUsed),fmt(r.gasLimit),r.gasLimit>0?scalar(r.gasUsed/r.gasLimit*100)+'%':badge('无法计算','amber'),r.txCount,button('详情','block-detail',`data-id="${r.hash}"`,'link')]),'暂无区块',{key:'gas-blocks'}))+`</div>`;}
-function evmPage(){const rs=evmReceipts(),fails=rs.filter(r=>r.status===0),ns=scopedNodes();const rate=rs.length?rs.filter(r=>r.status===1).length/rs.length*100:null;
- const mapping=table(['节点','Core 高度','对应 EVM 高度','对应 EVM hash','映射状态'],noSample()?[]:ns.map(n=>{const m=mappingSample(n);return [esc(n.name),fmt(m.coreHeight),fmt(m.evmHeight),`<span class="mono">${m.valid?esc(m.evmHash.slice(0,10)+'…'+m.evmHash.slice(-6)):'—'}</span>`,badge(mappingResult(n),mappingResult(n)==='一致'?'green':mappingResult(n)==='不一致'?'red':'amber')];}),'暂无映射样本',{key:'evm-mapping'});
- const ratePoints=buckets(rs,a=>a.length?a.filter(r=>r.status===1).length/a.length*100:null),failPoints=buckets(rs,a=>a.filter(r=>r.status===0).length);
- return heading('EVM 监控','',button('Gas 使用情况','go','data-route="ingress" data-node="all" data-focus="gas"')+button('刷新','refresh','','primary'))+nodeContext()+scopebar()+`<div class="cards">${card('Gas 价格',noSample()?'—':'0.12','Gwei')}${card('映射不一致节点',isQualityBad()?'—':ns.filter(n=>mappingResult(n)==='不一致').length,'个')}${card('交易成功率',scalar(rate),'%')}${card('失败交易',noSample()?'—':fails.length,'笔')}</div>`+panel('Core / EVM 对应关系',mapping)+panel('交易执行趋势',`<div class="panel-body charts-two"><div class="chart-card"><h3>交易成功率</h3>${lineChart('evm-success',[{id:'success',name:'成功率',color:COLORS[0],points:ratePoints}],'%',{title:'交易成功率'})}</div><div class="chart-card"><h3>失败交易数</h3>${lineChart('evm-failures',[{id:'failed',name:'失败数',color:COLORS[4],points:failPoints}],'笔',{title:'失败交易数'})}</div></div>`)+failurePanel(fails);}
-function failurePanel(fails){const counts=new Map();fails.forEach(r=>counts.set(r.reasonCategory,(counts.get(r.reasonCategory)||0)+1));const q=state.failureQuery.toLowerCase();const rows=fails.filter(r=>(state.failureType==='all'||r.reasonCategory===state.failureType)&&JSON.stringify(r).toLowerCase().includes(q)).sort((a,b)=>b.t-a.t||b.blockNumber-a.blockNumber||b.transactionIndex-a.transactionIndex);
- return panel('EVM 失败交易记录',`<div class="panel-body"><div class="reason-chips">${button('全部 '+fails.length,'failure-type','data-type="all"',state.failureType==='all'?'active':'')}${[...counts].map(([type,n])=>button(esc(type)+' '+n+' · '+scalar(n/fails.length*100)+'%','failure-type',`data-type="${esc(type)}"`,state.failureType===type?'active':'')).join('')}</div><div class="filters"><input type="search" id="failure-query" value="${esc(state.failureQuery)}" placeholder="搜索交易 hash 或地址" aria-label="搜索失败交易">${button('查询','failure-search')}${button('重置','failure-clear')}</div></div>`+table(['区块时间','交易 hash','区块号','区块类型','发送方 / 目标合约','失败类型','失败摘要','操作'],rows.map(r=>[timeText(r.t),`<span class="mono">${r.hash.slice(0,10)}…${r.hash.slice(-6)}</span>`,fmt(r.blockNumber),({small:'小块',big:'大块',unknown:'未知'})[r.blockType],`<div class="mono">${r.from.slice(0,8)}…${r.from.slice(-4)}<br>${r.to.slice(0,8)}…${r.to.slice(-4)}</div>`,badge(r.reasonCategory,r.reasonCategory==='原因未知'?'':'amber'),esc(r.reasonText),button('详情','failure-detail',`data-id="${r.hash}"`,'link')]),'暂无失败交易',{key:'evm-failures'}));}
-function alarmTable(records,key){return table(['首次发生','最近发生','告警类型','级别','影响对象','当前状态','最近通知','操作'],records.map(a=>{const n=notifications.find(n=>n.alertId===a.id);return [timeText(a.firstAt),timeText(a.lastAt),esc(a.title),badge(a.level,a.level==='严重'?'red':'amber'),esc(nodeBy(a.node)?.name||a.node),badge(a.status,a.status==='告警中'?'red':a.status==='已恢复'?'green':'amber'),n?badge(n.status,n.status==='发送成功'?'green':n.status==='发送失败'?'red':'amber'):'—',button('详情','alert-detail',`data-id="${a.id}"`,'link')];}),'暂无告警',{key});}
-function notificationTable(rows,key){return table(['发送时间','关联告警','事件','目标群','发送状态','尝试次数','失败原因','操作'],rows.map(n=>[timeText(n.t),button(n.alertId,'alert-detail',`data-id="${n.alertId}"`,'link'),n.event,esc(n.target),badge(n.status,n.status==='发送成功'?'green':n.status==='发送失败'?'red':'amber'),n.attempt,esc(n.error),button('消息详情','notification-detail',`data-id="${n.id}"`,'link')]),'暂无通知记录',{key});}
-function alertsPage(){const tab=state.tab||'alerts';const states=tab==='alerts'?['all','告警中','已恢复','状态未知']:['all','发送成功','发送失败','未配置'];const filter=tab==='alerts'?state.alertState:state.notificationState;let body;
- if(tab==='alerts'){const q=state.alertQuery.toLowerCase(),records=alarmRecords.filter(a=>(state.node==='all'||a.node===state.node)&&(state.alertState==='all'||a.status===state.alertState)&&(state.alertType==='all'||a.title===state.alertType)&&a.lastAt>=OBS.anchor-windowMs()&&JSON.stringify(a).toLowerCase().includes(q)).sort((a,b)=>b.lastAt-a.lastAt||b.id.localeCompare(a.id));body=`<div class="filters"><label>告警状态 <select id="alert-state" aria-label="告警状态">${states.map(s=>`<option ${s===filter?'selected':''} value="${s}">${s==='all'?'全部':s}</option>`).join('')}</select></label><label>告警类型 <select id="alert-type" aria-label="告警类型"><option value="all">全部</option>${[...new Set(alarmRecords.map(a=>a.title))].map(s=>`<option ${s===state.alertType?'selected':''}>${esc(s)}</option>`).join('')}</select></label><input type="search" id="alert-query" placeholder="搜索告警编号或对象" value="${esc(state.alertQuery)}" aria-label="搜索告警">${button('查询','alert-search')}</div>`+panel('告警记录',alarmTable(records,'alert-records'));}
- else{const q=state.notificationQuery.toLowerCase(),rows=notifications.filter(n=>(state.notificationState==='all'||n.status===state.notificationState)&&inWindow(n.t)&&JSON.stringify(n).toLowerCase().includes(q)&&(state.node==='all'||alarmRecords.some(a=>a.id===n.alertId&&a.node===state.node)));body=`<div class="filters"><label>发送状态 <select id="notification-state" aria-label="发送状态">${states.map(s=>`<option ${s===filter?'selected':''} value="${s}">${s==='all'?'全部':s}</option>`).join('')}</select></label><input type="search" id="notification-query" value="${esc(state.notificationQuery)}" placeholder="搜索告警编号或目标群" aria-label="搜索通知">${button('查询','notification-search')}</div>`+panel('Lark 通知记录',notificationTable(rows,'notification-records'));}
- return heading('告警中心','',button('刷新','refresh','','primary'))+scopebar()+`<div class="tabs">${button('告警记录','tab','data-tab="alerts"',tab==='alerts'?'active':'')}${button('Lark 通知记录','tab','data-tab="notifications"',tab==='notifications'?'active':'')}</div>`+body;}
-function openAlert(aid){const a=alarmRecords.find(a=>a.id===aid);if(!a)return;const rows=notifications.filter(n=>n.alertId===aid);modal('告警详情 · '+aid,`<dl class="kv">${[['告警类型',a.title],['状态',a.status],['级别',a.level],['影响对象',nodeBy(a.node)?.name||a.node],['首次发生',timeText(a.firstAt)],['最近发生',timeText(a.lastAt)],['当前观测',a.value],['触发条件',a.condition],['证据时间',a.evidence.observedAt],['证据观测值',a.evidence.value||'—'],['证据节点高度',a.evidence.nodeHeight??'不适用']].map(([k,v])=>`<dt>${k}</dt><dd>${esc(v)}</dd>`).join('')}</dl><h3 class="subheading">Lark 通知记录</h3>${notificationTable(rows,'alert-notifications-'+aid)}`,button('关闭','close')+button('定位监控','go',`data-route="${a.group}" data-node="${a.node}" ${a.fingerprint.endsWith('clock')?'data-focus="clock"':''}`,'primary')+button('节点日志','go',`data-route="logs" data-node="${a.node}"`),true);}
-function logsPage(){const q=state.logQuery.toLowerCase();const rows=noSample()?[]:OBS.logs.filter(r=>inWindow(r.t)&&(state.node==='all'||r.nodeId===state.node)&&(state.logLevel==='all'||r.level===state.logLevel)&&JSON.stringify(r).toLowerCase().includes(q));return heading('节点日志','',button('导出','export-logs'))+nodeContext()+scopebar()+`<div class="filters"><label>级别 <select id="log-level" aria-label="日志级别">${['all','INFO','WARN','ERROR'].map(l=>`<option ${l===state.logLevel?'selected':''} value="${l}">${l==='all'?'全部':l}</option>`).join('')}</select></label><input type="search" id="log-query" value="${esc(state.logQuery)}" placeholder="搜索日志或关联标识" aria-label="搜索日志">${button('查询','log-search')}${button('重置','log-clear')}</div>`+panel('节点日志',table(['时间','节点','级别','日志内容','关联标识'],rows.map(r=>[timeText(r.t),esc(nodeBy(r.nodeId).name),badge(r.level,r.level==='ERROR'?'red':r.level==='WARN'?'amber':''),`<span class="mono">${esc(r.message)}</span>`,r.traceId]),'暂无日志',{key:'node-logs'}));}
 function bybPage(){const tab=state.tab||'holders';let body;if(tab==='holders')body=panel('持仓与异动',table(['地址','公开标签','持仓数量','持仓占比','24h 变化','操作'],[],'暂无资产数据',{key:'byb-holders'}));else if(tab==='price')body=panel('价格与流动性',table(['项目','数值','数据状态'],[['参考价格','—',badge('未配置')],['成交量','—',badge('未配置')],['市场深度','—',badge('未配置')]],'暂无数据',{key:'byb-price'}));else body=panel('供应与解锁',table(['日期','类型','数量','状态'],[],'暂无供应与解锁记录',{key:'byb-supply'}));return heading('BYB 数据监控','',button('刷新','refresh','','primary'))+scopebar(false)+`<div class="cards">${card('参考价格','—','', '未配置')}${card('流通供应量','—','','未配置')}${card('持仓地址数','—','','未配置')}${card('未来解锁量','—','','未配置')}</div><div class="tabs">${[['holders','持仓与异动'],['price','价格与流动性'],['supply','供应与解锁']].map(([k,v])=>button(v,'tab',`data-tab="${k}"`,k===tab?'active':'')).join('')}</div>`+body;}
 
 // Adopted PRD behavior. Data below are local fixtures, not live chain/service observations.
 // Integrations must supply their own provenance, freshness policy, authorization and delivery results.
 const OPS_ROUTES=new Set(['overview','nodes','chain','ingress','evm','alerts','logs']);
-const ROUTE_QUERY={nodes:['tab','query'],chain:['storageType'],ingress:['gasNode','gasType'],evm:['failureType','failureQuery'],alerts:['tab','alertState','alertType','alertQuery','notificationState','notificationQuery'],logs:['logLevel','logQuery']};
-const QUERY_KEYS=['tab','query','storageType','gasNode','gasType','failureType','failureQuery','alertState','alertType','alertQuery','notificationState','notificationQuery','logLevel','logQuery'];
+const ROUTE_QUERY={nodes:['tab','query'],chain:['storageType'],ingress:['gasNode','gasType'],evm:['failureName'],alerts:['alertType','alertQuery'],logs:['logStart','logEnd']};
+const QUERY_KEYS=[...new Set(Object.values(ROUTE_QUERY).flat())];
 const FAILURE_TYPES=['Gas 耗尽','已解析合约错误','未解析合约错误','执行回退','原因未知'];
 const OPS_PERMISSIONS={read:'monitor:read',edit:'node:edit',export:'logs:export',audit:'audit:read'};
 Object.assign(state,{cutoff:Date.now(),fixedCutoff:false,blocked:'',loading:false,focus:'',activeAlert:null,routeNotice:''});
 const cmp=(a,b)=>String(a??'').localeCompare(String(b??''),'en',{numeric:true});
 const nodeSort=(a,b)=>cmp(a.id,b.id);
+const isManagedNode=n=>['validator','follow'].includes(n?.role);
 const dateValue=a=>Number.isFinite(a)?a:Date.parse(a)||0;
 const textMatch=(q,...values)=>{q=String(q??'').trim().toLowerCase();return !q||values.some(v=>v!=null&&String(v).toLowerCase().includes(q));};
 const hasPermission=(kind,nid)=>{
@@ -373,19 +361,21 @@ OBS.moduleStatus={};
 OBS.moduleRefresh=null;
 OBS.serviceSamples=[];
 OBS.serviceConfig=[];
-OBS.clocks=db.nodes.map((n,i)=>({nodeId:n.id,offset:[-1.2,0,.8,-.4,null,1.6][i]??null,source:null,synced:null,threshold:null,sampledAt:OBS.anchor,quality:i===4?'missing':'ok'}));
+OBS.coreHeads=db.nodes.filter(n=>n.role!=='gateway').map(n=>({nodeId:n.id,height:842110,chainId:'biya',stage:'produced',quality:'ok',t:OBS.anchor}));
+OBS.coreHeads.push({...OBS.coreHeads[0],nodeId:'core-reference'});
+OBS.coreHeadReference='core-reference';
+OBS.lagEvidence=[];
 OBS.chainHistory=db.nodes.filter(n=>n.role!=='gateway').flatMap(n=>[842100,842101].map(height=>({nodeId:n.id,chainId:'biya',version:'1',stage:'execution-complete',height,digest:'0x'+('ab'.repeat(32)),quality:'ok',t:OBS.anchor})));
 OBS.chainBaseline={nodeId:'val-01',chainId:'biya',version:'1',stage:'execution-complete'};
 OBS.queueSamples=db.nodes.filter(n=>n.role!=='gateway').map((n,i)=>({nodeId:n.id,executableFinalHeight:n.height+[3,2,1,2,3][i],completedHeight:n.height,mempool:[218,184,164,80,60][i],quality:'ok',t:OBS.anchor}));
 OBS.completedHeights=[];
 OBS.storageConfig=Object.fromEntries(['Replica','checkpoint','sidecar','snapshot'].map(type=>[type,{unit:type==='Replica'?'文件':type==='checkpoint'?'检查点':type==='snapshot'?'完整快照':null,physicalDefinitionConfirmed:type!=='sidecar',shared:false}]));
-OBS.mappingHistory=db.nodes.filter(n=>n.role!=='gateway').map(n=>({nodeId:n.id,chainId:'biya',version:'1',stage:'execution-complete',coreHeight:842100,evmHeight:42089,evmHash:OBS.blocks.find(b=>b.number===42089&&b.observerNodeId===n.id)?.hash||null,quality:'ok',t:OBS.anchor}));
 OBS.priceSamples=[];
 OBS.primaryObserver='val-01';
 OBS.blockHistoryComplete=true;
 OBS.receiptHistoryComplete=true;
-OBS.exportPolicy={maxRecords:null,maxBytes:null};
-OBS.logPolicy={retention:null};
+OBS.logPolicy={retentionMs:7*86400000,maxBytes:512,maxQueryMs:24*3600000};
+OBS.alertRules={};
 OBS.notificationConfig={target:null,detailBaseUrl:null,maxAttempts:null,retryDelays:[]};
 OBS.notificationAdapter=null;
 OBS.ingress.forEach(r=>{r.chainId='biya';r.businessId=r.id;r.timeQuality='ok';r.eventSource='入口处理事件';r.txHash=null;r.confirmationBlock=null;});
@@ -399,7 +389,7 @@ const creationFixture=OBS.receipts.filter(r=>r.status===0).sort((a,b)=>b.t-a.t)[
 if(OBS.logs[0])OBS.logs[0].traceId=null;
 db.nodes.forEach(n=>{n.version=n.version||1;});
 
-scopeNodes=()=>db.nodes.filter(n=>hasPermission('read',n.id)).filter(n=>state.route==='ingress'?n.role==='gateway':['chain','evm'].includes(state.route)?['validator','follow'].includes(n.role):true).sort(nodeSort);
+scopeNodes=()=>db.nodes.filter(n=>hasPermission('read',n.id)).filter(n=>state.route==='ingress'?n.role==='gateway':['nodes','chain','evm'].includes(state.route)?isManagedNode(n):true).sort(nodeSort);
 scopedNodes=()=>scopeNodes().filter(n=>state.node==='all'||n.id===state.node);
 qualityNotice=()=>state.loading?hint('正在获取数据…'):({empty:hint('暂无数据'),stale:hint('数据过期 · 最后成功采样 '+timeText(OBS.anchor)+' · UTC+8','amber'),error:hint('采集失败，保留最后成功数据。 '+button('重试','refresh','','link'),'red')})[state.scenario]||'';
 scopebar=(withNode=true)=>`<div class="scopebar"><div>${withNode?`<label>监控对象 <select id="scope-node" aria-label="监控对象"><option value="all">全部适用节点</option>${scopeNodes().map(n=>`<option value="${n.id}" ${state.node===n.id?'selected':''}>${esc(n.name)}</option>`).join('')}</select></label>`:''}<label>统计窗口 <select id="scope-window" aria-label="统计窗口">${[['1h','近 1 小时'],['6h','近 6 小时'],['24h','近 24 小时']].map(([k,v])=>`<option value="${k}" ${k===state.window?'selected':''}>${v}</option>`).join('')}</select></label></div><span class="stamp">查询截止 ${timeText(state.cutoff)} · UTC+8<br>最近采样 ${timeText(OBS.anchor)} · UTC+8${state.fixedCutoff?' · 历史定位':''}</span></div>${qualityNotice()}${state.routeNotice?hint(esc(state.routeNotice),'amber'):''}`;
@@ -456,43 +446,46 @@ navigate=(route,node='all',focus='',extra={})=>{
  if(route!==state.route){Object.assign(state,queryDefaults);state.gasNode=OBS.primaryObserver&&hasPermission('read',OBS.primaryObserver)?OBS.primaryObserver:'';resetPages();}
  const hash=writeLocation(route,node,focus,extra);if(location.hash===hash)syncRoute();else location.hash=hash;
 };
-const queryDefaults={tab:'',query:'',storageType:'Replica',gasNode:'val-01',gasType:'all',failureType:'all',failureQuery:'',alertState:'all',alertType:'all',alertQuery:'',notificationState:'all',notificationQuery:'',logLevel:'all',logQuery:''};
-const legalValues={storageType:['Replica','checkpoint','sidecar','snapshot'],gasType:['all','small','big','unknown'],failureType:['all',...FAILURE_TYPES],alertState:['all','告警中','已恢复','状态未知'],notificationState:['all','待发送','发送中','发送成功','发送失败','未配置'],logLevel:['all','INFO','WARN','ERROR']};
+const queryDefaults={tab:'',query:'',storageType:'Replica',gasNode:'val-01',gasType:'all',failureName:'',alertType:'all',alertQuery:'',logStart:'',logEnd:''};
+const legalValues={tab:['all','validator','follow'],storageType:['Replica','checkpoint','sidecar','snapshot'],gasType:['all','small','big']};
 syncRoute=()=>{
  let [route,query]=location.hash.slice(1).split('?');const params=new URLSearchParams(query||'');let focus=params.get('focus')||'';
- if(route==='infra'){route='overview';focus='clock';}
+ const oldClock=route==='infra'||(route==='overview'&&focus==='clock');
+ if(oldClock){route='overview';focus='';}
  route=({status:'overview',perf:'chain',trends:'chain',governance:'overview'})[route]||route||'overview';
  if(!TITLES[route])route='overview';const changed=route!==state.route;if(changed)resetPages();state.route=route;state.blocked='';state.routeNotice='';
  state.window=['1h','6h','24h'].includes(params.get('window'))?params.get('window'):state.window;
  const end=Number(params.get('at'));state.cutoff=params.has('at')&&Number.isFinite(end)&&end>0&&end<=Date.now()+1000?end:Date.now();state.fixedCutoff=Date.now()-state.cutoff>windowMs()/2;
- for(const key of QUERY_KEYS){if(params.has(key)){const v=params.get(key);state[key]=!legalValues[key]||legalValues[key].includes(v)?v:queryDefaults[key];}else if(changed)state[key]=queryDefaults[key];}
+ for(const key of QUERY_KEYS){if(params.has(key)){const v=params.get(key);state[key]=!legalValues[key]||legalValues[key].includes(v)?v:queryDefaults[key];}else if(changed||route==='logs'&&ROUTE_QUERY.logs.includes(key)||route==='nodes'&&ROUTE_QUERY.nodes.includes(key))state[key]=queryDefaults[key];}
  state.node=params.get('node')||'all';state.focus=focus;
  if(!hasPermission('read'))state.blocked='无访问权限';
  else if(state.node!=='all'){
   if(!nodeBy(state.node))state.blocked='节点不存在或已移除';
   else if(!hasPermission('read',state.node))state.blocked='无权查看该节点';
+  else if(route==='nodes'&&nodeBy(state.node).role==='gateway'){
+   state.blocked='此入口服务请在 Ex_API 交易池查看';
+  }
   else if(!scopeNodes().some(n=>n.id===state.node))state.blocked='该节点不适用于当前页面';
  }
  if(state.gasNode&&(!nodeBy(state.gasNode)||!hasPermission('read',state.gasNode)||nodeBy(state.gasNode).role==='gateway')){state.gasNode='';state.routeNotice='请选择有权查看的 EVM 观测节点';}
- if(focus&&(!['clock','gas'].includes(focus)||focus==='clock'&&route!=='overview'||focus==='gas'&&route!=='ingress'))state.routeNotice='定位区域不存在';
+ if(oldClock)state.routeNotice='时钟同步区域已移除';
+ if(focus&&!({chain:['chain-indicators','chain-comparison'],ingress:['gas']}[route]||[]).includes(focus)){state.routeNotice='定位区域不存在';state.focus='';}
  closeAllModals();render();document.getElementById('sidebar').classList.remove('open');
- if(focus)setTimeout(()=>document.getElementById(focus)?.scrollIntoView({block:'start'}),0);
+ if(state.focus&&focus)setTimeout(()=>document.getElementById(focus)?.scrollIntoView({block:'start'}),0);
  if(params.has('alert')&&!state.blocked)openAlert(params.get('alert'));
 };
 const baseRender=render;
 render=()=>{
  if(OPS_ROUTES.has(state.route)&&!hasPermission('read'))state.blocked='无访问权限';
- if(state.blocked){document.getElementById('current-title').textContent=TITLES[state.route];document.getElementById('workspace').innerHTML=heading(TITLES[state.route])+hint(esc(state.blocked),'red')+button('返回运行概览','go','data-route="overview" data-node="all"','primary');return;}
+ if(state.blocked){document.getElementById('current-title').textContent=TITLES[state.route];document.getElementById('workspace').innerHTML=heading(TITLES[state.route])+hint(esc(state.blocked),'red')+(state.route==='nodes'&&nodeBy(state.node)?.role==='gateway'&&hasPermission('read',state.node)?button('查看 Ex_API 交易池','node-monitor',`data-id="${esc(state.node)}"`,'link'):'')+button('返回运行概览','go','data-route="overview" data-node="all"','primary');return;}
  if(!['empty','error'].includes(state.scenario))state.last=timeText(OBS.anchor);
  baseRender();
  document.querySelector('[data-action="audit"]')?.toggleAttribute('disabled',!hasPermission('audit'));
 };
-const persistAlarmState=()=>{try{prototypeStorage.setItem(STORE+'-alarm-v4',JSON.stringify({alarmRecords,notifications,alarmSequence}));}catch{toast('告警记录未能保存在本机，刷新后可能无法恢复');}};
-
 services=n=>{
  const base=n.role==='gateway'?[['入口','Exchange API','http'],['入口','metrics','http']]:[['链端','P2P','p2p'],['链端','认证 UDP','udp'],['Core','Info API','http'],['Core','node_server','internal'],['Core','metrics','http'],['Core','pprof','http'],['EVM','JSON-RPC','json-rpc'],['EVM','快照 / 状态服务','internal']];
  return base.map(([group,name,protocol],index)=>{
-  const c=OBS.serviceConfig.find(c=>c.nodeId===n.id&&c.name===name),r=latestRecord(OBS.serviceSamples.filter(s=>s.nodeId===n.id&&s.name===name));
+  const c=OBS.serviceConfig.find(c=>c.nodeId===n.id&&c.name===name),r=latestRecord(OBS.serviceSamples.filter(s=>s.nodeId===n.id&&s.name===name&&s.t<=state.cutoff));
   let status=!c?.endpoint?'unconfigured':!r?'untested':qualityOf(r)!=='ok'?'stale':r.available?'ok':'down';
   return {id:n.id+'/'+name,group,name,protocol,order:index,endpoint:c?.endpoint||null,enabled:c?.enabled!==false,status,t:r?.t??null,error:r?.error||null};
  }).filter(s=>s.enabled);
@@ -500,34 +493,42 @@ services=n=>{
 statusBadge=s=>({ok:badge('可用','green'),down:badge('不可用','red'),untested:badge('未知'),stale:badge('数据过期','amber'),unconfigured:badge('未配置','amber')})[s]||badge('未知');
 serviceSummary=nodes=>{const ss=nodes.flatMap(services);return {ok:ss.filter(s=>s.status==='ok').length,total:ss.length,unknown:ss.filter(s=>!['ok','down'].includes(s.status)).length};};
 const serviceOverall=n=>{const ss=services(n);return ss.some(s=>s.status==='down')?'down':ss.length&&ss.every(s=>s.status==='ok')?'ok':'untested';};
-clockSample=n=>{const r=noSample()?null:OBS.clocks.find(r=>r.nodeId===n.id);return {...(r||{nodeId:n.id,offset:null,source:null,synced:null,threshold:null,sampledAt:null}),quality:qualityOf(r)};};
-const chainComparison=ns=>{
- const histories=ns.map(n=>OBS.chainHistory.filter(r=>r.nodeId===n.id&&r.quality==='ok'&&r.t<=state.cutoff&&r.height<=currentHeight(n)));
- const baseline=OBS.chainBaseline;
- const compatible=r=>baseline&&r.chainId===baseline.chainId&&r.stage===baseline.stage&&r.version===baseline.version;
- const heights=histories[0]?.filter(compatible).map(r=>r.height).filter(h=>histories.every(rs=>rs.some(r=>compatible(r)&&r.height===h)))||[];
+const latestNodeSample=(rows,nodeId)=>latestRecord(rows.filter(r=>r.nodeId===nodeId&&r.t<=state.cutoff));
+const availableSample=r=>!noSample()&&qualityOf(r)==='ok';
+const heightValue=v=>Number.isSafeInteger(v)&&v>=0;
+const chainHead=n=>latestNodeSample(OBS.coreHeads,n.id);
+const heightReference=()=>latestNodeSample(OBS.coreHeads,OBS.coreHeadReference);
+function heightResult(n){
+ const sample=chainHead(n),base=heightReference();
+ if(!availableSample(sample)||!heightValue(sample.height))return {sample,note:'节点高度缺测或过期'};
+ if(!availableSample(base)||!heightValue(base.height)||base.chainId!==sample.chainId||base.stage!==sample.stage||base.nodeId===n.id&&state.node!=='all')return {sample,note:'缺少同口径的有效参考高度'};
+ if(sample.height>base.height)return {sample,note:'节点高度高于参考值，请核查基准'};
+ return {sample,result:sample.height===base.height?'高度一致':'高度落后'};
+}
+function chainComparison(nodes){
+ const base=OBS.chainBaseline,comparable=r=>base&&availableSample(r)&&r.t<=state.cutoff&&r.chainId===base.chainId&&r.version===base.version&&r.stage===base.stage&&heightValue(r.height)&&/^0x[\da-f]{64}$/i.test(r.digest);
+ const samples=OBS.chainHistory.filter(comparable);
+ const eligible=nodes.filter(n=>samples.some(r=>r.nodeId===n.id));
+ const heights=samples.filter(r=>r.nodeId===base?.nodeId&&eligible.every(n=>samples.some(s=>s.nodeId===n.id&&s.height===r.height))).map(r=>r.height);
  const height=heights.length?Math.max(...heights):null;
- const reference=baseline&&OBS.chainHistory.find(r=>r.nodeId===baseline.nodeId&&r.height===height&&compatible(r)&&r.quality==='ok'&&r.t<=state.cutoff);
- const rows=ns.map(n=>{const sample=histories.find(rs=>rs.some(r=>r.nodeId===n.id))?.find(r=>compatible(r)&&r.height===height);return {node:n,sample,result:!isQualityBad()&&sample&&reference&&!(ns.length===1&&baseline.nodeId===n.id)&&/^0x[0-9a-fA-F]{64}$/.test(sample.digest)&&/^0x[0-9a-fA-F]{64}$/.test(reference.digest)?(sample.digest===reference.digest?'一致':'状态不一致'):'无法比较'};});
- return {height,rows,unknown:rows.filter(r=>r.result==='无法比较').length,mismatch:reference?rows.filter(r=>r.result==='状态不一致').length:null};
-};
-comparisonHeight=()=>chainComparison(scopedNodes().filter(n=>n.role!=='gateway')).height;
-chainSample=n=>{const r=latestRecord(OBS.queueSamples.filter(s=>s.nodeId===n.id&&s.t<=state.cutoff));return {lag:r?.quality==='ok'&&r.executableFinalHeight>=r.completedHeight?r.executableFinalHeight-r.completedHeight:null,mempool:r?.quality==='ok'&&r.mempool>=0?r.mempool:null};};
-mappingSample=n=>{
- const ns=scopedNodes().filter(x=>x.role!=='gateway'),base=OBS.chainBaseline;
- const compatible=r=>base&&r.chainId===base.chainId&&r.version===base.version&&r.stage===base.stage&&r.quality==='ok'&&r.t<=state.cutoff;
- const samples=ns.map(x=>OBS.mappingHistory.filter(r=>r.nodeId===x.id&&compatible(r)));
- const common=samples[0]?.map(r=>r.coreHeight).filter(h=>samples.every(rs=>rs.some(r=>r.coreHeight===h)))||[];
- const height=common.length?Math.max(...common):null;
- const r=latestRecord(OBS.mappingHistory.filter(r=>r.nodeId===n.id&&r.coreHeight===height&&compatible(r)));
- return {nodeId:n.id,coreHeight:r?.coreHeight??null,evmHeight:r?.evmHeight??null,evmHash:r?.evmHash??null,valid:!isQualityBad()&&r?.quality==='ok'&&!!r.evmHash,source:r};
-};
-mappingResult=n=>{
- const m=mappingSample(n);if(!m.valid)return '无法比较';
- const matches=scopedNodes().filter(n=>n.role!=='gateway').map(mappingSample);
- const base=OBS.mappingHistory.find(r=>r.nodeId===OBS.chainBaseline?.nodeId&&r.coreHeight===m.coreHeight&&r.stage===m.source.stage&&r.chainId===m.source.chainId&&r.version===m.source.version&&r.quality==='ok'&&r.evmHash&&r.t<=state.cutoff);
- return !base||(matches.length===1&&base.nodeId===n.id)||matches.some(x=>!x.valid||x.coreHeight!==m.coreHeight)?'无法比较':base.evmHeight===m.evmHeight&&base.evmHash===m.evmHash?'一致':'不一致';
-};
+ const reference=latestNodeSample(samples.filter(r=>r.height===height),base?.nodeId);
+ const rows=nodes.map(node=>{
+  const sample=latestNodeSample(samples.filter(r=>r.height===height),node.id);
+  const valid=!!(sample&&reference&&!(eligible.length===1&&reference.nodeId===node.id));
+  return {node,sample,valid,mismatch:valid&&sample.digest.toLowerCase()!==reference.digest.toLowerCase()};
+ });
+ const valid=rows.filter(r=>r.valid).length;
+ return {height,rows,valid,mismatches:rows.filter(r=>r.mismatch)};
+}
+function chainSample(n){
+ const r=latestNodeSample(OBS.queueSamples,n.id),valid=availableSample(r);
+ return {lag:valid&&heightValue(r.executableFinalHeight)&&heightValue(r.completedHeight)&&r.executableFinalHeight>=r.completedHeight?r.executableFinalHeight-r.completedHeight:null,mempool:valid&&heightValue(r.mempool)?r.mempool:null,completed:valid&&heightValue(r.completedHeight)?r.completedHeight:null};
+}
+function validatorSpread(nodes){
+ const validators=nodes.filter(n=>n.role==='validator'),values=validNumbers(validators.map(n=>chainSample(n).completed));
+ return {value:validators.length<2?'不适用':values.length<2?'—':Math.max(...values)-Math.min(...values),foot:`有效 ${values.length} / ${validators.length} 个验证者`};
+}
+
 storageRows=()=>noSample()?[]:OBS.storage.filter(r=>scopedNodes().some(n=>n.id===r.nodeId)&&r.type===state.storageType&&inWindow(r.t));
 buckets=(rows,getValue,last=false)=>{
  const step=bucketMs(),start=state.cutoff-windowMs(),map=new Map();
@@ -543,19 +544,13 @@ lineChart=(key,series,unit,options={})=>{
 
 ingressRows=()=>noSample()?[]:OBS.ingress.filter(r=>hasPermission('read',r.nodeId)&&inWindow(r.receivedAt)&&(state.node==='all'||r.nodeId===state.node)).filter((r,i,a)=>a.findIndex(x=>x.nodeId===r.nodeId&&x.id===r.id)===i).sort((a,b)=>b.receivedAt-a.receivedAt||cmp(a.nodeId,b.nodeId)||cmp(a.id,b.id));
 const validEventTime=(r,field)=>Number.isFinite(r[field])&&r[field]>=r.receivedAt&&r[field]<=state.cutoff;
-const pendingBundles=(nodeIds=null)=>{
- const groups=new Map();for(const r of OBS.ingress){if(!r.bundle||r.receivedAt>state.cutoff||!hasPermission('read',r.nodeId)||nodeIds&&!nodeIds.includes(r.nodeId))continue;const key=r.nodeId+'/'+r.bundle;if(!groups.has(key))groups.set(key,[]);groups.get(key).push(r);}
- return [...groups.values()].filter(rs=>!rs.some(r=>validEventTime(r,'broadcastAt'))).length;
-};
 const eventDuration=(r,field)=>validEventTime(r,field)&&(field!=='confirmedAt'||validEventTime(r,'broadcastAt')&&r.confirmedAt>=r.broadcastAt)&&r.timeQuality==='ok'&&!(state.scenario==='alert'&&r.validatorId==='val-03')?r[field]-r.receivedAt:null;
-const ingressStage=r=>r.rejected?'已拒绝':r.expired?'已过期':validEventTime(r,'confirmedAt')&&validEventTime(r,'broadcastAt')&&r.confirmedAt>=r.broadcastAt?'最终确认':r.confirmedAt!=null?'状态未知':validEventTime(r,'broadcastAt')?'待确认':r.broadcastAt!=null?'状态未知':'待广播';
-ingressMetrics=()=>{
+function ingressMetrics(){
  const rows=ingressRows(),bundles=new Map();
  for(const r of OBS.ingress){if(!r.bundle||!hasPermission('read',r.nodeId)||(state.node!=='all'&&r.nodeId!==state.node))continue;const k=r.nodeId+'/'+r.bundle;if(!bundles.has(k))bundles.set(k,[]);bundles.get(k).push(r);}
  const broadcasted=[...bundles.values()].filter(rs=>{const ts=rs.filter(r=>validEventTime(r,'broadcastAt')).map(r=>r.broadcastAt);return ts.length&&inWindow(Math.min(...ts));});
- return {broadcast:p95(rows.map(r=>eventDuration(r,'broadcastAt'))),finality:p95(rows.map(r=>eventDuration(r,'confirmedAt'))),rate:rows.length?rows.filter(r=>validEventTime(r,'broadcastAt')).length/rows.length*100:null,mean:broadcasted.length?broadcasted.reduce((s,rs)=>s+new Set(rs.map(r=>r.businessId)).size,0)/broadcasted.length:null};
+ return {broadcast:p95(rows.map(r=>eventDuration(r,'broadcastAt'))),finality:p95(rows.map(r=>eventDuration(r,'confirmedAt'))),mean:broadcasted.length?broadcasted.reduce((s,rs)=>s+new Set(rs.map(r=>r.businessId)).size,0)/broadcasted.length:null};
 };
-durationText=(r,field)=>{const v=eventDuration(r,field);return v!=null?scalar(v)+' ms':r[field]==null?'—':badge('时间不可比较','amber');};
 const gasInteger=v=>{try{if(typeof v==='number'&&!Number.isSafeInteger(v))return null;return /^\d+$/.test(String(v))?BigInt(v):null;}catch{return null;}};
 const validGas=b=>{const used=gasInteger(b.gasUsed),limit=gasInteger(b.gasLimit);return used!==null&&limit!==null&&limit>0n&&used<=limit;};
 const gasRatio=(used,limit)=>Number((used*100000000n+limit/2n)/limit)/1000000;
@@ -575,164 +570,364 @@ const classifyFailure=r=>{
  return e.kind==='out-of-gas'?'Gas 耗尽':e.kind==='decoded'&&e.text?'已解析合约错误':e.kind==='raw-revert'&&e.data?'未解析合约错误':e.kind==='revert'?'执行回退':'原因未知';
 };
 evmReceipts=()=>{
- if(noSample())return [];
+ if(isQualityBad())return [];
  const selected=scopedNodes().map(n=>n.id),map=new Map();
- for(const original of OBS.receipts){const normalized=original.status===0||original.status==='0x0'?0:original.status===1||original.status==='0x1'?1:null;const r={...original,status:normalized};if(!inWindow(r.t)||normalized==null)continue;const observers=(r.observerNodeIds||[r.observerNodeId]).filter(n=>selected.includes(n)&&hasPermission('read',n));if(!observers.length)continue;
+ for(const original of OBS.receipts){const normalized=original.status===0||original.status==='0x0'?0:original.status===1||original.status==='0x1'?1:null;const r={...original,status:normalized};if(!inWindow(r.t)||normalized==null||!r.hash||!r.blockHash||!Number.isSafeInteger(r.blockNumber)||r.quality!=='ok')continue;const observers=(r.observerNodeIds||[r.observerNodeId]).filter(n=>selected.includes(n)&&hasPermission('read',n));if(!observers.length)continue;
   const key=(r.chainId||'')+'/'+r.blockHash+'/'+r.hash,prev=map.get(key);
   if(prev){if(prev.status!==r.status){prev.conflict=true;continue;}prev.observerNodeIds=[...new Set([...prev.observerNodeIds,...observers])];}
   else map.set(key,{...r,observerNodeIds:observers,reasonCategory:r.status===0?classifyFailure(r):'',reasonText:r.reasonEvidence?.kind==='decoded'?r.reasonEvidence.text:r.reasonText==='—'?null:r.reasonText});
  }
- const rows=[...map.values()];return rows.filter(r=>!r.conflict&&!rows.some(x=>x.hash===r.hash&&x.blockHash!==r.blockHash));
+ const rows=[...map.values()];return rows.filter(r=>!r.conflict&&!rows.some(x=>x.chainId===r.chainId&&x.hash===r.hash&&x.blockHash!==r.blockHash));
 };
-failedReceipts=()=>evmReceipts().filter(r=>r.status===0);
 
 nodeTable=(nodes,key='nodes')=>table(['节点名称 / ID','节点类型','参与共识','执行高度','服务状态','操作'],nodes.slice().sort(nodeSort).map(n=>[
- `${esc(n.name||n.id)}<div class="mono muted">${wholeValue(n.id,false)}</div>`,badge(roleLabel(n.role)),n.consensusMember===false?'否':n.role==='validator'?'是':'否',n.role==='gateway'?'不适用':noSample()?'—':fmt(currentHeight(n)),statusBadge(serviceOverall(n)),button('详情','node-detail',`data-id="${n.id}"`,'link')+button('监控','node-monitor',`data-id="${n.id}"`,'link')+button('日志','node-log',`data-id="${n.id}"`,'link')]),'暂无节点',{key});
+ `${esc(n.name||n.id)}<div class="mono muted">${wholeValue(n.id,false)}</div>`,badge(roleLabel(n.role)),n.consensusMember===false?'否':n.role==='validator'?'是':'否',n.role==='gateway'?'不适用':noSample()?'—':fmt(currentHeight(n)),statusBadge(serviceOverall(n)),(isManagedNode(n)?button('详情','node-detail',`data-id="${n.id}"`,'link'):'')+button(n.role==='gateway'?'查看交易池':'监控','node-monitor',`data-id="${n.id}"`,'link')+button('日志','node-log',`data-id="${n.id}"`,'link')]),'暂无节点',{key});
 nodesPage=()=>{
  const tab=state.tab||'all',rows=scopeNodes().filter(n=>(tab==='all'||n.role===tab)&&(state.node==='all'||n.id===state.node)&&textMatch(state.query,n.name,n.id));
- return heading('节点管理','',button('刷新','refresh','','primary'))+nodeContext()+`<div class="tabs">${[['all','全部节点'],['validator','验证者'],['follow','follow'],['gateway','exchange-apiserver']].map(([k,v])=>button(v,'tab',`data-tab="${k}"`,k===tab?'active':'')).join('')}</div>`+searchFilter('搜索节点名称或 ID')+qualityNotice()+panel('节点列表',nodeTable(rows,'node-management'));
+ return heading('节点管理','',button('刷新','refresh','','primary'))+nodeContext()+`<div class="tabs">${[['all','全部节点'],['validator','验证节点'],['follow','同步节点']].map(([k,v])=>button(v,'tab',`data-tab="${k}"`,k===tab?'active':'')).join('')}</div>`+searchFilter('搜索节点名称或 ID')+qualityNotice()+panel('节点列表',nodeTable(rows,'node-management'));
 };
-overview=()=>{
- const ns=scopedNodes(),chain=ns.filter(n=>n.role!=='gateway'),gw=ns.filter(n=>n.role==='gateway'),summary=serviceSummary(ns),comparison=chainComparison(chain);
- const alive=ns.map(n=>latestRecord(OBS.nodeSamples.filter(s=>s.nodeId===n.id&&s.t<=state.cutoff))),valid=alive.filter(r=>r&&qualityOf(r)==='ok');
- const active=alarmRecords.filter(a=>a.status==='告警中'&&ns.some(n=>n.id===a.node)),unknown=alarmRecords.filter(a=>a.status==='状态未知'&&ns.some(n=>n.id===a.node));
- const queue=chain.map(chainSample),lag=validNumbers(queue.map(x=>x.lag));
- const pending=pendingBundles(gw.map(n=>n.id));
- const mapping=chain.map(mappingResult),values=[['节点探活',noSample()?'—':`${valid.filter(r=>r.alive).length} / ${ns.length} · 未知 ${ns.length-valid.length}`],['服务探活',`${summary.ok} / ${summary.total} · 未知 ${summary.unknown}`],['链状态一致性',!chain.length?'不适用':comparison.unknown?'无法判断':comparison.mismatch?'状态不一致':'一致'],['finalize 执行积压',!chain.length?'不适用':lag.length?Math.max(...lag)+' 块':'—'],['待广播 bundle',!gw.length?'不适用':noSample()?'—':pending+' 个'],['Core / EVM 映射',!chain.length?'不适用':mapping.includes('不一致')?'不一致':mapping.includes('无法比较')?'无法判断':'一致']];
- return heading('运行概览','',button('刷新','refresh','','primary'))+scopebar()+`<div class="cards">${card('参与共识的验证者',ns.filter(n=>n.role==='validator'&&n.consensusMember!==false).length,'个')}${card('follow 节点',ns.filter(n=>n.role==='follow').length,'个')}${card('交易入口',gw.length,'个')}${card('活跃告警',active.length,'个',unknown.length?'状态未知 '+unknown.length+' 个':'')}</div>`+panel('运行摘要',`<div class="summary-grid">${values.map(([k,v])=>`<div class="summary-line"><span>${k}</span><strong>${esc(v)}</strong></div>`).join('')}</div>`)+panel('节点运行状态',nodeTable(ns,'overview-nodes'),button('全部节点','all-nodes','','link'))+clockPanel(ns)+panel('当前告警',alarmTable(active,'overview-alerts'),button('告警中心','go','data-route="alerts"','link'));
-};
-clockPanel=ns=>{
- const ss=ns.map(clockSample),valid=ss.filter(s=>s.quality==='ok'&&s.source&&Number.isFinite(s.offset)),max=valid.length?Math.max(...valid.map(s=>Math.abs(s.offset))):null;
- const ties=valid.filter(s=>Math.abs(s.offset)===max).sort((a,b)=>cmp(a.nodeId,b.nodeId));
- const thresholds=valid.filter(s=>Number.isFinite(s.threshold)),over=thresholds.filter(s=>Math.abs(s.offset)>s.threshold),sync=valid.filter(s=>s.synced===false);
- const times=ss.map(s=>s.sampledAt).filter(Number.isFinite),unknown=ss.filter(s=>s.quality!=='ok'||s.synced==null).length;
- return '<div id="clock">'+panel('时钟同步',`<div class="panel-body"><div class="cards clock-cards">${card('最大绝对偏差',scalar(max),'ms',ties.map(s=>nodeBy(s.nodeId)?.name||s.nodeId).join('、'))}${card('偏差超限节点',thresholds.length?over.length:'—','个',thresholds.length<ss.length?'阈值未配置 / 无有效样本 '+(ss.length-thresholds.length)+' 个':'')}${card('同步异常节点',valid.length?sync.length:'—','个','同步未知 '+unknown+' 个')}${card('最近采样',times.length?shortTime(Math.max(...times)):'—','','最旧 '+(times.length?shortTime(Math.min(...times)):'—')+' · 缺测 '+ss.filter(s=>s.quality==='missing').length)}</div></div>`+table(['节点','节点类型','时间源','同步状态','时钟偏差','采样时间','数据状态'],ss.map(s=>[
- esc(nodeBy(s.nodeId)?.name||s.nodeId),roleLabel(nodeBy(s.nodeId)?.role),esc(s.source||'未配置'),badge(s.synced===true&&s.quality==='ok'&&s.source?'已同步':s.synced===false&&s.quality==='ok'&&s.source?'未同步':'未知',s.synced===false?'red':''),s.source&&Number.isFinite(s.offset)?(s.offset>0?'+':'')+scalar(s.offset)+' ms':'—',timeText(s.sampledAt),qualityTag(s.quality)+(Number.isFinite(s.threshold)&&Math.abs(s.offset)>s.threshold?badge('超限','red'):'')]),'暂无时钟数据',{key:'clock-nodes'}))+'</div>';
-};
+function overview(){
+ const ns=scopedNodes(),services=serviceSummary(ns),spread=validatorSpread(ns),records=alertRows(false);
+ const alive=ns.map(n=>latestNodeSample(OBS.nodeSamples,n.id)).filter(availableSample);
+ const probe=(name,value,foot,action,unit='')=>card(name,value,value==='—'?'':unit,foot)+action;
+ const scope=`data-node="${esc(state.node)}"`;
+ const roleCount=predicate=>isQualityBad()||OBS.directoryAvailable===false?'—':new Set(ns.filter(predicate).map(n=>n.id)).size;
+ const countFoot=isQualityBad()||OBS.directoryAvailable===false?'目录数据不可用':'';
+ const roleLink=role=>button('查看节点管理','overview-node-role',`data-role="${role}"`,'link');
+ const entryNode=nodeBy(state.node)?.role==='gateway'?state.node:'all';
+ const recent=alarmTable(records.slice(0,10),'overview-alerts',false);
+ return heading('运行概览','',button('刷新','refresh','','primary'))+scopebar()+`<section id="overview-summary" aria-labelledby="overview-metrics-title"><h2 id="overview-metrics-title" class="overview-metrics-title">关键指标</h2><div class="cards">${[
+  probe('节点探活',alive.length?`${alive.filter(r=>r.alive).length} / ${ns.length}`:'—',`未知 ${ns.length-alive.length} 个节点`,button('查看节点状态','jump','data-id="overview-nodes"','link')),
+  probe('服务探活',services.total&&services.unknown<services.total?`${services.ok} / ${services.total}`:'—',`未知 ${services.unknown} 个服务`,button('查看节点服务','jump','data-id="overview-nodes"','link')),
+  probe('验证节点执行高度差',spread.value,spread.foot,nodeBy(state.node)?.role==='gateway'?'':button('查看链端监控','overview-chain',scope,'link'),typeof spread.value==='number'?'块':''),
+  probe('窗口内告警数',isQualityBad()?'—':records.length,'',button('查看告警中心','overview-alerts','','link'),'条'),
+  probe('参与共识的验证节点',roleCount(n=>n.role==='validator'&&n.consensusMember!==false),countFoot,roleLink('validator'),'个'),
+  probe('同步节点',roleCount(n=>n.role==='follow'),countFoot,roleLink('follow'),'个'),
+  probe('交易入口服务',roleCount(n=>n.role==='gateway'),countFoot,button('查看交易池','go',`data-route="ingress" data-node="${esc(entryNode)}"`,'link'),'个')
+ ].map(html=>`<div class="metric-with-action">${html}</div>`).join('')}</div></section>`+
+ '<div id="overview-nodes">'+panel('节点运行状态',nodeTable(ns,'overview-nodes'),button('全部节点','all-nodes'))+'</div>'+
+ panel('近期告警',recent,button('查看告警中心','overview-alerts'));
+}
+function chainPage(){
+ const ns=scopedNodes(),c=chainComparison(ns),queue=ns.map(chainSample),pools=validNumbers(queue.map(q=>q.mempool)),spread=validatorSpread(ns),lag=queue[0]?.lag;
+ const rows=ns.map(n=>{
+  const h=heightResult(n),s=c.rows.find(r=>r.node.id===n.id),e=latestNodeSample(OBS.lagEvidence,n.id);
+  const notes=[];
+  if(s?.mismatch)notes.push('状态不一致 '+button('查看证据','state-evidence',`data-id="${esc(n.id)}"`,'link'));
+  if(availableSample(e))notes.push(esc(e.reason)+' '+button('查看依据','lag-evidence',`data-id="${esc(n.id)}"`,'link'));
+  return [esc(n.name),availableSample(h.sample)?fmt(h.sample.height):'—',h.result?badge(h.result,h.result==='高度落后'?'amber':'green'):'—<div class="muted">'+esc(h.note)+'</div>',h.result==='高度落后'?(notes.join('<br>')||'原因待确认'):''];
+ });
+ const reference=heightReference();
+ return heading('链端监控','',button('刷新','refresh','','primary'))+nodeContext()+scopebar()+`<div class="cards" id="chain-indicators">${card('mempool 待处理交易',pools.length?Math.max(...pools):'—',pools.length?'笔':'',`有效 ${pools.length} / ${ns.length} 个节点${state.node==='all'?' · 节点最大值':''}`)}${card('验证节点执行高度差',spread.value,typeof spread.value==='number'?'块':'',spread.foot)}${card('finalize 执行积压',state.node==='all'?'—':fmt(lag),state.node!=='all'&&lag!=null?'块':'',state.node==='all'?'请选择具体节点查看':lag==null?'缺少有效执行高度':'')}${card('app_hash 不一致节点',c.valid?c.mismatches.length:'—',c.valid?'个':'',`有效 ${c.valid} / ${ns.length} 个节点`)}</div>`+
+ '<div id="chain-comparison">'+panel('状态比较',(availableSample(reference)?`<div class="panel-body muted">参考高度 ${fmt(reference.height)} · ${timeText(reference.t)} UTC+8</div>`:'')+table(['节点','最新区块高度-Core','比较结果','备注'],rows,'暂无状态数据',{key:'chain-comparison'}),c.mismatches.length?button('查看不一致节点','state-evidence'):'')+'</div>'+storagePanel();
+}
+
 showNode=nid=>{
  if(!requirePermission('read',nid))return;const n=nodeBy(nid);if(!n)return toast('节点不存在或已移除');
+ if(!isManagedNode(n))return toast('此入口服务请在 Ex_API 交易池查看');
  const entries=[['节点 ID',n.id],['部署环境',n.environment||'未配置'],['验证者地址',n.role==='validator'?n.validatorAddress||'未配置':'不适用'],['节点类型',roleLabel(n.role)],['参与共识',n.consensusMember===false?'否':n.role==='validator'?'是':'否'],['执行高度',n.role==='gateway'?'不适用':noSample()?'—':fmt(currentHeight(n))],['共识权重',n.role==='validator'?n.consensusWeight??'未配置':'不适用'],['备注',n.note||'—']];
- modal(n.name+' · 节点详情',`<div class="modal-section"><h3>基础信息</h3><dl class="kv">${entries.map(([k,v])=>`<dt>${k}</dt><dd>${esc(v)}</dd>`).join('')}</dl></div><div class="modal-section"><h3>服务状态</h3>${table(['分组','服务','端点','探测类型','状态','采样时间','失败原因'],services(n).map(s=>[s.group,s.name,s.endpoint?esc(s.endpoint.replace(/([?&](?:token|key|secret|password)=)[^&]+/gi,'$1••••')):'未配置',s.protocol,statusBadge(s.status),timeText(s.t),esc(s.error||'—')]),'暂无服务',{key:'node-services-'+nid})}</div>`,button('关闭','close')+button('编辑节点信息','node-edit',`data-id="${nid}"`,'',!hasPermission('edit',nid))+button('查看时钟','go',`data-route="overview" data-node="${nid}" data-focus="clock"`)+button('专用监控','node-monitor',`data-id="${nid}"`,'primary')+button('查看日志','node-log',`data-id="${nid}"`),true);
+ modal(n.name+' · 节点详情',`<div class="modal-section"><h3>基础信息</h3><dl class="kv">${entries.map(([k,v])=>`<dt>${k}</dt><dd>${esc(v)}</dd>`).join('')}</dl></div><div class="modal-section"><h3>服务状态</h3>${table(['分组','服务','端点','探测类型','状态','采样时间','失败原因'],services(n).map(s=>[s.group,s.name,s.endpoint?esc(s.endpoint.replace(/([?&](?:token|key|secret|password)=)[^&]+/gi,'$1••••')):'未配置',s.protocol,statusBadge(s.status),timeText(s.t),esc(s.error||'—')]),'暂无服务',{key:'node-services-'+nid})}</div>`,button('关闭','close')+button('编辑节点信息','node-edit',`data-id="${nid}"`,'',!hasPermission('edit',nid))+button('专用监控','node-monitor',`data-id="${nid}"`,'primary')+button('查看日志','node-log',`data-id="${nid}"`),true);
 };
-chainPage=()=>{
- const ns=scopedNodes(),vals=ns.filter(n=>n.role==='validator'),c=chainComparison(ns),queue=ns.map(chainSample),lags=validNumbers(queue.map(x=>x.lag)),pools=validNumbers(queue.map(x=>x.mempool));
- const pending=pendingBundles();
- return heading('链端监控','',button('刷新','refresh','','primary'))+nodeContext()+scopebar()+`<div class="cards cards-five">${card('app_hash 不一致节点',c.unknown?'—':c.mismatch,'个',c.unknown?'无法比较 '+c.unknown+' 个':'')}${card('finalize 执行积压',noSample()?'—':lags.length?Math.max(...lags):'—','块')}${card('mempool 待处理交易',noSample()?'—':pools.length?Math.max(...pools):'—','笔','当前节点最大值')}${card('待广播 bundle',noSample()?'—':pending,'个','全网交易入口')}${card('验证者执行高度差',vals.length<2?'不适用':Math.max(...vals.map(currentHeight))-Math.min(...vals.map(currentHeight)),vals.length<2?'':'块')}</div>`+panel('状态比较',table(['节点','执行高度','比较高度','app_hash','比较结果'],c.rows.map(r=>[esc(r.node.name),fmt(currentHeight(r.node)),fmt(c.height),r.sample?wholeValue(r.sample.digest):'—',badge(r.result,r.result==='一致'?'green':r.result==='状态不一致'?'red':'amber')+(r.result==='无法比较'?'<div class="muted">缺少共同高度、有效样本或独立基准</div>':'')]),'暂无状态数据',{key:'chain-comparison'}))+storagePanel();
-};
-storagePanel=()=>{
+function storagePanel(){
  const rs=storageRows(),ns=scopedNodes(),config=OBS.storageConfig[state.storageType]||{},unit=config.unit||'单位未配置';
  const latest=ns.map(n=>({node:n,sample:latestRecord(rs.filter(r=>r.nodeId===n.id)),lastGood:latestRecord(rs.filter(r=>r.nodeId===n.id&&r.quality==='ok'))}));
- const valid=latest.filter(x=>x.sample&&qualityOf(x.sample)==='ok'&&config.physicalDefinitionConfirmed&&[x.sample.sizeBytes,x.sample.count,x.sample.latestHeight].every(v=>Number.isFinite(v)&&v>=0)&&(!config.shared||x.sample.sharedId));
- const aggregate=config.shared?[...new Map(valid.map(x=>[x.sample.sharedId,x])).values()]:valid;
- const size=aggregate.reduce((s,x)=>s+x.sample.sizeBytes,0),count=aggregate.reduce((s,x)=>s+x.sample.count,0),height=valid.length?Math.max(...valid.map(x=>x.sample.latestHeight)):null;
- const charts=[['sizeBytes','存储大小趋势','GiB',r=>r.sizeBytes/2**30],['count','对象数量趋势',unit,r=>r.count],['latestHeight','最新高度趋势','Core 高度',r=>r.latestHeight]].map(([key,title,u,read])=>{
-  const series=ns.map((n,i)=>({id:n.id,name:n.name,color:COLORS[i%COLORS.length],points:buckets(rs.filter(r=>r.nodeId===n.id),r=>r.quality==='ok'&&config.physicalDefinitionConfirmed?read(r):null,true)}));
-  if(key==='latestHeight'&&ns.length===1){const history=OBS.completedHeights.filter(r=>r.nodeId===ns[0].id&&inWindow(r.t));if(history.length)series.push({id:'finalized',name:'已完成高度',color:COLORS[2],points:buckets(history,r=>r.quality==='ok'?r.height:null,true)});}
-  return `<div class="chart-card"><h3>${title}</h3>${lineChart('storage-'+key,series,u,{title:state.storageType+' '+title,width:380})}${key==='latestHeight'&&ns.length===1&&!OBS.completedHeights.some(r=>r.nodeId===ns[0].id&&inWindow(r.t))?'<div class="metric-foot">已完成高度历史暂无数据</div>':''}</div>`;
+ const charts=[['sizeBytes','存储大小趋势','GiB',r=>r.sizeBytes/2**30],['count','对象数量趋势',unit,r=>r.count],['latestHeight','数据保存的最新高度趋势','Core 高度',r=>r.latestHeight]].map(([key,title,u,read])=>{
+  const series=ns.map((n,i)=>({id:n.id,name:n.name,color:COLORS[i%COLORS.length],points:buckets(rs.filter(r=>r.nodeId===n.id),r=>availableSample(r)&&config.physicalDefinitionConfirmed&&Number.isFinite(read(r))?read(r):null,true)}));
+  if(key==='latestHeight'&&ns.length===1){const history=OBS.completedHeights.filter(r=>r.nodeId===ns[0].id&&inWindow(r.t));if(history.length)series.push({id:'finalized',name:ns[0].name+' · 已完成高度',color:COLORS[2],points:buckets(history,r=>r.quality==='ok'?r.height:null,true)});}
+  return `<div class="chart-card"><h3>${title}</h3>${lineChart('storage-'+key,series,u,{title:state.storageType+' '+title,width:380,integer:key!=='sizeBytes',min:key==='count'?0:undefined})}${key==='latestHeight'&&ns.length===1&&!OBS.completedHeights.some(r=>r.nodeId===ns[0].id&&inWindow(r.t))?'<div class="metric-foot">已完成高度历史暂无数据</div>':''}</div>`;
  }).join('');
- return panel('存储与恢复对象',`<div class="object-tabs">${['Replica','checkpoint','sidecar','snapshot'].map(t=>button(t,'storage-type',`data-type="${t}"`,state.storageType===t?'active':'')).join('')}</div><div class="panel-body">${!config.physicalDefinitionConfirmed?hint('统计定义未配置','amber'):''}<div class="cards cards-three">${card('存储大小合计',valid.length?scalar(size/2**30,2):'—','GiB',`有效 ${valid.length} / ${ns.length} 个节点`)}${card('对象数量合计',valid.length?fmt(count):'—',unit)}${card('最新高度',fmt(height),'',ns.length>1?'节点最大值':'')}</div><div class="charts-three">${charts}</div></div>`+table(['节点','对象类型','大小','数量','最新高度','最新采样','最后有效采样','数据状态'],latest.map(({node:n,sample:r,lastGood:g})=>{const v=r?.quality==='ok'?r:g;return [esc(n.name),state.storageType,v&&config.physicalDefinitionConfirmed?scalar(v.sizeBytes/2**30,2)+' GiB':'—',v&&config.physicalDefinitionConfirmed?fmt(v.count)+' '+unit:'—',v&&config.physicalDefinitionConfirmed?fmt(v.latestHeight):'—',r?timeText(r.t):'—',g?timeText(g.t):'—',qualityTag(!config.physicalDefinitionConfirmed?'unconfigured':qualityOf(r))+(r&&r.quality!=='ok'&&g?badge('最后有效值','amber'):'')];}),'暂无存储数据',{key:'storage-current'}));
-};
-openIngress=rid=>{
- const r=OBS.ingress.find(x=>x.id===rid&&hasPermission('read',x.nodeId));if(!r)return toast('交易处理记录不存在或无权查看');
- detail('交易处理详情 · '+rid,[['交易标识',r.id],['入口节点',nodeBy(r.nodeId)?.name||r.nodeId],['接收时间',timeText(r.receivedAt)],['bundle',r.bundle??'—'],['首次广播',validEventTime(r,'broadcastAt')?timeText(r.broadcastAt):'—'],['最终确认',validEventTime(r,'confirmedAt')?timeText(r.confirmedAt):'—'],['当前阶段',ingressStage(r)],['验证者',nodeBy(r.validatorId)?.name||'未关联'],['链上交易 hash',r.txHash||'未关联'],['确认区块',r.confirmationBlock||'未关联'],['事件来源',r.eventSource||'未知'],['时间状态',r.timeQuality==='ok'?'有效':'无法比较']]);
-};
-ingressPage=()=>{
- const m=ingressMetrics(),rs=ingressRows();return heading('交易入口监控','',button('刷新','refresh','','primary'))+nodeContext()+scopebar()+`<div class="cards">${card('接收到广播 P95',scalar(m.broadcast),'ms')}${card('平均 bundle 交易数',scalar(m.mean),'笔 / 包')}${card('接收到最终确认 P95',scalar(m.finality),'ms')}${card('广播完成率',scalar(m.rate),'%')}</div>`+panel('交易处理记录',table(['接收时间','交易标识','bundle','入口节点','接收至广播','接收至最终确认','当前阶段','操作'],rs.map(r=>[timeText(r.receivedAt),wholeValue(r.id,false),esc(r.bundle||'—'),esc(nodeBy(r.nodeId)?.name||r.nodeId),durationText(r,'broadcastAt'),durationText(r,'confirmedAt'),badge(ingressStage(r),ingressStage(r)==='最终确认'?'green':'amber'),button('详情','ingress-detail',`data-id="${r.id}"`,'link')]),'暂无交易记录',{key:'ingress-transactions'}))+gasPanel();
-};
-gasPanel=()=>{
+ const tabs=['Replica','checkpoint','sidecar','snapshot'].map(t=>button(t,'storage-type',`data-type="${t}"`,state.storageType===t?'active':'')).join('');
+ const rows=latest.map(({node:n,sample:r,lastGood:g})=>{
+  const v=config.physicalDefinitionConfirmed?(availableSample(r)?r:g):null,head=chainHead(n);
+  const value=(display,note)=>display+(note?`<div class="muted">${esc(note)}</div>`:'');
+  const note=!config.physicalDefinitionConfirmed?'未配置':availableSample(r)?'':v?'最后有效值 · '+timeText(v.t):r?'采集失败或缺测':'缺测';
+  return [esc(n.name),state.storageType,value(v?scalar(v.sizeBytes/2**30,2)+' GiB':'—',note),v?fmt(v.count)+' '+unit:'—',
+   availableSample(head)?fmt(head.height)+`<div class="muted">${timeText(head.t)}</div>`:'—<div class="muted">缺测或过期</div>',
+   value(v?fmt(v.latestHeight):'—',note),r?timeText(r.t):'—',g?timeText(g.t):'—'];
+ });
+ return panel('存储与恢复对象',`<div class="object-tabs">${tabs}</div><div class="panel-body">${!config.physicalDefinitionConfirmed?hint('统计定义未配置','amber'):''}<div class="charts-three">${charts}</div></div>`+table(['节点','对象类型','大小','数量','链的最新高度','数据保存的最新高度','最新采样','最后有效采样'],rows,'暂无存储数据',{key:'storage-current'}));
+}
+const INGRESS_STAGES=[['receivedAt','接收'],['broadcastAt','首次成功广播'],['confirmedAt','最终确认']];
+// Coverage describes the local fixture's full observation intervals, independently of event counts.
+OBS.ingressCoverage=[{nodeId:'api-01',from:OBS.anchor-15*hourMs,to:OBS.anchor}];
+function ingressStageSeries(nodes){
+ const ids=new Set(nodes.map(n=>n.id)),step=bucketMs(),start=state.cutoff-windowMs();
+ const stages=INGRESS_STAGES.map(()=>new Map());
+ const coverage=new Map(nodes.map(n=>[n.id,OBS.ingressCoverage.filter(r=>r.nodeId===n.id)]));
+ for(const r of OBS.ingress){
+  if(!ids.has(r.nodeId)||!r.id||!r.eventSource||r.timeQuality!=='ok'||!Number.isFinite(r.receivedAt))continue;
+  const key=JSON.stringify([r.chainId,r.nodeId,r.id]);
+  INGRESS_STAGES.forEach(([field],i)=>{
+   if(!validEventTime(r,field)||i===2&&(!validEventTime(r,'broadcastAt')||r.confirmedAt<r.broadcastAt))return;
+   const prev=stages[i].get(key);
+   if(!prev||r[field]<prev.t)stages[i].set(key,{t:r[field],nodeId:r.nodeId});
+  });
+ }
+ return INGRESS_STAGES.map(([id,name],i)=>{
+  const counts=new Map();
+  for(const {t,nodeId} of stages[i].values()){
+   if(t<=start)continue;
+   const end=start+Math.ceil((t-start)/step)*step;
+   if(!counts.has(end))counts.set(end,new Map());
+   const bucket=counts.get(end);
+   bucket.set(nodeId,(bucket.get(nodeId)||0)+1);
+  }
+  const points=Array.from({length:windowMs()/step},(_,j)=>{
+   const t=start+(j+1)*step;
+   const covered=isQualityBad()?[]:nodes.filter(n=>coverage.get(n.id).some(r=>r.from<=t-step&&r.to>=t));
+   const count=covered.reduce((sum,n)=>sum+(counts.get(t)?.get(n.id)||0),0);
+   return {t,y:covered.length?count:null,emptyText:'采集缺测',note:covered.length>0&&covered.length<ids.size?'部分入口采集缺测':''};
+  });
+  return {id,name,color:COLORS[i],points};
+ });
+}
+function ingressTrendPanel(){
+ const nodes=scopedNodes(),step=bucketMs(),volume=ingressStageSeries(nodes);
+ const rate=volume.map(series=>({...series,points:series.points.map(p=>({...p,y:p.y===null?null:p.y/(step/1000)}))}));
+ const points=volume[0].points;
+ const hasData=points.some(p=>p.y!==null);
+ const incomplete=points.some(p=>p.y===null||p.note);
+ const context=nodes.length===1?nodes[0].name:'全部有权入口';
+ const options={end:state.cutoff,step,context,min:0,dots:true};
+ const charts=[['ingress-volume','阶段处理量','笔',volume,true],['ingress-rate','阶段吞吐','笔 / 秒',rate,false]].map(([key,title,unit,series,integer])=>
+  `<div class="chart-card"><h3>${title}</h3>${lineChart(key,series,unit,{...options,title,integer})}</div>`).join('');
+ return panel('交易处理趋势',`<div class="panel-body ingress-trend"><p class="metric-foot">本地样例 · ${step/60000} 分钟一桶 · 按各阶段发生时间统计。上方 P95 按接收时间选取交易。</p>${incomplete?hint(hasData?'部分时段采集缺测。无有效数据的时段断线。':'所选时段无有效采集数据。','amber'):''}<div class="ingress-trend-grid">${charts}</div></div>`);
+}
+
+function ingressPage(){
+ const m=ingressMetrics();
+ return heading('Ex_API 交易池','',button('刷新','refresh','','primary'))+nodeContext()+scopebar()+`<div class="cards cards-three">${card('接收到广播 P95',scalar(m.broadcast),'ms')}${card('接收到最终确认 P95',scalar(m.finality),'ms')}${card('平均 bundle 交易数',scalar(m.mean),'笔 / 包')}</div>`+ingressTrendPanel()+gasPanel();
+}
+function gasPanel(){
  const rawBlocks=dedupBlocks(OBS.blocks.filter(b=>b.observerNodeId===state.gasNode&&inWindow(b.t))),rows=blockRows(),conflicts=Math.max(0,rawBlocks.length-rows.length),small=rows.filter(b=>b.blockType==='small'),big=rows.filter(b=>b.blockType==='big'),unknown=rows.filter(b=>b.blockType==='unknown').length;
- const charts=[['small','小块',small,COLORS[0]],['big','大块',big,COLORS[1]]].map(([k,name,bs,color])=>{const s=gasStats(bs);return `<div class="chart-card"><h3>${name} Gas 使用率</h3><div class="gas-value">${s.ratio===null?(s.count?'无法计算':'暂无区块'):scalar(s.ratio)+'%'}<small>有效 ${s.valid} / ${s.count} 个区块 · ${fmt(s.gas)} Gas · 异常 ${s.invalid} 个</small></div>${lineChart('gas-'+k,[{id:k,name,color,points:buckets(bs,a=>gasStats(a).ratio).map(p=>{const v=gasStats(bs.filter(b=>b.t>p.t-bucketMs()&&b.t<=p.t));return {...p,emptyText:v.count?'无法计算':OBS.blockHistoryComplete?'暂无区块':'暂无数据',note:'有效 '+v.valid+' / '+v.count+' 个区块 · 异常 '+v.invalid+' 个'};})}],'%',{title:name+' Gas 使用率',dots:true})}<div class="metric-foot">最大使用率 ${s.max==null?'—':scalar(s.max)+'%'} · 最近区块 ${s.last==null?'—':shortTime(s.last)}</div></div>`;}).join('');
- const rowsForTable=rows.filter(r=>state.gasType==='all'||r.blockType===state.gasType);
- return '<div id="gas">'+panel('EVM 区块 Gas 使用情况',`<div class="panel-body"><div class="scopebar"><div><label>EVM 观测节点 <select id="gas-node" aria-label="EVM 观测节点"><option value="" ${!state.gasNode?'selected':''}>请选择节点</option>${db.nodes.filter(n=>n.role!=='gateway'&&hasPermission('read',n.id)).sort(nodeSort).map(n=>`<option value="${n.id}" ${n.id===state.gasNode?'selected':''}>${esc(n.name)}</option>`).join('')}</select></label><label>列表类型 <select id="gas-type" aria-label="列表类型">${[['all','全部'],['small','小块'],['big','大块'],['unknown','未知']].map(([k,v])=>`<option value="${k}" ${state.gasType===k?'selected':''}>${v}</option>`).join('')}</select></label></div><span class="stamp">类型未知 ${unknown} 个 · 冲突排除 ${conflicts} 个</span></div>${!state.gasNode?hint('请选择 EVM 观测节点','amber'):''}<div class="charts-two">${charts}</div></div>`+table(['时间','区块号','区块 hash','类型','gasUsed','gasLimit','使用率','交易数','操作'],rowsForTable.map(b=>[timeText(b.t),fmt(b.number),wholeValue(b.hash),badge(({small:'小块',big:'大块',unknown:'未知'})[b.blockType]),fmt(b.gasUsed),fmt(b.gasLimit),validGas(b)?scalar(gasRatio(gasInteger(b.gasUsed),gasInteger(b.gasLimit)))+'%':badge('数据异常','amber'),fmt(b.txCount),button('详情','block-detail',`data-id="${b.hash}"`,'link')]),'暂无区块',{key:'gas-blocks'}))+'</div>';
-};
-evmPage=()=>{
- const rs=evmReceipts(),fails=rs.filter(r=>r.status===0),ns=scopedNodes(),rate=rs.length?rs.filter(r=>r.status===1).length/rs.length*100:null;
- const observer=state.node!=='all'?state.node:OBS.primaryObserver,price=latestRecord(OBS.priceSamples.filter(r=>r.nodeId===observer&&r.t<=state.cutoff)),mapping=ns.map(mappingResult);
+ const charts=[['small','小块',small,COLORS[0]],['big','大块',big,COLORS[1]]].filter(([k])=>state.gasType==='all'||state.gasType===k).map(([k,name,bs,color])=>{const s=gasStats(bs);return `<div class="chart-card"><h3>${name} Gas 使用率</h3><div class="gas-value">${s.ratio===null?(s.count?'无法计算':OBS.blockHistoryComplete?'暂无区块':'暂无数据'):scalar(s.ratio)+'%'}<small>有效 ${s.valid} / ${s.count} 个区块 · ${fmt(s.gas)} Gas · 异常 ${s.invalid} 个</small></div>${lineChart('gas-'+k,[{id:k,name,color,points:buckets(bs,a=>gasStats(a).ratio).map(p=>{const v=gasStats(bs.filter(b=>b.t>p.t-bucketMs()&&b.t<=p.t));return {...p,emptyText:v.count?'无法计算':OBS.blockHistoryComplete?'暂无区块':'暂无数据',note:'有效 '+v.valid+' / '+v.count+' 个区块 · 异常 '+v.invalid+' 个'};})}],'%',{title:name+' Gas 使用率',dots:true})}<div class="metric-foot">最大使用率 ${s.max==null?'—':scalar(s.max)+'%'} · 最近区块 ${s.last==null?'—':shortTime(s.last)}</div></div>`;}).join('');
+ const observers=db.nodes.filter(n=>n.role!=='gateway'&&hasPermission('read',n.id)).sort(nodeSort);
+ const options=[['all','全部'],['small','小块'],['big','大块']];
+ const controls=`<div class="scopebar"><div><label>EVM 观测节点 <select id="gas-node"><option value="">请选择节点</option>${observers.map(n=>`<option value="${esc(n.id)}" ${n.id===state.gasNode?'selected':''}>${esc(n.name)}</option>`).join('')}</select></label><label>区块类型 <select id="gas-type">${options.map(([key,name])=>`<option value="${key}" ${state.gasType===key?'selected':''}>${name}</option>`).join('')}</select></label></div><span class="stamp">类型未知 ${unknown} 个 · 冲突排除 ${conflicts} 个</span></div>`;
+ return '<div id="gas">'+panel('EVM 区块 Gas 使用情况',`<div class="panel-body">${controls}${!state.gasNode?hint('请选择 EVM 观测节点','amber'):state.scenario==='error'||state.scenario==='stale'?hint('观测数据不可用','amber'):`<div class="${state.gasType==='all'?'charts-two':''}">${charts}</div>`}</div>`)+'</div>';
+}
+function evmPage(){
+ const rs=evmReceipts(),fails=rs.filter(r=>r.status===0),rate=rs.length?rs.filter(r=>r.status===1).length/rs.length*100:null;
+ const observer=state.node!=='all'?state.node:OBS.primaryObserver,price=latestRecord(OBS.priceSamples.filter(r=>r.nodeId===observer&&r.t<=state.cutoff));
  const priceNumber=price&&qualityOf(price)==='ok'&&gasInteger(price.wei)!==null?Number(price.wei)/1e9:null;
- const mappingTable=table(['节点','Core 高度','对应 EVM 高度','对应 EVM hash','映射状态'],ns.map(n=>{const m=mappingSample(n),status=mappingResult(n);return [esc(n.name),fmt(m.coreHeight),fmt(m.evmHeight),m.valid?wholeValue(m.evmHash):'—',badge(status,status==='一致'?'green':status==='不一致'?'red':'amber')];}),'暂无映射样本',{key:'evm-mapping'});
  const success=buckets(rs,a=>a.length?a.filter(r=>r.status===1).length/a.length*100:null),failed=buckets(rs,a=>a.filter(r=>r.status===0).length);
  if(OBS.receiptHistoryComplete&&!noSample())failed.forEach(p=>{if(p.y===null)p.y=0;});
- return heading('EVM 监控','',button('Gas 使用情况','evm-gas')+button('刷新','refresh','','primary'))+nodeContext()+scopebar()+`<div class="cards">${card('Gas 价格',priceNumber===null?'—':priceNumber.toLocaleString('en-US',{maximumSignificantDigits:8}),'Gwei',price?'观测节点 '+(nodeBy(observer)?.name||observer):'价格未配置')}${card('映射不一致节点',mapping.includes('无法比较')?'—':mapping.filter(s=>s==='不一致').length,'个')}${card('交易成功率',scalar(rate),'%')}${card('失败交易',noSample()||!OBS.receiptHistoryComplete?'—':fails.length,'笔')}</div>`+panel('Core / EVM 对应关系',mappingTable)+panel('交易执行趋势',`<div class="panel-body charts-two"><div class="chart-card"><h3>交易成功率</h3>${lineChart('evm-success',[{id:'success',name:'成功率',color:COLORS[0],points:success}],'%',{title:'交易成功率'})}</div><div class="chart-card"><h3>失败交易数</h3>${lineChart('evm-failures',[{id:'failed',name:'失败数',color:COLORS[4],points:failed}],'笔',{title:'失败交易数'})}</div></div>`)+failurePanel(fails);
+ return heading('EVM 监控','',button('Gas 使用情况','evm-gas')+button('刷新','refresh','','primary'))+nodeContext()+scopebar()+`<div class="cards">${card('Gas 价格',priceNumber===null?'—':priceNumber.toLocaleString('en-US',{maximumSignificantDigits:8}),'Gwei',price?'观测节点 '+(nodeBy(observer)?.name||observer):'价格未配置')}${card('交易成功率',scalar(rate),'%')}${card('失败交易',noSample()||!OBS.receiptHistoryComplete?'—':fails.length,'笔')}</div>`+panel('交易执行趋势',`<div class="panel-body charts-two"><div class="chart-card"><h3>交易成功率</h3>${lineChart('evm-success',[{id:'success',name:'成功率',color:COLORS[0],points:success}],'%',{title:'交易成功率'})}</div><div class="chart-card"><h3>失败交易数</h3>${lineChart('evm-failures',[{id:'failed',name:'失败数',color:COLORS[4],points:failed}],'笔',{title:'失败交易数',integer:true,min:0})}</div></div>`)+failurePanel(fails);
 };
-failurePanel=fails=>{
- const counts=new Map(FAILURE_TYPES.map(t=>[t,0]));fails.forEach(r=>counts.set(r.reasonCategory,(counts.get(r.reasonCategory)||0)+1));
- const rows=fails.filter(r=>(state.failureType==='all'||r.reasonCategory===state.failureType)&&textMatch(state.failureQuery,r.hash,r.from,r.to)).sort((a,b)=>b.t-a.t||b.blockNumber-a.blockNumber||b.transactionIndex-a.transactionIndex||cmp(a.hash,b.hash));
- return panel('EVM 失败交易记录',`<div class="panel-body"><div class="reason-chips">${button('全部 '+fails.length,'failure-type','data-type="all"',state.failureType==='all'?'active':'')}${[...counts].map(([t,n])=>button(esc(t)+' '+n+' · '+(fails.length?scalar(n/fails.length*100):0)+'%','failure-type',`data-type="${t}"`,state.failureType===t?'active':'')).join('')}</div><div class="filters"><input type="search" id="failure-query" value="${esc(state.failureQuery)}" placeholder="搜索交易 hash 或地址" aria-label="搜索失败交易">${button('查询','failure-search')}${button('重置','failure-clear')}</div></div>`+table(['区块时间','交易 hash','区块号','区块类型','发送方 / 目标合约','失败类型','失败摘要','操作'],rows.map(r=>[timeText(r.t),wholeValue(r.hash),fmt(r.blockNumber),({small:'小块',big:'大块',unknown:'未知'})[r.blockType]||'未知',`<div>${wholeValue(r.from)}<br>${r.to==null?'合约创建':wholeValue(r.to)}</div>`,badge(r.reasonCategory,'amber'),esc(r.reasonText||'未取得失败原因'),button('详情','failure-detail',`data-id="${r.hash}"`,'link')]),'暂无失败交易',{key:'evm-failures'}));
-};
-
-const deliveryEvents=new Map();
-alarmBody=a=>{
- const url=OBS.notificationConfig.detailBaseUrl;
- const link=url&&/^https:\/\//.test(url)?url.split('#')[0]+'#alerts?alert='+encodeURIComponent(a.id)+'&window=1h':'详情链接未配置';
- return `【BIYA Chain 告警】${a.title}\n告警编号：${a.id}\n告警级别：${a.level}\n影响对象：${a.evidence?.nodeName||nodeBy(a.node)?.name||a.node}\n首次发生：${timeText(a.firstAt)} · UTC+8\n发生时观测：${a.evidence?.value??a.value??'—'}\n触发条件：${a.evidence?.condition||a.condition}\n详情：${link}`;
-};
-sendNotification=(a,options={})=>{
- const config=OBS.notificationConfig,target=options.target??config.target,key=a.id+'/created/'+(target||'unconfigured');
- const previous=notifications.filter(n=>n.eventKey===key).sort((x,y)=>y.attempt-x.attempt)[0];
- if(previous&&!options.retry)return previous;
- if(options.retry&&(!previous||previous.status!=='发送失败'||!config.maxAttempts||previous.attempt>=config.maxAttempts))return null;
- const body=previous?.body||alarmBody(a),attempt=(previous?.attempt||0)+1;
- const n={id:'NTF-'+Date.now().toString(36)+'-'+notifications.length,alertId:a.id,eventKey:key,event:'产生',target:target||'未配置',t:options.at??Date.now(),status:target&&typeof OBS.notificationAdapter==='function'?'待发送':'未配置',attempt,error:target?'通知服务未配置':'目标群未配置',body,messageId:null};
- notifications.unshift(n);persistAlarmState();
- if(n.status==='未配置')return n;
- const deliver=async()=>{
-  if(deliveryEvents.has(key)&&!options.retry)return;deliveryEvents.set(key,n.id);n.status='发送中';persistAlarmState();
-  try{const response=await OBS.notificationAdapter({eventKey:key,body,target,attempt});if(response?.code!==0||!response.messageId)throw Object.assign(Error(response?.message||'发送结果未确认'),{retryable:response?.retryable===true});n.status='发送成功';n.error='—';n.messageId=response.messageId;}
-  catch(error){n.status='发送失败';n.error=String(error.message||'发送失败').slice(0,200).replace(/(token|secret|password)=[^\s&]+/gi,'$1=••••');
-   const delay=config.retryDelays?.[attempt-1];if(error.retryable===true&&config.maxAttempts&&attempt<config.maxAttempts&&Number.isFinite(delay)&&delay>=0)setTimeout(()=>retryNotification(n.id),delay);
-  }finally{deliveryEvents.delete(key);persistAlarmState();if(state.route==='alerts'&&!document.querySelector('.dialog'))render();}
- };
- queueMicrotask(deliver);return n;
-};
-retryNotification=(nid,options={})=>{const n=notifications.find(n=>n.id===nid),a=n&&alarmRecords.find(a=>a.id===n.alertId);return a?sendNotification(a,{...options,target:n.target,retry:true}):null;};
-ingestAlert=event=>{
- const t=Number.isFinite(event.t)?event.t:Date.now();
- const fingerprint=event.fingerprint||[event.chainId||'biya',event.ruleId||event.title,event.node,event.dimension||''].join('/');
- const active=alarmRecords.find(a=>a.fingerprint===fingerprint&&['告警中','状态未知'].includes(a.status));
- if(event.state==='resolved'||event.state==='unknown'){
-  if(active){const next=event.state==='resolved'?'已恢复':'状态未知';if(active.status!==next)active.stateChangedAt=t;active.status=next;if(event.state==='resolved')active.recoveredAt=t;persistAlarmState();}return active||null;
+function failurePanel(fails){
+ if(isQualityBad()||!OBS.receiptHistoryComplete&&!fails.length)return panel('EVM 失败交易分析','<div class="panel-body">'+hint('失败分析数据缺测')+'</div>');
+ if(!fails.length)return panel('EVM 失败交易分析','<div class="panel-body">'+hint('无失败交易 · 0 笔')+'</div>');
+ const nameOf=r=>r.businessLabel?.source&&r.businessLabel.name?.trim()?r.businessLabel.name.trim():'未知交易';
+ const names=[...new Set(fails.map(nameOf))].sort((a,b)=>a==='未知交易'?1:b==='未知交易'?-1:cmp(a,b));
+ const selection=names.includes(state.failureName)?state.failureName:'';
+ const groups=new Map(FAILURE_TYPES.map(type=>[type,new Map()]));
+ for(const tx of fails){
+  const name=nameOf(tx);if(selection&&name!==selection)continue;
+  const counts=groups.get(tx.reasonCategory);counts.set(name,(counts.get(name)||0)+1);
  }
- if(active){if(active.status!=='告警中')active.stateChangedAt=t;active.status='告警中';active.lastAt=t;active.value=event.value??active.value;active.observedAt=t;persistAlarmState();return active;}
- const a={id:'ALT-'+String(++alarmSequence).padStart(5,'0'),fingerprint,occurrenceId:'OCC-'+alarmSequence,node:event.node,title:event.title||'未知告警',ruleId:event.ruleId||fingerprint,ruleVersion:event.ruleVersion||'未配置',group:event.group||'overview',focus:event.focus||(fingerprint.endsWith('clock')?'clock':''),level:event.level||'警告',value:event.value??'—',condition:event.condition||'未配置',firstAt:t,lastAt:t,stateChangedAt:t,observedAt:t,status:'告警中',evidence:{nodeName:nodeBy(event.node)?.name||event.node,nodeHeight:event.nodeHeight??(nodeBy(event.node)?.role==='gateway'?null:nodeBy(event.node)?currentHeight(nodeBy(event.node)):null),observedAt:timeText(t),observedAtMs:t,value:event.value??null,condition:event.condition||'未配置',ruleVersion:event.ruleVersion||'未配置'}};
- alarmRecords.unshift(a);sendNotification(a,event.notification||{});persistAlarmState();return a;
-};
-// Old seeds are preserved as history, but their local assignment is not a real successful delivery.
-notifications.forEach(n=>{n.status='未配置';n.error='通知服务未配置';n.eventKey=n.alertId+'/created/unconfigured';n.target='未配置';const a=alarmRecords.find(a=>a.id===n.alertId);if(a)n.body=alarmBody(a);});
-alarmRecords.forEach(a=>{a.stateChangedAt=a.lastAt;a.lastAt=a.firstAt;a.evidence.observedAtMs=a.firstAt;a.evidence.nodeName=nodeBy(a.node)?.name||a.node;a.evidence.condition=a.condition;a.evidence.ruleVersion='未配置';});
-try{const saved=JSON.parse(prototypeStorage.getItem(STORE+'-alarm-v4')||'null');if(saved&&Array.isArray(saved.alarmRecords)&&Array.isArray(saved.notifications)){alarmRecords.splice(0,alarmRecords.length,...saved.alarmRecords);notifications.splice(0,notifications.length,...saved.notifications);alarmSequence=saved.alarmSequence||alarmRecords.length;}}catch{/* Preserve available local history. */}
+ const bars=[...groups].map(([type,counts])=>({type,counts:[...counts].sort((a,b)=>b[1]-a[1]||cmp(a[0],b[0])),total:[...counts.values()].reduce((a,b)=>a+b,0)})).sort((a,b)=>b.total-a.total);
+ const range=`${timeText(state.cutoff-windowMs())} 至 ${timeText(state.cutoff)} · UTC+8`;
+ const max=Math.max(...bars.map(b=>b.total),1);
+ const controls=`<div class="filters failure-filters"><label>交易名称 <select id="failure-name"><option value="">全部交易名称</option>${names.map(name=>`<option value="${esc(name)}" ${selection===name?'selected':''}>${esc(name)}</option>`).join('')}</select></label><span class="stamp">${esc(range)} · 未知名称 ${fails.filter(r=>nameOf(r)==='未知交易').length} 笔</span></div>`;
+ const chart=bars.map(({type,counts,total})=>{
+  const details=counts.length?counts.map(([name,n])=>`${esc(name)} · ${n} 笔`).join('<br>'):esc(selection||'全部交易名称')+' · 0 笔';
+  return `<li class="failure-bar"><span>${esc(type)}</span><div class="failure-track" tabindex="0" aria-label="${esc(type)} ${total} 笔"><div class="failure-fill" style="width:${100*total/max}%"></div><div class="failure-tip"><strong>${esc(type)} · ${total} 笔</strong><br>${details}<br>${esc(range)}</div></div><span>${total} 笔</span></li>`;
+ }).join('');
+ return panel('EVM 失败交易分析',controls+`<div class="panel-body">${!OBS.receiptHistoryComplete?hint('采集不完整，以下仅为已取得的失败样本','amber'):''}<ul class="failure-chart" aria-label="各失败类型笔数">${chart}</ul></div>`);
+}
+
 const alertSort=(a,b)=>b.lastAt-a.lastAt||cmp(b.id,a.id);
 const notificationSort=(a,b)=>b.t-a.t||cmp(b.id,a.id);
-alarmTable=(records,key)=>table(['告警编号','首次发生','最近发生','告警类型','级别','影响对象','当前状态','最近通知','操作'],records.slice().sort(alertSort).map(a=>{
- const n=notifications.filter(n=>n.alertId===a.id).sort(notificationSort)[0];
- return [wholeValue(a.id,false),timeText(a.firstAt),timeText(a.lastAt),esc(a.title),badge(a.level,a.level==='严重'?'red':'amber'),esc(nodeBy(a.node)?.name||a.node),badge(a.status,a.status==='告警中'?'red':a.status==='已恢复'?'green':'amber'),n?badge(n.status,n.status==='发送成功'?'green':n.status==='发送失败'?'red':'amber'):'—',button('详情','alert-detail',`data-id="${a.id}"`,'link')];
-}),'暂无告警',{key});
-notificationTable=(rows,key)=>table(['发送时间','关联告警','事件','目标群','发送状态','尝试次数','失败原因','操作'],rows.slice().sort(notificationSort).map(n=>[timeText(n.t),button(n.alertId,'alert-detail',`data-id="${n.alertId}"`,'link'),esc(n.event),esc(n.target),badge(n.status,n.status==='发送成功'?'green':n.status==='发送失败'?'red':'amber'),n.attempt,esc(n.error||'—'),button('消息详情','notification-detail',`data-id="${n.id}"`,'link')]),'暂无通知记录',{key});
-alertsPage=()=>{
- const tab=state.tab||'alerts',matchObject=a=>hasPermission('read',a.node)&&(state.node==='all'||a.node===state.node);let body='';
- if(tab==='alerts'){
-  const rows=alarmRecords.filter(a=>matchObject(a)&&inWindow(a.lastAt)&&(state.alertState==='all'||a.status===state.alertState)&&(state.alertType==='all'||a.title===state.alertType)&&textMatch(state.alertQuery,a.id,a.node,nodeBy(a.node)?.name));
-  const old=alarmRecords.filter(a=>matchObject(a)&&a.status==='告警中'&&a.lastAt<=state.cutoff-windowMs());
-  body=`<div class="filters"><label>告警状态 <select id="alert-state" aria-label="告警状态">${['all','告警中','已恢复','状态未知'].map(s=>`<option value="${s}" ${state.alertState===s?'selected':''}>${s==='all'?'全部':s}</option>`).join('')}</select></label><label>告警类型 <select id="alert-type" aria-label="告警类型"><option value="all">全部</option>${[...new Set(alarmRecords.filter(matchObject).map(a=>a.title))].sort(cmp).map(t=>`<option ${t===state.alertType?'selected':''}>${esc(t)}</option>`).join('')}</select></label><input type="search" id="alert-query" value="${esc(state.alertQuery)}" placeholder="搜索告警编号或对象" aria-label="搜索告警">${button('查询','alert-search')}</div>${old.length?hint('另有 '+old.length+' 条持续告警早于当前窗口。 '+button('查看当前告警','go','data-route="overview"','link'),'amber'):''}`+panel('告警记录',alarmTable(rows,'alert-records'));
- }else{
-  const rows=notifications.filter(n=>{const a=alarmRecords.find(a=>a.id===n.alertId);return a&&matchObject(a)&&inWindow(n.t)&&(state.notificationState==='all'||n.status===state.notificationState)&&textMatch(state.notificationQuery,n.alertId,n.target);});
-  body=`<div class="filters"><label>发送状态 <select id="notification-state" aria-label="发送状态">${['all','待发送','发送中','发送成功','发送失败','未配置'].map(s=>`<option value="${s}" ${state.notificationState===s?'selected':''}>${s==='all'?'全部':s}</option>`).join('')}</select></label><input type="search" id="notification-query" value="${esc(state.notificationQuery)}" placeholder="搜索告警编号或目标群" aria-label="搜索通知">${button('查询','notification-search')}</div>`+panel('Lark 通知记录',notificationTable(rows,'notification-records'));
+const alertFields=['告警编号','首次告警时间','最新告警时间','告警类型','影响对象','操作'];
+const alertRows=(applyFilters=true)=>alarmRecords.filter(a=>
+ (state.node==='all'||a.node===state.node)&&hasPermission('read',a.node)&&inWindow(a.lastAt)&&
+ (!applyFilters||((state.alertType==='all'||state.alertType===a.title)&&textMatch(state.alertQuery,a.id,a.node,nodeBy(a.node)?.name)))
+).sort(alertSort);
+function alarmTable(records,key,paginate=true){
+ const rows=records.map(a=>[wholeValue(a.id,false),timeText(a.firstAt),timeText(a.lastAt),esc(a.title),esc(nodeBy(a.node)?.name||a.evidence?.nodeName||a.node),button('详情','alert-detail',`data-id="${esc(a.id)}"`,'link')]);
+ return table(alertFields,rows,'暂无告警记录',{key,paginate});
+}
+const alertStorageKey=STORE+'-alarm-v5';
+const safeError=error=>String(error||'发送失败').slice(0,200).replace(/(token|secret|password)=[^\s&]+/gi,'$1=••••');
+function alarmBody(a){
+ const base=OBS.notificationConfig.detailBaseUrl;
+ const link=(base&&/^https:\/\//.test(base)?base.split('#')[0]:location.href.split('#')[0])+'#alerts?alert='+encodeURIComponent(a.id);
+ return `【BIYA Chain 告警】${a.title}\n告警编号：${a.id}\n影响对象：${a.evidence?.nodeName||a.node}\n首次告警时间：${timeText(a.firstAt)} · UTC+8\n异常摘要：${a.value??'—'}\n详情：${link}`;
+}
+function persistAlarmState(){
+ try{prototypeStorage.setItem(alertStorageKey,JSON.stringify({alarmRecords,notifications,alarmSequence}));}
+ catch{toast('告警记录未能保存在本机');}
+}
+const deliveryEvents=new Set();
+function notify(a,t,kind='首次通知'){
+ const id=`${a.id}-NTF-${notifications.filter(n=>n.alertId===a.id).length+1}`;
+ const n={id,alertId:a.id,kind,t,target:OBS.notificationConfig.target||null,status:null,error:null,body:alarmBody(a),attempts:[]};
+ notifications.unshift(n);persistAlarmState();
+ if(n.target&&typeof OBS.notificationAdapter==='function')deliverNotification(n);
+ return n;
+}
+async function deliverNotification(n){
+ if(deliveryEvents.has(n.id)||n.status)return;
+ deliveryEvents.add(n.id);
+ const config=OBS.notificationConfig,attempt=n.attempts.length+1,adapter=OBS.notificationAdapter;
+ let wait=null;
+ try{
+  const result=await adapter({notificationId:n.id,target:n.target,body:n.body,attempt});
+  if(result?.code!==0||!result.messageId)throw Object.assign(new Error(result?.message||'未确认发送结果'),{retryable:result?.retryable===true});
+  n.attempts.push({attempt,t:Date.now(),result:'发送成功'});n.status='发送成功';n.messageId=result.messageId;n.sentAt=Date.now();
+ }catch(error){
+  const reason=safeError(error.message),delay=config.retryDelays?.[attempt-1];
+  n.attempts.push({attempt,t:Date.now(),result:'发送失败',reason});
+  if(error.retryable&&attempt<config.maxAttempts&&Number.isFinite(delay)&&delay>=0)wait=delay;
+  else {n.status='发送失败';n.error=reason;n.sentAt=Date.now();}
+ }finally{
+  if(wait===null)deliveryEvents.delete(n.id);
+  persistAlarmState();
+  const details=[...document.querySelectorAll('[data-notification-id]')].find(el=>el.dataset.notificationId===n.id);
+  if(details)details.innerHTML=notificationResult(n);
+  else if(state.route==='alerts'&&!document.querySelector('.dialog'))render();
  }
- return heading('告警中心','',button('刷新','refresh','','primary'))+nodeContext()+scopebar()+`<div class="tabs">${button('告警记录','tab','data-tab="alerts"',tab==='alerts'?'active':'')}${button('Lark 通知记录','tab','data-tab="notifications"',tab==='notifications'?'active':'')}</div>`+body;
-};
-openAlert=aid=>{
- const a=alarmRecords.find(a=>a.id===aid);if(!a){modal('告警记录不可用',hint('告警不存在或已超过保留期','amber'));return;}
+ if(wait!==null)setTimeout(()=>{deliveryEvents.delete(n.id);deliverNotification(n);},wait);
+}
+function ingestAlert(event){
+ if(event.valid!==true||!Number.isFinite(event.t)||!event.ruleId||!event.node)return null;
+ const {t,node,ruleId}=event;
+ const fingerprint=JSON.stringify([event.chainId||'biya',event.environment||'local',ruleId,node,event.dimension||'']);
+ const existing=alarmRecords.find(a=>a.fingerprint===fingerprint);
+ if(existing){
+  if(t<=existing.lastAt)return existing;
+  existing.lastAt=t;
+  const rule=OBS.alertRules[ruleId],last=notifications.filter(n=>n.alertId===existing.id).sort(notificationSort)[0];
+  if(rule?.allowResend===true&&Number.isFinite(rule.minIntervalMs)&&rule.minIntervalMs>0&&last&&t-last.t>=rule.minIntervalMs&&rule.condition?.(event)===true)notify(existing,t,'业务重发');
+  persistAlarmState();return existing;
+ }
+ const a={id:'ALT-'+String(++alarmSequence).padStart(5,'0'),fingerprint,ruleId,node,title:event.title||'未知告警',group:event.group,focus:event.focus,firstAt:t,lastAt:t,value:event.value??'—',evidence:{nodeName:nodeBy(node)?.name||node,time:t,source:event.source||null,value:event.value??null}};
+ alarmRecords.unshift(a);notify(a,t);return a;
+}
+function restoreAlertHistory(){
+ const sources=[alertStorageKey,STORE+'-alarm-v4'];
+ for(const key of sources){
+  let saved;try{saved=JSON.parse(prototypeStorage.getItem(key)||'null');}catch{continue;}
+  if(!Array.isArray(saved?.alarmRecords)||!Array.isArray(saved?.notifications))continue;
+  alarmRecords.push(...saved.alarmRecords.map(a=>{
+   const {status,stateChangedAt,recoveredAt,observedAt,...history}=a;
+   return {...history,lastAt:Math.max(a.firstAt,a.lastAt||a.firstAt)};
+  }));
+  if(key===alertStorageKey)notifications.push(...saved.notifications);
+  else {
+   const groups=new Map();
+   for(const n of saved.notifications){const key=n.eventKey||n.id;if(!groups.has(key))groups.set(key,[]);groups.get(key).push(n);}
+   for(const attempts of groups.values()){
+    attempts.sort((a,b)=>a.t-b.t||a.attempt-b.attempt);const first=attempts[0],last=attempts.at(-1);
+    const status=['发送成功','发送失败'].includes(last.status)?last.status:null;
+    notifications.push({id:first.id,alertId:first.alertId,kind:'首次通知',t:first.t,sentAt:status?last.t:null,target:first.target==='未配置'?null:first.target,status,error:status==='发送失败'?last.error:null,body:first.body,attempts:attempts.map(n=>({attempt:n.attempt,t:n.t,result:n.status,reason:n.error}))});
+   }
+  }
+  alarmSequence=Math.max(Number(saved.alarmSequence)||0,...alarmRecords.map(a=>Number(/^ALT-(\d+)$/.exec(a.id)?.[1])||0));return;
+ }
+ for(let i=15;i>0;i--){
+  const node=['val-02','follow-02','api-01'][i%3],ruleId=['chain-state','finalize','ingress'][i%3];
+  ingestAlert({valid:true,t:OBS.anchor-i*150000,dimension:'fixture-'+i,ruleId,node,group:node==='api-01'?'ingress':'chain',focus:ruleId==='chain-state'?'chain-comparison':'chain-indicators',title:['链状态不一致','执行追赶落后','入口广播积压'][i%3],value:['同高度状态摘要不一致','节点执行进度落后','入口广播队列异常'][i%3]});
+ }
+}
+function alertsPage(){
+ const types=[...new Set(alarmRecords.filter(a=>hasPermission('read',a.node)).map(a=>a.title))].sort(cmp);
+ const filters=`<div class="filters alert-filters"><label>告警类型 <select id="alert-type"><option value="all">全部</option>${types.map(t=>`<option value="${esc(t)}" ${state.alertType===t?'selected':''}>${esc(t)}</option>`).join('')}</select></label><input type="search" id="alert-query" aria-label="告警关键词" placeholder="告警编号、节点标识或名称" value="${esc(state.alertQuery)}">${button('查询','alert-search')}</div>`;
+ return heading('告警中心','',button('刷新','refresh','','primary'))+nodeContext()+scopebar()+panel('告警记录',filters+alarmTable(noSample()?[]:alertRows(),'alert-records'));
+}
+function notificationResult(n){
+ const sentAt=n.sentAt?timeText(n.sentAt)+' · UTC+8':'—';
+ return `<dt>目标群</dt><dd>${esc(n.target||'未配置')}</dd><dt>发送时间</dt><dd>${esc(sentAt)}</dd><dt>发送结果</dt><dd>${esc(n.status||'')}</dd>${n.status==='发送失败'?'<dt>失败原因</dt><dd>'+esc(n.error)+'</dd>':''}`;
+}
+function openAlert(id){
+ const a=alarmRecords.find(a=>a.id===id);
+ if(!a){toast('告警不存在或超出保留期限');return;}
  if(!requirePermission('read',a.node))return;
- state.activeAlert=aid;const q=new URLSearchParams(location.hash.split('?')[1]||'');q.set('alert',aid);history.replaceState(null,'','#'+state.route+'?'+q);
- const rows=notifications.filter(n=>n.alertId===aid),entries=[['告警编号',a.id],['告警类型',a.title],['状态',a.status],['级别',a.level],['影响对象',nodeBy(a.node)?.name||a.node],['首次发生',timeText(a.firstAt)],['最近发生',timeText(a.lastAt)],['状态变更时间',timeText(a.stateChangedAt)],['当前观测',a.value],['触发条件',a.evidence.condition||a.condition],['规则版本',a.evidence.ruleVersion||'未配置'],['证据时间',a.evidence.observedAt],['证据观测值',a.evidence.value??'—'],['证据节点高度',a.evidence.nodeHeight??(nodeBy(a.node)?.role==='gateway'?'不适用':'—')]];
- modal('告警详情 · '+aid,`<dl class="kv">${entries.map(([k,v])=>`<dt>${k}</dt><dd>${esc(v)}</dd>`).join('')}</dl><h3 class="subheading">Lark 通知记录</h3>${notificationTable(rows,'alert-notifications-'+aid)}`,button('关闭','close')+button('定位监控','alert-monitor',`data-id="${aid}"`,'primary')+button('节点日志','alert-logs',`data-id="${aid}"`),true);
-};
-const logRows=()=>noSample()?[]:OBS.logs.filter(r=>hasPermission('read',r.nodeId)&&inWindow(r.t)&&(state.node==='all'||r.nodeId===state.node)&&(state.logLevel==='all'||r.level===state.logLevel)&&textMatch(state.logQuery,r.message,r.traceId)).sort((a,b)=>b.t-a.t||cmp(a.nodeId,b.nodeId)||cmp(b.id,a.id));
-logsPage=()=>heading('节点日志','',button('导出','export-logs','', '',!hasPermission('export'))+button('刷新','refresh','','primary'))+nodeContext()+scopebar()+`<div class="filters"><label>级别 <select id="log-level" aria-label="日志级别">${['all','INFO','WARN','ERROR'].map(s=>`<option value="${s}" ${s===state.logLevel?'selected':''}>${s==='all'?'全部':s}</option>`).join('')}</select></label><input type="search" id="log-query" value="${esc(state.logQuery)}" placeholder="搜索日志或关联标识" aria-label="搜索日志">${button('查询','log-search')}${button('重置','log-clear')}</div>`+panel('节点日志',table(['时间','节点','级别','日志内容','关联标识'],logRows().map(r=>[timeText(r.t),esc(nodeBy(r.nodeId)?.name||r.nodeId),badge(r.level,r.level==='ERROR'?'red':r.level==='WARN'?'amber':''),r.message?.length>160?`<details><summary>${esc(r.message.slice(0,120))}…</summary><pre class="log-text">${esc(r.message)}</pre></details>`:`<span class="log-text">${esc(r.message)}</span>`,r.traceId?wholeValue(r.traceId,false):'—']),'暂无日志',{key:'node-logs'}));
+ const focus=[a.group,a.focus],canMonitor=nodeBy(a.node)&&TITLES[focus[0]]&&!(focus[0]==='overview'&&focus[1]==='clock')&&!/时钟/.test(a.title);
+ const rows=notifications.filter(n=>n.alertId===id).sort(notificationSort);
+ const q=new URLSearchParams(location.hash.split('?')[1]||'');q.set('alert',id);history.replaceState(null,'','#'+state.route+'?'+q);
+ const text=(k,v)=>`<dt>${esc(k)}</dt><dd>${esc(v??'—')}</dd>`;
+ const fields=[['告警编号',id],['告警类型',a.title],['影响对象',nodeBy(a.node)?.name||a.evidence?.nodeName||a.node],['首次告警时间',timeText(a.firstAt)+' · UTC+8'],['最新告警时间',timeText(a.lastAt)+' · UTC+8'],['异常摘要',a.evidence?.value??a.value],['证据时间',timeText(a.evidence?.time||a.evidence?.observedAtMs||a.firstAt)+' · UTC+8']];
+ const messages=rows.map(n=>`<div class="notification-item">${rows.length>1?`<strong>${esc(n.kind)}</strong>`:''}<dl class="kv" data-notification-id="${esc(n.id)}" aria-live="polite">${notificationResult(n)}</dl><details><summary>消息内容</summary><pre class="message-body">${esc(n.body)}</pre>${button('打开告警链接','open-alert-link',`data-id="${esc(a.id)}"`,'link')}</details></div>`).join('');
+ state.activeAlert=id;
+ modal('告警详情 · '+id,`<dl class="kv">${fields.map(x=>text(...x)).join('')}</dl><h3 class="subheading">Lark 通知</h3>${messages||hint('暂无关联通知')}`,
+ button('关闭','close')+(canMonitor?button('定位监控','alert-monitor',`data-id="${esc(id)}"`,'primary'):'')+(nodeBy(a.node)?button('节点日志','alert-logs',`data-id="${esc(id)}"`):''),true);
+}
+
+const logInputValue=t=>t?new Date(t+8*hourMs).toISOString().slice(0,16):'';
+const parseLogInput=value=>value?Date.parse(value+'+08:00'):NaN;
+function logRange(){
+ const timestamp=(value,fallback)=>Number.isSafeInteger(Number(value))&&Number(value)>0&&Number(value)<=8.64e15-8*hourMs?Number(value):fallback;
+ return {start:timestamp(state.logStart,state.cutoff-hourMs),end:timestamp(state.logEnd,state.cutoff)};
+}
+const logEncoder=new TextEncoder();
+const supportedLogNodes=()=>scopeNodes().filter(n=>n.logSupported!==false);
+const canDownloadLog=node=>hasPermission('read',node)&&hasPermission('export',node)&&!OBS.logDownloadDenied?.includes(node);
+function logPackages(){
+ if(noSample()||state.scenario==='error')return [];
+ const {start,end}=logRange(),groups=new Map(),policy=OBS.logPolicy;
+ if(end<=start||end-start>policy.maxQueryMs)return [];
+ const ids=new Set(supportedLogNodes().filter(n=>(state.node==='all'||state.node===n.id)&&!OBS.logFailedNodes?.includes(n.id)).map(n=>n.id));
+ for(const r of OBS.logs){
+  if(!ids.has(r.nodeId)||r.t>state.cutoff)continue;
+  const from=Math.floor(r.t/hourMs)*hourMs,to=from+hourMs;
+  if(from>=end||to<=start||to>state.cutoff||to<=state.cutoff-policy.retentionMs)continue;
+  const key=JSON.stringify([r.nodeId,from]);
+  if(!groups.has(key))groups.set(key,{node:r.nodeId,from,to,rows:[]});
+  groups.get(key).rows.push(r);
+ }
+ return [...groups.values()].sort((a,b)=>b.from-a.from||cmp(a.node,b.node)).flatMap(({node,from,to,rows})=>{
+  const text=rows.sort((a,b)=>a.t-b.t||cmp(a.id,b.id)).map(r=>`${timeText(r.t)} UTC+8 [${r.level}] ${r.message}\n`).join('');
+  const parts=[];let part='',bytes=0;
+  for(const symbol of text){
+   const size=logEncoder.encode(symbol).length;
+   if(bytes+size>policy.maxBytes){parts.push({text:part,bytes});part='';bytes=0;}
+   part+=symbol;bytes+=size;
+  }
+  if(bytes)parts.push({text:part,bytes});
+  return parts.map((payload,i)=>({id:`${node}-${from}-${i+1}`,node,from,to,part:i+1,total:parts.length,payload,name:`${node}-${logInputValue(from).replace(/[:T]/g,'-')}-${i+1}.log`}));
+ });
+}
+function logsPage(){
+ const {start,end}=logRange(),nodes=supportedLogNodes();
+ const unsupported=state.node!=='all'&&!nodes.some(n=>n.id===state.node);
+ const options=nodes.map(n=>`<option value="${esc(n.id)}" ${state.node===n.id?'selected':''}>${esc(n.name)}</option>`).join('');
+ const filters=`<form id="log-package-query" class="filters log-package-filters"><label>节点 <select id="log-node" required><option value="all" ${state.node==='all'?'selected':''}>全部节点</option>${unsupported?`<option value="${esc(state.node)}" selected disabled>${esc(nodeBy(state.node)?.name)}（不支持日志包）</option>`:''}${options}</select></label><label>开始时间 <input type="datetime-local" id="log-start" required value="${logInputValue(start)}"></label><label>结束时间 <input type="datetime-local" id="log-end" required value="${logInputValue(end)}"></label><button type="submit" class="primary">查询</button><span class="stamp">UTC+8</span></form>`;
+ const scoped=nodes.filter(n=>state.node==='all'||n.id===state.node);
+ const failed=scoped.filter(n=>OBS.logFailedNodes?.includes(n.id)).length;
+ const error=state.scenario==='error'||failed>0&&failed===scoped.length;
+ const rows=logPackages();
+ const invalid=end<=start||end-start>OBS.logPolicy.maxQueryMs;
+ const empty=invalid?'请缩短查询时间范围':unsupported?'该节点不支持日志包':error?'日志包读取失败':!scoped.length?'当前无可查询的日志节点':'暂无匹配的可下载日志包';
+ const denied=rows.some(p=>!canDownloadLog(p.node));
+ const currentHour=Math.floor(state.cutoff/hourMs)*hourMs;
+ const ids=new Set(scoped.filter(n=>!OBS.logFailedNodes?.includes(n.id)).map(n=>n.id));
+ const openPackage=end>currentHour&&start<currentHour+hourMs&&OBS.logs.some(r=>ids.has(r.nodeId)&&r.t>=currentHour&&r.t<=state.cutoff);
+ const status=error?hint('日志包读取失败，请重新查询','red'):
+  (failed?hint(`部分节点查询失败 · ${failed} / ${scoped.length} 个节点`,'amber'):'')+(denied?hint(state.node==='all'?'部分日志包无下载权限':'无该节点日志包的下载权限','amber'):'')+(openPackage&&!invalid?hint('当前时段的日志包将在本周期结束后生成'):'');
+ return heading('节点日志')+panel('日志包',filters+status+table(['节点','日志覆盖时段（UTC+8）','文件名','文件大小','分包','操作'],rows.map(pkg=>[
+  esc(nodeBy(pkg.node)?.name||pkg.node),timeText(pkg.from)+' 至 '+timeText(pkg.to),esc(pkg.name),fmt(pkg.payload.bytes)+' B',pkg.part+' / '+pkg.total,canDownloadLog(pkg.node)?button('下载','log-download',`data-id="${esc(pkg.id)}"`,'link'):button('下载','log-download','title="无下载权限"','link',true)+'<span class="muted">无下载权限</span>'
+ ]),empty,{key:'log-packages'}));
+}
+function downloadLog(id){
+ const pkg=logPackages().find(p=>p.id===id);
+ if(!pkg||state.logFileState==='expired'||pkg.to<=Date.now()-OBS.logPolicy.retentionMs){toast('日志包已过期或不可用');return;}
+ if(!canDownloadLog(pkg.node)){toast('无该节点日志包的下载权限');return;}
+ if(state.logFileState==='missing'){toast('日志包文件缺失');return;}
+ if(state.logFileState==='retry'){state.logFileState='';toast('下载失败，请在本行重试');return;}
+ try{download(pkg.name,pkg.payload.text,'text/plain;charset=utf-8','已开始下载');}
+ catch{toast('下载失败，请在本行重试');}
+}
+function openLogs(node,at=null){
+ const end=at==null?state.cutoff:Math.min(Date.now(),at+hourMs/2);
+ const start=at==null?end-windowMs():Math.min(at,end)-hourMs/2;
+ navigate('logs',node,'',{logStart:start,logEnd:end});
+}
 
 const setQueryUrl=()=>{const q=new URLSearchParams(location.hash.split('?')[1]||'');const alert=q.get('alert');history.replaceState(null,'',writeLocation(state.route,state.node,state.focus,alert?{alert}:{}));};
 const updateFilter=(key,value,tableKey)=>{state[key]=value;if(tableKey)delete state.pagers[tableKey];else resetPages();setQueryUrl();render();};
 const editNode=nid=>{
- if(!requirePermission('edit',nid))return;const n=nodeBy(nid);if(!n)return toast('节点不存在');const version=n.version||1;
+ if(!requirePermission('edit',nid))return;const n=nodeBy(nid);if(!isManagedNode(n))return toast('节点不存在或不适用');const version=n.version||1;
  formModal('编辑节点信息',field('name','显示名称',n.name,{required:true,maxLength:1000})+field('note','备注',n.note,{textarea:true,full:true,max:2000}),'保存',async data=>{
   if(modalSavePending||!requirePermission('edit',nid))return;
   const name=String(data.get('name')||'').trim(),note=String(data.get('note')||'').trim();
@@ -767,55 +962,46 @@ handleAction=(action,el)=>{
   if(state.loading)return;state.loading=true;render();queueMicrotask(()=>{state.loading=false;state.cutoff=Date.now();state.fixedCutoff=false;resetPages();setQueryUrl();render();});return;
  }
  if(action==='all-nodes')return navigate('nodes','all');
+ if(action==='overview-node-role'){
+  const role=el.dataset.role,node=nodeBy(state.node)?.role===role?state.node:'all';
+  return navigate('nodes',node,'',{tab:role});
+ }
  if(action==='clear-context'){resetPages();return navigate(state.route,'all',state.focus);}
  if(action==='go')return navigate(el.dataset.route,el.dataset.node||state.node,el.dataset.focus||'');
  if(action==='node-edit')return editNode(rid);
  if(action==='node-detail')return showNode(rid);
  if(action==='node-monitor'||action==='node-log'){
   if(!nodeBy(rid))return toast('节点不存在');if(!requirePermission('read',rid))return;
-  return navigate(action==='node-log'?'logs':nodeBy(rid).role==='gateway'?'ingress':'chain',rid);
+  return action==='node-log'?openLogs(rid):navigate(nodeBy(rid).role==='gateway'?'ingress':'chain',rid);
  }
  if(action==='tab'){state.tab=el.dataset.tab;state.query='';resetPages();setQueryUrl();render();return;}
  if(action==='search')return updateFilter('query',document.getElementById('search')?.value.trim()||'','node-management');
  if(action==='clear-search')return updateFilter('query','','node-management');
  if(action==='storage-type')return updateFilter('storageType',el.dataset.type,'storage-current');
- if(action==='failure-type')return updateFilter('failureType',el.dataset.type,'evm-failures');
- if(action==='failure-search')return updateFilter('failureQuery',document.getElementById('failure-query').value.trim(),'evm-failures');
- if(action==='failure-clear'){state.failureType='all';return updateFilter('failureQuery','','evm-failures');}
  if(action==='alert-search')return updateFilter('alertQuery',document.getElementById('alert-query').value.trim(),'alert-records');
- if(action==='notification-search')return updateFilter('notificationQuery',document.getElementById('notification-query').value.trim(),'notification-records');
- if(action==='log-search')return updateFilter('logQuery',document.getElementById('log-query').value.trim(),'node-logs');
- if(action==='log-clear'){state.logLevel='all';return updateFilter('logQuery','','node-logs');}
  if(action==='evm-gas'){
   state.gasNode=state.node==='all'?'':state.node;return navigate('ingress','all','gas',{gasNode:state.gasNode});
  }
- if(action==='block-detail'){
-  const b=blockRows().find(b=>b.hash===rid);if(!b)return toast('区块不存在或无权查看');
-  return detail('EVM 区块详情',[['区块号',fmt(b.number)],['区块 hash',b.hash],['时间',timeText(b.t)+' · UTC+8'],['区块类型',({small:'小块',big:'大块',unknown:'未知'})[b.blockType]],['gasUsed',fmt(b.gasUsed)],['gasLimit',fmt(b.gasLimit)],['交易数',fmt(b.txCount)],['观测节点',nodeBy(b.observerNodeId)?.name||b.observerNodeId]]);
+ if(action==='overview-alerts')return navigate('alerts',state.node,'',{alertType:'all',alertQuery:''});
+ if(action==='overview-chain')return navigate('chain',el.dataset.node,'chain-indicators');
+ if(action==='jump')return document.getElementById(rid)?.scrollIntoView({block:'start'});
+ if(action==='state-evidence'){
+  const c=chainComparison(scopedNodes()),rows=c.mismatches.filter(r=>!rid||r.node.id===rid);
+  return modal('app_hash 不一致节点',table(['节点','状态比较高度','执行阶段','采样时间','状态证据'],rows.map(({node,sample})=>[esc(node.name),fmt(sample.height),'Core 执行完成',timeText(sample.t)+' · UTC+8',wholeValue(sample.digest)]),'暂无已证实的不一致节点',{key:'chain-evidence'}),'',true);
  }
- if(action==='failure-detail'){
-  const r=failedReceipts().find(r=>r.hash===rid);if(!r)return toast('失败交易不存在或无权查看');
-  return detail('EVM 失败交易详情',[['交易 hash',r.hash],['区块号',fmt(r.blockNumber)],['区块 hash',r.blockHash],['交易位置',r.transactionIndex],['区块时间',timeText(r.t)+' · UTC+8'],['区块类型',({small:'小块',big:'大块',unknown:'未知'})[r.blockType]||'未知'],['发送方',r.from],['目标合约',r.to??'合约创建'],['Gas 消耗',fmt(r.gasUsed)],['失败类型',r.reasonCategory],['失败原因',r.reasonText||'未取得失败原因'],['原因来源',r.reasonEvidence?.source||'未取得失败原因'],['观测节点',r.observerNodeIds.map(nid=>nodeBy(nid)?.name||nid).join('、')]]);
+ if(action==='lag-evidence'){
+  const e=latestNodeSample(OBS.lagEvidence,rid);if(!availableSample(e)||!requirePermission('read',rid))return;
+  return detail('落后原因依据',[['节点',nodeBy(rid)?.name],['原因',e.reason],['证据来源',e.source],['采样时间',timeText(e.t)+' · UTC+8']]);
  }
- if(action==='alert-monitor'||action==='alert-logs'){
+ if(action==='alert-monitor'||action==='alert-logs'||action==='open-alert-link'){
   const a=alarmRecords.find(a=>a.id===rid);if(!a||!requirePermission('read',a.node))return;
-  if(action==='alert-monitor')return navigate(a.group,a.node,a.focus||'');
-  state.cutoff=Math.min(Date.now(),a.lastAt+windowMs()/2);return navigate('logs',a.node,'',{at:state.cutoff});
+  if(action==='open-alert-link')return navigate('alerts','all','',{alert:rid});
+  if(!nodeBy(a.node))return toast('关联节点已移除');
+  if(action==='alert-logs')return openLogs(a.node,a.lastAt);
+  if(a.focus==='clock'||!TITLES[a.group])return toast('关联监控暂无定位入口');
+  return navigate(a.group,a.node,a.focus||'');
  }
- if(action==='notification-detail'){
-  const n=notifications.find(n=>n.id===rid),a=n&&alarmRecords.find(a=>a.id===n.alertId);if(!n||!a||!requirePermission('read',a.node))return;
-  return modal('Lark 消息详情',`<dl class="kv"><dt>目标群</dt><dd>${esc(n.target)}</dd><dt>发送状态</dt><dd>${esc(n.status)}</dd><dt>发送时间</dt><dd>${timeText(n.t)} · UTC+8</dd><dt>失败原因</dt><dd>${esc(n.error||'—')}</dd><dt>发送结果标识</dt><dd>${esc(n.messageId||'—')}</dd></dl><pre class="message-body">${esc(n.body)}</pre>`,'',true);
- }
- if(action==='export-logs'){
-  if(!requirePermission('export',state.node==='all'?null:state.node))return;
-  if(state.scenario==='error')return toast('日志查询失败，请重试后导出');
-  const rows=logRows();if(!rows.length)return toast('无可导出数据');
-  const payload={metadata:{cutoff:state.cutoff,window:state.window,node:state.node,level:state.logLevel,keyword:state.logQuery,timezone:'UTC+8',total:rows.length,complete:true},records:rows};
-  const bytes=new Blob([JSON.stringify(payload)]).size,policy=OBS.exportPolicy;
-  if(policy.maxRecords!=null&&rows.length>policy.maxRecords)return toast('超过导出上限 '+policy.maxRecords+' 条，请缩小范围');
-  if(policy.maxBytes!=null&&bytes>policy.maxBytes)return toast('超过导出文件大小限制，请缩小范围');
-  try{download('BIYA-node-logs-'+timeText(state.cutoff).replace(/[^0-9]/g,'')+'.json',payload);}catch{toast('下载失败，请重试');}return;
- }
+ if(action==='log-download')return downloadLog(rid);
  if(action==='audit'){
   if(!requirePermission('audit'))return;
   const rows=db.audit.filter(a=>a.action==='编辑节点信息'&&hasPermission('read',a.object)).sort((a,b)=>dateValue(b.t||b.time)-dateValue(a.t||a.time)||cmp(b.id,a.id));
@@ -827,16 +1013,15 @@ handleAction=(action,el)=>{
 document.addEventListener('change',e=>{
  const t=e.target,key=t.id;
  if(key==='scope-node'){e.stopImmediatePropagation();resetPages();navigate(state.route,t.value,state.focus);return;}
- const fields={'scope-window':['window',null],'gas-node':['gasNode','gas-blocks'],'gas-type':['gasType','gas-blocks'],'alert-state':['alertState','alert-records'],'alert-type':['alertType','alert-records'],'notification-state':['notificationState','notification-records'],'log-level':['logLevel','node-logs']};
+ const fields={'scope-window':['window',null],'gas-node':['gasNode',null],'gas-type':['gasType',null],'alert-type':['alertType','alert-records'],'failure-name':['failureName',null]};
  if(fields[key]){e.stopImmediatePropagation();const [field,tableKey]=fields[key];updateFilter(field,t.value,tableKey);}
 },true);
 document.addEventListener('click',e=>{
- const nav=e.target.closest('.nav-link');if(!nav)return;e.preventDefault();e.stopImmediatePropagation();const route=nav.getAttribute('href').slice(1);Object.assign(state,queryDefaults);state.gasNode=OBS.primaryObserver&&hasPermission('read',OBS.primaryObserver)?OBS.primaryObserver:'';resetPages();navigate(route,'all');
+ const nav=e.target.closest('.nav-link');if(!nav)return;e.preventDefault();e.stopImmediatePropagation();const route=nav.getAttribute('href').slice(1);if(route==='logs'){state.window='1h';state.cutoff=Date.now();}Object.assign(state,queryDefaults);state.gasNode=OBS.primaryObserver&&hasPermission('read',OBS.primaryObserver)?OBS.primaryObserver:'';resetPages();navigate(route,'all');
 },true);
 
-function render(){hideChartTooltip();chartHoverData.clear();syncAlarmScenario();document.getElementById('navigation').innerHTML=ROUTES.map(([key,title,icon,group])=>(group?`<div class="nav-group">${group}</div>`:'')+`<a class="nav-link ${state.route===key?'active':''}" href="#${key}" ${state.route===key?'aria-current="page"':''}><span class="nav-icon">${icon}</span>${title}</a>`).join('');document.getElementById('current-title').textContent=TITLES[state.route];const pages={overview,nodes:nodesPage,chain:chainPage,ingress:ingressPage,evm:evmPage,alerts:alertsPage,logs:logsPage,byb:bybPage,labels:labelsPage,contracts:contractsPage,'api-accounts':accountPage,'api-plans':planPage,'api-usage':usagePage,'api-ip':ipPage,'email-bl':domainPage};document.getElementById('workspace').innerHTML=(pages[state.route]||overview)();document.title=TITLES[state.route]+' · BIYA Chain Admin';const all=document.getElementById('select-all'),boxes=[...document.querySelectorAll('#workspace [data-select]')];if(all){all.checked=boxes.length>0&&boxes.every(x=>x.checked);all.indeterminate=boxes.some(x=>x.checked)&&!all.checked;}}
+function render(){hideChartTooltip();chartHoverData.clear();document.getElementById('navigation').innerHTML=ROUTES.map(([key,title,icon,group])=>(group?`<div class="nav-group">${group}</div>`:'')+`<a class="nav-link ${state.route===key?'active':''}" href="#${key}" ${state.route===key?'aria-current="page"':''}><span class="nav-icon">${icon}</span>${title}</a>`).join('');document.getElementById('current-title').textContent=TITLES[state.route];const pages={overview,nodes:nodesPage,chain:chainPage,ingress:ingressPage,evm:evmPage,alerts:alertsPage,logs:logsPage,byb:bybPage,labels:labelsPage,contracts:contractsPage,'api-accounts':accountPage,'api-plans':planPage,'api-usage':usagePage,'api-ip':ipPage,'email-bl':domainPage};document.getElementById('workspace').innerHTML=(pages[state.route]||overview)();document.title=TITLES[state.route]+' · BIYA Chain Admin';const all=document.getElementById('select-all'),boxes=[...document.querySelectorAll('#workspace [data-select]')];if(all){all.checked=boxes.length>0&&boxes.every(x=>x.checked);all.indeterminate=boxes.some(x=>x.checked)&&!all.checked;}}
 function detail(title,entries,wide=true){modal(title,`<dl class="kv">${entries.map(([k,v])=>`<dt>${esc(k)}</dt><dd class="break-value">${esc(v??'—')}</dd>`).join('')}</dl>`,'',wide);}
-function openIngress(rid){const r=OBS.ingress.find(r=>r.id===rid);if(!r)return;detail('交易处理详情 · '+rid,[['入口节点',nodeBy(r.nodeId).name],['接收时间',timeText(r.receivedAt)],['bundle',r.bundle],['首次广播',r.broadcastAt===null?'—':timeText(r.broadcastAt)],['最终确认',r.confirmedAt===null?'—':timeText(r.confirmedAt)],['验证者',nodeBy(r.validatorId)?.name||'未配置']]);}
 function handleAction(action,el){const rid=el.dataset.id;switch(action){
  case'close':closeModal();break;
  case'menu':document.getElementById('sidebar').classList.toggle('open');break;
@@ -853,31 +1038,19 @@ function handleAction(action,el){const rid=el.dataset.id;switch(action){
  case'node-monitor':navigate(nodeBy(rid).role==='gateway'?'ingress':'chain',rid);break;
  case'node-log':navigate('logs',rid);break;
  case'node-edit':{const n=nodeBy(rid);formModal('编辑节点信息',field('name','显示名称',n.name,{required:true,maxLength:60})+field('note','备注',n.note,{textarea:true,full:true,max:200}),'保存',d=>{if(!d.get('name').trim())return formError('名称不能为空。');Object.assign(n,{name:d.get('name').trim(),note:d.get('note').trim()});audit('编辑节点信息',n.id);closeModal();render();});break;}
- case'ingress-detail':openIngress(rid);break;
- case'block-detail':{const b=blockRows().find(b=>b.hash===rid);if(b)detail('EVM 区块详情',[['区块号',b.number],['区块 hash',b.hash],['时间',timeText(b.t)],['区块类型',({small:'小块',big:'大块',unknown:'未知'})[b.blockType]],['gasUsed',b.gasUsed],['gasLimit',b.gasLimit],['交易数',b.txCount],['观测节点',nodeBy(b.observerNodeId).name]]);break;}
- case'failure-type':state.failureType=el.dataset.type;resetPages();render();break;
- case'failure-search':state.failureQuery=document.getElementById('failure-query').value.trim();resetPages();render();break;
- case'failure-clear':state.failureQuery='';state.failureType='all';resetPages();render();break;
- case'failure-detail':{const r=failedReceipts().find(r=>r.hash===rid);if(r)detail('EVM 失败交易详情',[['交易 hash',r.hash],['区块号',r.blockNumber],['区块 hash',r.blockHash],['交易位置',r.transactionIndex],['区块时间',timeText(r.t)],['区块类型',({small:'小块',big:'大块',unknown:'未知'})[r.blockType]],['发送方',r.from],['目标合约',r.to],['Gas 消耗',r.gasUsed],['失败类型',r.reasonCategory],['失败原因',r.reasonText],['原因来源',r.reasonSource],['观测节点',state.node==='all'?'全部适用节点':nodeBy(state.node).name]]);break;}
  case'alert-detail':openAlert(rid);break;
- case'notification-detail':{const n=notifications.find(n=>n.id===rid);if(n)modal('Lark 消息详情',`<dl class="kv"><dt>目标群</dt><dd>${esc(n.target)}</dd><dt>发送状态</dt><dd>${esc(n.status)}</dd><dt>发送时间</dt><dd>${timeText(n.t)}</dd><dt>失败原因</dt><dd>${esc(n.error)}</dd></dl><pre class="message-body">${esc(n.body)}</pre>`,'',true);break;}
  case'alert-search':state.alertQuery=document.getElementById('alert-query').value.trim();resetPages();render();break;
- case'notification-search':state.notificationQuery=document.getElementById('notification-query').value.trim();resetPages();render();break;
- case'log-search':state.logQuery=document.getElementById('log-query').value.trim();resetPages();render();break;
- case'log-clear':state.logQuery='';state.logLevel='all';resetPages();render();break;
- case'export-logs':download('BIYA-node-logs.json',OBS.logs.filter(r=>inWindow(r.t)&&(state.node==='all'||r.nodeId===state.node)&&(state.logLevel==='all'||r.level===state.logLevel)&&JSON.stringify(r).toLowerCase().includes(state.logQuery.toLowerCase())));break;
  case'audit':modal('操作记录',table(['时间','操作人','操作','对象','结果'],db.audit.map(a=>[esc(a.time),esc(a.actor),esc(a.action),esc(a.object),esc(a.result)]),'暂无操作记录',{key:'audit-records'}),'',true);break;
  case'modal-save':{const f=document.getElementById('edit-form');if(f?.reportValidity())modalHandler?.(new FormData(f));break;}
  case'modal-confirm':modalHandler?.();break;
  default:handleAdminAction(action,el);
 }}
-function retryNotification(nid,options={}){const n=notifications.find(n=>n.id===nid);if(!n||n.status!=='发送失败'||n.attempt>=(options.maxAttempts||3))return null;const a=alarmRecords.find(a=>a.id===n.alertId);return a?sendNotification(a,{target:n.target,fail:!!options.fail,at:options.at||Date.now()}):null;}
 document.addEventListener('click',e=>{const el=e.target.closest('[data-action]');if(el&&!el.disabled)handleAction(el.dataset.action,el);});
 document.addEventListener('change',async e=>{const t=e.target;
  if(t.dataset.pageSize){updatePage(t.dataset.pageSize,1,Number(t.value));return;}
  if(t.dataset.pageJump){updatePage(t.dataset.pageJump,Math.floor(Number(t.value))||1);return;}
  if(t.id==='scope-node'){resetPages();navigate(state.route,t.value);return;}
- const changes={'scope-window':'window','gas-node':'gasNode','gas-type':'gasType','alert-state':'alertState','alert-type':'alertType','notification-state':'notificationState','log-level':'logLevel','error-code':'tab'};
+ const changes={'error-code':'tab'};
  if(changes[t.id]){state[changes[t.id]]=t.value;resetPages();render();return;}
  if(t.dataset.select){t.checked?state.selected.add(t.dataset.select):state.selected.delete(t.dataset.select);render();return;}
  if(t.id==='select-all'){document.querySelectorAll('#workspace [data-select]').forEach(cb=>t.checked?state.selected.add(cb.dataset.select):state.selected.delete(cb.dataset.select));render();return;}
@@ -885,8 +1058,17 @@ document.addEventListener('change',async e=>{const t=e.target;
  if(t.name==='sourceFile'||t.name==='abiFile'){const f=t.files?.[0];if(f){if(f.size>100000){t.value='';return formError('文件超过 100 KB。');}document.querySelector(`[name="${t.name==='sourceFile'?'source':'abi'}"]`).value=await f.text();}}
 });
 document.addEventListener('input',e=>{if(e.target.id==='import-text'){importRows=[];const b=document.querySelector('[data-action="import-confirm"]');if(b)b.disabled=true;}});
-document.addEventListener('submit',e=>{if(e.target.id==='edit-form'){e.preventDefault();document.querySelector('[data-action="modal-save"]')?.click();}});
-document.addEventListener('keydown',e=>{if(e.key==='Escape')closeModal();const searchActions={search:'search','failure-query':'failure-search','alert-query':'alert-search','notification-query':'notification-search','log-query':'log-search'};if(e.key==='Enter'&&searchActions[e.target.id]){e.preventDefault();handleAction(searchActions[e.target.id],e.target);}if(e.key==='Tab'&&document.querySelector('.dialog')){const items=[...document.querySelectorAll('.dialog button:not(:disabled),.dialog input:not(:disabled),.dialog select:not(:disabled),.dialog textarea:not(:disabled)')].filter(x=>x.offsetParent);if(!items.length)return;const first=items[0],last=items.at(-1);if(e.shiftKey&&document.activeElement===first){e.preventDefault();last.focus();}else if(!e.shiftKey&&document.activeElement===last){e.preventDefault();first.focus();}}});
+document.addEventListener('submit',e=>{if(e.target.id==='edit-form'){e.preventDefault();document.querySelector('[data-action="modal-save"]')?.click();}
+ if(e.target.id!=='log-package-query')return;
+ e.preventDefault();
+ const node=document.getElementById('log-node').value,start=parseLogInput(document.getElementById('log-start').value),end=parseLogInput(document.getElementById('log-end').value);
+ if(!node||!requirePermission('read',node==='all'?undefined:node))return;
+ if(!Number.isFinite(start)||!Number.isFinite(end)||end<=start)return toast('请选择有效的起止时间');
+ if(end-start>OBS.logPolicy.maxQueryMs)return toast('超过最大查询跨度，请缩短范围');
+ delete state.pagers['log-packages'];
+ if(state.scenario==='error')state.scenario='normal';
+ navigate('logs',node,'',{logStart:start,logEnd:end});});
+document.addEventListener('keydown',e=>{if(e.key==='Escape')closeModal();const searchActions={search:'search','alert-query':'alert-search'};if(e.key==='Enter'&&searchActions[e.target.id]){e.preventDefault();handleAction(searchActions[e.target.id],e.target);}if(e.key==='Tab'&&document.querySelector('.dialog')){const items=[...document.querySelectorAll('.dialog button:not(:disabled),.dialog input:not(:disabled),.dialog select:not(:disabled),.dialog textarea:not(:disabled)')].filter(x=>x.offsetParent);if(!items.length)return;const first=items[0],last=items.at(-1);if(e.shiftKey&&document.activeElement===first){e.preventDefault();last.focus();}else if(!e.shiftKey&&document.activeElement===last){e.preventDefault();first.focus();}}});
 document.addEventListener('pointermove',showChartTooltip);
 document.addEventListener('pointerout',e=>{if(activeHoverSvg&&!activeHoverSvg.contains(e.relatedTarget))hideChartTooltip();});
 document.addEventListener('scroll',hideChartTooltip,true);
@@ -895,6 +1077,7 @@ window.addEventListener('resize',hideChartTooltip);
 window.addEventListener('hashchange',syncRoute);
 window.ADMIN_META={version:'3.0',pages:ROUTES.map(r=>r[0]),mode:'standalone'};
 state.last=timeText(OBS.anchor);
+restoreAlertHistory();
 syncRoute();
 
 // Local, reversible PRD state demonstrations. No live probes or Lark requests are performed.
@@ -904,15 +1087,16 @@ syncRoute();
  const ROUTE_NAMES=Object.fromEntries(ROUTES.filter(r=>OPS_ROUTES.has(r[0])).map(r=>[r[0],r[1]]));
  const COMMON=[['normal','默认展示'],['loading','首次加载'],['empty','暂无数据'],['error','读取失败'],['stale','数据过期'],['partial','部分缺测'],['denied','无查看权限']];
  const CASES={
-  overview:[['healthy','探活与时钟正常'],['clock-abnormal','时钟偏差超限'],['clock-unconfigured','时钟未配置'],['clock-missing','时钟缺测'],['probe-failure','服务探测失败'],['service-unconfigured','服务未配置'],['active-alerts','当前活跃告警'],['zero-backlog','有效零积压']],
-  nodes:[['no-match','查询无匹配'],['detail','链端节点详情'],['gateway-detail','入口节点详情'],['services-down','服务不可用'],['services-unconfigured','服务未配置'],['edit','编辑与保存'],['edit-required','名称为空'],['edit-limit','名称超长'],['edit-failure','保存失败与重试'],['edit-conflict','信息修改冲突'],['read-only','只读账号'],['audit','操作记录'],['audit-empty','暂无操作记录'],['audit-error','操作记录读取失败'],['audit-denied','无操作记录权限'],['not-found','节点不存在'],['node-denied','节点无访问权限'],['pagination','多页节点列表']],
-  chain:[['mismatch','链状态不一致'],['baseline-missing','缺少可信基准'],['single-node','单节点无法比较'],['storage-zero','存储有效零值'],['storage-missing','存储暂无采样'],['storage-failure','最新存储采集失败'],['storage-unconfigured','存储统计未配置'],['storage-trend-gap','趋势缺测断线'],['storage-history','单节点完成高度对照'],['storage-partial','存储部分缺测']],
-  ingress:[['stages','六种交易处理阶段'],['clock-conflict','事件时间不可比较'],['gas-empty','窗口内暂无区块'],['gas-zero','Gas 有效零值'],['gas-invalid','Gas 数据异常'],['gas-unknown','未知区块类型'],['gas-conflict','同高度区块冲突'],['gas-select','尚未选择观测节点'],['block-detail','EVM 区块详情'],['ingress-detail','交易处理详情'],['block-missing','区块详情不存在']],
-  evm:[['no-match','失败交易无匹配'],['mapping-mismatch','Core / EVM 映射不一致'],['mapping-missing','映射缺少样本'],['no-executions','完整采集但无交易'],['success-only','有成功交易且零失败'],['fail-types','五种失败类型'],['contract-create','失败合约创建交易'],['reason-missing','失败原因未取得'],['reason-long','长失败原因'],['reason-retry','失败原因重试'],['gas-unconfigured','Gas 价格未配置'],['failure-detail','失败交易详情'],['failure-missing','失败交易不存在']],
-  alerts:[['no-match','告警查询无匹配'],['active','告警中'],['recovered','告警已恢复'],['unknown','告警状态未知'],['alert-detail','告警详情与定位'],['notification-detail','Lark 消息详情'],['notification-all','五种通知发送状态'],['notification-queued','通知待发送'],['notification-sending','通知发送中'],['notification-success','通知发送成功'],['notification-failure','通知发送失败'],['notification-unconfigured','通知未配置'],['notification-empty','暂无通知记录'],['notification-error','通知记录读取失败'],['notification-attempts','多次发送尝试'],['alert-missing','告警记录不存在']],
-  logs:[['no-match','日志查询无匹配'],['long-text','长日志展开'],['no-trace','关联标识为空'],['export','导出完整查询结果'],['export-progress','日志正在导出'],['export-limit','超过导出上限'],['export-denied','无日志导出权限'],['export-failure','下载失败与重试']]
+  nodes:[['no-match','查询无匹配'],['detail','链端节点详情'],['gateway-legacy','旧入口服务定位'],['services-down','服务不可用'],['services-unconfigured','服务未配置'],['edit','编辑与保存'],['edit-required','名称为空'],['edit-limit','名称超长'],['edit-failure','保存失败与重试'],['edit-conflict','信息修改冲突'],['read-only','只读账号'],['audit','操作记录'],['audit-empty','暂无操作记录'],['audit-error','操作记录读取失败'],['audit-denied','无操作记录权限'],['not-found','节点不存在'],['node-denied','节点无访问权限'],['pagination','多页节点列表']],
+  overview:[['healthy','探活正常'],['probe-failure','服务探测失败'],['latest-alerts','近期告警超过 10 条']],
+  chain:[['mismatch','同高度状态不一致'],['height-behind','高度落后及原因'],['baseline-missing','缺少可信基准'],['single-node','单节点 finalize 积压'],['zero-backlog','单节点零积压'],['storage-zero','存储有效零值'],['storage-missing','存储暂无采样'],['storage-failure','最新存储采集失败'],['storage-unconfigured','存储统计未配置'],['storage-trend-gap','趋势缺测断线'],['storage-history','单节点完成高度对照'],['storage-partial','存储部分缺测']],
+  ingress:[['trend-gap','趋势缺采与有效零值'],['clock-conflict','事件时间不可比较'],['gas-empty','窗口内暂无区块'],['gas-zero','Gas 有效零值'],['gas-invalid','Gas 数据异常'],['gas-unknown','未知区块类型'],['gas-select','尚未选择观测节点'],['gas-small','切换小块统计'],['gas-big','切换大块统计']],
+  evm:[['fail-types','按失败类型和交易名称聚合'],['no-executions','完整采集但无交易'],['success-only','有成功交易且零失败'],['reason-missing','失败原因或名称未知'],['gas-unconfigured','Gas 价格未配置']],
+  alerts:[['no-match','告警查询无匹配'],['alert-detail','告警详情与定位'],['repeat','重复采集只更新最新时间'],['resend','达到条件后再次通知'],['notification-pending','尚未取得发送结果'],['notification-success','发送成功'],['notification-failure','最终发送失败'],['notification-retry','投递重试后成功']],
+  logs:[['all-nodes','全部节点与权限'],['cross-package','跨时段查询与分包'],['no-match','查询无匹配'],['download-denied','无下载权限'],['download-expired','日志包已过期'],['download-retry','下载失败与原行重试'],['span-limit','查询时间跨度超限']]
  };
- const PANEL_NAMES={overview:['运行摘要','节点运行状态','时钟同步','当前告警'],nodes:['节点列表'],chain:['状态比较','存储与恢复对象'],ingress:['交易处理记录','EVM 区块 Gas 使用情况'],evm:['Core / EVM 对应关系','交易执行趋势','EVM 失败交易记录'],alerts:['告警记录','Lark 通知记录'],logs:['节点日志']};
+ const PANEL_NAMES={overview:['关键指标','节点运行状态','近期告警'],nodes:['节点列表'],chain:['状态比较','存储与恢复对象'],ingress:['交易处理趋势','EVM 区块 Gas 使用情况'],evm:['交易执行趋势','EVM 失败交易分析'],alerts:['告警记录'],logs:['日志包']};
+
  const demo={active:false,storage:new Map(),route:state.route,scene:'',snapshot:null,epoch:0,open:false};
  window.ADMIN_DEMO=demo;
  const root=document.createElement('aside');root.className='admin-demo';root.id='admin-demo';root.setAttribute('aria-label','原型演示工具');
@@ -945,12 +1129,12 @@ syncRoute();
  function toggle(open){demo.open=open;demoPanel.hidden=!open;trigger.setAttribute('aria-expanded',String(open));if(open){updatePanel();root.querySelector('.demo-close').focus();}else trigger.focus();}
  function saveSnapshot(){
   const forms=[...document.querySelectorAll('#modal-root input,#modal-root textarea,#modal-root select')].map(e=>({name:e.name,value:e.value}));
-  return {originalDb:db,originalObs:{...OBS},originalState:{...state},originalUser:{...USER},originalAlarms:alarmRecords.slice(),originalNotifications:notifications.slice(),state:clone(state),obs:clone(OBS),db:clone(db),user:clone(USER),alarms:clone(alarmRecords),notifications:clone(notifications),alarmSequence,lastScenario,hash:location.hash,scroll:[scrollX,scrollY],modal:document.getElementById('modal-root').innerHTML,stack:modalStack.slice(),handler:modalHandler,returnFocus:modalReturn,focus:document.activeElement,forms,cache:new Map(tableCache),coreHeights:new Map(lastHeightSamples),heights:new Map(lastEvmHeights),services:new Map(lastServiceStates),clocks:new Map(lastClockSamples)};
+  return {originalDb:db,originalObs:{...OBS},originalState:{...state},originalUser:{...USER},originalAlarms:alarmRecords.slice(),originalNotifications:notifications.slice(),state:clone(state),obs:clone(OBS),db:clone(db),user:clone(USER),alarms:clone(alarmRecords),notifications:clone(notifications),alarmSequence,hash:location.hash,scroll:[scrollX,scrollY],modal:document.getElementById('modal-root').innerHTML,stack:modalStack.slice(),handler:modalHandler,returnFocus:modalReturn,focus:document.activeElement,forms,cache:new Map(tableCache),coreHeights:new Map(lastHeightSamples),services:new Map(lastServiceStates)};
  }
  function restoreData(){
   const s=demo.snapshot;closeAllModals();replace(state,s.state);replace(OBS,s.obs);db=clone(s.db);replace(USER,s.user);
-  alarmRecords.splice(0,alarmRecords.length,...clone(s.alarms));notifications.splice(0,notifications.length,...clone(s.notifications));alarmSequence=s.alarmSequence;lastScenario=s.lastScenario;
-  tableCache.clear();lastHeightSamples.clear();s.coreHeights.forEach((v,k)=>lastHeightSamples.set(k,v));lastEvmHeights.clear();s.heights.forEach((v,k)=>lastEvmHeights.set(k,v));lastServiceStates.clear();s.services.forEach((v,k)=>lastServiceStates.set(k,v));lastClockSamples.clear();s.clocks.forEach((v,k)=>lastClockSamples.set(k,clone(v)));
+  alarmRecords.splice(0,alarmRecords.length,...clone(s.alarms));notifications.splice(0,notifications.length,...clone(s.notifications));alarmSequence=s.alarmSequence;
+  tableCache.clear();lastHeightSamples.clear();s.coreHeights.forEach((v,k)=>lastHeightSamples.set(k,v));lastServiceStates.clear();s.services.forEach((v,k)=>lastServiceStates.set(k,v));
   clearTimeout(toastTimer);document.querySelectorAll('.toast').forEach(e=>e.remove());hideChartTooltip();
  }
  function reset(){
@@ -965,38 +1149,35 @@ syncRoute();
   OBS.serviceConfig=[];OBS.serviceSamples=[];
   db.nodes.forEach(n=>{const names=n.role==='gateway'?['Exchange API','metrics']:['P2P','认证 UDP','Info API','node_server','metrics','pprof','JSON-RPC','快照 / 状态服务'];names.forEach(name=>{OBS.serviceConfig.push({nodeId:n.id,name,endpoint:'https://demo.invalid/'+n.id+'/'+encodeURIComponent(name),enabled:true});OBS.serviceSamples.push({nodeId:n.id,name,available:true,quality:'ok',t:OBS.anchor});});});
   OBS.nodeSamples=db.nodes.map(n=>({nodeId:n.id,alive:true,quality:'ok',t:OBS.anchor}));
-  OBS.clocks=db.nodes.map((n,i)=>({nodeId:n.id,offset:i===0?0:(i%2?1:-1),source:'本地示例时间源',synced:true,threshold:10,sampledAt:OBS.anchor,quality:'ok'}));
  }
- function newAlert(status='告警中',index=0){
-  const node=['val-01','val-02','api-01'][index%3],t=OBS.anchor-index*60000-1000;
-  const type=index%3,title=['节点时钟偏差超限','服务探活失败','入口广播积压'][type],value=['128 ms',0,'86 个'][type],condition=['绝对偏差 > 10 ms','可用服务数 = 0','待广播 bundle > 50 个'][type];
-  const a={id:'ALT-DEMO-'+String(index+1).padStart(3,'0'),fingerprint:'demo-'+index,occurrenceId:'DEMO-OCC-'+index,node,title,ruleId:'DEMO-RULE-'+index,ruleVersion:'本地示例规则 v1',group:node==='api-01'?'ingress':'overview',focus:type===0?'clock':'',level:'严重',value,condition,firstAt:t-60000,lastAt:t,stateChangedAt:t,status,evidence:{nodeName:nodeBy(node)?.name||node,nodeHeight:node==='api-01'?null:842105,observedAt:timeText(t-60000),observedAtMs:t-60000,value,condition,ruleVersion:'本地示例规则 v1'}};
-  alarmRecords.unshift(a);return a;
+ function demoAlert(t,changes={}){
+  return ingestAlert({valid:true,t,ruleId:'chain-state',node:'val-02',group:'chain',focus:'chain-comparison',title:'链状态不一致',value:'共同 Core 高度的状态摘要不一致',source:'本地状态观测样例',...changes});
  }
- function notification(a,status,index=0,attempt=1){
-  const n={id:'NTF-DEMO-'+index+'-'+attempt,alertId:a.id,eventKey:a.id+'/created/demo-group',event:'产生',target:status==='未配置'?'未配置':'BIYA Chain 本地演示群',t:OBS.anchor-index*1000+attempt,status,attempt,error:status==='发送失败'?'本地模拟：通知服务请求超时':status==='未配置'?'目标群未配置':'—',messageId:status==='发送成功'?'local-demo-message-'+index:null,body:alarmBody(a)};
-  notifications.push(n);return n;
+ function demoLogRange(){
+  const boundary=Math.floor(state.cutoff/hourMs)*hourMs;
+  state.node='val-01';state.logStart=boundary-1.5*hourMs;state.logEnd=boundary-hourMs/2;
+  OBS.logs=Array.from({length:7},(_,i)=>({id:'fixture-'+i,nodeId:state.node,t:boundary-(i<5?1.5:.5)*hourMs+i*1000,level:'INFO',message:'样例检查点写入 '+i+' · '+(i<5?'运行日志'.repeat(16):'已完成')}));
  }
+
  function initialize(route,scene){
   demo.epoch++;restoreData();demo.active=true;demo.route=route;demo.scene=scene;demo.storage=new Map([[STORE,JSON.stringify({schema:3,data:db})]]);
   // Rebase only the isolated fixtures, keeping shortcuts useful in a tab left open overnight.
   const delta=Math.floor(Date.now()/60000)*60000-OBS.anchor;
-  for(const rows of Object.values(OBS))if(Array.isArray(rows))for(const r of rows)for(const k of ['t','sampledAt','receivedAt','broadcastAt','confirmedAt'])if(Number.isFinite(r[k]))r[k]+=delta;
+  for(const rows of Object.values(OBS))if(Array.isArray(rows))for(const r of rows)for(const k of ['t','sampledAt','receivedAt','broadcastAt','confirmedAt',...(rows===OBS.ingressCoverage?['from','to']:[])])if(Number.isFinite(r[k]))r[k]+=delta;
   OBS.anchor+=delta;
   alarmRecords.forEach(a=>{for(const k of ['firstAt','lastAt','stateChangedAt','observedAt','recoveredAt'])if(Number.isFinite(a[k]))a[k]+=delta;if(Number.isFinite(a.evidence?.observedAtMs)){a.evidence.observedAtMs+=delta;a.evidence.observedAt=timeText(a.evidence.observedAtMs);}});
-  notifications.forEach(n=>{n.t+=delta;const a=alarmRecords.find(a=>a.id===n.alertId);if(a)n.body=alarmBody(a);});
-  Object.assign(state,queryDefaults,{route,node:'all',window:'1h',cutoff:Math.max(Date.now(),OBS.anchor+1000),scenario:'normal',blocked:'',loading:false,routeNotice:'',fixedCutoff:false,activeAlert:null,saveFailure:false,pagers:{},hiddenSeries:new Set(),selected:new Set()});
+  notifications.forEach(n=>{n.t+=delta;if(n.sentAt)n.sentAt+=delta;const a=alarmRecords.find(a=>a.id===n.alertId);if(a)n.body=alarmBody(a);});
+  Object.assign(state,queryDefaults,{route,node:'all',window:'1h',cutoff:Math.max(Date.now(),OBS.anchor+1000),scenario:'normal',blocked:'',loading:false,routeNotice:'',fixedCutoff:false,activeAlert:null,saveFailure:false,logFileState:'',pagers:{},hiddenSeries:new Set(),selected:new Set()});
   USER.permissions=['monitor:read','node:edit','logs:export','audit:read'];delete USER.nodeIds;OBS.moduleStatus={};OBS.moduleRefresh=null;OBS.notificationAdapter=null;
-  lastScenario='normal';
  }
  const htmlNotice=(text,retry=false)=>`<div class="notice red demo-page-notice">${esc(text)}${retry?'<button type="button" data-demo-recover>重试</button>':''}</div>`;
  function emptyData(route){
   state.scenario='empty';
   if(route==='nodes'||route==='overview'){db.nodes=[];alarmRecords.length=0;}
   if(route==='alerts'){alarmRecords.length=0;notifications.length=0;}
-  if(route==='chain'){OBS.chainHistory=[];OBS.queueSamples=[];OBS.storage=[];db.nodes.filter(n=>n.role!=='gateway').forEach(n=>n.height=null);}
+  if(route==='chain'){OBS.coreHeads=[];OBS.chainHistory=[];OBS.queueSamples=[];OBS.storage=[];db.nodes.filter(n=>n.role!=='gateway').forEach(n=>n.height=null);}
   if(route==='ingress'){OBS.ingress=[];OBS.blocks=[];}
-  if(route==='evm'){OBS.receipts=[];OBS.mappingHistory=[];OBS.priceSamples=[];OBS.receiptHistoryComplete=false;}
+  if(route==='evm'){OBS.receipts=[];OBS.priceSamples=[];OBS.receiptHistoryComplete=false;}
   if(route==='logs')OBS.logs=[];
  }
  async function run(route,scene){
@@ -1012,35 +1193,34 @@ syncRoute();
    if(route==='nodes')db.nodes=db.nodes.filter(n=>n.id!=='val-02');
    if(route==='chain'){expected=scopedNodes().length;valid=expected-1;OBS.chainHistory=OBS.chainHistory.filter(r=>r.nodeId!=='val-02');OBS.moduleStatus['存储与恢复对象']={status:'partial',expected,valid};}
    if(route==='ingress')expected=ingressRows().length;
-   if(route==='logs')expected=logRows().length;
+   if(route==='logs')expected=OBS.logs.length;
    if(route==='alerts'){const rows=alarmRecords.filter(r=>inWindow(r.lastAt));expected=rows.length;if(rows.length)alarmRecords.splice(alarmRecords.indexOf(rows.at(-1)),1);valid=Math.max(0,expected-1);}
    if(route==='overview'){OBS.nodeSamples=OBS.nodeSamples.filter(r=>r.nodeId!=='val-02');OBS.serviceSamples=OBS.serviceSamples.filter(r=>r.nodeId!=='val-02');}
    if(route==='chain')OBS.storage=OBS.storage.filter(r=>r.nodeId!=='val-02');
-   if(route==='evm'){expected=scopedNodes().length;valid=expected-1;OBS.mappingHistory=OBS.mappingHistory.filter(r=>r.nodeId!=='val-02');}
+   if(route==='evm'){expected=OBS.receipts.length;OBS.receipts=OBS.receipts.filter((r,i)=>i%4!==0);valid=OBS.receipts.length;OBS.receiptHistoryComplete=false;}
    if(route==='ingress'){OBS.ingress=OBS.ingress.filter((r,i)=>i%4!==0);valid=ingressRows().length;}
-   if(route==='logs'){OBS.logs=OBS.logs.filter(r=>r.nodeId!=='val-02');valid=logRows().length;}
+   if(route==='logs'){OBS.logs=OBS.logs.filter(r=>r.nodeId!=='val-02');valid=OBS.logs.length;}
    OBS.moduleStatus[title]={status:'partial',expected,valid,lastSuccess:OBS.anchor};
   }
   if(scene==='denied'){USER.permissions=[];state.blocked='无访问权限';}
-  if(scene==='no-match'){const key={nodes:'query',evm:'failureQuery',alerts:'alertQuery',logs:'logQuery'}[route];state[key]='不存在的查询结果-DEM0';}
+  if(scene==='no-match'){const key={nodes:'query',alerts:'alertQuery'}[route];state[key]='不存在的查询结果-DEM0';}
   switch(route){
    case 'overview':
-    if(['healthy','clock-abnormal','probe-failure','zero-backlog'].includes(scene))healthy();
-    if(scene==='clock-abnormal'){Object.assign(OBS.clocks[0],{offset:128,synced:false});Object.assign(OBS.clocks[1],{offset:-128});}
-    if(scene==='clock-missing')OBS.clocks=[];
-    if(scene==='probe-failure'){OBS.serviceSamples[0].available=false;OBS.serviceSamples[0].error='连接超时';OBS.nodeSamples[0].alive=false;}
-    if(scene==='service-unconfigured'){OBS.serviceConfig=[];OBS.serviceSamples=[];}
-    if(scene==='active-alerts'){alarmRecords.length=0;newAlert();newAlert('状态未知',1);}
-    if(scene==='zero-backlog'){OBS.queueSamples.forEach(r=>Object.assign(r,{executableFinalHeight:r.completedHeight,mempool:0}));OBS.ingress.forEach(r=>{r.broadcastAt=r.receivedAt+1;});}
-    if(scene.startsWith('clock-'))state.focus='clock';
+    if(scene==='healthy'||scene==='probe-failure')healthy();
+    if(scene==='probe-failure'){OBS.serviceSamples[0].available=false;OBS.nodeSamples[0].alive=false;}
+    if(scene==='latest-alerts'){
+     alarmRecords.length=0;notifications.length=0;
+     for(let i=0;i<13;i++)demoAlert(OBS.anchor-i*90000-1000,{dimension:'fixture-'+i});
+    }
     break;
    case 'nodes':{
-    const nid=scene==='gateway-detail'?'api-01':'val-01';
-    if(['detail','gateway-detail','services-down','services-unconfigured','read-only'].includes(scene)){
+    const nid='val-01';
+    if(['detail','services-down','services-unconfigured','read-only'].includes(scene)){
      if(scene==='services-down'){healthy();OBS.serviceSamples[0].available=false;OBS.serviceSamples[0].error='端点连接超时';}
      if(scene==='read-only')USER.permissions=['monitor:read'];
      after=()=>showNode(nid);
     }
+    if(scene==='gateway-legacy')after=()=>navigate('nodes','api-01');
     if(scene.startsWith('edit'))after=()=>{
      showNode(nid);editNode(nid);
      const name=document.querySelector('.dialog [name="name"]');name.value=scene==='edit-required'?'':scene==='edit-limit'?'节'.repeat(61):'节点名称（演示修改）';
@@ -1059,77 +1239,81 @@ syncRoute();
     break;
    }
    case 'chain':
-    if(scene==='mismatch')OBS.chainHistory.filter(r=>r.nodeId==='val-02').forEach(r=>r.digest='0x'+'cd'.repeat(32));
-    if(scene==='baseline-missing')OBS.chainBaseline=null;
-    if(scene==='single-node')state.node='val-01';
-    if(scene==='storage-zero')OBS.storage.filter(r=>r.type==='Replica').forEach(r=>Object.assign(r,{sizeBytes:0,count:0,latestHeight:0,quality:'ok'}));
+    if(['mismatch','height-behind'].includes(scene))OBS.chainHistory.filter(r=>r.nodeId==='val-02').forEach(r=>r.digest='0x'+'cd'.repeat(32));
+    if(scene==='height-behind'){
+     OBS.coreHeads.filter(r=>['val-02','follow-02'].includes(r.nodeId)).forEach(r=>r.height-=2);
+     OBS.lagEvidence=[{nodeId:'val-02',t:OBS.anchor,quality:'ok',reason:'Core 区块接收延迟',source:'同一统计时点的区块接收记录与参考节点出块记录（本地样例）'}];
+    }
+    if(scene==='baseline-missing'){OBS.chainBaseline=null;OBS.coreHeadReference=null;}
+    if(['single-node','zero-backlog'].includes(scene))state.node='val-01';
+    if(scene==='zero-backlog')OBS.queueSamples.forEach(r=>r.executableFinalHeight=r.completedHeight);
+    if(scene==='storage-zero')OBS.storage.forEach(r=>Object.assign(r,{sizeBytes:0,count:0,latestHeight:0,quality:'ok'}));
     if(scene==='storage-missing')OBS.storage=[];
-    if(scene==='storage-failure')OBS.storage.push({id:'demo-latest-failure',nodeId:'val-01',type:'Replica',t:state.cutoff-1,quality:'error'});
+    if(scene==='storage-failure')OBS.storage.push({id:'fixture-last-error',nodeId:'val-01',type:'Replica',t:state.cutoff,quality:'error'});
     if(scene==='storage-unconfigured')state.storageType='sidecar';
-    if(scene==='storage-trend-gap')OBS.storage.forEach(r=>{if(r.t>OBS.anchor-28*60000&&r.t<=OBS.anchor-15*60000)r.quality='missing';});
+    if(scene==='storage-trend-gap')OBS.storage.filter(r=>r.t>OBS.anchor-28*60000&&r.t<=OBS.anchor-15*60000).forEach(r=>r.quality='missing');
     if(scene==='storage-history'){state.node='val-01';OBS.completedHeights=OBS.storage.filter(r=>r.nodeId==='val-01'&&r.type==='Replica').map(r=>({nodeId:r.nodeId,t:r.t,height:r.latestHeight+4,quality:'ok'}));}
     if(scene==='storage-partial'){OBS.storage=OBS.storage.filter(r=>r.nodeId!=='val-02');OBS.moduleStatus['存储与恢复对象']={status:'partial',expected:5,valid:4};}
     break;
-   case 'ingress':{
-    if(['stages','clock-conflict','ingress-detail'].includes(scene)){
-     const proto=clone(OBS.ingress[1]);OBS.ingress=Array.from({length:6},(_,i)=>({...proto,id:'TX-DEMO-'+i,businessId:'DEMO-'+i,bundle:'BUNDLE-DEMO-'+i,receivedAt:OBS.anchor-i*10000-5000,broadcastAt:i===0?null:OBS.anchor-i*10000-4000,confirmedAt:i===2?OBS.anchor-i*10000-3000:null,rejected:i===3,expired:i===4}));OBS.ingress[5].confirmedAt=OBS.ingress[5].receivedAt-1;
-     if(scene==='clock-conflict')OBS.ingress.forEach(r=>{r.timeQuality='unknown';r.broadcastAt=r.receivedAt-1;});
-     if(scene==='ingress-detail')after=()=>openIngress(OBS.ingress[2].id);
+   case 'ingress':
+    if(['trend-gap','partial'].includes(scene)){
+     const gap=OBS.anchor-10*60000;
+     OBS.ingressCoverage=OBS.ingressCoverage.flatMap(r=>[{...r,to:gap-5*60000},{...r,from:gap}]);
     }
-    if(scene.startsWith('gas-')||scene.startsWith('block-'))state.focus='gas';
+    if(scene==='clock-conflict')OBS.ingressCoverage=[];
+    if(scene==='clock-conflict')OBS.ingress.forEach(r=>r.timeQuality='unknown');
+    if(scene.startsWith('gas-'))state.focus='gas';
     if(scene==='gas-empty')OBS.blocks=[];
     if(scene==='gas-zero')OBS.blocks.forEach(b=>b.gasUsed=0);
-    if(scene==='gas-invalid')OBS.blocks.forEach((b,i)=>{if(i%2===0)b.gasLimit=0;else b.gasUsed=String(BigInt(b.gasLimit)+1n);});
-    if(scene==='gas-unknown')OBS.blocks.forEach(b=>{b.typeSource=null;b.blockType='unknown';});
-    if(scene==='gas-conflict'){const b=clone(OBS.blocks.filter(b=>b.observerNodeId==='val-01').at(-1));b.canonical=false;OBS.blocks.filter(x=>x.number===b.number).forEach(x=>x.canonical=false);OBS.blocks.push({...b,hash:'0x'+'ef'.repeat(32)});}
+    if(scene==='gas-invalid')OBS.blocks.forEach(b=>b.gasLimit=0);
+    if(scene==='gas-unknown')OBS.blocks.forEach(b=>b.typeSource=null);
     if(scene==='gas-select')state.gasNode='';
-    if(scene==='block-detail')after=()=>handleAction('block-detail',{dataset:{id:blockRows()[0].hash}});
-    if(scene==='block-missing')after=()=>modal('EVM 区块详情',htmlNotice('区块不存在或已移除'));
+    if(['gas-small','gas-big'].includes(scene))state.gasType=scene.slice(4);
     break;
-   }
-   case 'evm':{
-    if(scene==='mapping-mismatch')OBS.mappingHistory.filter(r=>r.nodeId==='val-02').forEach(r=>r.evmHash='0x'+'ef'.repeat(32));
-    if(scene==='mapping-missing')OBS.mappingHistory=[];
+   case 'evm':
+    if(['fail-types','reason-missing'].includes(scene)){
+     const seed=OBS.receipts.find(r=>r.status===0||r.status==='0x0');
+     const label={name:'转账',source:'本地业务标签样例'},label2={name:'兑换',source:'本地业务标签样例'};
+     const fixtures=[['out-of-gas',label],['revert',label],['decoded',label2],[null,null]];
+     OBS.receipts=fixtures.map(([kind,businessLabel],i)=>({...seed,hash:'0x'+String(i+1).padStart(64,'0'),t:OBS.anchor-(i+1)*60000,businessLabel,reasonEvidence:kind?{kind,source:'本地执行样本',text:'执行失败'}:null}));
+     if(scene==='reason-missing')OBS.receipts=OBS.receipts.slice(-1);
+    }
     if(scene==='no-executions')OBS.receipts=[];
-    if(scene==='success-only')OBS.receipts=OBS.receipts.filter(r=>r.status===1);
-    if(['fail-types','contract-create','reason-missing','reason-long','failure-detail','reason-retry'].includes(scene)){
-     const first=clone(OBS.receipts.find(r=>r.status===0&&inWindow(r.t)));OBS.receipts=OBS.receipts.filter(r=>r.status===1);
-     const evidence=[{kind:'out-of-gas',source:'本地示例执行记录'},{kind:'decoded',source:'本地示例解析结果',text:'余额不足'},{kind:'raw-revert',source:'本地示例回退数据',data:'0x1234'},{kind:'revert',source:'本地示例执行记录'},null];
-     for(let i=0;i<5;i++)OBS.receipts.push({...clone(first),hash:'0x'+(900000+i).toString(16).padStart(64,'0'),transactionIndex:i,t:OBS.anchor-i*1000,status:0,reasonEvidence:evidence[i],reasonText:i===4?null:['out of gas','余额不足','0x1234','执行回退'][i],to:i===0?null:first.to});
-     const selected=OBS.receipts.filter(r=>r.status===0)[scene==='reason-missing'||scene==='reason-retry'?4:0];
-     if(scene==='reason-long'){selected.reasonEvidence={kind:'decoded',source:'本地示例解析结果',text:'交易执行失败：余额不足，'.repeat(80)+' 0x'+'ab'.repeat(200)};selected.reasonText=selected.reasonEvidence.text;}
-     if(scene!=='fail-types')after=()=>{handleAction('failure-detail',{dataset:{id:selected.hash}});if(scene==='reason-retry')document.querySelector('.dialog-footer').insertAdjacentHTML('beforeend','<button type="button" data-demo-reason-retry>重试获取失败原因</button>');};
-    }
-    if(scene==='failure-missing')after=()=>modal('EVM 失败交易详情',htmlNotice('失败交易不存在或无权查看'));
+    if(scene==='success-only')OBS.receipts=OBS.receipts.filter(r=>r.status===1||r.status==='0x1');
     break;
-   }
-   case 'alerts':{
-    if(!['normal','loading','empty','error','stale','partial','denied','no-match'].includes(scene)){
+   case 'alerts':
+    if(scene!=='normal'&&!['loading','empty','error','stale','partial','denied','no-match'].includes(scene)){
      alarmRecords.length=0;notifications.length=0;
-     const status=scene==='recovered'?'已恢复':scene==='unknown'?'状态未知':'告警中',a=newAlert(status);
-     if(scene.startsWith('notification-')||scene==='alert-detail'){
-      const statuses=['待发送','发送中','发送成功','发送失败','未配置'];
-      const key=scene.slice(13),lookup={queued:'待发送',sending:'发送中',success:'发送成功',failure:'发送失败',unconfigured:'未配置'};
-      if(scene==='notification-all')statuses.forEach((s,i)=>notification(i?newAlert('告警中',i):a,s,i));
-      else if(scene==='notification-attempts'){for(let i=1;i<=23;i++)notification(a,i===23?'发送成功':'发送失败',0,i);}
-      else if(!['notification-empty','notification-error'].includes(scene))notification(a,lookup[key]||'发送失败');
-      if(scene!=='alert-detail')state.tab='notifications';
+     const t=OBS.anchor-300000;
+     if(scene==='resend')OBS.alertRules={'chain-state':{allowResend:true,minIntervalMs:120000,condition:event=>event.testResend===true}};
+     if(scene.startsWith('notification-')||scene==='resend'||scene==='repeat')OBS.notificationConfig={target:'本地测试群',maxAttempts:scene==='notification-retry'?2:1,retryDelays:[50]};
+     if(['notification-success','notification-failure','notification-retry','resend','repeat'].includes(scene))OBS.notificationAdapter=async ({attempt})=>{
+      if(scene==='notification-failure'||scene==='notification-retry'&&attempt===1)return {code:1,message:'模拟投递超时',retryable:scene==='notification-retry'};
+      return {code:0,messageId:'local-fixture-'+attempt};
+     };
+     const a=demoAlert(t);
+     if(scene==='repeat'||scene==='resend'){
+      demoAlert(t+60000,{testResend:true});demoAlert(t+120000,{testResend:true});demoAlert(t+120000,{testResend:true});demoAlert(t);
      }
-     if(scene==='alert-detail'||scene==='notification-attempts')after=()=>openAlert(a.id);
-     if(scene==='notification-detail')after=()=>{openAlert(a.id);handleAction('notification-detail',{dataset:{id:notifications[0].id}});};
-     if(scene==='notification-error')OBS.moduleStatus['Lark 通知记录']={status:'error',error:'通知记录读取失败'};
-     if(scene==='alert-missing')after=()=>openAlert('ALT-NOT-FOUND');
+     if(scene==='notification-retry')await new Promise(resolve=>setTimeout(resolve,100));
+     if(scene!=='repeat'&&scene!=='resend')after=()=>openAlert(a.id);
     }
     break;
-   }
    case 'logs':
-    if(scene==='long-text'){OBS.logs[0].message='执行阶段日志：'.repeat(100)+'\n事务未完成，等待下一轮确认。';OBS.logs[0].t=OBS.anchor;}
-    if(scene==='no-trace')OBS.logs.forEach(r=>r.traceId=null);
-    if(scene==='export-denied')USER.permissions=['monitor:read'];
-    if(scene==='export-limit'){OBS.exportPolicy={maxRecords:2,maxBytes:null};after=()=>handleAction('export-logs',{dataset:{}});}
-    if(scene==='export')after=()=>handleAction('export-logs',{dataset:{}});
+    if(!['normal','empty','loading','error','stale','partial','denied'].includes(scene))demoLogRange();
+    if(scene==='all-nodes'){
+     OBS.logs.push(...OBS.logs.map(r=>({...r,id:r.id+'-second',nodeId:'val-02'})),...OBS.logs.map(r=>({...r,id:r.id+'-hidden',nodeId:'val-03'})));
+     USER.nodeIds=['val-01','val-02'];OBS.logDownloadDenied=['val-02'];state.node='all';
+    }
+    if(scene==='partial')OBS.logFailedNodes=['val-02'];
+    if(scene==='no-match')state.node='val-02';
+    if(scene==='download-denied')USER.permissions=['monitor:read'];
+    if(scene==='download-expired')state.logFileState='expired';
+    if(scene==='download-retry')state.logFileState='retry';
+    if(scene==='span-limit')state.logStart=state.logEnd-2*24*hourMs;
     break;
   }
+
   history.replaceState(null,'',writeLocation(route,state.node,state.focus));render();after?.();updatePanel();
   if(document.querySelector('.dialog')&&demo.open)toggle(false);
   if(state.focus)document.getElementById(state.focus)?.scrollIntoView({block:'start'});else scrollTo(0,0);
@@ -1138,7 +1322,6 @@ syncRoute();
   const current=clone(state),was=demo.scene,route=state.route;
   run(route,'normal');Object.assign(state,Object.fromEntries([...QUERY_KEYS,'window','node','focus'].map(k=>[k,current[k]])));state.pagers=current.pagers;state.cutoff=Date.now();history.replaceState(null,'',writeLocation(route,state.node,state.focus));render();
   if(was==='audit-error')handleAction('audit',{dataset:{}});
-  if(was==='notification-error'){state.tab='notifications';render();}
  }
  const productRender=render;
  render=()=>{productRender();decorate();updatePanel();};
@@ -1148,39 +1331,27 @@ syncRoute();
   if(['loading','error'].includes(scene)){
    workspace.querySelectorAll('.metric-value').forEach(e=>{e.textContent=scene==='loading'?'正在加载…':'—';e.classList.add('demo-loading-value');});
    workspace.querySelectorAll('.panel').forEach(p=>{const title=p.querySelector('.panel-head').outerHTML;p.innerHTML=title+(scene==='loading'?'<div class="demo-skeleton" aria-label="正在加载"><i></i><i></i><i></i></div>':htmlNotice('读取失败，请重试',true));});
-   workspace.querySelector('[data-action="export-logs"]')?.setAttribute('disabled','');
   }
   if(scene==='stale'&&!workspace.textContent.includes('最后成功采样'))workspace.insertAdjacentHTML('afterbegin',hint('数据过期 · 最后成功采样 '+timeText(OBS.anchor)+' · UTC+8','amber'));
   if(scene==='partial'){
    const m=Object.values(OBS.moduleStatus).find(m=>m.status==='partial');
    if(m)workspace.insertAdjacentHTML('afterbegin',hint('数据不完整 · 有效 '+m.valid+' / '+m.expected+' · 缺失部分不计为正常','amber'));
   }
-  if(scene==='empty'&&state.route==='chain')workspace.querySelectorAll('.cards-five .metric-value').forEach(e=>e.textContent='—');
-  if(scene==='notification-error'){
-   const p=[...workspace.querySelectorAll('.panel')].find(p=>p.querySelector('h2')?.textContent==='Lark 通知记录');if(p)p.innerHTML=p.querySelector('.panel-head').outerHTML+htmlNotice('通知记录读取失败',true);
-  }
-  if(scene==='export-progress'){
-   workspace.querySelector('[data-action="export-logs"]')?.setAttribute('disabled','');workspace.insertAdjacentHTML('beforeend','<div class="notice demo-page-notice">正在导出当前查询的完整日志… <button type="button" data-demo-export-finish>完成导出</button></div>');
-  }
-  if(scene==='export-failure')workspace.insertAdjacentHTML('beforeend',htmlNotice('日志下载失败，查询条件已保留',true));
  }
  // Capture only explicit demo controls; ordinary application controls keep their behavior.
  document.addEventListener('click',e=>{
-  const button=e.target.closest('[data-demo-case],[data-demo-reset],[data-demo-close],[data-demo-recover],[data-demo-export-finish],[data-demo-reason-retry]');
+  const button=e.target.closest('[data-demo-case],[data-demo-reset],[data-demo-close],[data-demo-recover]');
   if(!button)return;e.preventDefault();e.stopImmediatePropagation();
   if(button.hasAttribute('data-demo-reset')){reset();return;}
   if(button.hasAttribute('data-demo-close')){toggle(false);return;}
-  if(button.hasAttribute('data-demo-recover')){const exporting=demo.scene==='export-failure';recover();if(exporting)handleAction('export-logs',{dataset:{}});return;}
-  if(button.hasAttribute('data-demo-export-finish')){demo.scene='export';render();handleAction('export-logs',{dataset:{}});return;}
-  if(button.hasAttribute('data-demo-reason-retry')){const r=OBS.receipts.find(r=>r.hash===failedReceipts().find(r=>r.reasonCategory==='原因未知')?.hash);if(r){r.reasonEvidence={kind:'decoded',source:'本地示例重试结果',text:'合约余额不足'};r.reasonText='合约余额不足';closeAllModals();render();handleAction('failure-detail',{dataset:{id:r.hash}});}return;}
+  if(button.hasAttribute('data-demo-recover')){recover();return;}
   run(button.dataset.demoRoute,button.dataset.demoCase);
  },true);
  const productAction=handleAction;
  handleAction=(action,el)=>{
   if(demo.active&&state.route===demo.route){
-   if((action==='refresh'||action==='module-retry')&&['loading','error','stale','partial','storage-partial','notification-error'].includes(demo.scene)){recover();return;}
+   if((action==='refresh'||action==='module-retry')&&['loading','error','stale','partial','storage-partial'].includes(demo.scene)){recover();return;}
    if(action==='modal-save'&&demo.scene==='edit-failure'&&document.querySelector('#form-error')?.textContent){state.saveFailure=false;}
-   if(action==='export-logs'&&demo.scene==='export-failure')return toast('日志下载失败，查询条件已保留，可点击重试');
   }
   return productAction(action,el);
  };
@@ -1199,11 +1370,7 @@ syncRoute();
   if(e.key==='Tab'&&demo.open&&root.contains(document.activeElement)){const items=[...root.querySelectorAll('button:not(:disabled)')].filter(e=>e.getClientRects().length),first=items[0],last=items.at(-1);if(e.shiftKey&&document.activeElement===first){e.preventDefault();last.focus();}else if(!e.shiftKey&&document.activeElement===last){e.preventDefault();first.focus();}e.stopImmediatePropagation();}
  },true);
  window.addEventListener('resize',()=>{if(root.style.left){root.style.left=Math.max(8,Math.min(parseFloat(root.style.left),innerWidth-trigger.offsetWidth-8))+'px';root.style.top=Math.max(8,Math.min(parseFloat(root.style.top),innerHeight-trigger.offsetHeight-8))+'px';}if(demo.open)placePanel();});
- // Leaving the demonstration route restores the product state before the existing hash listener renders.
- window.addEventListener('hashchange',()=>{
-  if(!demo.active)return;const destination=location.hash,route=destination.slice(1).split('?')[0];
-  if(route!==demo.route){reset();history.replaceState(null,'',destination);syncRoute();}
- });
+ // Keep fixture data available through linked pages until the user resets the demo.
  Object.assign(demo,{run,reset,recover,cases:CASES,common:COMMON,toggle});updatePanel();
 })();
 </script></body></html>
